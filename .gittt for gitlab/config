@@ -1,0 +1,16 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://gitlab.com/hawasly1/bilhikma/bilhikma_mobile.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "alkhateeb"]
+	remote = origin
+	merge = refs/heads/alkhateeb
+	vscode-merge-base = origin/alkhateeb
+[branch "master"]
+	vscode-merge-base = origin/main

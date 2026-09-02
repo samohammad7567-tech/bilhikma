@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "519626139267",
+    "project_id": "bilhikma-98a54",
+    "storage_bucket": "bilhikma-98a54.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519626139267:android:975e580fb8f8c652e35db6",
+        "android_client_info": {
+          "package_name": "tech.bilhikma.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlS-O-bh5Eyyj8PY_ZbF7tuEVI5x4N6vo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

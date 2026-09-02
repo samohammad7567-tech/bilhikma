@@ -1,0 +1,1 @@
+enum NotificationTone { gold, green }
