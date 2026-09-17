@@ -6,6 +6,7 @@ import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_envelope.dart';
 import '../../../../core/network/json_reader.dart';
+import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/network/media_access_model.dart';
 import '../../../../core/services/device_service.dart';
 import '../../../../core/utils/error_mapper.dart';
@@ -29,6 +30,15 @@ class ProgressResult {
   final bool seekRejected;
 }
 
+/// A minted playback link together with where it points, so the screen can
+/// name the source without handling tokens or device ids itself.
+class PlaybackAccess {
+  const PlaybackAccess({required this.url, required this.source});
+
+  final String url;
+  final MediaSource source;
+}
+
 class LessonDetailDataSource {
   LessonDetailDataSource({
     this.client = const ApiClient(),
@@ -46,9 +56,13 @@ class LessonDetailDataSource {
         LessonDetailModel.fromData,
       );
 
-  Future<String> requestPlaybackUrl(int contentId) async {
+  Future<PlaybackAccess> requestPlayback(int contentId) async {
     final MediaAccessModel access = await requestPlaybackToken(contentId);
-    return access.url(deviceUuid: DeviceService.deviceUuid);
+
+    return PlaybackAccess(
+      url: access.url(deviceUuid: DeviceService.deviceUuid),
+      source: access.source,
+    );
   }
 
   Future<MediaAccessModel> requestPlaybackToken(int contentId) async {

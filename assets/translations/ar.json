@@ -22,6 +22,8 @@
   "password_min_8": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
   "password_must_contain_letter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
   "password_must_contain_number": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+  "lesson_source_file": "ملف مرفوع",
+  "lesson_source_youtube": "يوتيوب",
   "valid_phone_required": "أدخل رقم هاتف صحيح، مثل 0958953288 أو +963958953288",
   "platform_name": "منصة بالحكمة",
   "platform_tagline": "منصة بالحكمة الإلكترونية للعلوم الشرعية والعربية",

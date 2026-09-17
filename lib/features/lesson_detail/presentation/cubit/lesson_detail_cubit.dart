@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../../../core/enums/content_type_enum.dart';
+import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/models/lesson_progress_model.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../../data/data_source/lesson_detail_data_source.dart';
@@ -36,6 +37,12 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
   bool _isReporting = false;
 
+  /// Minted when the lesson opens, so the summary card can name the source
+  /// before anything plays. It is held here instead of being emitted as
+  /// [LessonDetailState.playbackUrl] because a url in the state builds the
+  /// player, and both players start playing the moment they are built.
+  PlaybackAccess? _access;
+
   /// A 403 or 404 from the progress endpoint is a standing answer: the lesson
   /// is not accessible to this account, or no longer exists. The playback
   /// ticker fires every second and a rejected checkpoint never advances, so
@@ -56,8 +63,10 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   }
 
   Future<void> loadLesson() async {
-    // A reload asks the server again, so an earlier refusal stops standing.
+    // A reload asks the server again, so an earlier refusal stops standing,
+    // and the link is minted afresh rather than reused from the failed run.
     _isProgressHalted = false;
+    _access = null;
 
     emit(state.copyWith(status: LessonDetailStatus.loading, clearError: true));
 
@@ -81,6 +90,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       );
 
       await _refreshDownloadedAttachments();
+      await _prefetchAccess(detail);
     } on AppException catch (error) {
       if (isClosed) return;
       _emitFailure(error);
@@ -122,19 +132,53 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     ),
   );
 
+  /// Asks for the playback link as soon as the lesson opens, purely to learn
+  /// its source. Failures stay silent: nothing was requested by the user yet,
+  /// and tapping play repeats the call and surfaces the real error then.
+  Future<void> _prefetchAccess(LessonDetailModel detail) async {
+    if (!detail.isPlayable || detail.isLocked) return;
+
+    try {
+      final PlaybackAccess access = await repo.requestPlayback(id);
+      if (isClosed) return;
+
+      _access = access;
+      emit(state.copyWith(playbackSource: access.source));
+    } catch (_) {
+      return;
+    }
+  }
+
   Future<void> preparePlayback() async {
     final LessonDetailModel? detail = state.detail;
     if (detail == null || !detail.isPlayable || state.isPreparingPlayback) {
       return;
     }
 
+    // Already minted while the screen opened: play without a second round trip.
+    final PlaybackAccess? ready = _access;
+    if (ready != null) {
+      emit(
+        state.copyWith(playbackUrl: ready.url, playbackSource: ready.source),
+      );
+      return;
+    }
+
     emit(state.copyWith(isPreparingPlayback: true));
 
     try {
-      final String url = await repo.requestPlaybackUrl(id);
+      final PlaybackAccess access = await repo.requestPlayback(id);
       if (isClosed) return;
 
-      emit(state.copyWith(playbackUrl: url, isPreparingPlayback: false));
+      _access = access;
+
+      emit(
+        state.copyWith(
+          playbackUrl: access.url,
+          playbackSource: access.source,
+          isPreparingPlayback: false,
+        ),
+      );
     } on AppException catch (error) {
       if (isClosed) return;
       emit(

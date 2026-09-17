@@ -9,6 +9,7 @@ final class LessonDetailState {
     this.progress = const LessonProgressModel(),
     this.isLocked = false,
     this.playbackUrl,
+    this.playbackSource,
     this.isPreparingPlayback = false,
     this.isPlaying = false,
     this.isVideoFullscreen = false,
@@ -34,6 +35,11 @@ final class LessonDetailState {
   final bool isLocked;
 
   final String? playbackUrl;
+
+  /// Where the lesson plays from. Null until the playback link is minted, and
+  /// always null for an article, which has nothing to play.
+  final MediaSource? playbackSource;
+
   final bool isPreparingPlayback;
   final bool isPlaying;
 
@@ -99,6 +105,7 @@ final class LessonDetailState {
     LessonProgressModel? progress,
     bool? isLocked,
     String? playbackUrl,
+    MediaSource? playbackSource,
     bool? isPreparingPlayback,
     bool? isPlaying,
     bool? isVideoFullscreen,
@@ -123,6 +130,7 @@ final class LessonDetailState {
     progress: progress ?? this.progress,
     isLocked: isLocked ?? this.isLocked,
     playbackUrl: playbackUrl ?? this.playbackUrl,
+    playbackSource: playbackSource ?? this.playbackSource,
     isPreparingPlayback: isPreparingPlayback ?? this.isPreparingPlayback,
     isPlaying: isPlaying ?? this.isPlaying,
     isVideoFullscreen: isVideoFullscreen ?? this.isVideoFullscreen,

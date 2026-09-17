@@ -4,6 +4,7 @@ import '../constants/app_assets.dart';
 import '../enums/content_type_enum.dart';
 import '../enums/lesson_category_enum.dart';
 import '../enums/lesson_status_enum.dart';
+import '../enums/media_source_enum.dart';
 
 extension LessonCategoryView on LessonCategory {
   String get label => switch (this) {
@@ -61,4 +62,16 @@ extension LessonStatusView on LessonStatus {
           foreground: colors.onPrimaryContainer,
         ),
       };
+}
+
+extension MediaSourceView on MediaSource {
+  String get badgeLabel => switch (this) {
+    MediaSource.file => 'lesson_source_file',
+    MediaSource.youtube => 'lesson_source_youtube',
+  };
+
+  ({Color background, Color foreground}) badgeColors(ColorScheme colors) => (
+    background: colors.secondaryContainer,
+    foreground: colors.onSecondaryContainer,
+  );
 }

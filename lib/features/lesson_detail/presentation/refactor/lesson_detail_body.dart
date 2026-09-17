@@ -71,6 +71,7 @@ class LessonDetailBody extends StatelessWidget {
               child: LessonSummaryCard(
                 detail: detail,
                 progress: state.progress,
+                source: state.playbackSource,
               ),
             ),
 

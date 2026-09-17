@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/ornamented_card.dart';
 import '../../../../core/models/lesson_progress_model.dart';
+import '../../../../core/enums/media_source_enum.dart';
+import '../../../../core/widgets/lesson_source_badge.dart';
 import '../../../../core/widgets/lesson_status_badge.dart';
 import '../../../lessons/presentation/refactor/lesson_formats.dart';
 import '../../../../core/widgets/lesson_meta_item.dart';
@@ -14,11 +16,15 @@ class LessonSummaryCard extends StatelessWidget {
     required this.detail,
     super.key,
     this.progress = const LessonProgressModel(),
+    this.source,
   });
 
   final LessonDetailModel detail;
 
   final LessonProgressModel progress;
+
+  /// Null until the playback link has been minted, and for an article.
+  final MediaSource? source;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +53,16 @@ class LessonSummaryCard extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsetsDirectional.only(start: 8.w),
-                child: LessonStatusBadge(status: detail.status),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (source != null) ...<Widget>[
+                      LessonSourceBadge(source: source!),
+                      SizedBox(width: 6.w),
+                    ],
+                    LessonStatusBadge(status: detail.status),
+                  ],
+                ),
               ),
             ],
           ),

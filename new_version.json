@@ -1,0 +1,595 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Bilhikma Platform API",
+    "description": "REST API for the Bilhikma learning platform: student registration and approval, entity/class/subject structure, protected lesson delivery, textbooks, live sessions, notifications and the administration dashboard.\n\n## Conventions\n\n- Every response — success or failure — is wrapped in the same envelope: `{ \"data\": ..., \"message\": \"...\", \"status_code\": 0|1 }`. `status_code` is a logical flag (1 = success, 0 = failure) and is independent of the HTTP status, which always stays protocol-correct.\n- Lists return `data.items` plus `data.meta.pagination` (`count`, `current_page`, `per_page`, `total`). An empty list is a success with `items: []`, never an error.\n- Validation failures return HTTP 422 with `errors` — an object keyed by field name, each holding an array of message strings.\n- Send `Accept: application/json` on every request. Without it Laravel may answer with an HTML error page instead of the JSON envelope.\n- Send `Accept-Language: ar` or `en` to choose the language of `message` and `errors`. Arabic is the default for the mobile app.\n- Authenticated requests carry `Authorization: Bearer <access_token>`. Tokens are bound to one device: logging in elsewhere revokes the previous session, and the next request from it returns 401.\n\n## Getting started\n\n1. Import `bilhikma-api.postman_environment.json` and select it.\n2. Set `base_url` to your server.\n3. Run **Authentication → Log in (admin)** once. The access and refresh tokens\n   are captured automatically — nothing needs to be pasted by hand.\n4. Run **Authentication → Log in (student)** to work through the app endpoints.\n\nIds are captured as you go: listing entities stores `entity_id`, listing lessons\nstores `content_id`, and so on. Requests further down the collection reference\nthose variables, so a folder can be run top to bottom without editing anything.\n\n> The API allows one active session per account. Logging in as the student\n> revokes the admin session and vice versa, so keep the two tokens in separate\n> variables — which is exactly what this collection does\n> (`access_token` and `admin_token`).",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Student/Content/Lessons"
+    },
+    {
+      "name": "Student/Content/Playback"
+    }
+  ],
+  "paths": {
+    "/user/content/{id}": {
+      "get": {
+        "summary": "Lesson detail",
+        "deprecated": false,
+        "description": "One lesson with its attachments, its article body and the caller's progress.\n\nThis is the only endpoint that returns `article_body`, and only for an unlocked lesson. It also adds `subject_name` and `attachments`, neither of which appears in the listing. \r\n\r\n                            A locked lesson returns 403 because the previous lesson in the same subject has not been completed. Show the `message` from the body; it is already localised. \r\n\r\n                            Requesting a lesson from a class the student is not enrolled in returns 403 and writes a security event recording the student, the lesson, the device and the app version. Lessons from a class the student has finished stay readable.\n\n### Path parameters\n\n- `id` — *integer*, required. Lesson id.",
+        "tags": [
+          "Student/Content/Lessons"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{locale}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "category_subject_id": {
+                          "type": "integer"
+                        },
+                        "subject_name": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "checkpoints": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          }
+                        },
+                        "is_locked": {
+                          "type": "boolean"
+                        },
+                        "thumbnail_url": {
+                          "type": "string"
+                        },
+                        "duration_seconds": {
+                          "type": "integer"
+                        },
+                        "order": {
+                          "type": "integer"
+                        },
+                        "is_protected_media": {
+                          "type": "boolean"
+                        },
+                        "published_at": {
+                          "type": "string"
+                        },
+                        "progress": {
+                          "type": "object",
+                          "properties": {
+                            "max_position_seconds": {
+                              "type": "integer"
+                            },
+                            "progress_percent": {
+                              "type": "integer"
+                            },
+                            "is_completed": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "max_position_seconds",
+                            "progress_percent",
+                            "is_completed"
+                          ]
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "file_name": {
+                                "type": "string"
+                              },
+                              "file_type": {
+                                "type": "string"
+                              },
+                              "file_size": {
+                                "type": "integer"
+                              },
+                              "order_no": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "category_subject_id",
+                        "subject_name",
+                        "title",
+                        "type",
+                        "description",
+                        "checkpoints",
+                        "is_locked",
+                        "thumbnail_url",
+                        "duration_seconds",
+                        "order",
+                        "is_protected_media",
+                        "published_at",
+                        "progress",
+                        "attachments"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "status_code",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "message": "Content fetched successfully",
+                  "status_code": 1,
+                  "data": {
+                    "id": 5,
+                    "category_subject_id": 2,
+                    "subject_name": "الفقه",
+                    "title": "باب الطهارة",
+                    "type": "video",
+                    "description": "شرح أحكام الطهارة",
+                    "checkpoints": [
+                      450,
+                      900,
+                      1350,
+                      1800
+                    ],
+                    "is_locked": false,
+                    "thumbnail_url": "https://bilhikma.tech/storage/content-thumbnails/5.jpg",
+                    "duration_seconds": 1800,
+                    "order": 1,
+                    "is_protected_media": true,
+                    "published_at": "2026-08-01T10:00:00+00:00",
+                    "progress": {
+                      "max_position_seconds": 540,
+                      "progress_percent": 30,
+                      "is_completed": false
+                    },
+                    "attachments": [
+                      {
+                        "id": 1,
+                        "file_name": "ملخص الدرس.pdf",
+                        "file_type": "pdf",
+                        "file_size": 152400,
+                        "order_no": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "401 — no token, or an expired one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Unauthenticated. Please log in.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "status_code"
+                  ]
+                },
+                "example": {
+                  "message": "Finish the previous lesson to unlock this one.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "404 — the id in the path does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Resource not found.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "500 — an unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Something went wrong. Please try again later.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/content/{id}/access-token": {
+      "post": {
+        "summary": "Request a playback link",
+        "deprecated": false,
+        "description": "Mints a temporary, device-bound link for the video or audio file.\n\nCall this immediately before playback and hand the returned token to the player as `GET /api/media/{token}?device_uuid=...`. The link is bound to `device_uuid`: copied to another device it returns 403 and is recorded as a device conflict. It is reusable until it expires (default 3 days, configurable) so pausing and resuming works. \n\nA locked lesson is refused here too, and the refusal is written to the security-event log. This is the gate that makes sequential access a rule rather than a client-side convention: without a token there is no playable URL for any client to fetch.\n\n### Path parameters\n\n- `id` — *integer*, required. Lesson id. Must be a video or audio lesson.\n\n### Body fields\n\n- `device_uuid` — *string*, **required**. Must match the device_uuid used at login, or the link will not work.\n\n### Captured into the environment\n\n- `{{media_token}}` ← `data.token`\n\n### File or YouTube\n\nCheck `source` before playing:\n\n- `file` — play `/api/media/{token}?device_uuid=...` as before.\n- `youtube` — play `youtube_url` in the YouTube player.\n\n```json\n{\"token\": \"R0eUO9kp...\", \"expires_at\": \"2026-09-17T00:22:57+00:00\", \"source\": \"youtube\", \"youtube_url\": \"https://www.youtube.com/watch?v=7JevotOZqQU\"}\n```\n\nProgress is reported the same way for both.",
+        "tags": [
+          "Student/Content/Playback"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{locale}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_uuid": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "device_uuid"
+                ]
+              },
+              "example": {
+                "device_uuid": "9f2b4c7a-15de-4e83-b6c1-3ad0e9f47c52"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        },
+                        "expires_at": {
+                          "type": "string"
+                        },
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "file",
+                            "youtube"
+                          ],
+                          "description": "Where the lesson plays from.\nfile: play /api/media/{token}?device_uuid=... in the normal player.\nyoutube: play youtube_url in the YouTube player."
+                        },
+                        "youtube_url": {
+                          "type": "string",
+                          "description": "The YouTube link when source is youtube. null when source is file.",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "token",
+                        "expires_at",
+                        "source",
+                        "youtube_url"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "status_code",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "message": "Access link generated successfully",
+                  "status_code": 1,
+                  "data": {
+                    "token": "DyUJdA6F8hSaHHvymNwOZ5R0YCbjOQUZ...",
+                    "expires_at": "2026-08-13T09:36:15+00:00",
+                    "source": "file",
+                    "youtube_url": null
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "401 — no token, or an expired one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Unauthenticated. Please log in.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "status_code"
+                  ]
+                },
+                "example": {
+                  "message": "Finish the previous lesson to unlock this one.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "404 — the id in the path does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Resource not found.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "422 — a required field was missing or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "example": {
+                  "message": "The Device Uuid field is required.",
+                  "status_code": 0,
+                  "errors": {
+                    "device_uuid": [
+                      "The Device Uuid field is required."
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "500 — an unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Something went wrong. Please try again later.",
+                  "status_code": 0
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status_code": {
+            "type": "integer"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status_code": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      }
+    },
+    "responses": {},
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [],
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}

@@ -14,8 +14,8 @@ class LessonDetailRepo {
   Future<LessonDetailModel> fetchLesson(int contentId) =>
       dataSource.fetchLesson(contentId);
 
-  Future<String> requestPlaybackUrl(int contentId) =>
-      dataSource.requestPlaybackUrl(contentId);
+  Future<PlaybackAccess> requestPlayback(int contentId) =>
+      dataSource.requestPlayback(contentId);
 
   Future<String> requestAttachmentUrl(int contentId, int attachmentId) =>
       dataSource.requestAttachmentUrl(contentId, attachmentId);

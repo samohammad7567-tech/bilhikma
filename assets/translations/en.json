@@ -23,6 +23,8 @@
   "password_min_8": "Password must be at least 8 characters",
   "password_must_contain_letter": "Password must contain at least one letter",
   "password_must_contain_number": "Password must contain at least one number",
+  "lesson_source_file": "File",
+  "lesson_source_youtube": "YouTube",
   "valid_phone_required": "Enter a valid phone number, e.g. 0958953288 or +963958953288",
   "platform_name": "BilHikma Platform",
   "platform_tagline": "BilHikma e-learning platform for Islamic and Arabic sciences",
