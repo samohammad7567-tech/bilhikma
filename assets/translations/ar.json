@@ -148,6 +148,7 @@
   "general": "عام",
   "clear_downloads": "مسح التنزيلات",
   "clear_all_downloads": "مسح جميع التنزيلات",
+  "logout_confirm": "سيُنهى تسجيل دخولك على هذا الجهاز، وستحتاج إلى إدخال بياناتك مرة أخرى",
   "clear_downloads_confirm": "ستحذف جميع الدروس المنزّلة نهائياً من هذا الجهاز",
   "clear_all": "مسح الكل",
   "downloads_cleared": "تم مسح التنزيلات",

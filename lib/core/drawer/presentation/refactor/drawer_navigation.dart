@@ -4,6 +4,7 @@ import '../../../di/service_locator.dart';
 import '../../../enums/drawer_destination_enum.dart';
 import '../../../routing/app_routes.dart';
 import '../../../services/device_session_service.dart';
+import '../widgets/logout_confirm_dialog.dart';
 
 class DrawerNavigation {
   DrawerNavigation._();
@@ -40,9 +41,17 @@ class DrawerNavigation {
     }
   }
 
-  static void logout(BuildContext context) {
-    Scaffold.of(context).closeDrawer();
+  static Future<void> logout(BuildContext context) async {
+    // Resolved before the dialog: after the await this context may be gone.
+    final ScaffoldState scaffold = Scaffold.of(context);
 
+    final bool isConfirmed = await LogoutConfirmDialog.show(context);
+    if (!isConfirmed) return;
+
+    if (scaffold.mounted) scaffold.closeDrawer();
+
+    // Not awaited: the session is cleared locally either way, and the student
+    // should not sit on the drawer waiting for the round trip.
     DeviceSessionService.logout();
 
     getIt<GlobalKey<NavigatorState>>().currentState?.pushNamedAndRemoveUntil(

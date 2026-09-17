@@ -148,6 +148,7 @@
   "general": "General",
   "clear_downloads": "Clear downloads",
   "clear_all_downloads": "Clear all downloads",
+  "logout_confirm": "Your session on this device will end, and you will need to sign in again",
   "clear_downloads_confirm": "All downloaded lessons will be permanently removed from this device",
   "clear_all": "Clear all",
   "downloads_cleared": "Downloads cleared",

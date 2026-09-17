@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'drawer_menu_list.dart';
 import '../../../enums/drawer_destination_enum.dart';
-import '../../../services/device_session_service.dart';
 import '../../../widgets/custom_button.dart';
 import '../refactor/drawer_navigation.dart';
 import 'drawer_head.dart';
@@ -31,10 +30,7 @@ class DrawerContent extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
             child: CustomButton(
-              onPressed: () {
-                DeviceSessionService.clear();
-                DrawerNavigation.logout(context);
-              },
+              onPressed: () => DrawerNavigation.logout(context),
               text: 'logout'.tr(),
               width: double.infinity,
               height: 48.h,
