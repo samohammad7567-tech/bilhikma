@@ -9,6 +9,7 @@ import 'core/routing/app_router.dart';
 import 'core/routing/app_routes.dart';
 import 'core/routing/keyboard_dismiss_observer.dart';
 import 'core/themes/app_theme.dart';
+import 'core/utils/app_language.dart';
 import 'core/utils/app_screen_util.dart';
 import 'core/widgets/app_chrome.dart';
 
@@ -20,6 +21,11 @@ class BilhikmaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Models resolve `{"ar": ..., "en": ...}` fields while parsing, where no
+    // context is reachable, so the chosen locale is mirrored here on every
+    // language change.
+    AppLanguage.update(context.locale.languageCode);
+
     return BlocProvider<AppPreferencesCubit>.value(
       value: getIt<AppPreferencesCubit>(),
       child: BlocBuilder<AppPreferencesCubit, AppPreferencesState>(

@@ -1,3 +1,5 @@
+import '../utils/app_language.dart';
+
 class Json {
   Json._();
 
@@ -7,6 +9,31 @@ class Json {
     if (value == null) return null;
     final String text = value.toString().trim();
     return text.isEmpty ? null : text;
+  }
+
+  /// Translatable backend fields arrive as `{"ar": "...", "en": "..."}`.
+  /// Resolves them to the app language, falling back to Arabic and then to any
+  /// filled translation. A plain string passes through unchanged, so the same
+  /// reader works whether or not the endpoint is translated.
+  static String asLocalizedString(Object? value) =>
+      asOptionalLocalizedString(value) ?? '';
+
+  static String? asOptionalLocalizedString(Object? value) {
+    if (value is! Map) return asOptionalString(value);
+
+    final Map<String, dynamic> translations = asMap(value);
+    final List<String> order = <String>[
+      AppLanguage.code,
+      AppLanguage.fallbackCode,
+      ...translations.keys,
+    ];
+
+    for (final String code in order) {
+      final String? text = asOptionalString(translations[code]);
+      if (text != null) return text;
+    }
+
+    return null;
   }
 
   static int asInt(Object? value) {

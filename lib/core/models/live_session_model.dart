@@ -45,8 +45,8 @@ class LiveSessionModel {
   factory LiveSessionModel.fromJson(Map<String, dynamic> json) =>
       LiveSessionModel(
         id: Json.asInt(json['id']),
-        title: Json.asString(json['title']),
-        description: Json.asOptionalString(json['description']),
+        title: Json.asLocalizedString(json['title']),
+        description: Json.asOptionalLocalizedString(json['description']),
         coverUrl: Json.asOptionalString(json['cover_url']),
         youtubeUrl: Json.asOptionalString(json['youtube_url']),
         scheduledAt: Json.asDateTime(json['scheduled_at']),

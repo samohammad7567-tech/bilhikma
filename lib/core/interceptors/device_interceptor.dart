@@ -6,6 +6,7 @@ import '../constants/api_endpoints.dart';
 import '../di/service_locator.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
+import '../utils/app_language.dart';
 
 class DeviceInterceptor extends Interceptor {
   const DeviceInterceptor();
@@ -15,6 +16,10 @@ class DeviceInterceptor extends Interceptor {
     if (DeviceService.isInitialized) {
       options.headers.addAll(DeviceService.headers);
     }
+
+    // Set per request, not once at Dio setup: the user can switch language
+    // while signed in and the backend must answer in the language on screen.
+    options.headers['Accept-Language'] = AppLanguage.code;
 
     handler.next(options);
   }

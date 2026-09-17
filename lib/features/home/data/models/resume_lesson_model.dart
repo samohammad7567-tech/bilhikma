@@ -36,9 +36,9 @@ class ResumeLessonModel {
   factory ResumeLessonModel.fromJson(Map<String, dynamic> json) =>
       ResumeLessonModel(
         contentId: Json.asInt(json['content_id']),
-        title: Json.asString(json['title']),
+        title: Json.asLocalizedString(json['title']),
         type: ContentType.fromJson(json['type']),
-        subjectName: Json.asString(json['subject_name']),
+        subjectName: Json.asLocalizedString(json['subject_name']),
         durationSeconds: Json.asInt(json['duration_seconds']),
         resumeAtSeconds: Json.asInt(json['resume_at_seconds']),
         progressPercent: Json.asInt(json['progress_percent']),

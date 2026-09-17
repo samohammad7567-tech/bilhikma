@@ -51,9 +51,9 @@ class LessonModel {
   factory LessonModel.fromJson(Map<String, dynamic> json) => LessonModel(
     id: Json.asInt(json['id']),
     categorySubjectId: Json.asInt(json['category_subject_id']),
-    title: Json.asString(json['title']),
+    title: Json.asLocalizedString(json['title']),
     type: ContentType.fromJson(json['type']),
-    description: Json.asOptionalString(json['description']),
+    description: Json.asOptionalLocalizedString(json['description']),
     durationSeconds: Json.asInt(json['duration_seconds']),
     order: Json.asInt(json['order']),
     thumbnailUrl: Json.asOptionalString(json['thumbnail_url']),

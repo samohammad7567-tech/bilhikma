@@ -56,28 +56,19 @@ class LoginIdentityField extends StatelessWidget {
         color: Theme.of(context).colorScheme.onSurface,
       ),
       keyboardType: TextInputType.phone,
-      maxLength: 10,
+      maxLength: 16,
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
+        FilteringTextInputFormatter.allow(AppRegex.phoneAllowedChars),
       ],
-      validator: (value) {
-        final phone = value ?? '';
-
-        if (phone.isEmpty) {
-          return 'phone_required'.tr();
-        }
-
-        if (!AppRegex.phoneStartsWithZero(phone)) {
-          return 'phone_must_start_with_zero'.tr();
-        }
-
-        if (!AppRegex.phoneHasValidLength(phone)) {
-          return 'phone_must_be_10_digits'.tr();
-        }
-
-        return null;
-      },
+      validator: _validatePhone,
     );
+  }
+
+  static String? _validatePhone(String? value) {
+    final String phone = value?.trim() ?? '';
+    if (phone.isEmpty) return 'phone_required'.tr();
+    if (!AppRegex.isValidPhone(phone)) return 'valid_phone_required'.tr();
+    return null;
   }
 
   static String? _validateEmail(String? value) {

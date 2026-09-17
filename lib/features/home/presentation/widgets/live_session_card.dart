@@ -14,6 +14,12 @@ class LiveSessionCard extends StatelessWidget {
   final LiveSessionModel session;
   final VoidCallback? onTap;
 
+  /// The session's own title leads the card. A session saved without one falls
+  /// back to the schedule line so the card never leads with a blank row.
+  String get _headline => session.title.trim().isEmpty
+      ? HomeFormats.liveHeadline(session)
+      : session.title;
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -50,7 +56,7 @@ class LiveSessionCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      HomeFormats.liveHeadline(session),
+                      _headline,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTheme.styles(context).labelStrong,
@@ -59,7 +65,7 @@ class LiveSessionCard extends StatelessWidget {
                     SizedBox(height: 2.h),
 
                     Text(
-                      session.title,
+                      HomeFormats.liveHeadline(session),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTheme.styles(context).cardSubtitle,

@@ -36,6 +36,12 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
   bool _isReporting = false;
 
+  /// A 403 or 404 from the progress endpoint is a standing answer: the lesson
+  /// is not accessible to this account, or no longer exists. The playback
+  /// ticker fires every second and a rejected checkpoint never advances, so
+  /// without this the same request would be resent once a second forever.
+  bool _isProgressHalted = false;
+
   /// After a 422 the player is pulled back to [allowed_position_seconds].
   /// The server measures every report against real elapsed time, so the same
   /// checkpoint must not be retried immediately — it would be read as a skip.
@@ -50,6 +56,9 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   }
 
   Future<void> loadLesson() async {
+    // A reload asks the server again, so an earlier refusal stops standing.
+    _isProgressHalted = false;
+
     emit(state.copyWith(status: LessonDetailStatus.loading, clearError: true));
 
     try {
@@ -167,7 +176,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
   Future<void> _reportDueCheckpoint({bool atEnd = false}) async {
     final int? checkpoint = state.nextCheckpointSeconds;
-    if (checkpoint == null || _isReporting) return;
+    if (checkpoint == null || _isReporting || _isProgressHalted) return;
     if (!atEnd && state.positionSeconds < checkpoint) return;
     if (_isCoolingDown) return;
 
@@ -220,11 +229,19 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       }
     } on AppException catch (error) {
       if (isClosed) return;
+
+      // Reported once, then never again for this lesson: the toast carries the
+      // server's own message and retrying would only repeat it every second.
+      if (_isRefusal(error)) _isProgressHalted = true;
+
       emit(state.copyWith(messageKey: error.key, message: error.message));
     } finally {
       _isReporting = false;
     }
   }
+
+  static bool _isRefusal(AppException error) =>
+      error.statusCode == 403 || error.statusCode == 404;
 
   void _applyCorrection(
     int? allowedPositionSeconds, [

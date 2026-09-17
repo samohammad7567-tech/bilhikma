@@ -9,6 +9,10 @@ class LessonPlaybackReporter {
 
   static const Duration _endWindow = Duration(milliseconds: 400);
 
+  /// How long a resume waits for the media to report its duration.
+  static const Duration _durationTimeout = Duration(seconds: 10);
+  static const Duration _durationPoll = Duration(milliseconds: 250);
+
   final void Function(int positionSeconds, int playedSeconds) onTick;
   final void Function(int durationSeconds) onEnded;
 
@@ -40,10 +44,27 @@ class LessonPlaybackReporter {
     final VideoPlayback? playback = _playback;
     if (playback == null || seconds <= 0) return;
 
-    final Duration duration = playback.duration;
+    final Duration duration = await _awaitDuration(playback);
     if (duration <= Duration.zero || seconds >= duration.inSeconds) return;
+    if (!identical(_playback, playback)) return;
 
     await playback.seekTo(Duration(seconds: seconds));
+  }
+
+  /// A file player knows its duration as soon as it finishes initializing, but
+  /// YouTube only reports one once its metadata arrives — reading it straight
+  /// away would drop the resume seek on every YouTube lesson.
+  Future<Duration> _awaitDuration(VideoPlayback playback) async {
+    final DateTime deadline = DateTime.now().add(_durationTimeout);
+
+    while (playback.duration <= Duration.zero) {
+      if (!identical(_playback, playback)) return Duration.zero;
+      if (!DateTime.now().isBefore(deadline)) break;
+
+      await Future<void>.delayed(_durationPoll);
+    }
+
+    return playback.duration;
   }
 
   Future<void> seekTo(int seconds) async {

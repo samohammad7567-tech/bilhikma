@@ -51,9 +51,9 @@ class ResetIdentityField extends StatelessWidget {
       hintText: 'phone_number'.tr(),
       suffixIcon: const FieldIconBox(asset: AppAssets.assetsPhoneIconFilled),
       keyboardType: TextInputType.phone,
-      maxLength: 10,
+      maxLength: 16,
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly,
+        FilteringTextInputFormatter.allow(AppRegex.phoneAllowedChars),
       ],
       validator: _validatePhone,
     );
@@ -69,12 +69,7 @@ class ResetIdentityField extends StatelessWidget {
   static String? _validatePhone(String? value) {
     final String phone = value?.trim() ?? '';
     if (phone.isEmpty) return 'phone_required'.tr();
-    if (!AppRegex.phoneStartsWithZero(phone)) {
-      return 'phone_must_start_with_zero'.tr();
-    }
-    if (!AppRegex.phoneHasValidLength(phone)) {
-      return 'phone_must_be_10_digits'.tr();
-    }
+    if (!AppRegex.isValidPhone(phone)) return 'valid_phone_required'.tr();
     return null;
   }
 }

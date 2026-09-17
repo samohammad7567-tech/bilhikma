@@ -73,10 +73,10 @@ class LessonDetailModel {
       LessonDetailModel(
         id: Json.asInt(data['id']),
         categorySubjectId: Json.asInt(data['category_subject_id']),
-        title: Json.asString(data['title']),
+        title: Json.asLocalizedString(data['title']),
         type: ContentType.fromJson(data['type']),
-        description: Json.asOptionalString(data['description']),
-        subjectName: Json.asOptionalString(data['subject_name']),
+        description: Json.asOptionalLocalizedString(data['description']),
+        subjectName: Json.asOptionalLocalizedString(data['subject_name']),
         publishedAt: Json.asDateTime(data['published_at']),
         durationSeconds: Json.asInt(data['duration_seconds']),
         thumbnailUrl: Json.asOptionalString(data['thumbnail_url']),

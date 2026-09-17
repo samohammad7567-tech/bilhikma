@@ -20,7 +20,6 @@ class DioService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Accept-Language': CacheUtil.get(key: 'lang') ?? 'en',
 
           'Authorization': 'Bearer ${_storedToken()}',
           ...DeviceService.headers,
