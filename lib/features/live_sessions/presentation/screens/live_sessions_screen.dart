@@ -40,9 +40,6 @@ class LiveSessionsScreen extends StatelessWidget {
           showBack: showBack,
           onBack: onBack,
           drawer: hasHostDrawer ? null : const AppDrawer(),
-          // As a tab the screen is a destination, not a drill-down: the bottom
-          // bar already moves between sections, so the corner belongs to the
-          // drawer. Pushed as a route the corner belongs to back.
           showMenu: !showBack,
           onMenuTap: onMenuTap,
           child: Builder(

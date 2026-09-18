@@ -15,14 +15,7 @@ class CurrentUser {
     return raw == null ? null : AuthUserModel.fromJson(raw);
   }
 
-  /// The screen-capture exemption the backend last sent, without a request.
-  /// Absent cache means no exemption, so captures are reported by default.
   static bool get canCaptureScreen => cachedUser()?.canCaptureScreen ?? false;
-
-  /// Writes a fresh exemption onto the cached user so it survives a restart.
-  /// The stored map is patched in place rather than re-encoded from the model,
-  /// which keeps every field the backend sent — including any this app version
-  /// does not read yet.
   static Future<void> setCaptureExemption(bool canCaptureScreen) async {
     final Map<String, dynamic>? user = _decode();
     if (user == null || user['can_capture_screen'] == canCaptureScreen) return;

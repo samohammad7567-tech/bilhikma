@@ -33,10 +33,6 @@ class SecurityEventResponseModel {
   final bool accountSuspended;
 
   final String? warningIssued;
-
-  /// The account's capture permission as the backend sees it right now, echoed
-  /// back on every reported event. Null when the payload omits it, which means
-  /// "unchanged" rather than "revoked" — see ScreenCapturePolicy.
   final bool? canCaptureScreen;
 
   bool get hasWarning => (warningIssued ?? '').isNotEmpty;

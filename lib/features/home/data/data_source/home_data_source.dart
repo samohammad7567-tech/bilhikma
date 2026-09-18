@@ -22,12 +22,6 @@ class HomeDataSource {
         ApiEndpoints.subjects,
         HomeOverviewModel.fromData,
       );
-
-  /// The stage-to-semester path of the active class, outermost first.
-  ///
-  /// `/user/subjects` carries only the leaf class name in `context`, so the
-  /// ancestry comes from the enrollment tree. Decorative for the header card:
-  /// a failure degrades to the leaf name the overview already provides.
   Future<List<String>> fetchEducationalPath() async {
     try {
       final MyEnrollmentsModel enrolled = await enrollments

@@ -24,9 +24,6 @@ void main() async {
 
   AppLifecycleService.instance.initialize();
   ScreenCaptureService.instance.attach(getIt());
-
-  // Before the first frame: an account without permission must be listening
-  // from the splash onwards, and an exempt one must not report itself.
   ScreenCapturePolicy.initialize();
   await ScreenCapturePolicy.restore();
   print(DeviceService.metadata);

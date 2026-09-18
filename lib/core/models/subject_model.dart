@@ -19,13 +19,7 @@ class SubjectModel {
   final String name;
 
   final String? iconUrl;
-
-  /// The subject's own catalogue order. Shared across classes and not unique,
-  /// so it no longer drives the list — see [position].
   final int orderNo;
-
-  /// Where the class places this subject, 1-based and unique within the class.
-  /// This is what arranges the list and what the index strip shows.
   final int position;
 
   final int lessonsCount;
@@ -47,14 +41,6 @@ class SubjectModel {
     completedLessons: Json.asInt(json['completed_lessons']),
     progressPercent: Json.asInt(json['progress_percent']),
   );
-
-  /// Parses `items` and arranges the subjects by [position], so every screen
-  /// showing this list agrees on the order regardless of how the payload
-  /// happens to arrive.
-  ///
-  /// The sort is stable: equal positions keep their payload order, which is
-  /// what preserves the previous behaviour if a response ever omits the field
-  /// and every subject falls back to 0.
   static List<SubjectModel> listFrom(Object? items) {
     final List<SubjectModel> parsed = Json.asList<SubjectModel>(
       items,

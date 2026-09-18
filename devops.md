@@ -1,4 +1,3 @@
-# DevOps Setup — Bilhikma Mobile
 
 Step-by-step plan to take this app from "builds on a laptop" to a reproducible,
 signed, automatically built and distributed pipeline.
@@ -7,8 +6,6 @@ Written against the repo as it stands today. Every step says **why**, **what to
 run**, and **what to commit**.
 
 ---
-
-## 0. Where the project stands right now
 
 | Area | Current state | Gap |
 |------|---------------|-----|
@@ -30,14 +27,9 @@ artifact). 6 → 9 are hardening. 10 is iOS, whenever it is needed.
 
 ---
 
-## 1. Repo hygiene (do this first)
-
 Nothing else is reproducible until the repository is clean.
 
-### 1.1 Restore the git directory
-
 ```bash
-# From the project root, on the machine holding this copy:
 mv .gittt .git
 git status
 git remote -v   # expect: origin  https://gitlab.com/hawasly1/bilhikma/bilhikma_mobile.git
@@ -46,8 +38,6 @@ git remote -v   # expect: origin  https://gitlab.com/hawasly1/bilhikma/bilhikma_
 If the rename was deliberate (to hide the repo from a tool), keep a proper
 checkout elsewhere and treat this folder as a scratch copy — CI needs a real
 repository.
-
-### 1.2 Purge build junk and stray files from the tree
 
 Present in the working directory, must never reach a commit:
 
@@ -67,31 +57,22 @@ Move the task/spec markdown + PDFs into `docs/` so the root holds only project
 files. Confirm whether `screens/` is real source or screenshots; if the latter,
 it belongs in `docs/` too.
 
-### 1.3 Extend `.gitignore`
-
 Append:
 
 ```gitignore
-# Signing — never commit
 android/key.properties
 **/*.keystore
 **/*.jks
 *.p12
 *.p8
-
-# Firebase / service accounts
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 **/service-account*.json
 fastlane/*.json
-
-# Fastlane output
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
-
-# Local env
 .env
 .env.*
 !.env.example
@@ -108,8 +89,6 @@ The gradle file already handles its absence gracefully
 (`if (file("google-services.json").exists())`), so local builds without Firebase
 still work — good design, keep it.
 
-### 1.4 Pin the toolchain
-
 Create `.fvmrc` (or a plain `FLUTTER_VERSION` file CI reads):
 
 ```json
@@ -118,8 +97,6 @@ Create `.fvmrc` (or a plain `FLUTTER_VERSION` file CI reads):
 
 Add to `README.md` (currently empty): required Flutter 3.44.5 stable, JDK 17,
 Android SDK, and the run commands from Appendix B.
-
-### 1.5 Branching model
 
 ```
 main         → production, protected, tagged releases only
@@ -133,12 +110,8 @@ required.
 
 ---
 
-## 2. Environment configuration (dart-define)
-
 `ApiEndpoints.baseUrl` is a compile-time constant pointing at production. Make it
 injectable so dev/staging builds hit their own backend.
-
-### 2.1 Read config from the environment
 
 `lib/core/constants/api_endpoints.dart`:
 
@@ -157,14 +130,11 @@ class ApiEndpoints {
   );
 
   static bool get isProd => environment == 'prod';
-  // ... existing endpoint constants unchanged
 }
 ```
 
 `String.fromEnvironment` must stay `const` — reading it at runtime changes how
 the release build tree-shakes.
-
-### 2.2 Config files per environment
 
 `config/dev.json`:
 
@@ -178,8 +148,6 @@ base URLs only, no secrets. Build with:
 ```bash
 flutter build apk --release --dart-define-from-file=config/prod.json
 ```
-
-### 2.3 VS Code launch configs
 
 `.vscode/launch.json`:
 
@@ -207,12 +175,8 @@ flutter build apk --release --dart-define-from-file=config/prod.json
 
 ---
 
-## 3. Android product flavors
-
 Three flavors, three application ids, so dev/staging/prod install side by side on
 one device and Firebase registers them separately.
-
-### 3.1 `android/app/build.gradle.kts`
 
 Add inside `android { }`:
 
@@ -248,8 +212,6 @@ flavors would show the same name. Change it to the resource:
     ...>
 ```
 
-### 3.2 Per-flavor Firebase config
-
 Each flavor is a distinct `applicationId`, so each needs its own Firebase Android
 app and its own config file:
 
@@ -263,8 +225,6 @@ The existing guard in `build.gradle.kts` checks `android/app/google-services.jso
 Either apply the plugin unconditionally once the per-flavor files exist, or keep
 the guard and drop the prod copy at the app root.
 
-### 3.3 Verify
-
 ```bash
 flutter build apk --debug --flavor dev  --dart-define-from-file=config/dev.json
 flutter build apk --debug --flavor prod --dart-define-from-file=config/prod.json
@@ -274,12 +234,8 @@ Both must install on the same device simultaneously.
 
 ---
 
-## 4. Release signing (blocking for any store release)
-
 `release` currently reuses the debug signing config. A debug-signed AAB is
 rejected by Play.
-
-### 4.1 Generate the upload keystore (once, keep it forever)
 
 ```bash
 keytool -genkey -v -keystore bilhikma-upload.jks \
@@ -290,16 +246,12 @@ Store the `.jks` and its passwords in the team password manager. Losing it means
 losing the ability to update the app (recoverable only via a Play upload-key
 reset).
 
-### 4.2 `android/key.properties` (gitignored)
-
 ```properties
 storeFile=../../bilhikma-upload.jks
 storePassword=***
 keyAlias=upload
 keyPassword=***
 ```
-
-### 4.3 Wire it into `android/app/build.gradle.kts`
 
 Above `android { }`:
 
@@ -340,8 +292,6 @@ buildTypes {
 }
 ```
 
-### 4.4 `android/app/proguard-rules.pro`
-
 R8 needs keep rules for the heavier plugins in this app:
 
 ```proguard
@@ -357,8 +307,6 @@ background audio (just_audio / audio_service) and FCM are the three things R8 is
 most likely to break here. If minification causes trouble under deadline, ship
 with `isMinifyEnabled = false` and fix it in a follow-up.
 
-### 4.5 CI injection
-
 CI has no `key.properties`. Store the keystore base64-encoded as a masked
 variable and rebuild both files in the pipeline (section 5):
 
@@ -368,12 +316,8 @@ base64 -w0 bilhikma-upload.jks > keystore.b64   # paste into ANDROID_KEYSTORE_B6
 
 ---
 
-## 5. CI pipeline — GitLab CI
-
 The remote is GitLab, so `.gitlab-ci.yml` is the primary pipeline. A GitHub
 Actions equivalent is in Appendix A.
-
-### 5.1 CI/CD variables
 
 Settings → CI/CD → Variables. Mark every one **Masked**; mark signing and
 service-account variables **Protected** so only `main`/`develop` can read them.
@@ -389,8 +333,6 @@ service-account variables **Protected** so only `main`/`develop` can read them.
 | `PLAY_SERVICE_ACCOUNT_JSON` | File | Play Console service-account key |
 | `FIREBASE_APP_ID_ANDROID` | Var | `1:xxx:android:yyy` |
 | `FIREBASE_TOKEN` | Var | App Distribution auth |
-
-### 5.2 `.gitlab-ci.yml`
 
 ```yaml
 image: ghcr.io/cirruslabs/flutter:3.44.5
@@ -501,8 +443,6 @@ release:play:
       when: manual        # a human approves every production upload
 ```
 
-### 5.3 Versioning rule
-
 `pubspec.yaml` keeps the **version name** (`1.0.0`); the **build number** always
 comes from `--build-number=$CI_PIPELINE_IID`, so it is monotonic and never
 collides on Play. Stop hand-editing the `+2`.
@@ -512,16 +452,10 @@ tagged pipeline builds and (after manual approval) uploads.
 
 ---
 
-## 6. Fastlane — Play Store delivery
-
-### 6.1 Play Console prerequisites
-
 1. Create the app in Play Console with package `tech.bilhikma.app`.
 2. Upload the first AAB **by hand** — the API cannot create the first release.
 3. Google Cloud → service account → grant it "Release manager" in Play Console →
    download the JSON key → store as `PLAY_SERVICE_ACCOUNT_JSON` in GitLab.
-
-### 6.2 Files
 
 `android/Gemfile`:
 
@@ -576,8 +510,6 @@ cd android && bundle exec fastlane run validate_play_store_json_key
 
 ---
 
-## 7. Tests and quality gates
-
 There is no `test/` directory, so CI has nothing to protect the app with today.
 Minimum viable suite, in priority order:
 
@@ -609,8 +541,6 @@ Also enforce in `analysis_options.yaml` the rules this architecture depends on:
 
 ---
 
-## 8. Observability
-
 1. **Crashlytics** — add `firebase_crashlytics` and hook it up in `main.dart`:
 
    ```dart
@@ -633,8 +563,6 @@ Also enforce in `analysis_options.yaml` the rules this architecture depends on:
 
 ---
 
-## 9. Security in the pipeline
-
 - Never echo secrets: masked variables, and `set +x` around the signing steps.
 - The app already uses `flutter_secure_storage` and `screen_protector` — keep
   release builds obfuscated so token handling is not trivially readable.
@@ -646,8 +574,6 @@ Also enforce in `analysis_options.yaml` the rules this architecture depends on:
   can never read the keystore.
 
 ---
-
-## 10. iOS (when the platform is added)
 
 There is no `ios/` folder yet. When iOS starts:
 
@@ -665,8 +591,6 @@ There is no `ios/` folder yet. When iOS starts:
    `google-services.json`.
 
 ---
-
-## Execution checklist
 
 - [ ] `.gittt` → `.git`, verify remote, delete stray files, move docs to `docs/`
 - [ ] `.gitignore` extended; `google-services.json` untracked
@@ -686,8 +610,6 @@ There is no `ios/` folder yet. When iOS starts:
 - [ ] iOS phase scheduled (section 10)
 
 ---
-
-## Appendix A — GitHub Actions equivalent
 
 If the project mirrors to GitHub, `.github/workflows/android.yml`:
 
@@ -759,27 +681,16 @@ as section 5.1.
 
 ---
 
-## Appendix B — Local command reference
-
 ```bash
-# Day-to-day
 flutter run --flavor dev --dart-define-from-file=config/dev.json
-
-# QA build (what CI ships to App Distribution)
 flutter build apk --release --flavor staging \
   --dart-define-from-file=config/staging.json
-
-# Release bundle (what CI ships to Play)
 flutter build appbundle --release --flavor prod \
   --dart-define-from-file=config/prod.json \
   --obfuscate --split-debug-info=build/symbols
-
-# The gates CI enforces
 dart format --output=none --set-exit-if-changed lib/
 flutter analyze --fatal-infos
 flutter test --coverage
-
-# After changing icon/splash config
 dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```

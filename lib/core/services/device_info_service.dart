@@ -1,10 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 
-/// Reads the hardware identity of the current device once and caches it.
-///
-/// Self-contained on purpose: it only depends on `device_info_plus`, so the
-/// file can be dropped into any app as-is.
 class DeviceInfoService {
   DeviceInfoService._();
 
@@ -15,22 +11,12 @@ class DeviceInfoService {
   static String _osVersion = unknown;
   static bool _isPhysicalDevice = true;
   static bool _initialized = false;
-
-  /// Marketing / hardware model, e.g. `SM-G991B` or `iPhone14,3`.
   static String get model => _model;
-
-  /// Vendor behind the model, e.g. `samsung` or `Apple`.
   static String get manufacturer => _manufacturer;
-
-  /// Operating system version, e.g. `14` or `17.5.1`.
   static String get osVersion => _osVersion;
-
-  /// `false` on emulators and simulators.
   static bool get isPhysicalDevice => _isPhysicalDevice;
 
   static bool get isInitialized => _initialized;
-
-  /// Manufacturer and model together, e.g. `samsung SM-G991B`.
   static String get fullModel {
     if (_manufacturer == unknown || _model == unknown) return _model;
     if (_model.toLowerCase().startsWith(_manufacturer.toLowerCase())) {
@@ -45,8 +31,6 @@ class DeviceInfoService {
     try {
       await _read(DeviceInfoPlugin());
     } catch (error) {
-      // A missing platform implementation must never block startup: the app
-      // keeps running and simply reports `unknown` to the backend.
       debugPrint('DeviceInfoService failed to read the device info: $error');
     }
 

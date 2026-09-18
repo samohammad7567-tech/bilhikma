@@ -12,16 +12,10 @@ class LessonSubjectHeader extends StatelessWidget {
   const LessonSubjectHeader({required this.subject, super.key, this.order});
 
   final SubjectContentModel subject;
-
-  /// Overrides the subject's own [SubjectContentModel.position] when a caller
-  /// already knows the number. Left null, the subject answers for itself.
   final int? order;
 
   @override
   Widget build(BuildContext context) {
-    // A hardcoded 1 used to sit here, which is why every subject's details page
-    // disagreed with the list it was opened from. An unknown position now shows
-    // no strip at all — a missing number beats a wrong one.
     final int position = order ?? subject.position;
 
     return Material(

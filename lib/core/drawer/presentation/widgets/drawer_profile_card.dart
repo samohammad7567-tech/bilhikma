@@ -21,10 +21,6 @@ class DrawerProfileCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        // Both sides carried the same mask, which read as one lopsided smudge
-        // rather than the pair every other card shows. Falling through to
-        // OrnamentedCard's defaults is what puts this card in the same design
-        // system as the dashboard header and the subject cards.
         child: OrnamentedCard(
           radius: 14.r,
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),

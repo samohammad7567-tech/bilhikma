@@ -42,16 +42,12 @@ class DrawerNavigation {
   }
 
   static Future<void> logout(BuildContext context) async {
-    // Resolved before the dialog: after the await this context may be gone.
     final ScaffoldState scaffold = Scaffold.of(context);
 
     final bool isConfirmed = await LogoutConfirmDialog.show(context);
     if (!isConfirmed) return;
 
     if (scaffold.mounted) scaffold.closeDrawer();
-
-    // Not awaited: the session is cleared locally either way, and the student
-    // should not sit on the drawer waiting for the round trip.
     DeviceSessionService.logout();
 
     getIt<GlobalKey<NavigatorState>>().currentState?.pushNamedAndRemoveUntil(

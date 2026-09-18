@@ -35,9 +35,6 @@ final class LessonDetailState {
   final bool isLocked;
 
   final String? playbackUrl;
-
-  /// Where the lesson plays from. Null until the playback link is minted, and
-  /// always null for an article, which has nothing to play.
   final MediaSource? playbackSource;
 
   final bool isPreparingPlayback;
@@ -89,6 +86,44 @@ final class LessonDetailState {
   int get seekLimitSeconds => positionSeconds > progress.maxPositionSeconds
       ? positionSeconds
       : progress.maxPositionSeconds;
+
+  /// Furthest second reached on this device, including seconds watched since
+  /// the last acknowledged checkpoint.
+  ///
+  /// Deliberately separate from [seekLimitSeconds]: that one answers "how far
+  /// may the user scrub", this one answers "how far have they watched". They
+  /// happen to share a formula today — changing the seek policy must not
+  /// silently change what the progress bar shows.
+  int get watchedHighWaterSeconds =>
+      positionSeconds > progress.maxPositionSeconds
+      ? positionSeconds
+      : progress.maxPositionSeconds;
+
+  /// Progress the server has actually credited. The only value that may inform
+  /// what gets reported, unlocked, or marked complete.
+  double get confirmedProgress => progress.progress;
+
+  /// Optimistic progress derived from local playback, for display only.
+  ///
+  /// Checkpoints sit at quartiles of the duration, so on long lessons the
+  /// credited percent can sit still for a very long time. This fills the gap
+  /// between checkpoints; it is never sent anywhere.
+  double get localProgress {
+    final int total = detail?.durationSeconds ?? 0;
+    if (total <= 0) return confirmedProgress;
+
+    return (watchedHighWaterSeconds / total).clamp(0.0, 1.0);
+  }
+
+  /// What the progress bar renders. Never falls below [confirmedProgress], so
+  /// a rejected seek pulls it back down to whatever the server credited.
+  double get displayProgress {
+    if (progress.isCompleted) return 1;
+
+    return localProgress > confirmedProgress
+        ? localProgress
+        : confirmedProgress;
+  }
 
   Duration get seekLimit => Duration(seconds: seekLimitSeconds);
 

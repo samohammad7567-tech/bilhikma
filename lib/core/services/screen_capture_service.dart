@@ -39,15 +39,7 @@ class ScreenCaptureService {
   bool get isRecording => _isRecording;
 
   bool get isExempt => _isExempt;
-
-  /// Injects the repo once, at startup, so [ScreenCapturePolicy] can start and
-  /// stop the listeners later without having to carry it around.
   void attach(SecurityRepo repo) => _repo = repo;
-
-  /// The policy's decision, applied to the detectors: an exempt account is not
-  /// listened to at all, so no capture of theirs can reach the backend. Not
-  /// guarded on a change of value — the first call has to start the listeners
-  /// even though it repeats the `false` this field starts life with.
   void applyExemption(bool isExempt) {
     _isExempt = isExempt;
 
@@ -113,9 +105,6 @@ class ScreenCaptureService {
     int? contentId,
     Map<String, dynamic> meta = const <String, dynamic>{},
   }) async {
-    // An exempt account never reaches the endpoint. The backend would file the
-    // event without consequence, but an exemption means there is nothing to
-    // report in the first place.
     if (_isExempt) return;
 
     final Object? token = CacheUtil.get(key: DeviceSessionService.tokenKey);

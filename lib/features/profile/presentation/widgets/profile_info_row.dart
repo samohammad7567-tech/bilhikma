@@ -32,7 +32,9 @@ class ProfileInfoRow extends StatelessWidget {
           ),
 
           SizedBox(width: 12.w),
-          Expanded(child: _FieldValue(field: field, profile: profile)),
+          Expanded(
+            child: _FieldValue(field: field, profile: profile),
+          ),
         ],
       ),
     );
@@ -49,10 +51,6 @@ class _FieldValue extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppTextStyles styles = AppTheme.styles(context);
     final List<String> path = field.pathOf(profile);
-
-    // Only a real hierarchy earns the chevron layout; a lone class name reads
-    // as an ordinary value, which is also the fallback when the backend sends
-    // no path.
     if (path.length > 1) {
       return EducationalPathText(
         segments: path,

@@ -28,8 +28,6 @@ class LoginBody extends StatelessWidget {
                       alignment: AlignmentDirectional.centerEnd,
                       child: LoginLanguageToggle(),
                     ),
-                    // The toggle sits outside the even split so adding it does
-                    // not shift the header and form off their current spacing.
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,

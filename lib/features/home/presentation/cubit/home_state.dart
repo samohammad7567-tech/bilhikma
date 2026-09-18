@@ -15,10 +15,6 @@ final class HomeState {
   final HomeOverviewModel? overview;
 
   final LiveSessionModel? liveSession;
-
-  /// Stage to semester, outermost first. Empty until the enrollment tree
-  /// arrives, or when it cannot be resolved — the card then falls back to the
-  /// class name alone.
   final List<String> educationalPath;
 
   final String? errorKey;
@@ -32,9 +28,6 @@ final class HomeState {
   ResumeLessonModel? get resume => overview?.resume;
 
   ActiveContextModel? get context => overview?.context;
-
-  /// What the header card renders under the entity name: the resolved path
-  /// when the tree is available, the class name on its own otherwise.
   List<String> get classPath {
     if (educationalPath.isNotEmpty) return educationalPath;
 

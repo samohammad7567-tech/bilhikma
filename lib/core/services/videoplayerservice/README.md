@@ -1,4 +1,3 @@
-# Video Player Service
 
 A portable floating video player: full-screen playback with custom gesture
 controls, shrinking into a draggable / pinch-to-resize picture-in-picture
@@ -23,8 +22,6 @@ held · swipe down = minimize · rotate button · speed picker · draggable
 progress bar. PiP square: drag to move, pinch to resize, tap center =
 play/pause, tap elsewhere = expand, ✕ = close.
 
-## What's inside
-
 | File | Purpose |
 |------|---------|
 | `video_item.dart` | Portable `VideoItem` model + `VideoSourceKind` + YouTube-id / live-URL detection. |
@@ -35,8 +32,6 @@ play/pause, tap elsewhere = expand, ✕ = close.
 | `floating_video_overlay.dart` | `FloatingVideoOverlay` widget: full-screen + PiP UI with all gestures, loading and error states. |
 | `video_player_options.dart` | `FloatingVideoOptions`: colors, speed list, labels, share hook, custom details builder. |
 | `videoplayerservice.dart` | Barrel export. |
-
-## 1. Add pub dependencies
 
 ```yaml
 dependencies:
@@ -53,16 +48,12 @@ entirely, construct the controller with `enablePictureInPicture: false`.
 Network playback needs the usual platform bits: `android:usesCleartextTraffic`
 (only for plain-http streams) and `NSAppTransportSecurity` on iOS.
 
-## 2. Create one controller, kept alive above navigation
-
 ```dart
 final videoController = FloatingVideoController();
 ```
 
 Provide it however you like (a singleton, `Provider`, `InheritedWidget`, passed
 down, …).
-
-## 3. Render the overlay on top of your app
 
 Put `FloatingVideoOverlay` in a `Stack` above your main content (e.g. wrapping
 your shell / `MainScreen`) so it floats over everything:
@@ -78,8 +69,6 @@ Stack(
   ],
 );
 ```
-
-## 4. Open a video
 
 Let the URL decide the engine — this is the call you normally want:
 
@@ -116,8 +105,6 @@ videoController.open(VideoItem.network(
 `isLive` is only a hint — if you get it wrong it self-corrects once the stream
 reports (or fails to report) a duration.
 
-## 5. Rebrand / customize
-
 ```dart
 FloatingVideoOptions(
   backgroundColor: const Color(0xFF101820),
@@ -136,8 +123,6 @@ FloatingVideoOptions(
   `VideoItem.shareText` are null, the share button is hidden.
 - `detailsBuilder` replaces the default title/date/description block under the
   expanded video.
-
-## Notes
 
 - The options class is called `FloatingVideoOptions`, not `VideoPlayerOptions`,
   so it never collides with `video_player`'s own `VideoPlayerOptions`.

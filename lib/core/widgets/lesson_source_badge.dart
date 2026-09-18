@@ -6,8 +6,6 @@ import '../enums/media_source_enum.dart';
 import '../themes/app_theme.dart';
 import '../utils/lesson_view_data.dart';
 
-/// Names where a lesson plays from — an uploaded file or YouTube — in the same
-/// shape as [LessonStatusBadge], which it sits beside.
 class LessonSourceBadge extends StatelessWidget {
   const LessonSourceBadge({required this.source, super.key});
 

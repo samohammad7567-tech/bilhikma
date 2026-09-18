@@ -1,22 +1,14 @@
     
 
-# 584  BilHikma  Development  Mobile 
-
  Add     
 
 **NOT STARTED**  
 
 - <sup>**Rename Content Type Labels Across the Entir**</sup> **e Application** 
 
-# **Task Title** 
-
 **Replace Content Type Constants: "** مسموع **" → "** صوتي **" and "** مرئي **" → "** فيديو **"** 
 
-## **Description** 
-
 The application currently uses the terms **"** صوتي **"** (Audio) and **"** فيديو **"** (Video) to label content types. These terms need to be replaced globally across all screens and interfaces with more appropriate terminology: **"** مسموع **"** and **"** مرئي **"** respectively. 
-
-## **Changes Required** 
 
  Status 
 
@@ -38,8 +30,6 @@ MA<br><!-- End of picture text -->
 
  Assigned to MA Mohammad AlKhat…  All fields      
 
-#### **Time Reports** 
-
 
 
 <!-- Start of picture text -->
@@ -55,10 +45,6 @@ H<br><!-- End of picture text -->
 |**Label**|||
 |صوتي|مسموع|Audio → Audible/Listening|
 |فيديو|مرئي|Video → Visual|
-
-
-
-## **Affected Areas** 
 
 This change must be applied **everywhere** these terms appear in the application, including but not limited to: 
 
@@ -82,10 +68,6 @@ This change must be applied **everywhere** these terms appear in the application
 
 - ✅ **All other screens** where these terms appear 
 
-## **Implementation Notes** 
-
-### **For Developers** 
-
 1. **Search the entire codebase** for the strings `" صوتي "` and `" فيديو "` (and their English equivalents `"Audio"` and `"Video"` if applicable) 
 
 2. **Update all constant definitions** , enum values, label texts, and string resources 
@@ -97,8 +79,6 @@ This change must be applied **everywhere** these terms appear in the application
 5. **Update any icons or visual indicators** associated with these labels if needed 
 
 Show less  
-
-### **Messages** 
 
 H **Hadeel** created the task Yesterday MA Pending reply H **Hadeel** Yesterday Action required by Rafat Haroub  RH Action is required by **Rafat Haroub** (a day) 
 

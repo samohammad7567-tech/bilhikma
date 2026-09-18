@@ -7,14 +7,8 @@ import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/custom_button.dart';
 
-/// Shown when the detail endpoint answers 403 because the previous lesson in
-/// the same subject is not completed yet. Retrying can never succeed, so this
-/// offers a way back to the list instead of a retry button.
 class LessonLockedView extends StatelessWidget {
   const LessonLockedView({required this.onBack, super.key, this.message});
-
-  /// The localized `message` from the response body. Falls back to the bundled
-  /// key only when the server did not send one.
   final String? message;
 
   final VoidCallback onBack;

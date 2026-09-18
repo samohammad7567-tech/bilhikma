@@ -30,8 +30,6 @@ class ProgressResult {
   final bool seekRejected;
 }
 
-/// A minted playback link together with where it points, so the screen can
-/// name the source without handling tokens or device ids itself.
 class PlaybackAccess {
   const PlaybackAccess({required this.url, required this.source});
 

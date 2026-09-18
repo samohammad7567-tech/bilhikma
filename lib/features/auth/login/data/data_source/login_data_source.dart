@@ -91,10 +91,6 @@ class LoginDataSource {
     if (refreshToken != null && refreshToken.isNotEmpty) {
       await CacheUtil.setString(key: refreshTokenKey, value: refreshToken);
     }
-
-    // The user is cached before the policy is resolved: the policy reads that
-    // cache back on the next cold start, so it has to be this login's user and
-    // not the one left behind by whoever signed in last.
     await _cacheUser(session.user);
 
     await ScreenCapturePolicy.resolve(

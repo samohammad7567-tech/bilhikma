@@ -41,8 +41,6 @@ class SettingsActionHandler {
     await context.setLocale(option.locale);
   }
 
-  /// Dark mode is not wired to anything yet, so the segmented control would
-  /// otherwise swallow the tap and look broken.
   static void selectTheme(BuildContext context, ThemeOption option) =>
       ComingSoonSheet.show(context, messageKey: 'coming_soon_theme');
 

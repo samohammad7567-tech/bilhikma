@@ -2,28 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/ornamented_card.dart';
-import '../../../../core/models/lesson_progress_model.dart';
 import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/widgets/lesson_source_badge.dart';
 import '../../../../core/widgets/lesson_status_badge.dart';
 import '../../../lessons/presentation/refactor/lesson_formats.dart';
 import '../../../../core/widgets/lesson_meta_item.dart';
 import '../../data/models/lesson_detail_model.dart';
+import '../refactor/lesson_progress_view.dart';
 import 'lesson_summary_position.dart';
 
 class LessonSummaryCard extends StatelessWidget {
   const LessonSummaryCard({
     required this.detail,
+    required this.progressView,
     super.key,
-    this.progress = const LessonProgressModel(),
     this.source,
   });
 
   final LessonDetailModel detail;
 
-  final LessonProgressModel progress;
-
-  /// Null until the playback link has been minted, and for an article.
+  final LessonProgressView progressView;
   final MediaSource? source;
 
   @override
@@ -88,7 +86,7 @@ class LessonSummaryCard extends StatelessWidget {
 
           if (detail.durationSeconds > 0) ...<Widget>[
             SizedBox(height: 10.h),
-            LessonSummaryPosition(detail: detail, progress: progress),
+            LessonSummaryPosition(view: progressView),
           ],
         ],
       ),

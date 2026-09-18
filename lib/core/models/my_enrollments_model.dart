@@ -34,8 +34,6 @@ class MyEnrollmentsModel {
     return null;
   }
 
-  /// Every class from the top of the tree down to the active one, in order —
-  /// the full educational path shown in the dashboard header card.
   List<EnrollmentNodeModel> get activePath {
     final int? enrollmentId = activeEnrollmentId;
     if (enrollmentId == null) return const <EnrollmentNodeModel>[];

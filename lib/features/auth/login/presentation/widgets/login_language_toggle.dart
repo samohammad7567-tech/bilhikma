@@ -7,12 +7,6 @@ import '../../../../../core/enums/language_option_enum.dart';
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/widgets/app_icon.dart';
 
-/// The language pill above the login title.
-///
-/// Settings can change the language, but settings sits behind the sign-in, so
-/// a user who cannot read the language the app opened in has no way through.
-/// This is that way through — the only language control reachable while signed
-/// out. `context.setLocale` persists the choice, so it survives the restart.
 class LoginLanguageToggle extends StatelessWidget {
   const LoginLanguageToggle({super.key});
 
@@ -32,9 +26,7 @@ class LoginLanguageToggle extends StatelessWidget {
       elevation: 4,
       offset: Offset(0, 40.h),
       constraints: BoxConstraints(minWidth: 150.w),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<LanguageOption>>[
         PopupMenuItem<LanguageOption>(
           enabled: false,
@@ -60,7 +52,6 @@ class LoginLanguageToggle extends StatelessWidget {
     );
   }
 
-  /// Re-selecting the current language would rebuild the whole app for nothing.
   void _select(BuildContext context, LanguageOption option) {
     if (option.code == context.locale.languageCode) return;
 
@@ -68,8 +59,6 @@ class LoginLanguageToggle extends StatelessWidget {
   }
 }
 
-/// The collapsed control: globe, current language, chevron. Laid out with the
-/// globe first so direction carries it — leading in English, trailing in Arabic.
 class _LanguagePill extends StatelessWidget {
   const _LanguagePill({required this.label});
 
@@ -124,8 +113,6 @@ class _LanguagePill extends StatelessWidget {
   }
 }
 
-/// One language in the open menu. Both labels stay in their own script in
-/// either locale, so the option a user is looking for is always legible.
 class _LanguageMenuRow extends StatelessWidget {
   const _LanguageMenuRow({required this.option, required this.isSelected});
 
@@ -148,11 +135,7 @@ class _LanguageMenuRow extends StatelessWidget {
           ),
         ),
         if (isSelected)
-          Icon(
-            Icons.check_rounded,
-            size: 18.w,
-            color: colors.onSurfaceVariant,
-          ),
+          Icon(Icons.check_rounded, size: 18.w, color: colors.onSurfaceVariant),
       ],
     );
   }

@@ -20,17 +20,7 @@ class AppSectionScaffold extends StatelessWidget {
   final Widget child;
   final VoidCallback? onBack;
   final bool showBack;
-
-  /// Puts a drawer button in the start corner. Set it on the shell tabs: a tab
-  /// is a destination, so its corner belongs to the drawer, while a pushed
-  /// screen is a drill-down and its corner belongs to the back button.
-  ///
-  /// Ignored when no drawer is reachable, so a screen can ask for the button
-  /// without first knowing how it was opened.
   final bool showMenu;
-
-  /// Overrides what the drawer button does. Left null it opens whichever
-  /// drawer is in reach — this screen's own, or the shell's.
   final VoidCallback? onMenuTap;
 
   final Widget? leading;
@@ -41,8 +31,6 @@ class AppSectionScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Resolved before our own Scaffold exists, so this finds the shell's — the
-    // one actually holding the drawer when this screen is a tab.
     final ScaffoldState? host = Scaffold.maybeOf(context);
     final bool hasHostDrawer = host?.hasDrawer ?? false;
     final bool hasOwnDrawer = drawer != null;
@@ -56,8 +44,6 @@ class AppSectionScaffold extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              // Builder so Scaffold.of below resolves to the Scaffold above,
-              // which is the one carrying `drawer` when the screen owns it.
               child: Builder(
                 builder: (BuildContext barContext) => AppTopBar(
                   title: title,
@@ -66,7 +52,12 @@ class AppSectionScaffold extends StatelessWidget {
                       : null,
                   leading:
                       leading ??
-                      _menuButton(barContext, hasHostDrawer, hasOwnDrawer, host),
+                      _menuButton(
+                        barContext,
+                        hasHostDrawer,
+                        hasOwnDrawer,
+                        host,
+                      ),
                   trailing: trailing,
                 ),
               ),

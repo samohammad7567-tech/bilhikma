@@ -6,9 +6,6 @@ import '../../../themes/app_theme.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_outline_button.dart';
 
-/// Asks the student to confirm before the session is ended. Built in the same
-/// shape as the app's other confirmations, so the drawer's own colours carry
-/// through to the dialog.
 class LogoutConfirmDialog extends StatelessWidget {
   const LogoutConfirmDialog({super.key});
 

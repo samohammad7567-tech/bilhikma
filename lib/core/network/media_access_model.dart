@@ -12,12 +12,7 @@ class MediaAccessModel {
 
   final String token;
   final DateTime? expiresAt;
-
-  /// `file` for an uploaded file behind `/media/{token}`, `youtube` for a
-  /// lesson published as a YouTube link.
   final MediaSource source;
-
-  /// Only filled when [source] is `youtube`.
   final String? youtubeUrl;
 
   bool get isValid => token.isNotEmpty && !isExpired;
@@ -27,8 +22,6 @@ class MediaAccessModel {
     return expiry != null && expiry.isBefore(DateTime.now());
   }
 
-  /// A YouTube lesson has no token to sign, so it plays straight from its
-  /// link; anything else streams through the protected media endpoint.
   bool get isYoutube =>
       source.isYoutube && (youtubeUrl ?? '').trim().isNotEmpty;
 

@@ -10,6 +10,7 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../data/models/lesson_detail_model.dart';
 import '../cubit/lesson_detail_cubit.dart';
+import 'lesson_progress_view.dart';
 import '../widgets/lesson_artwork.dart';
 import '../widgets/lesson_attachments_card.dart';
 import '../widgets/lesson_audio_stage.dart';
@@ -70,7 +71,7 @@ class LessonDetailBody extends StatelessWidget {
             LessonDetailInset(
               child: LessonSummaryCard(
                 detail: detail,
-                progress: state.progress,
+                progressView: LessonProgressView.of(state),
                 source: state.playbackSource,
               ),
             ),

@@ -11,10 +11,6 @@ class Json {
     return text.isEmpty ? null : text;
   }
 
-  /// Translatable backend fields arrive as `{"ar": "...", "en": "..."}`.
-  /// Resolves them to the app language, falling back to Arabic and then to any
-  /// filled translation. A plain string passes through unchanged, so the same
-  /// reader works whether or not the endpoint is translated.
   static String asLocalizedString(Object? value) =>
       asOptionalLocalizedString(value) ?? '';
 
@@ -61,8 +57,6 @@ class Json {
     return text == 'true' || text == '1';
   }
 
-  /// Distinguishes "the backend said false" from "the backend said nothing",
-  /// which [asBool] flattens into the same `false`.
   static bool? asOptionalBool(Object? value) {
     if (value == null) return null;
     if (value is bool) return value;

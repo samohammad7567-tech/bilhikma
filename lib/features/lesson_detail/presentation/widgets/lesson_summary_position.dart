@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_theme.dart';
-import '../../../../core/models/lesson_progress_model.dart';
-import '../../data/models/lesson_detail_model.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
+import '../refactor/lesson_progress_view.dart';
 
 class LessonSummaryPosition extends StatelessWidget {
-  const LessonSummaryPosition({
-    required this.detail,
-    required this.progress,
-    super.key,
-  });
+  const LessonSummaryPosition({required this.view, super.key});
 
-  final LessonDetailModel detail;
-  final LessonProgressModel progress;
+  final LessonProgressView view;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double ratio = progress.progress;
+    final double barHeight = 6.h;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -30,8 +24,8 @@ class LessonSummaryPosition extends StatelessWidget {
             children: <Widget>[
               Text(
                 LessonDetailFormats.position(
-                  totalSeconds: detail.durationSeconds,
-                  elapsedSeconds: progress.maxPositionSeconds,
+                  totalSeconds: view.totalSeconds,
+                  elapsedSeconds: view.elapsedSeconds,
                 ),
                 maxLines: 1,
                 style: AppTheme.styles(context).progressLabel,
@@ -40,7 +34,7 @@ class LessonSummaryPosition extends StatelessWidget {
               const Spacer(),
 
               Text(
-                '${progress.progressPercent}%',
+                '${view.percent}%',
                 maxLines: 1,
                 style: AppTheme.styles(context).progressLabel,
               ),
@@ -51,14 +45,30 @@ class LessonSummaryPosition extends StatelessWidget {
         SizedBox(height: 6.h),
 
         ClipRRect(
-          borderRadius: BorderRadius.circular(6.r),
-          child: LinearProgressIndicator(
-            value: ratio,
-            minHeight: 6.h,
-            backgroundColor: colors.surfaceContainerLowest,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              colors.secondaryContainer,
-            ),
+          borderRadius: BorderRadius.circular(barHeight),
+          child: Stack(
+            children: <Widget>[
+              if (view.hasPending)
+                LinearProgressIndicator(
+                  value: view.pending,
+                  minHeight: barHeight,
+                  backgroundColor: colors.surfaceContainerLowest,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colors.secondaryContainer.withValues(alpha: 0.4),
+                  ),
+                ),
+
+              LinearProgressIndicator(
+                value: view.confirmed,
+                minHeight: barHeight,
+                backgroundColor: view.hasPending
+                    ? Colors.transparent
+                    : colors.surfaceContainerLowest,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  colors.secondaryContainer,
+                ),
+              ),
+            ],
           ),
         ),
       ],

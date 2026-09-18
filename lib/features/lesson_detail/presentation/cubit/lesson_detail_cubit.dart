@@ -36,22 +36,8 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   final LessonPlaybackDataSource playbackStore;
 
   bool _isReporting = false;
-
-  /// Minted when the lesson opens, so the summary card can name the source
-  /// before anything plays. It is held here instead of being emitted as
-  /// [LessonDetailState.playbackUrl] because a url in the state builds the
-  /// player, and both players start playing the moment they are built.
   PlaybackAccess? _access;
-
-  /// A 403 or 404 from the progress endpoint is a standing answer: the lesson
-  /// is not accessible to this account, or no longer exists. The playback
-  /// ticker fires every second and a rejected checkpoint never advances, so
-  /// without this the same request would be resent once a second forever.
   bool _isProgressHalted = false;
-
-  /// After a 422 the player is pulled back to [allowed_position_seconds].
-  /// The server measures every report against real elapsed time, so the same
-  /// checkpoint must not be retried immediately — it would be read as a skip.
   static const Duration _correctionCooldown = Duration(seconds: 5);
 
   DateTime? _correctedAt;
@@ -63,8 +49,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   }
 
   Future<void> loadLesson() async {
-    // A reload asks the server again, so an earlier refusal stops standing,
-    // and the link is minted afresh rather than reused from the failed run.
     _isProgressHalted = false;
     _access = null;
 
@@ -131,10 +115,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       errorMessage: error.message,
     ),
   );
-
-  /// Asks for the playback link as soon as the lesson opens, purely to learn
-  /// its source. Failures stay silent: nothing was requested by the user yet,
-  /// and tapping play repeats the call and surfaces the real error then.
   Future<void> _prefetchAccess(LessonDetailModel detail) async {
     if (!detail.isPlayable || detail.isLocked) return;
 
@@ -154,8 +134,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     if (detail == null || !detail.isPlayable || state.isPreparingPlayback) {
       return;
     }
-
-    // Already minted while the screen opened: play without a second round trip.
     final PlaybackAccess? ready = _access;
     if (ready != null) {
       emit(
@@ -236,9 +214,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
   Future<void> _sendCheckpoint(int positionSeconds) async {
     _isReporting = true;
-
-    // Captured before the await: ticks keep accumulating while the request is
-    // in flight, and zeroing the counter afterwards would drop those seconds.
     final int sentDelta = state.watchedDeltaSeconds;
 
     try {
@@ -273,9 +248,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       }
     } on AppException catch (error) {
       if (isClosed) return;
-
-      // Reported once, then never again for this lesson: the toast carries the
-      // server's own message and retrying would only repeat it every second.
       if (_isRefusal(error)) _isProgressHalted = true;
 
       emit(state.copyWith(messageKey: error.key, message: error.message));

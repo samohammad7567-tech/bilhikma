@@ -87,8 +87,6 @@ class HomeScreen extends StatelessWidget {
       AppRoutes.lessonDetail,
       arguments: LessonDetailArgs(id: lesson.contentId, type: lesson.type),
     );
-
-    // is_locked is never cacheable: reread the overview after any completion.
     await cubit.refresh();
   }
 

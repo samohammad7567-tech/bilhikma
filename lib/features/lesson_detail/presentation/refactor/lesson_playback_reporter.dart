@@ -8,8 +8,6 @@ class LessonPlaybackReporter {
   static const Duration _tick = Duration(seconds: 1);
 
   static const Duration _endWindow = Duration(milliseconds: 400);
-
-  /// How long a resume waits for the media to report its duration.
   static const Duration _durationTimeout = Duration(seconds: 10);
   static const Duration _durationPoll = Duration(milliseconds: 250);
 
@@ -51,9 +49,6 @@ class LessonPlaybackReporter {
     await playback.seekTo(Duration(seconds: seconds));
   }
 
-  /// A file player knows its duration as soon as it finishes initializing, but
-  /// YouTube only reports one once its metadata arrives — reading it straight
-  /// away would drop the resume seek on every YouTube lesson.
   Future<Duration> _awaitDuration(VideoPlayback playback) async {
     final DateTime deadline = DateTime.now().add(_durationTimeout);
 
@@ -84,10 +79,6 @@ class LessonPlaybackReporter {
     final bool isPlaying = playback.isPlaying;
 
     if (!isPlaying && seconds == _lastPositionSeconds) return;
-
-    // The server validates watched_delta_seconds against wall-clock time and
-    // caps anything above it, so a second only counts when the media actually
-    // moved — a buffering stall must not inflate the counter.
     final bool hasPlayedASecond = isPlaying && !playback.isBuffering;
 
     _lastPositionSeconds = seconds;

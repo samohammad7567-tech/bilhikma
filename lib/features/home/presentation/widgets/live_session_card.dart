@@ -13,9 +13,6 @@ class LiveSessionCard extends StatelessWidget {
 
   final LiveSessionModel session;
   final VoidCallback? onTap;
-
-  /// The session's own title leads the card. A session saved without one falls
-  /// back to the schedule line so the card never leads with a blank row.
   String get _headline => session.title.trim().isEmpty
       ? HomeFormats.liveHeadline(session)
       : session.title;

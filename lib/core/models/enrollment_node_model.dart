@@ -50,11 +50,6 @@ class EnrollmentNodeModel {
     }
   }
 
-  /// The branch from this node down to the node carrying [enrollmentId],
-  /// this node included. Empty when the branch does not hold that enrollment.
-  ///
-  /// `/user/subjects` only returns the leaf class, so the header card rebuilds
-  /// the ancestry from the enrollment tree instead.
   List<EnrollmentNodeModel> pathTo(int enrollmentId) {
     if (this.enrollmentId == enrollmentId) return <EnrollmentNodeModel>[this];
 

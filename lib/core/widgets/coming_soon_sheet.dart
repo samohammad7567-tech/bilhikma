@@ -6,16 +6,8 @@ import '../themes/app_theme.dart';
 import 'custom_button.dart';
 import 'sheet_handle.dart';
 
-/// The answer to tapping something that does not exist yet.
-///
-/// A control that silently does nothing reads as a broken app, so every
-/// unfinished feature routes here instead: it says the feature is coming rather
-/// than leaving the tap unanswered. Call [show] from the tap handler.
 class ComingSoonSheet extends StatelessWidget {
   const ComingSoonSheet({super.key, this.messageKey = 'coming_soon_message'});
-
-  /// Lets a caller explain what in particular is coming, while every sheet
-  /// keeps the same title and shape.
   final String messageKey;
 
   static Future<void> show(

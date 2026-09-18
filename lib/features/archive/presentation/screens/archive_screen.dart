@@ -53,8 +53,6 @@ class ArchiveScreen extends StatelessWidget {
       AppRoutes.lessonDetail,
       arguments: LessonDetailArgs.fromLesson(lesson),
     );
-
-    // is_locked is never cacheable: reread the list after any completion.
     await cubit.silentRefresh();
   }
 

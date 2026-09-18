@@ -16,9 +16,6 @@ class DeviceInterceptor extends Interceptor {
     if (DeviceService.isInitialized) {
       options.headers.addAll(DeviceService.headers);
     }
-
-    // Set per request, not once at Dio setup: the user can switch language
-    // while signed in and the backend must answer in the language on screen.
     options.headers['Accept-Language'] = AppLanguage.code;
 
     handler.next(options);

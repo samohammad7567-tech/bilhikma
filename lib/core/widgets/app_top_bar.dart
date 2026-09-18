@@ -14,18 +14,12 @@ class AppTopBar extends StatelessWidget {
 
   final String title;
   final VoidCallback? onBack;
-
-  /// Occupies the start corner instead of the back button — right in Arabic,
-  /// left in English. A screen that offers a drawer puts its menu button here
-  /// rather than in [trailing], which resolves to the opposite corner.
   final Widget? leading;
 
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    // One corner, one control: an explicit leading widget wins over the back
-    // button so the two can never stack on top of each other.
     final VoidCallback? onBack = this.onBack;
     final Widget? start =
         leading ??
@@ -49,10 +43,7 @@ class AppTopBar extends StatelessWidget {
           ),
 
           if (start != null)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: start,
-            ),
+            Align(alignment: AlignmentDirectional.centerStart, child: start),
 
           if (trailing != null)
             Align(alignment: AlignmentDirectional.centerEnd, child: trailing),

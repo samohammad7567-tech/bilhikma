@@ -17,13 +17,7 @@ class ProfileModel {
   final String id;
   final String name;
   final String institution;
-
-  /// The current class on its own, as the backend labels it. Kept as the
-  /// fallback for older responses that carry no [path].
   final String academicPath;
-
-  /// The full educational path, outermost first — stage, then any classes
-  /// between, then the current semester. Empty when the backend omits it.
   final List<String> path;
 
   final String phone;
@@ -42,9 +36,6 @@ class ProfileModel {
       .take(2)
       .map((String word) => word.substring(0, 1))
       .join('.');
-
-  /// What the info card renders for the academic path: the resolved path when
-  /// the backend sends one, the class name on its own otherwise.
   List<String> get educationalPath {
     if (path.isNotEmpty) return path;
 
@@ -97,10 +88,6 @@ class ProfileModel {
     'phone': phone,
     'avatar_url': avatarUrl,
   };
-
-  /// `path` arrives as `[{id, name}, …]`, ordered from the stage down to the
-  /// current class. Only the names reach the UI; unnamed nodes are dropped so
-  /// a partial tree cannot render an empty chevron segment.
   static List<String> _pathNames(Object? value) => <String>[
     for (final Map<String, dynamic> node in Json.asMapList(value))
       if (Json.asString(node['name']).trim().isNotEmpty)

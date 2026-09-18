@@ -12,10 +12,6 @@ class InstitutionCard extends StatelessWidget {
   });
 
   final String institution;
-
-  /// The educational path, outermost first — stage, then any classes between,
-  /// then the current semester. A single entry renders as plain text, which is
-  /// the fallback when only the class name is known.
   final List<String> path;
 
   @override

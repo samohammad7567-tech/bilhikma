@@ -20,13 +20,6 @@ class SubjectContentModel {
 
   final int categorySubjectId;
   final String name;
-
-  /// Where the class places this subject, 1-based — the same number the
-  /// subjects list prints on its index strip, so the two screens agree.
-  ///
-  /// `GET /user/subjects/{id}` does not return this field yet; until it does it
-  /// parses as 0, which [LessonSubjectHeader] reads as "unknown" and hides the
-  /// strip for rather than printing a wrong number.
   final int position;
 
   final String? iconUrl;

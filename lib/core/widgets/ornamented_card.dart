@@ -65,9 +65,6 @@ class OrnamentBackdrop extends StatelessWidget {
     return IgnorePointer(
       child: Stack(
         children: <Widget>[
-          // Stated as Arabic sits them: leading in the bottom-right corner,
-          // trailing against the left edge. [CardOrnament] mirrors the pair
-          // for English.
           if (leading != null)
             CardOrnament(asset: leading, alignment: Alignment.bottomRight),
           if (trailing != null)

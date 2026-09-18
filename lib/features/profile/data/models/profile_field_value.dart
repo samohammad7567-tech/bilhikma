@@ -7,10 +7,6 @@ extension ProfileFieldValue on ProfileField {
     ProfileField.academicPath => profile.academicPath,
     ProfileField.phone => profile.phone,
   };
-
-  /// The academic path is the one field with a hierarchy behind it — stage
-  /// down to the current semester. Every other field is flat, so it reports an
-  /// empty path and falls back to [valueOf].
   List<String> pathOf(ProfileModel profile) => switch (this) {
     ProfileField.institution => const <String>[],
     ProfileField.academicPath => profile.educationalPath,

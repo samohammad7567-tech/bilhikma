@@ -19,12 +19,6 @@ class AppTopBarBackButton extends StatelessWidget {
         child: SizedBox(
           width: 44.w,
           height: 44.w,
-
-          // Icons.arrow_back_ios_new carries matchTextDirection: true, so
-          // Flutter already mirrors it for Arabic. Swapping it for
-          // arrow_forward_ios here would flip an icon that is auto-mirroring
-          // too, and the two flips would cancel out into a left-pointing back
-          // arrow in RTL.
           child: Icon(
             Icons.arrow_back_ios_new,
             size: 18.w,

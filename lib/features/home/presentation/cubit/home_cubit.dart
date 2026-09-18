@@ -45,9 +45,6 @@ class HomeCubit extends Cubit<HomeState> {
           clearError: true,
         ),
       );
-
-      // Header decoration: the card already renders the class name from the
-      // overview, so this fills in the ancestry without holding the screen.
       unawaited(_loadEducationalPath());
 
       final LiveSessionModel? session = await repo.fetchHighlightedSession();

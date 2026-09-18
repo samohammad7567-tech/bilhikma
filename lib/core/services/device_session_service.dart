@@ -27,8 +27,6 @@ class DeviceSessionService {
     'session_active_on_another_device',
     'already_logged_in_on_another_device',
   };
-
-  /// Device identity plus the running build, sent alongside the credentials.
   static Map<String, dynamic> loginPayload() => <String, dynamic>{
     ...DeviceService.metadata,
     if (PushNotificationService.token != null)

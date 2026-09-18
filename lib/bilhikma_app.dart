@@ -21,9 +21,6 @@ class BilhikmaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Models resolve `{"ar": ..., "en": ...}` fields while parsing, where no
-    // context is reachable, so the chosen locale is mirrored here on every
-    // language change.
     AppLanguage.update(context.locale.languageCode);
 
     return BlocProvider<AppPreferencesCubit>.value(

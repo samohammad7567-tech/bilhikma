@@ -1,7 +1,5 @@
     
 
-# 583  BilHikma  Development  Mobile 
-
 <sup>**Fix UI**</sup> 
 
  Add     
@@ -20,19 +18,9 @@
 <!-- Start of picture text -->
 RH<br><!-- End of picture text -->
 
-# **1. Fix Sidebar/Menu Icon Position for RTL/LTR Consistency** 
-
  Not scheduled 
 
-## **Task Title** 
-
-### **Fix Menu Icon Positioning Across All Screens for RTL/LTR Support** 
-
-## **Description** 
-
 The sidebar/menu toggle icon position is inconsistent across different screens in the mobile app. The icon must follow the correct directional layout based on the app's language setting. 
-
-## **Requirements** 
 
 
 
@@ -42,8 +30,6 @@ MA<br><!-- End of picture text -->
  Assigned to  All fields 
 
 > MA Mohammad AlKhat…      
-
-#### **Time Reports** 
 
 
 
@@ -55,22 +41,14 @@ H<br><!-- End of picture text -->
 <!-- Start of picture text -->
  Users RH MA H<br><!-- End of picture text -->
 
-### **Current Issue** 
-
 - In **Screenshot 1** (Live Broadcast screen): The menu icon appears on the **top-left** (incorrect for Arabic/RTL) 
 
 - In **Screenshot 2** (Dashboard screen): The menu icon appears on the **top-right** ✅ (correct for Arabic/RTL) 
-
-### **Expected Behavior** 
 
 |**Language**|**Layout Direction**|**Menu Icon Position**|
 |---|---|---|
 |Arabic|RTL (Right-to-Left)|**Top-Right**corner|
 |English|LTR (Left-to-Right)|**Top-Left**corner|
-
-
-
-### **Action Items** 
 
 1. **Audit all screens** in the mobile app to identify where the menu/sidebar icon is incorrectly positioned 
 
@@ -84,11 +62,7 @@ H<br><!-- End of picture text -->
 
 4. Ensure the fix uses proper RTL/LTR layout directives (e.g., `start` / `end` instead of `left` / `right` in layout code) so it automatically adapts when the language changes 
 
-### **Affected Screens** 
-
 Live Broadcast screen ( المباشر البث ) — **confirmed incorrect** All other screens must be reviewed and corrected if needed 
-
-### **Notes** 
 
 Use layout direction-aware properties (e.g., `marginStart` / `marginEnd` , 
 
@@ -96,27 +70,13 @@ Use layout direction-aware properties (e.g., `marginStart` / `marginEnd` ,
 
 - Test with both Arabic and English language settings to verify correct behavior on all screens 
 
-# **2. Fix Decorative Images/Patterns for LTR Layout** 
-
-## **Task Title** 
-
-### **Adjust Decorative Background Images for English (LTR) Layout** 
-
-## **Description** 
-
 When the application language is switched to English (LTR layout), the decorative background images/patterns in various frames and cards are not properly adjusted for the left-to-right layout direction. 
-
-## **Current Issue** 
 
 The decorative Islamic geometric pattern images appear in the following locations and need LTR adjustment: 
 
 **Header section** - Left and right corner decorative patterns 
 
 - **Subject cards** - Left and right side decorative patterns (visible in pink highlighted areas) 
-
-## **Requirements** 
-
-### **Expected Behavior** 
 
 When app language = **English (LTR)** : 
 
@@ -126,15 +86,11 @@ When app language = **English (LTR)** :
 
 3. Visual balance and aesthetic should be maintained for LTR layout 
 
-### **Affected Components** 
-
 - ✅ Dashboard header section (institute name area) 
 
 - ✅ Subject cards (all subject items in the list) 
 
 - ✅ All other cards/frames with similar decorative patterns 
-
-### **Technical Implementation** 
 
 1. **Detect layout direction** (RTL/LTR) based on current language 
 
@@ -150,17 +106,9 @@ When app language = **English (LTR)** :
 
 4. **Apply to all screens** that use these decorative patterns 
 
-# **3. Add Decorative Pattern Images to Sidebar/Drawer Menu** 
-
-## **Task Title** 
-
 **Add Decorative Islamic Pattern Images to Sidebar Drawer Menu** 
 
-## **Description** 
-
 The sidebar/drawer menu is missing decorative Islamic geometric pattern images in specific locations. These patterns need to be added to match the design system used across the rest of the application. 
-
-## **Current Issue** 
 
 As shown in the screenshot (pink highlighted boxes), the sidebar drawer menu is missing decorative pattern images in **two locations** around the user profile card section: 
 
@@ -170,28 +118,16 @@ As shown in the screenshot (pink highlighted boxes), the sidebar drawer menu is 
 
 These decorative patterns are visible in other parts of the app (dashboard header, subject cards) but are **not rendered** in the sidebar menu. 
 
-## **Requirements** 
-
-### **Expected Behavior** 
-
 Decorative Islamic geometric pattern images should appear on **both sides** of the user profile card in the sidebar drawer 
 
 Patterns should match the style and opacity used in other screens 
 
 Patterns should be **subtle/background-level** (not obstructing content) 
 
-
-
-### **RTL/LTR Considerations** 
-
 |**Language**|**Layout**|**Pattern Position**|
 |---|---|---|
 |Arabic|RTL|Patterns on both sides,<br>mirrored appropriately|
 |English|LTR|Patterns on both sides,<br>mirrored appropriately|
-
-
-
-### **Implementation Details** 
 
 1. **Add decorative pattern images** to the two highlighted areas in the sidebar: 
 
@@ -209,27 +145,15 @@ Use `start` / `end` positioning instead of hardcoded `left` / `right`
 
 5. **Set appropriate opacity** so patterns appear as subtle background decorations 
 
-# **4. Add "Coming Soon" Drawer/Modal for Unavailable Features** 
-
-## **Task Title** 
-
 **Display "Coming Soon" Notification Drawer for All Unavailable Features** 
 
-## **Description** 
-
 Currently, when users tap on features that are not yet available in the application (e.g., the Exam/Quiz feature after completing a lesson), nothing happens or the behavior is unclear. A **"Coming Soon" drawer/modal** should be displayed to inform users that the feature will be available in the future. 
-
-## **Current Issue** 
 
 Features that are not yet implemented have **no user feedback** when tapped 
 
 - Users may be confused about why nothing happens 
 
 - No communication about future feature availability 
-
-## **Requirements** 
-
-### **Expected Behavior** 
 
 When a user taps on any **unavailable/not-yet-implemented feature** , a **bottom drawer or modal popup** should appear with: 
 
@@ -241,23 +165,13 @@ When a user taps on any **unavailable/not-yet-implemented feature** , a **bottom
 
 4. **Close button** — To dismiss the drawer 
 
-# **5. Fix Subject Numbering Consistency Across All Pages** 
-
-## **Task Title** 
-
 **Maintain Consistent Subject Numbering Between Subjects List and Subject Details Pages** 
-
-## **Description** 
 
 The subject numbering is inconsistent between the subjects list page (Home) and the subject details page. When a user navigates from the subjects list to a specific subject's 
 
 
 
 details page, the subject number resets to **1** instead of retaining its original number from the list. 
-
-## **Current Issue** 
-
-### **Screenshot 1 — Subjects List (Home Page)** 
 
 The subjects are numbered as follows: 
 
@@ -269,13 +183,7 @@ The subjects are numbered as follows:
 |العقيدة|**7**|
 |الحديث|**8**|
 
-
-
-### **Screenshot 2 — Subject Details Page (** العقيدة **)** 
-
 When navigating to the العقيدة subject details page, the number displayed is **1** ❌ — but it should remain **7** ✅ as shown in the subjects list. 
-
-## **Expected Behavior** 
 
 The subject number must be **consistent and persistent** across all pages: 
 
@@ -287,10 +195,6 @@ The subject number must be **consistent and persistent** across all pages:
 |Any other<br>page<br>referencing<br>the subject<br>العقيدة|**7** ✅|
 |**Implementation Details**<br>photo_2026-08-25_0<br>photo|_2026-08-25_0<br>photo_2026-08-24_2<br>photo_2026-08-24_2|
 |photo_2026-08-24_2<br>photo<br>Show less|_2026-08-24_2|
-
-
-
-### **Messages** 
 
 |H|**Hadeel** created the task|Yesterday|
 |---|---|---|
