@@ -26,7 +26,6 @@ void main() async {
   ScreenCaptureService.instance.attach(getIt());
   ScreenCapturePolicy.initialize();
   await ScreenCapturePolicy.restore();
-  print(DeviceService.metadata);
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[Locale('ar'), Locale('en')],

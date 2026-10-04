@@ -40,7 +40,6 @@ class SearchResults extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 24.h),
       itemCount: results.length,
       itemBuilder: (BuildContext context, int index) {
-        print(results[index].isLocked);
         final LessonModel result = results[index];
 
         return Padding(

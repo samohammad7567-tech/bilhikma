@@ -37,23 +37,19 @@ class TestOptionTile extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
           child: Row(
             children: <Widget>[
-              Expanded(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.start,
-                  style: AppTheme.styles(context).optionLabel.copyWith(
-                    color: foreground,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                  ),
-                ),
-              ),
-
-              SizedBox(width: 10.w),
-
               TestOptionIndicator(
                 isSelected: isSelected,
                 isMultiSelect: isMultiSelect,
                 color: foreground,
+              ),
+              SizedBox(width: 15.w),
+              Text(
+                label,
+                textAlign: TextAlign.start,
+                style: AppTheme.styles(context).optionLabel.copyWith(
+                  color: foreground,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                ),
               ),
             ],
           ),

@@ -38,8 +38,10 @@ class AppBottomNavBar extends StatelessWidget {
           onTap: (int index) => onTabSelected(AppTab.values[index]),
           color: colors.secondary,
           backgroundColor: Colors.transparent,
-          buttonBackgroundColor: colors.surface,
-          iconPadding: 3.w,
+          // The halo is painted by BottomNavTabIcon so it shows for every
+          // selected tab; the package's own disc would double it.
+          buttonBackgroundColor: Colors.transparent,
+          iconPadding: 0,
           height: barHeight,
           animationDuration: const Duration(milliseconds: 400),
           items: <CurvedNavigationBarItem>[

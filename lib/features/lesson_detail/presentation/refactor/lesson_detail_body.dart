@@ -135,24 +135,24 @@ class LessonDetailBody extends StatelessWidget {
 
             if (!detail.isArticle) ...<Widget>[
               SizedBox(height: 20.h),
-              LessonDetailInset(
-                child: CustomButton(
-                  onPressed:
-                      onGoToTest ??
-                      () => ComingSoonSheet.show(
-                        context,
-                        messageKey: 'coming_soon_test',
-                      ),
-                  text: 'go_to_test'.tr(),
-                  width: double.infinity,
-                  height: 46,
-                  threeRadius: 8.r,
-                  lastRadius: 8.r,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  textColor: Theme.of(context).colorScheme.onSecondary,
-                  elevation: 0,
-                ),
-              ),
+              // LessonDetailInset(
+              //   child: CustomButton(
+              //     onPressed:
+              //         onGoToTest ??
+              //         () => ComingSoonSheet.show(
+              //           context,
+              //           messageKey: 'coming_soon_test',
+              //         ),
+              //     text: 'go_to_test'.tr(),
+              //     width: double.infinity,
+              //     height: 46,
+              //     threeRadius: 8.r,
+              //     lastRadius: 8.r,
+              //     backgroundColor: Theme.of(context).colorScheme.secondary,
+              //     textColor: Theme.of(context).colorScheme.onSecondary,
+              //     elevation: 0,
+              //   ),
+              // ),
             ],
           ],
         );

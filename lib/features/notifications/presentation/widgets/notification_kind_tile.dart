@@ -24,13 +24,7 @@ class NotificationKindTile extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: AppIcon(
-          asset: kind.imagePath,
-          size: 24.w,
-          color: isGreen
-              ? Colors.white
-              : Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        child: AppIcon(asset: kind.imagePath, size: 30.w),
       ),
     );
   }

@@ -21,9 +21,6 @@ class MainShellView extends StatelessWidget {
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (bool didPop, Object? result) {
-            print(
-              'MainShellView: onPopInvokedWithResult: didPop=$didPop, result=$result',
-            );
             if (didPop) return;
             onBack(context, cubit.handleBackPress());
           },

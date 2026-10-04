@@ -26,8 +26,8 @@ enum NotificationKind {
     NotificationKind.enrollmentApproved => AppAssets.assetsAccountAccepted,
     NotificationKind.accountStatus => AppAssets.assetsAccountRejected,
     NotificationKind.inactivityWarning => AppAssets.assetsPending,
-    NotificationKind.adminAnnouncement => AppAssets.assetsNotification,
-    NotificationKind.custom => AppAssets.assetsNotification,
+    NotificationKind.adminAnnouncement => AppAssets.assetsNotificationIcon,
+    NotificationKind.custom => AppAssets.assetsNotificationIcon,
   };
 
   static NotificationKind fromJson(Object? value) {

@@ -16,32 +16,6 @@ class TestIntroCardRow extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  row.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).labelSmall,
-                ),
-
-                SizedBox(height: 2.h),
-
-                Text(
-                  row.value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).labelStrong,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(width: 12.w),
-
           Container(
             width: 40.w,
             height: 40.w,
@@ -51,6 +25,29 @@ class TestIntroCardRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Icon(row.icon, size: 20.w, color: colors.onSecondary),
+          ),
+          SizedBox(width: 12.w),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                row.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.styles(context).labelSmall,
+              ),
+
+              SizedBox(height: 2.h),
+
+              Text(
+                row.value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.styles(context).labelStrong,
+              ),
+            ],
           ),
         ],
       ),

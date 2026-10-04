@@ -11,6 +11,4 @@ class CacheKeys {
 
   static const String tokenKey = 'token';
   static const String refreshTokenKey = 'refresh_token';
-  static const String _boundDeviceKey = 'session_device_id';
-  static const String _boundTokenKey = 'session_token_fingerprint';
 }

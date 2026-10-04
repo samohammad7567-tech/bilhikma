@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_theme.dart';
-import 'settings_glyph_tile.dart';
 
 class SettingsChoiceCard extends StatelessWidget {
   const SettingsChoiceCard({

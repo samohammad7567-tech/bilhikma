@@ -6,7 +6,6 @@ import '../cubit/settings_cubit.dart';
 import '../../../../core/enums/settings_group_enum.dart';
 import '../widgets/settings_body_section.dart';
 import '../widgets/settings_language_card.dart';
-import '../widgets/settings_theme_card.dart';
 
 class SettingsBody extends StatelessWidget {
   const SettingsBody({super.key});
@@ -27,7 +26,7 @@ class SettingsBody extends StatelessWidget {
 
             SizedBox(height: 16.h),
 
-            const SettingsThemeCard(),
+            // const SettingsThemeCard(),
           ],
         );
       },

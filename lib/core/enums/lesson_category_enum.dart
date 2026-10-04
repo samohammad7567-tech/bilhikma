@@ -1,5 +1,3 @@
-import '../network/json_reader.dart';
-
 enum LessonCategory {
   lessons('lessons'),
   live('live'),
