@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/app_regex.dart';
 import '../../../../../core/widgets/app_icon.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/phone_number_field.dart';
 import '../../../../../core/enums/login_method_enum.dart';
 
 class LoginIdentityField extends StatelessWidget {
@@ -42,12 +42,10 @@ class LoginIdentityField extends StatelessWidget {
       );
     }
 
-    return CustomTextField(
-      filled: true,
-      fillColour: colors.tertiary.withValues(alpha: 0.4),
+    return PhoneNumberField(
       key: const ValueKey<LoginMethod>(LoginMethod.phone),
       controller: phoneController,
-      hintText: 'phone_number'.tr(),
+      fillColour: colors.tertiary.withValues(alpha: 0.4),
       suffixIcon: AppIcon(
         size: 20.w,
         padding: EdgeInsetsGeometry.all(12),
@@ -55,20 +53,7 @@ class LoginIdentityField extends StatelessWidget {
 
         color: Theme.of(context).colorScheme.onSurface,
       ),
-      keyboardType: TextInputType.phone,
-      maxLength: 16,
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(AppRegex.phoneAllowedChars),
-      ],
-      validator: _validatePhone,
     );
-  }
-
-  static String? _validatePhone(String? value) {
-    final String phone = value?.trim() ?? '';
-    if (phone.isEmpty) return 'phone_required'.tr();
-    if (!AppRegex.isValidPhone(phone)) return 'valid_phone_required'.tr();
-    return null;
   }
 
   static String? _validateEmail(String? value) {

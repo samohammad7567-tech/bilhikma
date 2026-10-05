@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/app_regex.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/phone_number_field.dart';
 import '../../../../../core/enums/reset_channel_enum.dart';
 import 'field_icon_box.dart';
 
@@ -41,21 +41,13 @@ class ResetIdentityField extends StatelessWidget {
       );
     }
 
-    return CustomTextField(
+    return PhoneNumberField(
       key: const ValueKey<ResetChannel>(ResetChannel.sms),
       controller: phoneController,
-      filled: true,
       fillColour: fill,
       borderColor: Colors.transparent,
       borderRadius: 12.r,
-      hintText: 'phone_number'.tr(),
       suffixIcon: const FieldIconBox(asset: AppAssets.assetsPhoneIconFilled),
-      keyboardType: TextInputType.phone,
-      maxLength: 16,
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(AppRegex.phoneAllowedChars),
-      ],
-      validator: _validatePhone,
     );
   }
 
@@ -63,13 +55,6 @@ class ResetIdentityField extends StatelessWidget {
     final String email = value?.trim() ?? '';
     if (email.isEmpty) return 'email_required'.tr();
     if (!AppRegex.isValidEmail(email)) return 'valid_email_required'.tr();
-    return null;
-  }
-
-  static String? _validatePhone(String? value) {
-    final String phone = value?.trim() ?? '';
-    if (phone.isEmpty) return 'phone_required'.tr();
-    if (!AppRegex.isValidPhone(phone)) return 'valid_phone_required'.tr();
     return null;
   }
 }
