@@ -9,6 +9,7 @@ final class SetPasswordState {
     this.status = SetPasswordStatus.initial,
     this.codeStatus = OtpStatus.initial,
     this.code = '',
+    this.password = '',
     this.strength = PasswordStrength.none,
     this.obscurePassword = true,
     this.obscureConfirm = true,
@@ -19,6 +20,7 @@ final class SetPasswordState {
   final SetPasswordStatus status;
   final OtpStatus codeStatus;
   final String code;
+  final String password;
   final PasswordStrength strength;
   final bool obscurePassword;
   final bool obscureConfirm;
@@ -38,6 +40,7 @@ final class SetPasswordState {
     SetPasswordStatus? status,
     OtpStatus? codeStatus,
     String? code,
+    String? password,
     PasswordStrength? strength,
     bool? obscurePassword,
     bool? obscureConfirm,
@@ -48,6 +51,7 @@ final class SetPasswordState {
     status: status ?? this.status,
     codeStatus: codeStatus ?? this.codeStatus,
     code: code ?? this.code,
+    password: password ?? this.password,
     strength: strength ?? this.strength,
     obscurePassword: obscurePassword ?? this.obscurePassword,
     obscureConfirm: obscureConfirm ?? this.obscureConfirm,

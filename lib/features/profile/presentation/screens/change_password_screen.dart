@@ -2,10 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/enums/password_requirement_enum.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/password_requirements_checklist.dart';
 import '../../data/repos/profile_repo.dart';
 import '../../../../core/widgets/app_toast.dart';
 
@@ -26,6 +28,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   bool _isSaving = false;
   bool _obscure = true;
+
+  /// Mirrors [_next] so the requirements checklist rebuilds on every keystroke.
+  String _newPassword = '';
 
   @override
   void dispose() {
@@ -108,13 +113,29 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ).colorScheme.tertiary.withValues(alpha: 0.4),
               obscureText: _obscure,
               hintText: 'new_password'.tr(),
+              onChanged: (String? value) {
+                setState(() => _newPassword = value ?? '');
+                return null;
+              },
               validator: (String? value) {
                 final String text = value ?? '';
-                if (text.length < 8) return 'password_too_short'.tr();
+                if (text.isEmpty) return 'password_required'.tr();
+
+                // Same rules the checklist below renders.
+                final PasswordRequirement? unmet =
+                    PasswordRequirement.firstUnsatisfiedIn(text);
+                if (unmet != null) {
+                  return unmet.labelKey.tr(namedArgs: unmet.labelArgs);
+                }
+
                 if (text == _current.text) return 'password_must_differ'.tr();
                 return null;
               },
             ),
+
+            SizedBox(height: 10.h),
+
+            PasswordRequirementsChecklist(password: _newPassword),
 
             SizedBox(height: 16.h),
 

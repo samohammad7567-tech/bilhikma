@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/widgets/password_requirements_checklist.dart';
 import '../cubit/set_password_cubit.dart';
 import '../widgets/labelled_field.dart';
 import '../widgets/otp_code_field.dart';
@@ -50,6 +51,10 @@ class SetPasswordForm extends StatelessWidget {
                       validator: ResetPasswordValidators.password,
                     ),
                   ),
+
+                  SizedBox(height: 10.h),
+
+                  PasswordRequirementsChecklist(password: state.password),
 
                   if (state.showStrength) ...<Widget>[
                     SizedBox(height: 10.h),

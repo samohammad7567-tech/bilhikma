@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 
-import '../../../../../core/utils/app_regex.dart';
+import '../../../../../core/enums/password_requirement_enum.dart';
 
 class ResetPasswordValidators {
   ResetPasswordValidators._();
@@ -9,13 +9,13 @@ class ResetPasswordValidators {
     final String password = value ?? '';
 
     if (password.isEmpty) return 'password_required'.tr();
-    if (password.length < 8) return 'password_min_8'.tr();
-    if (!AppRegex.passwordHasLetter(password)) {
-      return 'password_must_contain_letter'.tr();
-    }
-    if (!AppRegex.passwordHasNumber(password)) {
-      return 'password_must_contain_number'.tr();
-    }
+
+    // Rejects on the same rules the checklist renders, so the two can never
+    // disagree about whether a password is acceptable.
+    final PasswordRequirement? unmet = PasswordRequirement.firstUnsatisfiedIn(
+      password,
+    );
+    if (unmet != null) return unmet.labelKey.tr(namedArgs: unmet.labelArgs);
 
     return null;
   }

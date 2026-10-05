@@ -1,6 +1,9 @@
 class AppRegex {
   AppRegex._();
 
+  /// Shortest password the app accepts when a new one is being created.
+  static const int passwordMinLength = 6;
+
   static final RegExp email = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
   static final RegExp passwordLetter = RegExp(r'[A-Za-z]');
   static final RegExp passwordNumber = RegExp(r'\d');
@@ -14,9 +17,16 @@ class AppRegex {
 
   static bool isValidEmail(String value) => email.hasMatch(value);
 
+  static bool passwordHasMinLength(String value) =>
+      value.length >= passwordMinLength;
+
   static bool passwordHasLetter(String value) => passwordLetter.hasMatch(value);
 
   static bool passwordHasNumber(String value) => passwordNumber.hasMatch(value);
+
+  static bool passwordHasUpper(String value) => passwordUpper.hasMatch(value);
+
+  static bool passwordHasLower(String value) => passwordLower.hasMatch(value);
 
   static bool passwordHasMixedCase(String value) =>
       passwordUpper.hasMatch(value) && passwordLower.hasMatch(value);
