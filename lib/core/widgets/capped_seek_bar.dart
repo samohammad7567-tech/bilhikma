@@ -9,6 +9,7 @@ class CappedSeekBar extends StatefulWidget {
     required this.onSeek,
     super.key,
     this.onBlocked,
+    this.onInteraction,
   });
 
   final Duration position;
@@ -19,6 +20,10 @@ class CappedSeekBar extends StatefulWidget {
   final ValueChanged<Duration> onSeek;
 
   final VoidCallback? onBlocked;
+
+  /// Fired while the user drags the thumb, so an owning overlay can keep
+  /// itself on screen for as long as the interaction lasts.
+  final VoidCallback? onInteraction;
 
   @override
   State<CappedSeekBar> createState() => _CappedSeekBarState();
@@ -66,6 +71,8 @@ class _CappedSeekBarState extends State<CappedSeekBar> {
 
   void _onChanged(double raw) {
     final double cap = widget.maxPosition.inSeconds.toDouble();
+
+    widget.onInteraction?.call();
     setState(() => _dragSeconds = raw > cap ? cap : raw);
   }
 

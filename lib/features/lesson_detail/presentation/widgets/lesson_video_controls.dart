@@ -1,8 +1,12 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../core/utils/media_controls_visibility.dart';
 import '../../../../core/widgets/app_toast.dart';
-import '../../../../core/widgets/capped_seek_bar.dart';
+import 'lesson_video_bottom_bar.dart';
+import 'lesson_video_round_button.dart';
+import 'lesson_video_tap_layer.dart';
 
 class LessonVideoControls extends StatefulWidget {
   const LessonVideoControls({
@@ -37,26 +41,37 @@ class LessonVideoControls extends StatefulWidget {
 }
 
 class _LessonVideoControlsState extends State<LessonVideoControls> {
-  bool _showRewindHint = false;
+  final MediaControlsVisibility _visibility = MediaControlsVisibility();
 
-  void _rewind() {
-    widget.onRewind();
+  @override
+  void initState() {
+    super.initState();
+    _visibility.setPlaying(widget.isPlaying);
+  }
 
-    setState(() => _showRewindHint = true);
-    Future<void>.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) setState(() => _showRewindHint = false);
-    });
+  @override
+  void didUpdateWidget(LessonVideoControls oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isPlaying != widget.isPlaying) {
+      _visibility.setPlaying(widget.isPlaying);
+    }
+  }
+
+  @override
+  void dispose() {
+    _visibility.dispose();
+    super.dispose();
+  }
+
+  void _run(VoidCallback action) {
+    action();
+    _visibility.poke();
   }
 
   void _refuseSkip() {
+    _visibility.poke();
     AppToast.show(context, 'video_no_skip_note'.tr());
-  }
-
-  static String _clock(Duration value) {
-    final int minutes = value.inMinutes;
-    final int seconds = value.inSeconds.remainder(60);
-
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -64,35 +79,45 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onDoubleTap: _rewind,
-                child: _RewindHint(visible: _showRewindHint),
-              ),
-            ),
-
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onDoubleTap: _refuseSkip,
-              ),
-            ),
-          ],
+        LessonVideoTapLayer(
+          onTap: _visibility.toggle,
+          onRewind: () => _run(widget.onRewind),
+          onRefuseSkip: _refuseSkip,
         ),
 
         if (widget.isBuffering)
-          const Center(child: CircularProgressIndicator(color: Colors.white))
-        else
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
+
+        ValueListenableBuilder<bool>(
+          valueListenable: _visibility,
+          builder: (BuildContext context, bool visible, Widget? child) =>
+              IgnorePointer(
+                ignoring: !visible,
+                child: AnimatedOpacity(
+                  opacity: visible ? 1 : 0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  child: child,
+                ),
+              ),
+          child: _controls(),
+        ),
+      ],
+    );
+  }
+
+  Widget _controls() {
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        if (!widget.isBuffering)
           Center(
-            child: _RoundButton(
+            child: LessonVideoRoundButton(
               icon: widget.isPlaying
                   ? Icons.pause_rounded
                   : Icons.play_arrow_rounded,
               size: 34.sp,
-              onTap: widget.onToggle,
+              onTap: () => _run(widget.onToggle),
             ),
           ),
 
@@ -100,103 +125,18 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
           left: 0,
           right: 0,
           bottom: 0,
-          child: Container(
-            padding: EdgeInsets.fromLTRB(12.w, 2.h, 4.w, 2.h),
-            color: Colors.black.withValues(alpha: 0.35),
-            child: Row(
-              children: <Widget>[
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Text(
-                    '${_clock(widget.position)} / ${_clock(widget.duration)}',
-                    style: TextStyle(color: Colors.white, fontSize: 11.sp),
-                  ),
-                ),
-
-                SizedBox(width: 6.w),
-
-                Expanded(
-                  child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: CappedSeekBar(
-                      position: widget.position,
-                      duration: widget.duration,
-                      maxPosition: widget.maxPosition,
-                      onSeek: widget.onSeek,
-                      onBlocked: _refuseSkip,
-                    ),
-                  ),
-                ),
-
-                _RoundButton(
-                  icon: widget.isFullscreen
-                      ? Icons.fullscreen_exit_rounded
-                      : Icons.fullscreen_rounded,
-                  size: 20.sp,
-                  onTap: widget.onFullscreen,
-                ),
-              ],
-            ),
+          child: LessonVideoBottomBar(
+            isFullscreen: widget.isFullscreen,
+            position: widget.position,
+            duration: widget.duration,
+            maxPosition: widget.maxPosition,
+            onSeek: (Duration target) => _run(() => widget.onSeek(target)),
+            onBlocked: _refuseSkip,
+            onInteraction: _visibility.poke,
+            onFullscreen: () => _run(widget.onFullscreen),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _RewindHint extends StatelessWidget {
-  const _RewindHint({required this.visible});
-
-  final bool visible;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: visible ? 1 : 0,
-      duration: const Duration(milliseconds: 150),
-      child: ColoredBox(
-        color: Colors.black.withValues(alpha: visible ? 0.25 : 0),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(Icons.fast_rewind_rounded, color: Colors.white, size: 30.sp),
-              Text(
-                '10s',
-                style: TextStyle(color: Colors.white, fontSize: 12.sp),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RoundButton extends StatelessWidget {
-  const _RoundButton({
-    required this.icon,
-    required this.size,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final double size;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black.withValues(alpha: 0.45),
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(8.w),
-          child: Icon(icon, color: Colors.white, size: size),
-        ),
-      ),
     );
   }
 }
