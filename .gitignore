@@ -29,3 +29,6 @@ app.*.map.json
 /android/app/release
 android/build/
 windows/flutter/ephemeral/
+
+# CI scratch (bundler binstubs created by the iOS workflow)
+.ci-bin/

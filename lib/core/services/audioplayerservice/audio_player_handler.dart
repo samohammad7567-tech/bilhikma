@@ -255,6 +255,9 @@ class AudioPlayerHandler extends BaseAudioHandler
     }
     final scheme = uri.scheme.toLowerCase();
     if (scheme == 'http' || scheme == 'https') {
+      // just_audio's disk cache is what keeps remote lessons playable
+      // offline; the experimental API is used deliberately.
+      // ignore: experimental_member_use
       return LockCachingAudioSource(uri, tag: tag);
     }
     return AudioSource.uri(uri, tag: tag);

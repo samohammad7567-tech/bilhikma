@@ -1,0 +1,7 @@
+# Bundle identifier of the Runner target.
+app_identifier("tech.bilhikma.app")
+
+# Only needed for the `testflight` lane / App Store Connect calls.
+# Both come from repository secrets in CI, so nothing sensitive lives here.
+apple_id(ENV["APPLE_ID"]) unless ENV["APPLE_ID"].to_s.empty?
+team_id(ENV["APPLE_TEAM_ID"]) unless ENV["APPLE_TEAM_ID"].to_s.empty?

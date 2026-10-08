@@ -1,0 +1,381 @@
+# Bilhikma - iOS release pipeline.
+#
+# Lanes
+#   verify_setup        Check every required credential/env var without building.
+#   build_only          Produce a signed IPA locally (useful for debugging signing).
+#   distribute          Signed IPA -> Firebase App Distribution (the CI default).
+#   testflight_release  Signed IPA -> TestFlight (needs an App Store Connect key).
+#
+# All credentials arrive through environment variables so nothing secret is
+# committed. See docs/ios_release_setup.md for the full list.
+
+require "base64"
+require "securerandom"
+require "tmpdir"
+require "shellwords"
+require "fileutils"
+require "time"
+
+default_platform(:ios)
+
+APP_IDENTIFIER  = "tech.bilhikma.app"
+XCODE_PROJECT   = "Runner.xcodeproj"
+XCODE_WORKSPACE = "Runner.xcworkspace"
+SCHEME          = "Runner"
+CONFIGURATION   = "Release"
+IPA_OUTPUT_DIR  = File.expand_path("../../build/ios/ipa", __dir__)
+IPA_NAME        = "bilhikma.ipa"
+KEYCHAIN_NAME   = "bilhikma_ci.keychain"
+DEFAULT_TESTERS = "mohammadwork199700@gmail.com"
+VALID_EXPORTS   = %w[ad-hoc app-store development enterprise].freeze
+
+# ---------------------------------------------------------------------------
+# Plain Ruby helpers (no lane context required)
+# ---------------------------------------------------------------------------
+
+def env_or_fail(key)
+  value = ENV[key].to_s.strip
+  if value.empty?
+    UI.user_error!("Missing required environment variable #{key}. See docs/ios_release_setup.md")
+  end
+  value
+end
+
+def env_or(key, fallback)
+  value = ENV[key].to_s.strip
+  value.empty? ? fallback : value
+end
+
+def write_temp_file(name, bytes)
+  path = File.join(Dir.mktmpdir("bilhikma-ios"), name)
+  File.open(path, "wb") { |f| f.write(bytes) }
+  path
+end
+
+def decode_base64_secret(key)
+  raw = env_or_fail(key)
+  bytes = Base64.decode64(raw.gsub(/\s+/, ""))
+  if bytes.nil? || bytes.empty?
+    UI.user_error!("#{key} did not decode to any data - re-encode the file with `base64 -i <file> | pbcopy`.")
+  end
+  bytes
+end
+
+# Reads the embedded plist out of a .mobileprovision so the build is configured
+# from the profile itself rather than from hand-maintained settings.
+def provisioning_profile_details(path)
+  require "plist"
+
+  xml = `security cms -D -i #{Shellwords.escape(path)} 2>/dev/null`
+  UI.user_error!("Could not decode the provisioning profile at #{path}.") if xml.to_s.strip.empty?
+
+  plist = Plist.parse_xml(xml)
+  entitlements = plist["Entitlements"] || {}
+  application_identifier = entitlements["application-identifier"].to_s
+  team_id = (plist["TeamIdentifier"] || []).first || entitlements["com.apple.developer.team-identifier"]
+  bundle_id = application_identifier.sub(/\A#{Regexp.escape(team_id.to_s)}\./, "")
+
+  {
+    uuid: plist["UUID"],
+    name: plist["Name"],
+    team_id: team_id,
+    bundle_id: bundle_id,
+    aps_environment: entitlements["aps-environment"],
+    expires_at: plist["ExpirationDate"],
+    device_count: (plist["ProvisionedDevices"] || []).length,
+    provisions_all_devices: plist["ProvisionsAllDevices"] == true
+  }
+end
+
+def signing_identity_for(export_method)
+  export_method == "development" ? "Apple Development" : "Apple Distribution"
+end
+
+def keychain_file_exists?
+  [KEYCHAIN_NAME, "#{KEYCHAIN_NAME}-db"].any? do |name|
+    File.exist?(File.expand_path("~/Library/Keychains/#{name}"))
+  end
+end
+
+def profile_matches_app?(bundle_id)
+  return true if bundle_id == APP_IDENTIFIER
+  return true if bundle_id.to_s.end_with?("*") && APP_IDENTIFIER.start_with?(bundle_id.to_s.chomp("*"))
+  false
+end
+
+# Firebase App Distribution authenticates with a service-account JSON file.
+# Accept it as a path, as raw JSON, or as base64-encoded JSON.
+def firebase_credentials_path
+  path = ENV["FIREBASE_SERVICE_ACCOUNT_FILE"].to_s.strip
+  unless path.empty?
+    UI.user_error!("FIREBASE_SERVICE_ACCOUNT_FILE points at #{path}, which does not exist.") unless File.exist?(path)
+    return path
+  end
+
+  raw = ENV["FIREBASE_SERVICE_ACCOUNT_JSON"].to_s.strip
+  if raw.empty?
+    UI.user_error!("Set FIREBASE_SERVICE_ACCOUNT_JSON (or FIREBASE_SERVICE_ACCOUNT_FILE). See docs/ios_release_setup.md")
+  end
+
+  json = raw.start_with?("{") ? raw : Base64.decode64(raw.gsub(/\s+/, ""))
+  unless json.to_s.strip.start_with?("{")
+    UI.user_error!("FIREBASE_SERVICE_ACCOUNT_JSON is neither raw JSON nor base64-encoded JSON.")
+  end
+
+  write_temp_file("firebase-service-account.json", json)
+end
+
+# ---------------------------------------------------------------------------
+
+platform :ios do
+  before_all do
+    ENV["FASTLANE_SKIP_UPDATE_CHECK"]  = "1"
+    ENV["FASTLANE_XCODE_LIST_TIMEOUT"] = "120"
+    ENV["FASTLANE_HIDE_CHANGELOG"]     = "1"
+  end
+
+  # -------------------------------------------------------------------------
+  desc "Validate credentials and inspect the provisioning profile; builds nothing."
+  lane :verify_setup do
+    UI.header("Signing credentials")
+    %w[IOS_DIST_CERT_P12_BASE64 IOS_DIST_CERT_PASSWORD IOS_PROVISION_PROFILE_BASE64].each do |key|
+      env_or_fail(key)
+      UI.success("  #{key} is set (#{ENV[key].to_s.length} chars)")
+    end
+
+    UI.header("Firebase App Distribution")
+    UI.success("  FIREBASE_IOS_APP_ID = #{env_or_fail('FIREBASE_IOS_APP_ID')}")
+    UI.success("  service account resolved to #{File.basename(firebase_credentials_path)}")
+    UI.success("  testers = #{env_or('FIREBASE_TESTERS', DEFAULT_TESTERS)}")
+
+    profile_path = write_temp_file("profile.mobileprovision", decode_base64_secret("IOS_PROVISION_PROFILE_BASE64"))
+    details = provisioning_profile_details(profile_path)
+
+    UI.header("Provisioning profile")
+    details.each { |key, value| UI.message("  #{key}: #{value}") }
+
+    unless profile_matches_app?(details[:bundle_id])
+      UI.user_error!("Profile is for #{details[:bundle_id]}, but the app bundle id is #{APP_IDENTIFIER}.")
+    end
+    if details[:expires_at] && Time.parse(details[:expires_at].to_s) < Time.now
+      UI.user_error!("Provisioning profile expired on #{details[:expires_at]}.")
+    end
+    if details[:aps_environment].nil?
+      UI.important("Profile carries no aps-environment entitlement - push notifications will not work. " \
+                   "Enable the Push Notifications capability on the App ID and regenerate the profile.")
+    end
+
+    UI.success("Setup looks good.")
+    details
+  end
+
+  # -------------------------------------------------------------------------
+  desc "Build a signed IPA without uploading it anywhere."
+  lane :build_only do |options|
+    export_method = resolve_export_method(options)
+    profile = prepare_signing(export_method: export_method)
+    build_signed_ipa(export_method: export_method, profile: profile)
+    UI.success("IPA written to #{File.join(IPA_OUTPUT_DIR, IPA_NAME)}")
+  end
+
+  # -------------------------------------------------------------------------
+  desc "Build a signed IPA and release it on Firebase App Distribution."
+  lane :distribute do |options|
+    export_method = resolve_export_method(options)
+
+    profile = prepare_signing(export_method: export_method)
+    build_signed_ipa(export_method: export_method, profile: profile)
+
+    if %w[ad-hoc development].include?(export_method) &&
+       !profile[:provisions_all_devices] && profile[:device_count].zero?
+      UI.important("This #{export_method} profile has zero registered devices - testers will not be able to install the build. " \
+                   "Register their UDIDs in the Apple Developer portal and regenerate the profile.")
+    end
+
+    upload_to_firebase(
+      testers: options[:testers],
+      groups: options[:groups],
+      release_notes: options[:release_notes]
+    )
+
+    UI.success("Released to Firebase App Distribution.")
+  end
+
+  # -------------------------------------------------------------------------
+  desc "Build a signed IPA and upload it to TestFlight."
+  lane :testflight_release do |options|
+    profile = prepare_signing(export_method: "app-store")
+    build_signed_ipa(export_method: "app-store", profile: profile)
+
+    app_store_connect_api_key(
+      key_id: env_or_fail("APP_STORE_CONNECT_KEY_ID"),
+      issuer_id: env_or_fail("APP_STORE_CONNECT_ISSUER_ID"),
+      key_content: env_or_fail("APP_STORE_CONNECT_KEY_P8_BASE64"),
+      is_key_content_base64: true,
+      in_house: false
+    )
+
+    upload_to_testflight(
+      ipa: File.join(IPA_OUTPUT_DIR, IPA_NAME),
+      skip_waiting_for_build_processing: true,
+      changelog: options[:release_notes] || default_release_notes
+    )
+  end
+
+  # -------------------------------------------------------------------------
+  # Private lanes
+  # -------------------------------------------------------------------------
+
+  private_lane :resolve_export_method do |options|
+    method = (options[:export_method] || env_or("IOS_EXPORT_METHOD", "ad-hoc")).to_s.strip
+    unless VALID_EXPORTS.include?(method)
+      UI.user_error!("export_method must be one of #{VALID_EXPORTS.join(', ')} (got '#{method}').")
+    end
+    method
+  end
+
+  desc "Import the certificate + profile into a throwaway keychain and switch the project to manual signing."
+  private_lane :prepare_signing do |options|
+    export_method = options[:export_method]
+    keychain_password = env_or("IOS_KEYCHAIN_PASSWORD", SecureRandom.hex(24))
+
+    delete_keychain(name: KEYCHAIN_NAME) if keychain_file_exists?
+
+    create_keychain(
+      name: KEYCHAIN_NAME,
+      password: keychain_password,
+      default_keychain: false,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false,
+      add_to_search_list: true
+    )
+
+    cert_path = write_temp_file("ios_distribution.p12", decode_base64_secret("IOS_DIST_CERT_P12_BASE64"))
+    import_certificate(
+      certificate_path: cert_path,
+      certificate_password: env_or_fail("IOS_DIST_CERT_PASSWORD"),
+      keychain_name: KEYCHAIN_NAME,
+      keychain_password: keychain_password,
+      log_output: true
+    )
+    File.delete(cert_path)
+
+    profile_path = write_temp_file("profile.mobileprovision", decode_base64_secret("IOS_PROVISION_PROFILE_BASE64"))
+    details = provisioning_profile_details(profile_path)
+
+    unless profile_matches_app?(details[:bundle_id])
+      UI.user_error!("Provisioning profile targets #{details[:bundle_id]}, but the app bundle id is #{APP_IDENTIFIER}.")
+    end
+    if details[:expires_at] && Time.parse(details[:expires_at].to_s) < Time.now
+      UI.user_error!("Provisioning profile expired on #{details[:expires_at]}. Regenerate it in the Apple Developer portal.")
+    end
+
+    install_provisioning_profile(path: profile_path)
+    UI.message("Profile '#{details[:name]}' (#{details[:uuid]}), team #{details[:team_id]}, expires #{details[:expires_at]}")
+
+    # Automatic signing needs an interactive Xcode session, so CI must be manual.
+    update_code_signing_settings(
+      path: XCODE_PROJECT,
+      use_automatic_signing: false,
+      team_id: details[:team_id],
+      targets: [SCHEME],
+      build_configurations: [CONFIGURATION],
+      code_sign_identity: signing_identity_for(export_method),
+      profile_name: details[:name],
+      profile_uuid: details[:uuid],
+      bundle_identifier: APP_IDENTIFIER
+    )
+
+    details
+  end
+
+  desc "Archive and export the IPA with gym."
+  private_lane :build_signed_ipa do |options|
+    export_method = options[:export_method]
+    details = options[:profile]
+
+    FileUtils.mkdir_p(IPA_OUTPUT_DIR)
+
+    build_app(
+      workspace: XCODE_WORKSPACE,
+      scheme: SCHEME,
+      configuration: CONFIGURATION,
+      # `flutter build ios --no-codesign` already produced the Dart/Flutter
+      # artifacts; cleaning here would only throw away Xcode work.
+      clean: false,
+      skip_profile_detection: true,
+      export_method: export_method,
+      export_team_id: details[:team_id],
+      output_directory: IPA_OUTPUT_DIR,
+      output_name: IPA_NAME,
+      include_bitcode: false,
+      include_symbols: true,
+      buildlog_path: File.join(IPA_OUTPUT_DIR, "logs"),
+      export_options: {
+        signingStyle: "manual",
+        teamID: details[:team_id],
+        compileBitcode: false,
+        uploadBitcode: false,
+        uploadSymbols: true,
+        destination: "export",
+        provisioningProfiles: { APP_IDENTIFIER => details[:name] }
+      }
+      # Deliberately no `xcargs` signing overrides: command-line build settings
+      # apply to every target in the workspace, which makes embedded pod
+      # frameworks demand a provisioning profile of their own. prepare_signing
+      # already wrote these settings onto the Runner target's Release config.
+    )
+  end
+
+  desc "Upload the built IPA to Firebase App Distribution."
+  private_lane :upload_to_firebase do |options|
+    ipa_path = File.join(IPA_OUTPUT_DIR, IPA_NAME)
+    UI.user_error!("No IPA at #{ipa_path} - the build step did not produce one.") unless File.exist?(ipa_path)
+
+    testers = (options[:testers] || env_or("FIREBASE_TESTERS", DEFAULT_TESTERS)).to_s.strip
+    groups  = (options[:groups] || env_or("FIREBASE_TESTER_GROUPS", "")).to_s.strip
+    notes   = (options[:release_notes] || default_release_notes).to_s
+
+    UI.message("Notifying testers: #{testers}") unless testers.empty?
+
+    params = {
+      app: env_or_fail("FIREBASE_IOS_APP_ID"),
+      service_credentials_file: firebase_credentials_path,
+      ipa_path: ipa_path,
+      release_notes: notes,
+      debug: false
+    }
+    params[:testers] = testers unless testers.empty?
+    params[:groups] = groups unless groups.empty?
+
+    firebase_app_distribution(params)
+  end
+
+  desc "Release notes assembled from the build version and recent commits."
+  private_lane :default_release_notes do
+    version = env_or("IOS_BUILD_NAME", "unknown")
+    build   = env_or("IOS_BUILD_NUMBER", "unknown")
+    branch  = env_or("GITHUB_REF_NAME", `git rev-parse --abbrev-ref HEAD 2>/dev/null`.to_s.strip)
+    sha     = env_or("GITHUB_SHA", `git rev-parse HEAD 2>/dev/null`.to_s.strip)
+    log     = `git log -5 --no-merges --pretty=format:"- %s" 2>/dev/null`.to_s.strip
+
+    [
+      "Bilhikma iOS #{version} (#{build})",
+      "branch: #{branch}",
+      "commit: #{sha[0, 12]}",
+      "",
+      "Recent changes:",
+      log.empty? ? "- (no commit history available)" : log
+    ].join("\n")
+  end
+
+  # -------------------------------------------------------------------------
+  after_all do
+    delete_keychain(name: KEYCHAIN_NAME) if keychain_file_exists?
+  end
+
+  error do |_lane, _exception|
+    delete_keychain(name: KEYCHAIN_NAME) if keychain_file_exists?
+  end
+end
