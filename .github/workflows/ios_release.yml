@@ -37,12 +37,21 @@ jobs:
         with:
           fetch-depth: 20
 
-      - name: Show toolchain
+      - name: Select Xcode and show toolchain
         id: toolchain
         run: |
           set -euo pipefail
 
           sw_vers
+
+          echo "Installed Xcode versions:"
+          ls -d /Applications/Xcode*.app
+
+          # Pick the newest installed Xcode rather than the image default,
+          # which is not always the latest one available.
+          NEWEST="$(ls -d /Applications/Xcode*.app | sort -V | tail -n1)"
+          sudo xcode-select -s "$NEWEST/Contents/Developer"
+
           xcodebuild -version
 
           XCODE_MAJOR="$(
@@ -51,7 +60,12 @@ jobs:
             sed -E 's/^Xcode[[:space:]]+([0-9]+).*/\1/'
           )"
 
+          IOS_SDK="$(xcrun --sdk iphoneos --show-sdk-version)"
+          echo "Selected Xcode .. $NEWEST"
+          echo "iOS SDK ......... $IOS_SDK"
+
           echo "xcode_major=$XCODE_MAJOR" >> "$GITHUB_OUTPUT"
+          echo "ios_sdk=$IOS_SDK" >> "$GITHUB_OUTPUT"
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2

@@ -41,6 +41,18 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^34.2.3
   cached_network_image: ^3.4.1
   photo_view: ^0.15.0
+
+# device_info_plus >= 12.4.0 calls -[NSProcessInfo isiOSAppOnVision], which
+# only exists in the iOS 26.1 SDK, so it fails to compile on CI runners with
+# older Xcode. 12.3.0 is the last release without that call.
+# syncfusion_flutter_pdfviewer asks for ^13.1.0 but only uses androidInfo,
+# which is unchanged, hence the override rather than a version bump.
+dependency_overrides:
+  device_info_plus: 12.3.0
+  # 12.3.0 pins win32 ^5.11.0 while share_plus needs ^6.0.1. win32 is used
+  # only by the Windows desktop implementation, which this app never builds.
+  win32: ^6.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
