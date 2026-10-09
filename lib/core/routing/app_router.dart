@@ -36,6 +36,7 @@ import '../../features/subject_content/presentation/screens/subject_content_scre
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/subjects/presentation/screens/subjects_screen.dart';
 import '../di/service_locator.dart';
+import '../services/notification_launcher.dart';
 import '../utils/cache_util.dart';
 import '../utils/orientation/orientation_lock.dart';
 import 'app_routes.dart';
@@ -63,6 +64,8 @@ class AppRouter {
         );
 
       case AppRoutes.login:
+        NotificationLauncher.instance.markSignedOut();
+
         return MaterialPageRoute(
           builder: (_) => LoginScreen(
             onLoggedIn: _onLoggedIn,
@@ -98,6 +101,8 @@ class AppRouter {
         );
 
       case AppRoutes.home:
+        NotificationLauncher.instance.markReady();
+
         return MaterialPageRoute(builder: (_) => const MainShellScreen());
 
       case AppRoutes.live:

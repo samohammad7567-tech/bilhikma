@@ -398,7 +398,10 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   }
 
   /// Applies a new playback rate and remembers it for the next lesson.
+  ///
+  /// The fastest rates stay closed until this lesson has been completed once.
   Future<void> setPlaybackSpeed(PlaybackSpeed speed) async {
+    if (speed.needsCompletedLesson && !state.progress.isCompleted) return;
     if (state.playbackSpeed == speed) return;
 
     emit(state.copyWith(playbackSpeed: speed));

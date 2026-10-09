@@ -17,6 +17,7 @@ class LessonAudioPlayer extends StatelessWidget {
     required this.onToggle,
     required this.speed,
     required this.onSpeedChanged,
+    required this.isLessonCompleted,
     super.key,
     this.isBuffering = false,
     this.onSeek,
@@ -35,6 +36,8 @@ class LessonAudioPlayer extends StatelessWidget {
 
   final PlaybackSpeed speed;
   final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
+  final bool isLessonCompleted;
 
   final ValueChanged<Duration>? onSeek;
 
@@ -61,6 +64,7 @@ class LessonAudioPlayer extends StatelessWidget {
             onToggle: onToggle,
             speed: speed,
             onSpeedChanged: onSpeedChanged,
+            isLessonCompleted: isLessonCompleted,
             onRewind: onSeek == null ? null : () => _rewind(onSeek),
             onForward: onSeek == null ? null : () => _forward(context, onSeek),
           ),

@@ -6,17 +6,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/notification_model.dart';
 import '../widgets/notification_card.dart';
+import '../../../../core/routing/notification_destination.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 
 class NotificationsList extends StatefulWidget {
   const NotificationsList({
     required this.notifications,
     required this.onSeen,
+    required this.onOpen,
     super.key,
   });
 
   final List<NotificationModel> notifications;
   final ValueChanged<int> onSeen;
+
+  /// Called with the tapped notification and the screen it refers to.
+  final void Function(NotificationModel item, NotificationDestination target)
+  onOpen;
 
   @override
   State<NotificationsList> createState() => _NotificationsListState();
@@ -76,7 +82,17 @@ class _NotificationsListState extends State<NotificationsList> {
             SizedBox(height: 10.h),
         itemBuilder: (BuildContext context, int index) {
           final NotificationModel item = widget.notifications[index];
-          final Widget card = NotificationCard(notification: item);
+
+          // Notifications that refer to nothing openable stay inert.
+          final NotificationDestination? target = NotificationDestination
+              .resolve(kind: item.kind, deepLink: item.deepLink);
+
+          final Widget card = NotificationCard(
+            notification: item,
+            onTap: target == null
+                ? null
+                : () => widget.onOpen(item, target),
+          );
 
           if (item.isRead) return card;
 

@@ -24,6 +24,7 @@ class LessonVideoControls extends StatefulWidget {
     required this.onFullscreen,
     required this.speed,
     required this.onSpeedChanged,
+    required this.isLessonCompleted,
     super.key,
   });
 
@@ -42,6 +43,8 @@ class LessonVideoControls extends StatefulWidget {
 
   final PlaybackSpeed speed;
   final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
+  final bool isLessonCompleted;
 
   @override
   State<LessonVideoControls> createState() => _LessonVideoControlsState();
@@ -87,6 +90,7 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
     await PlaybackSpeedSheet.show(
       context: context,
       current: widget.speed,
+      isLessonCompleted: widget.isLessonCompleted,
       onSelected: widget.onSpeedChanged,
     );
 

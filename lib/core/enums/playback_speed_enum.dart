@@ -19,6 +19,19 @@ enum PlaybackSpeed {
 
   bool get isNormal => this == PlaybackSpeed.normal;
 
+  /// Fastest rate allowed before the lesson has been completed once.
+  static const double maxOnFirstWatch = 1.5;
+
+  /// Rates past the first-watch cap open up once the lesson is completed.
+  bool get needsCompletedLesson => rate > maxOnFirstWatch;
+
+  /// Rate to actually play at: a stored preference above the first-watch cap
+  /// drops back to the cap until this lesson has been completed.
+  PlaybackSpeed cappedFor({required bool isLessonCompleted}) =>
+      isLessonCompleted || !needsCompletedLesson
+      ? this
+      : PlaybackSpeed.oneAndHalf;
+
   /// Closest offered rate to [rate]; [normal] when nothing was stored.
   ///
   /// Keeps a cached rate usable after this list changes, instead of silently

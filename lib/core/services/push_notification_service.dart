@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../constants/api_endpoints.dart';
+import '../routing/notification_destination.dart';
 import 'dio_service.dart';
+import 'notification_launcher.dart';
 
 class PushNotificationService {
   PushNotificationService._();
@@ -37,6 +41,7 @@ class PushNotificationService {
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
+      onDidReceiveNotificationResponse: _onLocalNotificationTap,
     );
     await _localNotifications
         .resolvePlatformSpecificImplementation<
@@ -59,7 +64,9 @@ class PushNotificationService {
     });
 
     FirebaseMessaging.onMessage.listen(_showForegroundNotification);
+    FirebaseMessaging.onMessageOpenedApp.listen(_openFromMessage);
 
+    await _handleLaunchTap();
     await registerToken();
   }
 
@@ -78,6 +85,51 @@ class PushNotificationService {
       );
     } catch (error) {
       debugPrint('PushNotificationService: token registration skipped: $error');
+    }
+  }
+
+  /// A notification tap that started the app: the destination is queued and
+  /// opened once the app has signed-in UI to navigate from.
+  static Future<void> _handleLaunchTap() async {
+    final RemoteMessage? initial = await FirebaseMessaging.instance
+        .getInitialMessage();
+    if (initial != null) {
+      _openFromMessage(initial);
+      return;
+    }
+
+    final NotificationAppLaunchDetails? details = await _localNotifications
+        .getNotificationAppLaunchDetails();
+    if (details?.didNotificationLaunchApp ?? false) {
+      _openFromPayload(details?.notificationResponse?.payload);
+    }
+  }
+
+  static void _openFromMessage(RemoteMessage message) => NotificationLauncher
+      .instance
+      .open(NotificationDestination.fromPushData(message.data));
+
+  static void _onLocalNotificationTap(NotificationResponse response) =>
+      _openFromPayload(response.payload);
+
+  static void _openFromPayload(String? payload) {
+    if (payload == null || payload.isEmpty) {
+      NotificationLauncher.instance.open(null);
+      return;
+    }
+
+    try {
+      final Object? decoded = jsonDecode(payload);
+
+      NotificationLauncher.instance.open(
+        decoded is Map
+            ? NotificationDestination.fromPushData(
+                Map<String, dynamic>.from(decoded),
+              )
+            : null,
+      );
+    } on FormatException {
+      NotificationLauncher.instance.open(null);
     }
   }
 
@@ -102,6 +154,7 @@ class PushNotificationService {
           priority: Priority.high,
         ),
       ),
+      payload: jsonEncode(message.data),
     );
   }
 }

@@ -91,6 +91,7 @@
   "video_no_skip_note": "You can rewind and rewatch, but you cannot skip past what you have already watched",
   "playback_speed": "Playback speed",
   "playback_speed_normal": "Normal",
+  "playback_speed_locked_note": "Speeds above 1.5x unlock once you complete the lesson",
   "profile_title": "Profile",
   "academic_path": "Learning path",
   "edit_information": "Edit information",

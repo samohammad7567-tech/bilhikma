@@ -20,7 +20,7 @@ enum NotificationKind {
   bool get isGreen => tone == NotificationTone.green;
 
   String get imagePath => switch (this) {
-    NotificationKind.newContent => AppAssets.assetsBookIcon,
+    NotificationKind.newContent => AppAssets.boo,
     NotificationKind.liveSession => AppAssets.assetsLive,
     NotificationKind.liveReminder => AppAssets.assetsLive,
     NotificationKind.enrollmentApproved => AppAssets.assetsAccountAccepted,

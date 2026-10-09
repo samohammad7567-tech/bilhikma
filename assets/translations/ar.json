@@ -91,6 +91,7 @@
   "video_no_skip_note": "يمكنك الرجوع وإعادة المشاهدة، لكن لا يمكنك التقديم إلى ما بعد ما شاهدته",
   "playback_speed": "سرعة التشغيل",
   "playback_speed_normal": "عادي",
+  "playback_speed_locked_note": "السرعات الأعلى من ×1.5 تُفتح بعد إكمال الدرس",
   "profile_title": "الملف الشخصي",
   "academic_path": "المسار التعليمي",
   "edit_information": "تعديل المعلومات",

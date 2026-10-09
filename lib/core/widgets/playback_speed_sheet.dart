@@ -10,17 +10,22 @@ import 'sheet_handle.dart';
 class PlaybackSpeedSheet extends StatelessWidget {
   const PlaybackSpeedSheet({
     required this.current,
+    required this.isLessonCompleted,
     required this.onSelected,
     super.key,
   });
 
   final PlaybackSpeed current;
 
+  /// Fastest rates stay locked until the lesson has been completed once.
+  final bool isLessonCompleted;
+
   final ValueChanged<PlaybackSpeed> onSelected;
 
   static Future<void> show({
     required BuildContext context,
     required PlaybackSpeed current,
+    required bool isLessonCompleted,
     required ValueChanged<PlaybackSpeed> onSelected,
   }) => showModalBottomSheet<void>(
     context: context,
@@ -28,6 +33,7 @@ class PlaybackSpeedSheet extends StatelessWidget {
     isScrollControlled: true,
     builder: (BuildContext sheetContext) => PlaybackSpeedSheet(
       current: current,
+      isLessonCompleted: isLessonCompleted,
       onSelected: (PlaybackSpeed speed) {
         Navigator.of(sheetContext).pop();
         onSelected(speed);
@@ -70,8 +76,22 @@ class PlaybackSpeedSheet extends StatelessWidget {
                   _Option(
                     speed: option,
                     isSelected: option == current,
+                    isLocked: option.needsCompletedLesson && !isLessonCompleted,
                     onTap: () => onSelected(option),
                   ),
+
+                if (!isLessonCompleted) ...<Widget>[
+                  SizedBox(height: 8.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Text(
+                      'playback_speed_locked_note'.tr(),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: styles.cardCaption,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -85,11 +105,13 @@ class _Option extends StatelessWidget {
   const _Option({
     required this.speed,
     required this.isSelected,
+    required this.isLocked,
     required this.onTap,
   });
 
   final PlaybackSpeed speed;
   final bool isSelected;
+  final bool isLocked;
   final VoidCallback onTap;
 
   @override
@@ -97,22 +119,36 @@ class _Option extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final AppTextStyles styles = AppTheme.styles(context);
 
+    final TextStyle style = isSelected
+        ? styles.optionLabelSelected
+        : styles.optionLabel;
+
     return ListTile(
-      onTap: onTap,
+      onTap: isLocked ? null : onTap,
       dense: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
       title: Text(
         speed.isNormal ? 'playback_speed_normal'.tr() : speed.label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: isSelected ? styles.optionLabelSelected : styles.optionLabel,
+        style: isLocked
+            ? style.copyWith(color: style.color?.withValues(alpha: 0.4))
+            : style,
       ),
-      trailing: isSelected
-          ? Icon(Icons.check_rounded, size: 20.w, color: colors.primary)
-          : null,
+      trailing: switch ((isLocked, isSelected)) {
+        (true, _) => Icon(
+          Icons.lock_outline_rounded,
+          size: 18.w,
+          color: colors.onSurfaceVariant.withValues(alpha: 0.5),
+        ),
+        (false, true) => Icon(
+          Icons.check_rounded,
+          size: 20.w,
+          color: colors.primary,
+        ),
+        (false, false) => null,
+      },
     );
   }
 }

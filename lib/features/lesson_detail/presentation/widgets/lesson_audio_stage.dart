@@ -21,6 +21,7 @@ class LessonAudioStage extends StatefulWidget {
     required this.correctionRevision,
     required this.speed,
     required this.onSpeedChanged,
+    required this.isLessonCompleted,
     super.key,
   });
 
@@ -39,6 +40,8 @@ class LessonAudioStage extends StatefulWidget {
 
   final PlaybackSpeed speed;
   final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
+  final bool isLessonCompleted;
 
   @override
   State<LessonAudioStage> createState() => _LessonAudioStageState();
@@ -143,6 +146,7 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
         onToggle: widget.onPrepare,
         speed: widget.speed,
         onSpeedChanged: widget.onSpeedChanged,
+        isLessonCompleted: widget.isLessonCompleted,
       );
     }
 
@@ -158,6 +162,7 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
         onSeek: (Duration target) => _reporter.seekTo(target.inSeconds),
         speed: widget.speed,
         onSpeedChanged: widget.onSpeedChanged,
+        isLessonCompleted: widget.isLessonCompleted,
       ),
     );
   }

@@ -77,6 +77,12 @@ final class LessonDetailState {
 
   bool get isArticleRead => progress.isCompleted;
 
+  /// Rate the players actually run at. The stored preference is the user's
+  /// choice; rates above the first-watch cap only apply once the lesson has
+  /// been completed.
+  PlaybackSpeed get effectivePlaybackSpeed =>
+      playbackSpeed.cappedFor(isLessonCompleted: progress.isCompleted);
+
   List<int> get checkpoints => detail?.checkpoints ?? const <int>[];
 
   bool get hasReportedEveryCheckpoint =>

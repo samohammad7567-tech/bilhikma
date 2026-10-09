@@ -18,6 +18,7 @@ class LessonAudioControlsRow extends StatelessWidget {
     required this.onToggle,
     required this.speed,
     required this.onSpeedChanged,
+    required this.isLessonCompleted,
     super.key,
     this.onRewind,
     this.onForward,
@@ -29,6 +30,8 @@ class LessonAudioControlsRow extends StatelessWidget {
 
   final PlaybackSpeed speed;
   final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
+  final bool isLessonCompleted;
 
   final VoidCallback? onRewind;
   final VoidCallback? onForward;
@@ -69,6 +72,7 @@ class LessonAudioControlsRow extends StatelessWidget {
   Future<void> _pickSpeed(BuildContext context) => PlaybackSpeedSheet.show(
     context: context,
     current: speed,
+    isLessonCompleted: isLessonCompleted,
     onSelected: onSpeedChanged,
   );
 }

@@ -27,6 +27,7 @@ class LessonVideoStage extends StatefulWidget {
     required this.onFullscreenChanged,
     required this.speed,
     required this.onSpeedChanged,
+    required this.isLessonCompleted,
     super.key,
   });
 
@@ -48,6 +49,8 @@ class LessonVideoStage extends StatefulWidget {
 
   final PlaybackSpeed speed;
   final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
+  final bool isLessonCompleted;
 
   @override
   State<LessonVideoStage> createState() => _LessonVideoStageState();
@@ -210,6 +213,7 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
                     onFullscreen: _toggleFullscreen,
                     speed: widget.speed,
                     onSpeedChanged: widget.onSpeedChanged,
+                    isLessonCompleted: widget.isLessonCompleted,
                   ),
                 ),
               ),
