@@ -21,7 +21,7 @@ void main() async {
   await DeviceService.ensureInitialized();
   await setupServiceLocator();
   await PushNotificationService.ensureInitialized();
-
+  //
   AppLifecycleService.instance.initialize();
   ScreenCaptureService.instance.attach(getIt());
   ScreenCapturePolicy.initialize();
