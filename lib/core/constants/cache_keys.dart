@@ -3,6 +3,7 @@ class CacheKeys {
   static const String isDark = 'isDark';
   static const String fontScale = 'font_scale';
   static const String sleepTimerMinutes = 'sleep_timer_minutes';
+  static const String playbackSpeed = 'playback_speed';
   static const String rememberMeKey = 'remember_me';
   static const String rememberedIdentifierKey = 'remembered_identifier';
   static const String rememberedMethodKey = 'remembered_login_method';

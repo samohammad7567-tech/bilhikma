@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/widgets/capped_seek_bar.dart';
+import '../../../../core/widgets/playback_speed_button.dart';
 import 'lesson_video_round_button.dart';
 
 class LessonVideoBottomBar extends StatelessWidget {
@@ -14,6 +16,8 @@ class LessonVideoBottomBar extends StatelessWidget {
     required this.onBlocked,
     required this.onInteraction,
     required this.onFullscreen,
+    required this.speed,
+    required this.onPickSpeed,
     super.key,
   });
 
@@ -26,6 +30,9 @@ class LessonVideoBottomBar extends StatelessWidget {
   final VoidCallback onBlocked;
   final VoidCallback onInteraction;
   final VoidCallback onFullscreen;
+
+  final PlaybackSpeed speed;
+  final VoidCallback onPickSpeed;
 
   static String _clock(Duration value) {
     final int minutes = value.inMinutes;
@@ -64,6 +71,14 @@ class LessonVideoBottomBar extends StatelessWidget {
               ),
             ),
           ),
+
+          PlaybackSpeedButton(
+            speed: speed,
+            onTap: onPickSpeed,
+            onOverlay: true,
+          ),
+
+          SizedBox(width: 4.w),
 
           LessonVideoRoundButton(
             icon: isFullscreen

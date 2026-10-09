@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/utils/media_controls_visibility.dart';
+import '../../../../core/widgets/playback_speed_sheet.dart';
 import '../../../../core/widgets/app_toast.dart';
 import 'lesson_video_bottom_bar.dart';
 import 'lesson_video_round_button.dart';
@@ -20,6 +22,8 @@ class LessonVideoControls extends StatefulWidget {
     required this.onRewind,
     required this.onSeek,
     required this.onFullscreen,
+    required this.speed,
+    required this.onSpeedChanged,
     super.key,
   });
 
@@ -35,6 +39,9 @@ class LessonVideoControls extends StatefulWidget {
   final VoidCallback onRewind;
   final ValueChanged<Duration> onSeek;
   final VoidCallback onFullscreen;
+
+  final PlaybackSpeed speed;
+  final ValueChanged<PlaybackSpeed> onSpeedChanged;
 
   @override
   State<LessonVideoControls> createState() => _LessonVideoControlsState();
@@ -72,6 +79,18 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
   void _refuseSkip() {
     _visibility.poke();
     AppToast.show(context, 'video_no_skip_note'.tr());
+  }
+
+  Future<void> _pickSpeed() async {
+    _visibility.show();
+
+    await PlaybackSpeedSheet.show(
+      context: context,
+      current: widget.speed,
+      onSelected: widget.onSpeedChanged,
+    );
+
+    if (mounted) _visibility.poke();
   }
 
   @override
@@ -134,6 +153,8 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
             onBlocked: _refuseSkip,
             onInteraction: _visibility.poke,
             onFullscreen: () => _run(widget.onFullscreen),
+            speed: widget.speed,
+            onPickSpeed: _pickSpeed,
           ),
         ),
       ],

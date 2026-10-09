@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_toast.dart';
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/widgets/capped_seek_bar.dart';
-import 'lesson_audio_play_button.dart';
-import 'lesson_audio_skip_button.dart';
+import 'lesson_audio_controls_row.dart';
 
 class LessonAudioPlayer extends StatelessWidget {
   const LessonAudioPlayer({
@@ -15,6 +15,8 @@ class LessonAudioPlayer extends StatelessWidget {
     required this.maxPosition,
     required this.isPlaying,
     required this.onToggle,
+    required this.speed,
+    required this.onSpeedChanged,
     super.key,
     this.isBuffering = false,
     this.onSeek,
@@ -30,6 +32,9 @@ class LessonAudioPlayer extends StatelessWidget {
   final bool isPlaying;
   final bool isBuffering;
   final VoidCallback onToggle;
+
+  final PlaybackSpeed speed;
+  final ValueChanged<PlaybackSpeed> onSpeedChanged;
 
   final ValueChanged<Duration>? onSeek;
 
@@ -50,29 +55,14 @@ class LessonAudioPlayer extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              LessonAudioSkipButton(
-                icon: Icons.skip_next,
-                onTap: onSeek == null ? null : () => _rewind(onSeek),
-              ),
-
-              SizedBox(width: 22.w),
-
-              LessonAudioPlayButton(
-                isPlaying: isPlaying,
-                isBuffering: isBuffering,
-                onToggle: onToggle,
-              ),
-
-              SizedBox(width: 22.w),
-
-              LessonAudioSkipButton(
-                icon: Icons.skip_previous,
-                onTap: onSeek == null ? null : () => _forward(context, onSeek),
-              ),
-            ],
+          LessonAudioControlsRow(
+            isPlaying: isPlaying,
+            isBuffering: isBuffering,
+            onToggle: onToggle,
+            speed: speed,
+            onSpeedChanged: onSpeedChanged,
+            onRewind: onSeek == null ? null : () => _rewind(onSeek),
+            onForward: onSeek == null ? null : () => _forward(context, onSeek),
           ),
 
           SizedBox(height: 12.h),

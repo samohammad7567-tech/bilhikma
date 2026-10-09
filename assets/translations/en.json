@@ -89,6 +89,8 @@
   "preview": "Preview",
   "go_to_test": "Go to the test",
   "video_no_skip_note": "You can rewind and rewatch, but you cannot skip past what you have already watched",
+  "playback_speed": "Playback speed",
+  "playback_speed_normal": "Normal",
   "profile_title": "Profile",
   "academic_path": "Learning path",
   "edit_information": "Edit information",

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/services/videoplayerservice/video_item.dart';
 import '../../../../core/services/videoplayerservice/video_playback.dart';
 import '../refactor/lesson_playback_reporter.dart';
@@ -18,6 +19,8 @@ class LessonAudioStage extends StatefulWidget {
     required this.seekLimitSeconds,
     required this.correctionSeconds,
     required this.correctionRevision,
+    required this.speed,
+    required this.onSpeedChanged,
     super.key,
   });
 
@@ -34,6 +37,9 @@ class LessonAudioStage extends StatefulWidget {
   final int? correctionSeconds;
   final int correctionRevision;
 
+  final PlaybackSpeed speed;
+  final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
   @override
   State<LessonAudioStage> createState() => _LessonAudioStageState();
 }
@@ -45,6 +51,7 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
   );
 
   VideoPlayback? _playback;
+  bool _hasAppliedSpeed = false;
 
   @override
   void initState() {
@@ -61,6 +68,8 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
       unawaited(_createIfPossible());
       return;
     }
+
+    if (oldWidget.speed != widget.speed) unawaited(_applySpeed());
 
     final int? correction = widget.correctionSeconds;
     if (correction != null &&
@@ -84,18 +93,40 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
 
     final VideoPlayback playback = VideoPlayback.forItem(item);
     _playback = playback;
+    _hasAppliedSpeed = false;
+    playback.addListener(_onPlaybackChanged);
     _reporter.attach(playback);
 
     await playback.initialize();
     if (!mounted) return;
 
+    await _applySpeed();
     await _reporter.resumeAt(widget.resumeSeconds);
+  }
+
+  Future<void> _applySpeed() async {
+    final VideoPlayback? playback = _playback;
+    if (playback == null) return;
+
+    _hasAppliedSpeed = playback.isReady;
+    await playback.setPlaybackSpeed(widget.speed.rate);
+  }
+
+  /// A rate set before the player is ready is dropped by some backends
+  /// (YouTube in particular), so it is applied once more on first ready.
+  void _onPlaybackChanged() {
+    final VideoPlayback? playback = _playback;
+    if (_hasAppliedSpeed || playback == null || !playback.isReady) return;
+
+    unawaited(_applySpeed());
   }
 
   void _teardown() {
     _reporter.detach();
+    _playback?.removeListener(_onPlaybackChanged);
     _playback?.dispose();
     _playback = null;
+    _hasAppliedSpeed = false;
   }
 
   @override
@@ -110,6 +141,8 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
         isPlaying: false,
         isBuffering: widget.isPreparing,
         onToggle: widget.onPrepare,
+        speed: widget.speed,
+        onSpeedChanged: widget.onSpeedChanged,
       );
     }
 
@@ -123,6 +156,8 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
         isBuffering: playback.isBuffering,
         onToggle: playback.togglePlayPause,
         onSeek: (Duration target) => _reporter.seekTo(target.inSeconds),
+        speed: widget.speed,
+        onSpeedChanged: widget.onSpeedChanged,
       ),
     );
   }

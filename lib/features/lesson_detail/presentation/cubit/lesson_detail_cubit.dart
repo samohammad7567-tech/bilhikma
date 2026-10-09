@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/enums/media_source_enum.dart';
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/models/lesson_progress_model.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../../data/data_source/lesson_detail_data_source.dart';
 import '../../data/data_source/lesson_playback_data_source.dart';
+import '../../data/data_source/playback_speed_data_source.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../data/models/lesson_detail_model.dart';
 import '../../data/models/lesson_playback_state_model.dart';
@@ -22,8 +24,10 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     this.type = ContentType.video,
     LessonDetailRepo? repo,
     this.playbackStore = const LessonPlaybackDataSource(),
+    this.speedStore = const PlaybackSpeedDataSource(),
   }) : repo = repo ?? LessonDetailRepo(),
        super(const LessonDetailState()) {
+    emit(state.copyWith(playbackSpeed: speedStore.read()));
     loadLesson();
     DownloadedPdfsDataSource.revision.addListener(_onDownloadsChanged);
   }
@@ -34,6 +38,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
   final LessonDetailRepo repo;
   final LessonPlaybackDataSource playbackStore;
+  final PlaybackSpeedDataSource speedStore;
 
   bool _isReporting = false;
   PlaybackAccess? _access;
@@ -390,6 +395,14 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   void setVideoFullscreen(bool value) {
     if (state.isVideoFullscreen == value) return;
     emit(state.copyWith(isVideoFullscreen: value));
+  }
+
+  /// Applies a new playback rate and remembers it for the next lesson.
+  Future<void> setPlaybackSpeed(PlaybackSpeed speed) async {
+    if (state.playbackSpeed == speed) return;
+
+    emit(state.copyWith(playbackSpeed: speed));
+    await speedStore.write(speed);
   }
 
   void reportMessage(String messageKey) =>

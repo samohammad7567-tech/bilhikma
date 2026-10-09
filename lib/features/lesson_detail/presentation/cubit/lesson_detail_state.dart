@@ -13,6 +13,7 @@ final class LessonDetailState {
     this.isPreparingPlayback = false,
     this.isPlaying = false,
     this.isVideoFullscreen = false,
+    this.playbackSpeed = PlaybackSpeed.normal,
     this.positionSeconds = 0,
     this.checkpointIndex = 0,
     this.watchedDeltaSeconds = 0,
@@ -41,6 +42,8 @@ final class LessonDetailState {
   final bool isPlaying;
 
   final bool isVideoFullscreen;
+
+  final PlaybackSpeed playbackSpeed;
 
   final int positionSeconds;
 
@@ -144,6 +147,7 @@ final class LessonDetailState {
     bool? isPreparingPlayback,
     bool? isPlaying,
     bool? isVideoFullscreen,
+    PlaybackSpeed? playbackSpeed,
     int? positionSeconds,
     int? checkpointIndex,
     int? watchedDeltaSeconds,
@@ -169,6 +173,7 @@ final class LessonDetailState {
     isPreparingPlayback: isPreparingPlayback ?? this.isPreparingPlayback,
     isPlaying: isPlaying ?? this.isPlaying,
     isVideoFullscreen: isVideoFullscreen ?? this.isVideoFullscreen,
+    playbackSpeed: playbackSpeed ?? this.playbackSpeed,
     positionSeconds: positionSeconds ?? this.positionSeconds,
     checkpointIndex: checkpointIndex ?? this.checkpointIndex,
     watchedDeltaSeconds: watchedDeltaSeconds ?? this.watchedDeltaSeconds,

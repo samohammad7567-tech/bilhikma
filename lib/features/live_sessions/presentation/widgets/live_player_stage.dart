@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,20 +25,86 @@ class LivePlayerStage extends StatefulWidget {
 }
 
 class _LivePlayerStageState extends State<LivePlayerStage> {
+  static const Duration _autoHideDelay = Duration(seconds: 3);
+  static const Duration _fadeDuration = Duration(milliseconds: 200);
+
   late final VideoPlayback _playback;
+
+  bool _controlsVisible = true;
+  Timer? _hideTimer;
 
   @override
   void initState() {
     super.initState();
     _playback = VideoPlayback.forItem(widget.item);
+    _playback.addListener(_onPlaybackChanged);
     _playback.initialize();
   }
 
   @override
   void dispose() {
+    _cancelHideTimer();
+    _playback.removeListener(_onPlaybackChanged);
     _restoreOrientation();
     _playback.dispose();
     super.dispose();
+  }
+
+  bool get _isLoading => !_playback.isReady || _playback.isBuffering;
+
+  bool get _canAutoHide => _playback.isPlaying && !_isLoading;
+
+  void _onPlaybackChanged() {
+    if (!mounted) return;
+
+    // Loading / paused / stopped: controls must stay on screen.
+    if (!_canAutoHide) {
+      _cancelHideTimer();
+      if (!_controlsVisible) setState(() => _controlsVisible = true);
+      return;
+    }
+
+    // Playing: arm the countdown once, never restart it on position ticks.
+    if (_controlsVisible && _hideTimer == null) _armHideTimer();
+  }
+
+  void _armHideTimer() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(_autoHideDelay, () {
+      _hideTimer = null;
+      if (mounted) setState(() => _controlsVisible = false);
+    });
+  }
+
+  void _cancelHideTimer() {
+    _hideTimer?.cancel();
+    _hideTimer = null;
+  }
+
+  void _showControls() {
+    if (!_controlsVisible) setState(() => _controlsVisible = true);
+
+    if (_canAutoHide) {
+      _armHideTimer();
+    } else {
+      _cancelHideTimer();
+    }
+  }
+
+  void _toggleControls() {
+    if (!_controlsVisible) {
+      _showControls();
+      return;
+    }
+
+    _cancelHideTimer();
+    setState(() => _controlsVisible = false);
+  }
+
+  void _onPlayPause() {
+    unawaited(_playback.togglePlayPause());
+    // The playback listener re-arms the countdown once it is playing again.
+    _showControls();
   }
 
   void _restoreOrientation() {
@@ -81,13 +149,33 @@ class _LivePlayerStageState extends State<LivePlayerStage> {
             builder: (BuildContext context, _) => Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                _Controls(
-                  isPlaying: _playback.isPlaying,
-                  isBuffering: _playback.isBuffering,
-                  isFullscreen: widget.isFullscreen,
-                  onPlayPause: _playback.togglePlayPause,
-                  onFullscreen: _toggleFullscreen,
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _toggleControls,
+                    child: const SizedBox.expand(),
+                  ),
                 ),
+
+                IgnorePointer(
+                  ignoring: !_controlsVisible,
+                  child: AnimatedOpacity(
+                    opacity: _controlsVisible ? 1 : 0,
+                    duration: _fadeDuration,
+                    child: _Controls(
+                      isPlaying: _playback.isPlaying,
+                      isLoading: _isLoading,
+                      isFullscreen: widget.isFullscreen,
+                      onPlayPause: _onPlayPause,
+                      onFullscreen: _toggleFullscreen,
+                    ),
+                  ),
+                ),
+
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
 
                 PositionedDirectional(
                   top: 10.h,
@@ -106,14 +194,14 @@ class _LivePlayerStageState extends State<LivePlayerStage> {
 class _Controls extends StatelessWidget {
   const _Controls({
     required this.isPlaying,
-    required this.isBuffering,
+    required this.isLoading,
     required this.isFullscreen,
     required this.onPlayPause,
     required this.onFullscreen,
   });
 
   final bool isPlaying;
-  final bool isBuffering;
+  final bool isLoading;
   final bool isFullscreen;
   final VoidCallback onPlayPause;
   final VoidCallback onFullscreen;
@@ -123,17 +211,14 @@ class _Controls extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
-        Center(
-          child: isBuffering
-              ? const CircularProgressIndicator(color: Colors.white)
-              : _RoundButton(
-                  icon: isPlaying
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  size: 34.sp,
-                  onTap: onPlayPause,
-                ),
-        ),
+        if (!isLoading)
+          Center(
+            child: _RoundButton(
+              icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              size: 34.sp,
+              onTap: onPlayPause,
+            ),
+          ),
 
         PositionedDirectional(
           bottom: 10.h,

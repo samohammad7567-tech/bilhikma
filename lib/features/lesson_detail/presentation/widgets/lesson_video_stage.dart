@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/services/videoplayerservice/video_item.dart';
 import '../../../../core/services/videoplayerservice/video_playback.dart';
 import '../../../../core/utils/orientation/orientation_util.dart';
@@ -24,6 +25,8 @@ class LessonVideoStage extends StatefulWidget {
     required this.correctionRevision,
     required this.isFullscreen,
     required this.onFullscreenChanged,
+    required this.speed,
+    required this.onSpeedChanged,
     super.key,
   });
 
@@ -43,6 +46,9 @@ class LessonVideoStage extends StatefulWidget {
   final bool isFullscreen;
   final ValueChanged<bool> onFullscreenChanged;
 
+  final PlaybackSpeed speed;
+  final ValueChanged<PlaybackSpeed> onSpeedChanged;
+
   @override
   State<LessonVideoStage> createState() => _LessonVideoStageState();
 }
@@ -54,6 +60,7 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
   );
 
   VideoPlayback? _playback;
+  bool _hasAppliedSpeed = false;
   bool _isMobile = true;
 
   @override
@@ -76,6 +83,8 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     if (oldWidget.isFullscreen != widget.isFullscreen) {
       unawaited(_applyOrientation(fullscreen: widget.isFullscreen));
     }
+
+    if (oldWidget.speed != widget.speed) unawaited(_applySpeed());
 
     if (oldWidget.url != widget.url) {
       _teardown();
@@ -107,18 +116,40 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
 
     final VideoPlayback playback = VideoPlayback.forItem(item);
     _playback = playback;
+    _hasAppliedSpeed = false;
+    playback.addListener(_onPlaybackChanged);
     _reporter.attach(playback);
 
     await playback.initialize();
     if (!mounted) return;
 
+    await _applySpeed();
     await _reporter.resumeAt(widget.resumeSeconds);
+  }
+
+  Future<void> _applySpeed() async {
+    final VideoPlayback? playback = _playback;
+    if (playback == null) return;
+
+    _hasAppliedSpeed = playback.isReady;
+    await playback.setPlaybackSpeed(widget.speed.rate);
+  }
+
+  /// A rate set before the player is ready is dropped by some backends
+  /// (YouTube in particular), so it is applied once more on first ready.
+  void _onPlaybackChanged() {
+    final VideoPlayback? playback = _playback;
+    if (_hasAppliedSpeed || playback == null || !playback.isReady) return;
+
+    unawaited(_applySpeed());
   }
 
   void _teardown() {
     _reporter.detach();
+    _playback?.removeListener(_onPlaybackChanged);
     _playback?.dispose();
     _playback = null;
+    _hasAppliedSpeed = false;
   }
 
   void _toggleFullscreen() => widget.onFullscreenChanged(!widget.isFullscreen);
@@ -177,6 +208,8 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
                     onSeek: (Duration target) =>
                         _reporter.seekTo(target.inSeconds),
                     onFullscreen: _toggleFullscreen,
+                    speed: widget.speed,
+                    onSpeedChanged: widget.onSpeedChanged,
                   ),
                 ),
               ),

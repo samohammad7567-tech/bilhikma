@@ -89,6 +89,8 @@
   "preview": "معاينة",
   "go_to_test": "انتقل إلى الاختبار",
   "video_no_skip_note": "يمكنك الرجوع وإعادة المشاهدة، لكن لا يمكنك التقديم إلى ما بعد ما شاهدته",
+  "playback_speed": "سرعة التشغيل",
+  "playback_speed_normal": "عادي",
   "profile_title": "الملف الشخصي",
   "academic_path": "المسار التعليمي",
   "edit_information": "تعديل المعلومات",

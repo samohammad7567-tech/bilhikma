@@ -188,6 +188,8 @@ class LessonDetailBody extends StatelessWidget {
       onPrepare: cubit.preparePlayback,
       isFullscreen: state.isVideoFullscreen,
       onFullscreenChanged: cubit.setVideoFullscreen,
+      speed: state.playbackSpeed,
+      onSpeedChanged: cubit.setPlaybackSpeed,
       onTick: (int position, int played) => cubit.onPlaybackTick(
         positionSeconds: position,
         playedSeconds: played,
@@ -229,6 +231,8 @@ class LessonDetailBody extends StatelessWidget {
             seekLimitSeconds: state.seekLimitSeconds,
             correctionSeconds: state.correctionSeconds,
             correctionRevision: state.correctionRevision,
+            speed: state.playbackSpeed,
+            onSpeedChanged: cubit.setPlaybackSpeed,
           ),
         ),
       ];
