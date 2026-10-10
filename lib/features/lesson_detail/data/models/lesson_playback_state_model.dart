@@ -16,6 +16,13 @@ class LessonPlaybackStateModel {
 
   final int nextCheckpointIndex;
 
+  /// Whether this device actually saved a spot for the lesson.
+  ///
+  /// A missing entry reads back as a zeroed model, so "no saved spot" and
+  /// "saved at second zero" are indistinguishable — both correctly mean the
+  /// resume point has to come from the backend instead.
+  bool get hasPosition => positionSeconds > 0;
+
   LessonPlaybackStateModel copyWith({
     int? positionSeconds,
     int? watchedDeltaSeconds,

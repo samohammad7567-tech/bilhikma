@@ -94,23 +94,59 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     }
   }
 
+  /// Decides where the lesson picks up, and how much of it the server has
+  /// already credited.
+  ///
+  /// **Position** — this device's saved spot wins whenever there is one;
+  /// otherwise playback resumes from the position the backend credited. A
+  /// lesson the backend already marked complete starts over from the
+  /// beginning, and its stale local spot is dropped.
+  ///
+  /// **Checkpoint index** — always re-derived from the credited position,
+  /// never taken from local storage. The index decides which checkpoints still
+  /// get reported, and reporting is the only thing that moves the percent, so
+  /// it has to mirror exactly what the server acknowledged. A stale local index
+  /// that ran ahead would make the client skip checkpoints the server never
+  /// received, leaving the lesson stuck below 100% and unable to ever complete.
   LessonPlaybackStateModel _restoredCounter(LessonDetailModel detail) {
     final LessonPlaybackStateModel stored = playbackStore.read(id);
-    if (stored.positionSeconds > 0 || stored.nextCheckpointIndex > 0) {
-      return stored;
+    final LessonProgressModel progress = detail.progress;
+
+    final int creditedIndex = detail.checkpoints
+        .where((int checkpoint) => checkpoint <= progress.maxPositionSeconds)
+        .length;
+
+    if (progress.isCompleted) {
+      playbackStore.clear(id);
+
+      return LessonPlaybackStateModel(
+        contentId: id,
+        nextCheckpointIndex: creditedIndex,
+      );
     }
 
-    if (detail.progress.isCompleted) return stored;
-
-    final int credited = detail.progress.maxPositionSeconds;
-
     return stored.copyWith(
-      positionSeconds: credited,
-      nextCheckpointIndex: detail.checkpoints
-          .where((int checkpoint) => checkpoint <= credited)
-          .length,
+      positionSeconds: stored.hasPosition
+          ? stored.positionSeconds
+          : progress.maxPositionSeconds,
+      nextCheckpointIndex: creditedIndex,
+      watchedDeltaSeconds: _carriedDelta(stored, progress),
     );
   }
+
+  /// Seconds watched on this device that no checkpoint ever acknowledged.
+  ///
+  /// Dropped unless the saved spot is genuinely past the credited position:
+  /// anywhere else those seconds were either already counted (the app died
+  /// after the server answered but before the counter was rewritten) or were
+  /// watched on another device, and replaying them would inflate the percent
+  /// and complete the lesson early.
+  static int _carriedDelta(
+    LessonPlaybackStateModel stored,
+    LessonProgressModel progress,
+  ) => stored.positionSeconds > progress.maxPositionSeconds
+      ? stored.watchedDeltaSeconds
+      : 0;
 
   void _emitFailure(AppException error) => emit(
     state.copyWith(
@@ -248,9 +284,9 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
 
       await _persistCounter();
 
-      if (state.hasReportedEveryCheckpoint && state.progress.isCompleted) {
-        playbackStore.clear(id);
-      }
+      // Once the server owns a completed lesson the saved spot is noise, and
+      // keeping it would resume the next visit at the final second.
+      if (state.progress.isCompleted) playbackStore.clear(id);
     } on AppException catch (error) {
       if (isClosed) return;
       if (_isRefusal(error)) _isProgressHalted = true;

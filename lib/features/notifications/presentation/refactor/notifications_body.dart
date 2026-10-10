@@ -18,9 +18,7 @@ class NotificationsBody extends StatelessWidget {
   ) {
     cubit.markRead(item.id);
 
-    Navigator.of(
-      context,
-    ).pushNamed(target.route, arguments: target.arguments);
+    Navigator.of(context).pushNamed(target.route, arguments: target.arguments);
   }
 
   @override

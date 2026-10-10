@@ -22,6 +22,13 @@ class PlaybackSpeedSheet extends StatelessWidget {
 
   final ValueChanged<PlaybackSpeed> onSelected;
 
+  /// Share of the screen the sheet may take, leaving the rest as barrier.
+  ///
+  /// Without a cap the option list is tall enough to cover a fullscreen
+  /// landscape video outright, so there is no barrier left to tap and the
+  /// sheet can only be closed by picking a rate or pressing back.
+  static const double _maxHeightFactor = 0.85;
+
   static Future<void> show({
     required BuildContext context,
     required PlaybackSpeed current,
@@ -31,6 +38,9 @@ class PlaybackSpeedSheet extends StatelessWidget {
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * _maxHeightFactor,
+    ),
     builder: (BuildContext sheetContext) => PlaybackSpeedSheet(
       current: current,
       isLessonCompleted: isLessonCompleted,
@@ -53,48 +63,67 @@ class PlaybackSpeedSheet extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const SheetHandle(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Deliberately outside the scroll view below. A drag that starts
+            // on a scrollable is claimed by that scrollable, so once the
+            // options overflow there would be nowhere left to grab the sheet
+            // and swipe it closed.
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const SheetHandle(),
 
-                SizedBox(height: 16.h),
+                  SizedBox(height: 16.h),
 
-                Text(
-                  'playback_speed'.tr(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: styles.panelTitle,
-                ),
-
-                SizedBox(height: 8.h),
-
-                for (final PlaybackSpeed option in PlaybackSpeed.values)
-                  _Option(
-                    speed: option,
-                    isSelected: option == current,
-                    isLocked: option.needsCompletedLesson && !isLessonCompleted,
-                    onTap: () => onSelected(option),
-                  ),
-
-                if (!isLessonCompleted) ...<Widget>[
-                  SizedBox(height: 8.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    child: Text(
-                      'playback_speed_locked_note'.tr(),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: styles.cardCaption,
-                    ),
+                  Text(
+                    'playback_speed'.tr(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: styles.panelTitle,
                   ),
                 ],
-              ],
+              ),
             ),
-          ),
+
+            // Loose, so the list keeps its natural height whenever it fits and
+            // stays unscrollable — then a swipe anywhere on the sheet closes
+            // it, and only a genuinely overflowing list scrolls instead.
+            Flexible(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (final PlaybackSpeed option in PlaybackSpeed.values)
+                      _Option(
+                        speed: option,
+                        isSelected: option == current,
+                        isLocked:
+                            option.needsCompletedLesson && !isLessonCompleted,
+                        onTap: () => onSelected(option),
+                      ),
+
+                    if (!isLessonCompleted) ...<Widget>[
+                      SizedBox(height: 8.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: Text(
+                          'playback_speed_locked_note'.tr(),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: styles.cardCaption,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

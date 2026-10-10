@@ -19,6 +19,12 @@ class LessonPlaybackReporter {
   int _lastPositionSeconds = -1;
   bool _hasEnded = false;
 
+  /// Binds to [playback] without reporting anything yet.
+  ///
+  /// Ticks stay off until [beginReportingAt] has placed the player, otherwise
+  /// the first tick fires while the media is still loading at second zero and
+  /// reports that as the user's position — overwriting the very spot the
+  /// lesson was about to resume from.
   void attach(VideoPlayback playback) {
     detach();
 
@@ -27,7 +33,6 @@ class LessonPlaybackReporter {
     _lastPositionSeconds = -1;
 
     playback.addListener(_watchForEnd);
-    _ticker = Timer.periodic(_tick, (_) => _reportTick());
   }
 
   void detach() {
@@ -38,15 +43,34 @@ class LessonPlaybackReporter {
     _playback = null;
   }
 
-  Future<void> resumeAt(int seconds) async {
+  /// Seeks to [seconds] and starts reporting playback from there.
+  ///
+  /// Always starts the ticker, even when there is nothing to seek to, so a
+  /// lesson opened at the beginning is still tracked.
+  Future<void> beginReportingAt(int seconds) async {
+    await _seekForResume(seconds);
+
+    final VideoPlayback? playback = _playback;
+    if (playback == null) return;
+
+    _lastPositionSeconds = playback.position.inSeconds;
+    _ticker ??= Timer.periodic(_tick, (_) => _reportTick());
+  }
+
+  Future<void> _seekForResume(int seconds) async {
     final VideoPlayback? playback = _playback;
     if (playback == null || seconds <= 0) return;
 
     final Duration duration = await _awaitDuration(playback);
-    if (duration <= Duration.zero || seconds >= duration.inSeconds) return;
+    if (duration <= Duration.zero) return;
     if (!identical(_playback, playback)) return;
 
-    await playback.seekTo(Duration(seconds: seconds));
+    // Clamped a second short of the end: seeking to the very last frame makes
+    // some backends report the media as ended and snap back to zero, which
+    // would replay a lesson the user had all but finished.
+    final int last = duration.inSeconds - 1;
+
+    await playback.seekTo(Duration(seconds: seconds > last ? last : seconds));
   }
 
   Future<Duration> _awaitDuration(VideoPlayback playback) async {

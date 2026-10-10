@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "tech.bilhikma.app"
-        minSdk = flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion 
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

@@ -85,9 +85,6 @@ final class LessonDetailState {
 
   List<int> get checkpoints => detail?.checkpoints ?? const <int>[];
 
-  bool get hasReportedEveryCheckpoint =>
-      checkpoints.isNotEmpty && checkpointIndex >= checkpoints.length;
-
   int? get nextCheckpointSeconds => checkpointIndex < checkpoints.length
       ? checkpoints[checkpointIndex]
       : null;
@@ -108,9 +105,17 @@ final class LessonDetailState {
       ? positionSeconds
       : progress.maxPositionSeconds;
 
+  /// Ceiling on every progress track until the server confirms completion.
+  ///
+  /// A full 100% is the signal that the lesson is finished, so no track may
+  /// reach it on local playback alone — only [LessonProgressModel.isCompleted]
+  /// may take it there.
+  static const double _unconfirmedCeiling = 0.99;
+
   /// Progress the server has actually credited. The only value that may inform
   /// what gets reported, unlocked, or marked complete.
-  double get confirmedProgress => progress.progress;
+  double get confirmedProgress =>
+      progress.isCompleted ? 1 : _capped(progress.progress);
 
   /// Optimistic progress derived from local playback, for display only.
   ///
@@ -121,7 +126,7 @@ final class LessonDetailState {
     final int total = detail?.durationSeconds ?? 0;
     if (total <= 0) return confirmedProgress;
 
-    return (watchedHighWaterSeconds / total).clamp(0.0, 1.0);
+    return _capped((watchedHighWaterSeconds / total).clamp(0.0, 1.0));
   }
 
   /// What the progress bar renders. Never falls below [confirmedProgress], so
@@ -134,11 +139,19 @@ final class LessonDetailState {
         : confirmedProgress;
   }
 
+  static double _capped(double value) =>
+      value > _unconfirmedCeiling ? _unconfirmedCeiling : value;
+
   Duration get seekLimit => Duration(seconds: seekLimitSeconds);
 
-  int get resumeSeconds => positionSeconds > progress.maxPositionSeconds
-      ? positionSeconds
-      : progress.maxPositionSeconds;
+  /// Second the player seeks to when it is created for this lesson.
+  ///
+  /// Just the current position: it is seeded at load time with this device's
+  /// saved spot, or the backend's credited position when there is none, and
+  /// then tracks playback so a player rebuilt mid-lesson — a refreshed media
+  /// link, a rotation — picks up where the user actually is rather than
+  /// jumping back to where the session opened.
+  int get resumeSeconds => positionSeconds;
 
   bool isAttachmentDownloaded(int attachmentId) =>
       downloadedAttachmentIds.contains(attachmentId);

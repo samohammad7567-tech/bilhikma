@@ -37,7 +37,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final HomeOverviewModel overview = await repo.fetchOverview();
       if (isClosed) return;
-
+      print(overview);
       emit(
         state.copyWith(
           status: HomeStatus.success,

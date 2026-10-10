@@ -117,6 +117,11 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     final VideoItem? item = VideoItem.fromUrl(url, id: 'lesson-video');
     if (item == null) return;
 
+    // Captured before the first await: once the reporter starts ticking it
+    // drives `resumeSeconds`, so reading it after the gap would resume from
+    // wherever the loading player happened to sit rather than the saved spot.
+    final int resumeTarget = widget.resumeSeconds;
+
     final VideoPlayback playback = VideoPlayback.forItem(item);
     _playback = playback;
     _hasAppliedSpeed = false;
@@ -127,7 +132,7 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     if (!mounted) return;
 
     await _applySpeed();
-    await _reporter.resumeAt(widget.resumeSeconds);
+    await _reporter.beginReportingAt(resumeTarget);
   }
 
   Future<void> _applySpeed() async {

@@ -84,14 +84,15 @@ class _NotificationsListState extends State<NotificationsList> {
           final NotificationModel item = widget.notifications[index];
 
           // Notifications that refer to nothing openable stay inert.
-          final NotificationDestination? target = NotificationDestination
-              .resolve(kind: item.kind, deepLink: item.deepLink);
+          final NotificationDestination? target =
+              NotificationDestination.resolve(
+                kind: item.kind,
+                deepLink: item.deepLink,
+              );
 
           final Widget card = NotificationCard(
             notification: item,
-            onTap: target == null
-                ? null
-                : () => widget.onOpen(item, target),
+            onTap: target == null ? null : () => widget.onOpen(item, target),
           );
 
           if (item.isRead) return card;
