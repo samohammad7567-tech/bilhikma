@@ -12,6 +12,13 @@
          install-time, not runtime: without it the register call throws a
          SecurityException. -->
     <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE"/>
+    <!-- Required by WindowManager.addScreenRecordingCallback (Android 15+),
+         which is the only signal that reports a screen *recording* of this
+         window. Unlike the DisplayManager inference it also sees a recorder
+         whose virtual display is private, which is the default and is why the
+         built-in recorder used to go unnoticed. Install-time, like the one
+         above: without it the add call throws a SecurityException. -->
+    <uses-permission android:name="android.permission.DETECT_SCREEN_RECORDING"/>
 
     <!-- Background audio. audio_service ships an EMPTY library manifest, so
          nothing below is merged in for us: the permissions, the service and
