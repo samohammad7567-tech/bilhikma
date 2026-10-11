@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/app_update/data/data_source/app_update_data_source.dart';
+import '../../features/app_update/data/repos/app_update_repo.dart';
+import '../../features/app_update/presentation/cubit/app_update_cubit.dart';
 import '../../features/archive/data/data_source/archive_data_source.dart';
 import '../../features/archive/data/repos/archive_repo.dart';
 import '../../features/archive/presentation/cubit/archive_cubit.dart';
@@ -72,6 +75,7 @@ final getIt = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
   await _initCore();
+  await _initAppUpdate();
   await _initSplash();
   await _initAuth();
   await _initForgetPassword();
@@ -121,6 +125,13 @@ Future<void> _initCore() async {
     ..registerLazySingleton(AppPreferencesCubit.new)
     ..registerSingleton<Dio>(DioService.dio!)
     ..registerSingleton<GlobalKey<NavigatorState>>(navigatorKey);
+}
+
+Future<void> _initAppUpdate() async {
+  getIt
+    ..registerFactory(() => AppUpdateCubit(repo: getIt()))
+    ..registerLazySingleton(() => AppUpdateRepo(dataSource: getIt()))
+    ..registerLazySingleton(AppUpdateDataSource.new);
 }
 
 Future<void> _initSplash() async {

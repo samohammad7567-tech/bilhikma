@@ -305,5 +305,15 @@
   "password_strength_weak": "Weak",
   "password_strength_fair": "Fair",
   "password_strength_good": "Strong",
-  "password_strength_strong": "Very strong"
+  "password_strength_strong": "Very strong",
+  "update_available": "Update available",
+  "update_available_note": "A newer version of the app is available. You can update now, or continue and update later.",
+  "update_now": "Update now",
+  "update_required": "Update required",
+  "update_required_note": "This version of the app is no longer supported. Please update to the latest version to continue.",
+  "maintenance_title": "Under maintenance",
+  "maintenance_note": "We are carrying out maintenance to improve the service. Please try again later.",
+  "app_update_current_version": "Your version: {version}",
+  "app_update_latest_version": "Latest version: {version}",
+  "update_store_open_failed": "Could not open the update link"
 }

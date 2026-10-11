@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../features/app_update/presentation/refactor/app_update_flow.dart';
+import '../../features/app_update/presentation/screens/app_update_gate.dart';
 import '../../features/archive/presentation/screens/archive_screen.dart';
 import '../../features/auth/account_approved/presentation/screens/account_approved_screen.dart';
 import '../../features/auth/forget_password/presentation/refactor/set_password_args.dart';
@@ -52,14 +54,14 @@ class AppRouter {
 
     switch (settings.name) {
       case AppRoutes.splash:
+        // The version check rides along with the splash: AppUpdateGate starts
+        // it and takes the screen over outright if this build may not run,
+        // while AppUpdateFlow holds the hand-off below long enough to offer an
+        // optional update before the app opens.
         return MaterialPageRoute(
-          builder: (_) => OrientationLock(
-            child: SplashScreen(
-              onCompleted: (BuildContext context, bool isLoggedIn) =>
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    !isLoggedIn ? AppRoutes.login : AppRoutes.home,
-                    (Route<dynamic> route) => false,
-                  ),
+          builder: (_) => AppUpdateGate(
+            child: OrientationLock(
+              child: SplashScreen(onCompleted: _onSplashCompleted),
             ),
           ),
         );
@@ -222,6 +224,19 @@ class AppRouter {
       default:
         return MaterialPageRoute(builder: (_) => const SizedBox());
     }
+  }
+
+  static Future<void> _onSplashCompleted(
+    BuildContext context,
+    bool isLoggedIn,
+  ) async {
+    if (!await AppUpdateFlow.resolve(context)) return;
+    if (!context.mounted) return;
+
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      !isLoggedIn ? AppRoutes.login : AppRoutes.home,
+      (Route<dynamic> route) => false,
+    );
   }
 
   static void _push(String route, Object arguments) =>

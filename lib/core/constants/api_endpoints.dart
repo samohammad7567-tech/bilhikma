@@ -5,6 +5,9 @@ class ApiEndpoints {
 
   static const String publicEntities = '/public/entities';
 
+  /// Public, unauthenticated: answers whether this build may still run.
+  static const String appVersion = '/public/app-version';
+
   static String publicEntityCategories(int entityId) =>
       '/public/entities/$entityId/categories';
 

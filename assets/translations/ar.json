@@ -305,5 +305,15 @@
   "password_strength_weak": "ضعيفة",
   "password_strength_fair": "متوسطة",
   "password_strength_good": "قوية",
-  "password_strength_strong": "قوية جداً"
+  "password_strength_strong": "قوية جداً",
+  "update_available": "يتوفر تحديث جديد",
+  "update_available_note": "صدر إصدار أحدث من التطبيق. يمكنك التحديث الآن أو المتابعة واستكمال التحديث لاحقاً.",
+  "update_now": "تحديث الآن",
+  "update_required": "التحديث مطلوب",
+  "update_required_note": "هذا الإصدار من التطبيق لم يعد مدعوماً. يرجى التحديث إلى أحدث إصدار للمتابعة.",
+  "maintenance_title": "التطبيق تحت الصيانة",
+  "maintenance_note": "نقوم حالياً بأعمال صيانة لتحسين الخدمة. يرجى المحاولة مرة أخرى لاحقاً.",
+  "app_update_current_version": "إصدارك الحالي: {version}",
+  "app_update_latest_version": "أحدث إصدار: {version}",
+  "update_store_open_failed": "تعذّر فتح رابط التحديث"
 }
