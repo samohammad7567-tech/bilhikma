@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../data/models/notification_model.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
+import '../refactor/notification_formats.dart';
 import 'notification_kind_chip.dart';
 
 class NotificationCardText extends StatelessWidget {
@@ -23,19 +25,23 @@ class NotificationCardText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: NotificationKindChip(kind: notification.kind, tone: tone),
-        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                notification.title,
+                textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: styles.cardTitle.copyWith(color: tone.title),
+              ),
+            ),
 
-        SizedBox(height: 6.h),
+            SizedBox(width: 8.w),
 
-        Text(
-          notification.title,
-          textAlign: TextAlign.start,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: styles.cardTitle.copyWith(color: tone.title),
+            NotificationKindChip(kind: notification.kind),
+          ],
         ),
 
         SizedBox(height: 4.h),
@@ -47,7 +53,29 @@ class NotificationCardText extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: styles.cardSubtitle.copyWith(color: tone.body),
         ),
+
+        SizedBox(height: 6.h),
+
+        Text(
+          _stamp(),
+          textAlign: TextAlign.start,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: styles.cardCaption.copyWith(
+            color: tone.body.withValues(alpha: 0.85),
+          ),
+        ),
       ],
     );
+  }
+
+  /// `اليوم ١٠:٣٠ ص • جديد` — when it arrived, and whether it is still new.
+  String _stamp() {
+    final String when = NotificationFormats.stamp(notification.sentAt);
+    final String state = notification.isRead
+        ? 'notification_state_read'.tr()
+        : 'notification_state_new'.tr();
+
+    return '$when • $state';
   }
 }

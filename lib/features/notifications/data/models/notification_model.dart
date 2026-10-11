@@ -1,5 +1,6 @@
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/enums/notification_kind_enum.dart';
+import 'notification_payload.dart';
 
 class NotificationModel {
   const NotificationModel({
@@ -11,6 +12,7 @@ class NotificationModel {
     this.deepLink,
     this.isRead = false,
     this.sentAt,
+    this.payload = NotificationPayload.none,
   });
 
   final int id;
@@ -23,7 +25,12 @@ class NotificationModel {
   final bool isRead;
   final DateTime? sentAt;
 
+  /// What the notification refers to, parsed from the API's `data` object.
+  final NotificationPayload payload;
+
   bool get hasDeepLink => (deepLink ?? '').isNotEmpty;
+
+  bool get hasImage => (imageUrl ?? '').isNotEmpty;
 
   NotificationModel markRead() => withRead(true);
 
@@ -38,6 +45,7 @@ class NotificationModel {
           deepLink: deepLink,
           isRead: read,
           sentAt: sentAt,
+          payload: payload,
         );
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
@@ -50,5 +58,6 @@ class NotificationModel {
         deepLink: Json.asOptionalString(json['deep_link']),
         isRead: Json.asBool(json['is_read']),
         sentAt: Json.asDateTime(json['sent_at']),
+        payload: NotificationPayload.fromJson(json['data']),
       );
 }

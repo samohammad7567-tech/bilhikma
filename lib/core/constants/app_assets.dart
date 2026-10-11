@@ -112,4 +112,26 @@ class AppAssets {
 
   static const String assetsYourRequestAccepted =
       "assets/your_request_accepted.png";
+
+  // Notification category artwork.
+  static const String assetsNewContentNotification =
+      "assets/new_content_notification.png";
+  static const String assetsLiveSessionNotification =
+      "assets/Live_session_notification.png";
+  static const String assetsInstantReminderNotification =
+      "assets/Instant_reminder_notifcation.png";
+  static const String assetsImmediateReminderNotification =
+      "assets/Immediate_reminder_notification.png";
+  static const String assetsApprovalOfRegistrationNotification =
+      "assets/approval_of_registration_notification.png";
+  static const String assetsAccountStatusNotification =
+      "assets/account_status_notification.png";
+  static const String assetsWarningNotification =
+      "assets/warning_notification.png";
+  static const String assetsAdministrativeNotice =
+      "assets/administrative_notice.png";
+  static const String assetsCustomNotification =
+      "assets/custom_notification.png";
+  static const String assetsSpecificNotification =
+      "assets/specifc_notification.png";
 }

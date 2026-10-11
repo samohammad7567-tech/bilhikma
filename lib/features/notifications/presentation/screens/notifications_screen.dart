@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/drawer/presentation/refactor/app_drawer.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../cubit/notifications_cubit.dart';
 import '../refactor/notifications_body.dart';
@@ -23,6 +24,10 @@ class NotificationsScreen extends StatelessWidget {
         child: AppSectionScaffold(
           title: context.tr('notifications'),
           showBack: showBack,
+          showMenu: true,
+          // Only when pushed: as a tab the shell already hosts the drawer,
+          // and a second one would just shadow it.
+          drawer: showBack ? const AppDrawer() : null,
           child: const NotificationsBody(),
         ),
       ),

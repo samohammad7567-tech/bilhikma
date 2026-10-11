@@ -1,3 +1,4 @@
+import '../../features/notifications/data/models/notification_payload.dart';
 import '../enums/content_type_enum.dart';
 import '../enums/notification_kind_enum.dart';
 import 'app_routes.dart';
@@ -6,11 +7,16 @@ import 'subject_content_args.dart';
 
 /// In-app screen a notification refers to.
 ///
-/// Resolution runs in three steps, each a fallback for the one before:
-/// a recognised target in the deep link, then any id the link carries — the
-/// API documents a lesson as the default destination — and finally the
-/// notification kind. A notification that gives none of the three resolves to
-/// `null`, so the tap stays inert instead of going somewhere unrelated.
+/// Resolution runs in four steps, each a fallback for the one before: the
+/// ids in the API's `data` payload, then a recognised target in the deep
+/// link, then any id the link carries, and finally the notification kind.
+///
+/// The payload leads because it is the only one the listing actually fills:
+/// every notification the service returns has `deep_link: null`, so reading
+/// the link alone sent a lesson notification to the subjects list.
+///
+/// `null` means the notification names no screen — its own content is all
+/// there is, and the caller shows that instead.
 class NotificationDestination {
   const NotificationDestination(this.route, {this.arguments});
 
@@ -22,11 +28,47 @@ class NotificationDestination {
   /// nothing openable — an announcement with no deep link, for instance.
   static NotificationDestination? resolve({
     required NotificationKind kind,
+    NotificationPayload payload = NotificationPayload.none,
     String? deepLink,
   }) {
     final _DeepLink link = _DeepLink.parse(deepLink);
 
-    return _forTarget(link) ?? _asLesson(link) ?? _fromKind(kind);
+    return fromPayload(payload) ??
+        _forTarget(link) ??
+        _asLesson(link) ??
+        _fromKind(kind);
+  }
+
+  /// Screen named by the ids the API attaches to the notification.
+  ///
+  /// A live session resolves to the sessions list here: opening the player
+  /// needs the session itself, which only a fetch can supply, so the caller
+  /// handles that case and falls back to this.
+  static NotificationDestination? fromPayload(NotificationPayload payload) {
+    if (payload.hasContent) {
+      return NotificationDestination(
+        AppRoutes.lessonDetail,
+        arguments: LessonDetailArgs(
+          id: payload.contentId,
+          type: payload.contentType,
+        ),
+      );
+    }
+
+    if (payload.hasLiveSession) {
+      return const NotificationDestination(AppRoutes.live);
+    }
+
+    if (payload.hasSubject) {
+      return NotificationDestination(
+        AppRoutes.subjectContent,
+        arguments: SubjectContentArgs(
+          categorySubjectId: payload.categorySubjectId,
+        ),
+      );
+    }
+
+    return null;
   }
 
   /// Target of a `bilhikma://content/5` style link.
@@ -64,6 +106,13 @@ class NotificationDestination {
         AppRoutes.lessonDetail,
         arguments: LessonDetailArgs(id: contentId, type: contentType),
       );
+    }
+
+    final int liveSessionId = _firstId(<String?>[
+      _firstString(data, const <String>['live_session_id', 'session_id']),
+    ]);
+    if (liveSessionId > 0) {
+      return const NotificationDestination(AppRoutes.live);
     }
 
     final int subjectId = _firstId(<String?>[
@@ -161,6 +210,10 @@ class NotificationDestination {
 
   /// Last resort: the kind alone. New content with no id in the payload
   /// cannot name the lesson, so it opens the subjects it was published under.
+  ///
+  /// Account notices and announcements deliberately resolve to nothing. Their
+  /// message is the whole point — sending them to a profile screen that
+  /// repeats none of it loses the thing the user tapped to read.
   static NotificationDestination? _fromKind(NotificationKind kind) =>
       switch (kind) {
         NotificationKind.newContent => const NotificationDestination(
@@ -168,8 +221,9 @@ class NotificationDestination {
         ),
         NotificationKind.liveSession || NotificationKind.liveReminder =>
           const NotificationDestination(AppRoutes.live),
-        NotificationKind.enrollmentApproved || NotificationKind.accountStatus =>
-          const NotificationDestination(AppRoutes.profile),
+        NotificationKind.enrollmentApproved => const NotificationDestination(
+          AppRoutes.profile,
+        ),
         _ => null,
       };
 

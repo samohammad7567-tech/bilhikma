@@ -3,37 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/notification_kind_enum.dart';
-import '../../../../core/themes/notification_tone_palette.dart';
+import '../../../../core/themes/notification_kind_accents.dart';
 
 /// Names the category in words, so the card is still identifiable to anyone
 /// who cannot tell the tones apart.
 class NotificationKindChip extends StatelessWidget {
-  const NotificationKindChip({
-    required this.kind,
-    required this.tone,
-    super.key,
-  });
+  const NotificationKindChip({required this.kind, super.key});
 
   final NotificationKind kind;
-  final NotificationTonePalette tone;
 
   @override
   Widget build(BuildContext context) {
+    final Color accent = NotificationKindAccents.of(context, kind);
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: tone.accent,
-        borderRadius: BorderRadius.circular(6.r),
+        color: accent.withValues(alpha: NotificationKindAccents.chipTint),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
         kind.labelKey.tr(),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: tone.onAccent,
-          fontSize: 10.sp,
+          color: accent,
+          fontSize: 9.sp,
           fontWeight: FontWeight.w700,
-          height: 1.4,
+          height: 1.3,
         ),
       ),
     );

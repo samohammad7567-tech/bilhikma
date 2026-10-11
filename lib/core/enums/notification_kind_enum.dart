@@ -37,25 +37,29 @@ enum NotificationKind {
   };
 
   String get imagePath => switch (this) {
-    NotificationKind.newContent => AppAssets.assetsBookIcon,
-    NotificationKind.liveSession => AppAssets.assetsLive,
-    NotificationKind.liveReminder => AppAssets.assetsLive,
-    NotificationKind.enrollmentApproved => AppAssets.assetsAccountAccepted,
-    NotificationKind.accountStatus => AppAssets.assetsAccountRejected,
-    NotificationKind.inactivityWarning => AppAssets.assetsPending,
-    NotificationKind.adminAnnouncement => AppAssets.assetsNotificationIcon,
-    NotificationKind.custom => AppAssets.assetsNotificationIcon,
+    NotificationKind.newContent => AppAssets.assetsNewContentNotification,
+    NotificationKind.liveSession => AppAssets.assetsLiveSessionNotification,
+    NotificationKind.liveReminder =>
+      AppAssets.assetsInstantReminderNotification,
+    NotificationKind.enrollmentApproved =>
+      AppAssets.assetsApprovalOfRegistrationNotification,
+    NotificationKind.accountStatus => AppAssets.assetsAccountStatusNotification,
+    NotificationKind.inactivityWarning => AppAssets.assetsWarningNotification,
+    NotificationKind.adminAnnouncement => AppAssets.assetsAdministrativeNotice,
+    NotificationKind.custom => AppAssets.assetsCustomNotification,
   };
 
-  /// Single-colour artwork, which is tinted to the tone so it stays visible.
-  /// The rest are full-colour illustrations and are drawn as authored.
-  bool get hasMonochromeIcon => switch (this) {
-    NotificationKind.liveSession ||
-    NotificationKind.liveReminder ||
-    NotificationKind.adminAnnouncement ||
-    NotificationKind.custom => true,
+  /// Artwork that already carries its own rounded tile, drawn whole rather
+  /// than as a glyph inside one.
+  bool get hasOwnTile => switch (this) {
+    NotificationKind.adminAnnouncement || NotificationKind.custom => true,
     _ => false,
   };
+
+  /// Every glyph is authored as flat artwork on transparency, so it takes
+  /// the tone colour and stays legible in both themes. The two that bring
+  /// their own tile are opaque — tinting those would flood the whole square.
+  bool get hasMonochromeIcon => !hasOwnTile;
 
   static NotificationKind fromJson(Object? value) {
     final String key = Json.asString(value).toLowerCase();

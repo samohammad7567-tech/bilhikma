@@ -3,18 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
 import '../../data/models/notification_model.dart';
 import 'notification_kind_tile.dart';
-import 'notification_time_chip.dart';
-import 'notification_unread_dot.dart';
 import 'notification_card_text.dart';
 
 class NotificationCard extends StatelessWidget {
-  const NotificationCard({required this.notification, super.key, this.onTap});
+  const NotificationCard({
+    required this.notification,
+    super.key,
+    this.onTap,
+    this.isOpening = false,
+  });
 
   final NotificationModel notification;
   final VoidCallback? onTap;
 
+  /// A live session is fetched before its screen can open.
+  final bool isOpening;
+
   /// Width of the accent bar down the leading edge.
-  static const double _barWidth = 5;
+  static const double _barWidth = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -39,67 +45,58 @@ class NotificationCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: isUnread
-                  ? tone.border
-                  : tone.border.withValues(alpha: 0.45),
-              width: isUnread ? 1.4 : 1,
-            ),
-          ),
-          child: IntrinsicHeight(
-            child: Row(
-              // Stretch so the accent bar runs the full height of the card.
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Container(
-                  width: _barWidth.w,
-                  color: isUnread
-                      ? tone.accent
-                      : tone.accent.withValues(alpha: 0.45),
-                ),
+        child: IntrinsicHeight(
+          child: Row(
+            // Stretch so the accent bar runs the full height of the card.
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                width: _barWidth.w,
+                color: isUnread
+                    ? tone.accent
+                    : tone.accent.withValues(alpha: 0.55),
+              ),
 
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 12.h,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        NotificationKindTile(
-                          kind: notification.kind,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10.w, 10.h, 12.w, 10.h),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _leading(tone),
+
+                      SizedBox(width: 10.w),
+
+                      Expanded(
+                        child: NotificationCardText(
+                          notification: notification,
                           tone: tone,
                         ),
-
-                        SizedBox(width: 12.w),
-
-                        Expanded(
-                          child: NotificationCardText(
-                            notification: notification,
-                            tone: tone,
-                          ),
-                        ),
-
-                        SizedBox(width: 8.w),
-
-                        if (isUnread) ...<Widget>[
-                          NotificationUnreadDot(color: tone.accent),
-                          SizedBox(width: 8.w),
-                        ],
-
-                        NotificationTimeChip(
-                          createdAt: notification.sentAt,
-                          tone: tone,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _leading(NotificationTonePalette tone) {
+    if (!isOpening) {
+      return NotificationKindTile(kind: notification.kind, tone: tone);
+    }
+
+    return SizedBox.square(
+      dimension: NotificationKindTile.size.w,
+      child: Center(
+        child: SizedBox.square(
+          dimension: 20.w,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.w,
+            valueColor: AlwaysStoppedAnimation<Color>(tone.accent),
           ),
         ),
       ),
