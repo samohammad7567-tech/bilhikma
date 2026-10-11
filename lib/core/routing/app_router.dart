@@ -20,6 +20,7 @@ import '../../features/lesson_test/presentation/screens/lesson_test_screen.dart'
 import '../../features/lessons/presentation/screens/lessons_view_all_screen.dart';
 import '../models/live_session_model.dart';
 import '../../features/textbooks/presentation/screens/book_preview_screen.dart';
+import 'book_preview_args.dart';
 import '../../features/profile/data/models/profile_model.dart';
 import '../../features/profile/presentation/screens/change_password_screen.dart';
 import '../../features/profile/presentation/screens/downloads_log_screen.dart';

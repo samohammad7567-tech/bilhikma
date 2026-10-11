@@ -10,6 +10,10 @@ class CacheKeys {
 
   static const String cachedUserKey = 'cached_user';
 
+  /// Map of document key -> last read page, for resuming the PDF reader.
+  static const String pdfReadingPositions = 'pdf_reading_positions';
+  static const String pdfPageLayout = 'pdf_page_layout';
+
   static const String tokenKey = 'token';
   static const String refreshTokenKey = 'refresh_token';
 

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/routing/app_routes.dart';
-import '../../../textbooks/presentation/screens/book_preview_screen.dart';
+import '../../../../core/routing/book_preview_args.dart';
+import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../data/models/lesson_detail_model.dart';
@@ -174,6 +175,7 @@ class LessonDetailBody extends StatelessWidget {
         filePath: path,
         title: file.fileName,
         contentId: cubit.id,
+        resumeKey: DownloadedPdfsDataSource.attachmentKey(cubit.id, file.id),
       ),
     );
   }

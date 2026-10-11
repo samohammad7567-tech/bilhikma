@@ -8,7 +8,8 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/prd_services.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
-import '../../../textbooks/presentation/screens/book_preview_screen.dart';
+import '../../../../core/routing/book_preview_args.dart';
+import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 
 class DownloadsLogScreen extends StatefulWidget {
   const DownloadsLogScreen({super.key});
@@ -110,6 +111,9 @@ class _DownloadRow extends StatelessWidget {
           arguments: BookPreviewArgs(
             filePath: file.path,
             title: _name.replaceAll('.pdf', ''),
+            // Recovering the logical key lets a book opened from here share
+            // its reading position with the same book opened from its subject.
+            resumeKey: const DownloadedPdfsDataSource().keyForFile(_name),
           ),
         ),
       ),

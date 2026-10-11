@@ -5,9 +5,12 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../core/services/prd_services.dart';
 import '../../../../core/utils/cache_util.dart';
+import 'pdf_reader_data_source.dart';
 
 class DownloadedPdfsDataSource {
-  const DownloadedPdfsDataSource();
+  const DownloadedPdfsDataSource({this.reader = const PdfReaderDataSource()});
+
+  final PdfReaderDataSource reader;
 
   static const String _key = 'downloaded_pdf_files';
 
@@ -17,6 +20,17 @@ class DownloadedPdfsDataSource {
 
   static String attachmentKey(int contentId, int attachmentId) =>
       'attachment:$contentId:$attachmentId';
+
+  /// The logical key a saved file belongs to, so a document opened from the
+  /// downloads log shares its reading position with the same book opened from
+  /// its subject. Null for a file nothing claims any more.
+  String? keyForFile(String fileName) {
+    for (final MapEntry<String, String> entry in _entries().entries) {
+      if (entry.value == fileName) return entry.key;
+    }
+
+    return null;
+  }
 
   Future<File?> fileFor(String key) async {
     final String? name = _entries()[key];
@@ -78,6 +92,9 @@ class DownloadedPdfsDataSource {
     } catch (_) {}
 
     CacheUtil.remove(key: _key);
+
+    // The files are gone, so the pages they were open at mean nothing.
+    await reader.clearPositions();
 
     revision.value++;
   }

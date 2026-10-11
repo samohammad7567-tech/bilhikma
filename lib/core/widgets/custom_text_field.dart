@@ -25,6 +25,8 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.borderRadius,
     this.inputFormatters,
+    this.onFieldSubmitted,
+    this.textInputAction,
   });
 
   final String? Function(String?)? validator;
@@ -46,6 +48,8 @@ class CustomTextField extends StatelessWidget {
   final Color? borderColor;
   final double? borderRadius;
   final List<TextInputFormatter>? inputFormatters;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +61,8 @@ class CustomTextField extends StatelessWidget {
       style: AppTheme.styles(context).fieldInput,
       validator: validator,
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
+      textInputAction: textInputAction,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       maxLength: maxLength,

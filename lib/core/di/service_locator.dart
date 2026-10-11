@@ -52,6 +52,10 @@ import '../../features/subject_content/data/data_source/subject_content_data_sou
 import '../../features/subject_content/data/repos/subject_content_repo.dart';
 import '../../features/subject_content/presentation/cubit/subject_content_cubit.dart';
 import '../../features/textbooks/data/data_source/book_downloads_data_source.dart';
+import '../../features/textbooks/data/data_source/pdf_reader_data_source.dart';
+import '../../features/textbooks/data/repos/pdf_reader_repo.dart';
+import '../../features/textbooks/presentation/cubit/book_preview_cubit.dart';
+import '../routing/book_preview_args.dart';
 import '../../features/textbooks/data/data_source/textbooks_data_source.dart';
 import '../../features/textbooks/data/repos/textbooks_repo.dart';
 import '../../features/subjects/data/data_source/subjects_data_source.dart';
@@ -236,7 +240,12 @@ Future<void> _initTextbooks() async {
       () => TextbooksRepo(dataSource: getIt(), downloads: getIt()),
     )
     ..registerLazySingleton(() => BookDownloadsDataSource(textbooks: getIt()))
-    ..registerLazySingleton(TextbooksDataSource.new);
+    ..registerLazySingleton(TextbooksDataSource.new)
+    ..registerFactoryParam<BookPreviewCubit, BookPreviewArgs, void>(
+      (BookPreviewArgs args, _) => BookPreviewCubit(args: args, repo: getIt()),
+    )
+    ..registerLazySingleton(() => PdfReaderRepo(dataSource: getIt()))
+    ..registerLazySingleton(PdfReaderDataSource.new);
 }
 
 Future<void> _initEducationalPathways() async {

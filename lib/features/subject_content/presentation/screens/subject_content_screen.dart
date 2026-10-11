@@ -10,7 +10,8 @@ import '../../../../core/models/lesson_model.dart';
 import '../../../../core/models/textbook_model.dart';
 import '../../../gallery/data/models/media_album_model.dart';
 import '../../../../core/models/live_session_model.dart';
-import '../../../textbooks/presentation/screens/book_preview_screen.dart';
+import '../../../../core/routing/book_preview_args.dart';
+import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../cubit/subject_content_cubit.dart';
 import '../../../../core/routing/subject_content_args.dart';
 import '../refactor/subject_content_body.dart';
@@ -74,6 +75,7 @@ class SubjectContentScreen extends StatelessWidget {
         filePath: path,
         title: book.title,
         contentId: book.id,
+        resumeKey: DownloadedPdfsDataSource.bookKey(book.id),
       ),
     );
   }
