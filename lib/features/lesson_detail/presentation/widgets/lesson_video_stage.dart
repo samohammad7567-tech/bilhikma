@@ -11,6 +11,7 @@ import '../../../../core/utils/orientation/orientation_util.dart';
 import '../../../../core/utils/screen_size.dart';
 import '../refactor/lesson_playback_reporter.dart';
 import 'lesson_video_controls.dart';
+import 'lesson_video_error.dart';
 
 class LessonVideoStage extends StatefulWidget {
   const LessonVideoStage({
@@ -57,6 +58,10 @@ class LessonVideoStage extends StatefulWidget {
 }
 
 class _LessonVideoStageState extends State<LessonVideoStage> {
+  /// Shape of the inline (non-fullscreen) stage. Slightly taller than the
+  /// video itself so the controls have room without overlaying the picture.
+  static const double _stageAspectRatio = 16 / 10;
+
   late final LessonPlaybackReporter _reporter = LessonPlaybackReporter(
     onTick: (int position, int played) => widget.onTick(position, played),
     onEnded: (int duration) => widget.onEnded(duration),
@@ -152,6 +157,14 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     unawaited(_applySpeed());
   }
 
+  Future<void> _retry() async {
+    _teardown();
+    if (mounted) setState(() {});
+
+    await _createIfPossible();
+    if (mounted) setState(() {});
+  }
+
   void _teardown() {
     _reporter.detach();
     _playback?.removeListener(_onPlaybackChanged);
@@ -186,9 +199,16 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
   Widget build(BuildContext context) {
     final VideoPlayback? playback = _playback;
 
+    final Size screen = MediaQuery.sizeOf(context);
+
+    // The real viewport, never double.infinity. In the fullscreen tree the
+    // parent is a Scaffold body and an infinite height resolves, but the
+    // normal tree places this inside a ListView — an unbounded vertical
+    // constraint, where it asserts "BoxConstraints forces an infinite height"
+    // and takes the frame with it. The transition builds in both.
     final double height = widget.isFullscreen
-        ? double.infinity
-        : MediaQuery.sizeOf(context).width / (16 / 10);
+        ? screen.height
+        : screen.width / _stageAspectRatio;
 
     return SizedBox(
       height: height,
@@ -202,25 +222,37 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
               )
             : ListenableBuilder(
                 listenable: playback,
-                builder: (BuildContext context, _) => playback.buildSurface(
-                  overlay: LessonVideoControls(
-                    isPlaying: playback.isPlaying,
-                    isBuffering: playback.isBuffering,
-                    isFullscreen: widget.isFullscreen,
-                    position: playback.position,
-                    duration: playback.duration,
-                    maxPosition: Duration(seconds: widget.seekLimitSeconds),
-                    onToggle: playback.togglePlayPause,
-                    onRewind: () =>
-                        playback.seekBy(const Duration(seconds: -10)),
-                    onSeek: (Duration target) =>
-                        _reporter.seekTo(target.inSeconds),
-                    onFullscreen: _toggleFullscreen,
-                    speed: widget.speed,
-                    onSpeedChanged: widget.onSpeedChanged,
-                    isLessonCompleted: widget.isLessonCompleted,
-                  ),
-                ),
+                builder: (BuildContext context, _) {
+                  // A failed player must not stay a black rectangle: the user
+                  // gets told, and gets a way to try again.
+                  final String? failure = playback.errorMessage;
+                  if (failure != null) {
+                    return LessonVideoError(
+                      details: failure,
+                      onRetry: () => unawaited(_retry()),
+                    );
+                  }
+
+                  return playback.buildSurface(
+                    overlay: LessonVideoControls(
+                      isPlaying: playback.isPlaying,
+                      isBuffering: playback.isBuffering,
+                      isFullscreen: widget.isFullscreen,
+                      position: playback.position,
+                      duration: playback.duration,
+                      maxPosition: Duration(seconds: widget.seekLimitSeconds),
+                      onToggle: playback.togglePlayPause,
+                      onRewind: () =>
+                          playback.seekBy(const Duration(seconds: -10)),
+                      onSeek: (Duration target) =>
+                          _reporter.seekTo(target.inSeconds),
+                      onFullscreen: _toggleFullscreen,
+                      speed: widget.speed,
+                      onSpeedChanged: widget.onSpeedChanged,
+                      isLessonCompleted: widget.isLessonCompleted,
+                    ),
+                  );
+                },
               ),
       ),
     );

@@ -1,20 +1,19 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/gallery/data/data_source/gallery_data_source.dart';
 import '../constants/api_endpoints.dart';
+import '../utils/app_logger.dart';
 import '../utils/cache_util.dart';
 import 'device_service.dart';
 import 'dio_service.dart';
 import 'push_notification_service.dart';
 import 'screen_capture_policy.dart';
+import 'secure_store.dart';
 import '../enums/device_session_status_enum.dart';
 
 class DeviceSessionService {
   DeviceSessionService._();
 
-  static const FlutterSecureStorage _storage = FlutterSecureStorage();
   static const String tokenKey = 'token';
   static const String refreshTokenKey = 'refresh_token';
   static const String _boundDeviceKey = 'session_device_id';
@@ -36,8 +35,8 @@ class DeviceSessionService {
   static Future<void> bind(String accessToken) async {
     await DeviceService.ensureInitialized();
 
-    await _storage.write(key: _boundDeviceKey, value: DeviceService.deviceUuid);
-    await _storage.write(key: _boundTokenKey, value: _fingerprint(accessToken));
+    await SecureStore.write(_boundDeviceKey, DeviceService.deviceUuid);
+    await SecureStore.write(_boundTokenKey, _fingerprint(accessToken));
   }
 
   static Future<DeviceSessionStatus> validateCachedSession() async {
@@ -46,17 +45,18 @@ class DeviceSessionService {
 
     await DeviceService.ensureInitialized();
 
-    String? boundDevice;
-    String? boundToken;
+    final String? boundDevice = await SecureStore.read(_boundDeviceKey);
+    final String? boundToken = await SecureStore.read(_boundTokenKey);
 
-    try {
-      boundDevice = await _storage.read(key: _boundDeviceKey);
-      boundToken = await _storage.read(key: _boundTokenKey);
-    } catch (error) {
-      debugPrint('Secure storage unreadable, deferring to the API: $error');
-    }
-
+    // Either the binding was never written or the keystore lost it. Both are
+    // indistinguishable from here, and neither is grounds for signing the user
+    // out locally — re-bind and let the API be the authority on the session.
     if (boundDevice == null || boundToken == null) {
+      AppLogger.info(
+        'No local device binding found; re-binding and deferring to the API',
+        name: 'device_session',
+      );
+
       await bind(token);
       return DeviceSessionStatus.valid;
     }
@@ -77,7 +77,11 @@ class DeviceSessionService {
         data: <String, dynamic>{'device_uuid': DeviceService.deviceUuid},
       );
     } catch (error) {
-      debugPrint('Remote logout failed, clearing local session anyway: $error');
+      AppLogger.warning(
+        'Remote logout failed, clearing the local session anyway',
+        name: 'device_session',
+        error: error,
+      );
     } finally {
       await clear();
     }
@@ -92,8 +96,8 @@ class DeviceSessionService {
 
     GalleryDataSource.clearCache();
 
-    await _storage.delete(key: _boundDeviceKey);
-    await _storage.delete(key: _boundTokenKey);
+    await SecureStore.delete(_boundDeviceKey);
+    await SecureStore.delete(_boundTokenKey);
   }
 
   static bool isDeviceConflict(Object error) {

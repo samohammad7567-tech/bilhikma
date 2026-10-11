@@ -15,6 +15,49 @@ devices it dies during (or before) the splash screen and never reaches the UI.
 
 ---
 
+## 0. Status
+
+`flutter analyze` clean · 17/17 tests pass · debug APK builds.
+
+| # | Item | Status |
+|---|---|---|
+| 1.1 | Wrong-ABI APK | **Fixed** — `scripts/build_release.sh` builds the AAB + a universal APK, refuses to run without a release keystore, and fails the build if `armeabi-v7a`/`arm64-v8a` are missing from the APK |
+| 1.2 | `main()` unguarded | **Fixed** — `runZonedGuarded`, `FlutterError.onError`, `PlatformDispatcher.onError`, release `ErrorWidget.builder`; every step isolated and time-boxed by `AppBootstrap` |
+| 1.3 | Keystore read fatal | **Fixed** — new `SecureStore` never throws; `resetOnError`, per-call timeout, prefs mirror for the device id |
+| 1.4 | FCM blocks startup | **Fixed** — moved after `runApp`, unawaited; every stage guarded and timed out |
+| 1.5 | 4.5 s splash hold | Open |
+| 1.6 | No Dio timeouts | **Fixed** — 20 s connect / 40 s receive / 40 s send |
+| 1.7 | Runtime font fetch | Open |
+| 2.1 | YouTube WebView | **Needs a product decision** — see the note in §2.1 |
+| 2.2 | `GlobalKey` re-parenting | Partly — (b) was dead code; (a) still re-parents, see §2.2 |
+| 2.3 | PiP never declared | **Fixed** — manifest declares it; call gated on API ≥ 26 *and* `isPipAvailable`. Was **dead code**, see §2.3 |
+| 2.4 | Decoder limits | Mitigated — aspect ratio can no longer crash layout; failures now surface a retry instead of a black box. Encoding ladder is server-side |
+| 2.5 | Speed above 1× | **Fixed** — capped at 1.25× on low-end devices, locked in the picker with an explanation |
+| 2.6 | `double.infinity` height | **Fixed** — uses the real viewport |
+| 3.1 | `audio_service` manifest | **Fixed** — service, receiver, 3 permissions, `MainActivity : AudioServiceActivity` |
+| 3.2 | No `largeHeap` | **Fixed** — `largeHeap` + image cache capped (24 MB low-end / 56 MB otherwise) |
+| 3.3 | Debug-signed release | **Fixed** — real `signingConfigs` from `key.properties`, loud warning on fallback |
+| 3.4 | Floating `targetSdk` | **Fixed** — pinned 24 / 35 / 36 |
+| 3.5 | No crash reporting | Open — `AppLogger` now records startup failures to logcat, but nothing is uploaded |
+| 4.1 | Raw translation keys | Open — this project has no `LangKeys`; 280 keys use raw strings. New keys follow that convention; a migration is its own pass |
+| 4.2 | Hardcoded English | Open — in the dead `video_player_options.dart` |
+| 4.3 | `print()` | **Fixed** — removed |
+| 4.4 | Unused imports | **Fixed** — removed |
+| 4.6 | `CacheUtil` swallows failures | **Fixed** — guarded `init`, `isReady` flag, loud log |
+
+### Correction to the original report
+
+`FloatingVideoController`, `FloatingVideoOverlay`, `ExpandedVideoPlayer`, `VideoPipPlayer` and
+`VideoSpeedSheet` are **unreferenced outside their own directory** — nothing in `lib/features/`
+constructs them. The lesson and live screens use `VideoPlayback.forItem` directly.
+
+So §2.3's PiP crash and §2.2(b)'s duplicate `_playerKey` **cannot have been firing in the
+shipped app**. They were real defects in that code, and they are fixed, but the live video
+crash surface is only: `lesson_video_stage.dart`, `live_player_stage.dart`,
+`lesson_audio_stage.dart`, and the two `VideoPlayback` implementations.
+
+---
+
 ## 1. Why the app never opens on some devices
 
 ### 1.1 Wrong-ABI APK installed — the app dies before any Flutter code runs
@@ -365,6 +408,17 @@ Android framework terminates the app. Nothing in this project configures that.
 Memory pressure is guaranteed here, because the WebView sits on top of everything else the app
 already holds resident: Firebase, Syncfusion PDF, ExoPlayer, `just_audio`, `cached_network_image`.
 
+**This one needs your decision, and here is why.** The backend tells the app per lesson
+whether its media is `file` or `youtube` (`MediaSource`, `lesson_detail_data_source.dart:33`),
+so lessons really can be YouTube-hosted. Playing those outside the app would break progress
+tracking outright — `onTick`, `onEnded`, the seek limit and lesson completion all depend on
+the in-app player — so a learner could never finish such a lesson. That is a product
+trade-off, not a bug fix, which is why it was left alone.
+
+What was done instead, to reduce how often the renderer is killed and to stop a kill from
+looking like a crash: `largeHeap` is on, the image cache is capped (§3.2), and a failed player
+now shows a message and a retry rather than a black rectangle.
+
 **Fix (pick one):**
 
 1. **Preferred:** stop using the YouTube IFrame WebView for lesson content — serve the same media
@@ -392,7 +446,7 @@ Two separate places do this.
 - `:59-61` fullscreen → returned directly as the `Scaffold` body
 - `:162-163` normal → one child of a `ListView`
 
-**(b) Floating / PiP overlay.**
+**(b) Floating / PiP overlay — dead code, see §0.**
 `lib/core/services/videoplayerservice/floating_video_controller.dart:40` creates
 `_playerKey = GlobalKey()`, and that single key is handed to **both**
 `widgets/expanded_video_player.dart:30` and `widgets/video_pip_player.dart:139`.
@@ -428,7 +482,7 @@ of relying on key re-parenting.
 ---
 
 ### 2.3 Picture-in-Picture is requested, but the manifest never declares support
-**Severity: high · CONFIRMED IN CODE**
+**Severity: high · CONFIRMED IN CODE · FIXED · but this code is unreachable — see §0**
 
 `lib/core/services/videoplayerservice/floating_video_controller.dart:46-51`, run on **every**
 `open()`:

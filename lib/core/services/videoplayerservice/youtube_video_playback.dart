@@ -49,7 +49,7 @@ class YoutubeVideoPlayback extends VideoPlayback {
   double get playbackSpeed => _playbackSpeed;
 
   @override
-  double get aspectRatio => 16 / 9;
+  double get reportedAspectRatio => VideoPlayback.fallbackAspectRatio;
 
   @override
   String? get errorMessage => _errorMessage;

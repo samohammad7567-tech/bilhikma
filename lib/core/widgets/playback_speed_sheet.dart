@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/playback_speed_enum.dart';
+import '../services/device_info_service.dart';
 import '../themes/app_theme.dart';
 import 'sheet_handle.dart';
 
@@ -51,10 +52,25 @@ class PlaybackSpeedSheet extends StatelessWidget {
     ),
   );
 
+  bool get _isLowEndDevice => DeviceInfoService.isLowEndDevice;
+
+  /// Why some rates are greyed out, or null when none are.
+  ///
+  /// The device limit is named first: it is the one the user cannot lift by
+  /// finishing the lesson, so explaining the other cap instead would be
+  /// actively misleading.
+  String? get _noteKey {
+    if (_isLowEndDevice) return 'playback_speed_device_note';
+    if (!isLessonCompleted) return 'playback_speed_locked_note';
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final AppTextStyles styles = AppTheme.styles(context);
+    final String? noteKey = _noteKey;
 
     return Container(
       decoration: BoxDecoration(
@@ -103,16 +119,20 @@ class PlaybackSpeedSheet extends StatelessWidget {
                         speed: option,
                         isSelected: option == current,
                         isLocked:
-                            option.needsCompletedLesson && !isLessonCompleted,
+                            (option.needsCompletedLesson &&
+                                !isLessonCompleted) ||
+                            option.exceedsDevice(
+                              isLowEndDevice: _isLowEndDevice,
+                            ),
                         onTap: () => onSelected(option),
                       ),
 
-                    if (!isLessonCompleted) ...<Widget>[
+                    if (noteKey != null) ...<Widget>[
                       SizedBox(height: 8.h),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.w),
                         child: Text(
-                          'playback_speed_locked_note'.tr(),
+                          noteKey.tr(),
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           style: styles.cardCaption,

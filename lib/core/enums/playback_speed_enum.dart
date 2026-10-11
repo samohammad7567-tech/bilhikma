@@ -22,15 +22,41 @@ enum PlaybackSpeed {
   /// Fastest rate allowed before the lesson has been completed once.
   static const double maxOnFirstWatch = 1.5;
 
+  /// Fastest rate a low-end device is asked to sustain.
+  ///
+  /// A decoder that only just keeps up at 1x has no headroom above it: it
+  /// misses its frame deadlines and ExoPlayer aborts the stream with a
+  /// `MediaCodec` error rather than merely playing rough. Older hardware also
+  /// runs the audio rate change through `Sonic` on the CPU, which competes
+  /// with the decoder for the same budget.
+  static const double maxOnLowEndDevice = 1.25;
+
   /// Rates past the first-watch cap open up once the lesson is completed.
   bool get needsCompletedLesson => rate > maxOnFirstWatch;
 
-  /// Rate to actually play at: a stored preference above the first-watch cap
-  /// drops back to the cap until this lesson has been completed.
-  PlaybackSpeed cappedFor({required bool isLessonCompleted}) =>
-      isLessonCompleted || !needsCompletedLesson
-      ? this
-      : PlaybackSpeed.oneAndHalf;
+  /// True when this device should not be asked for this rate at all. Unlike
+  /// [needsCompletedLesson] the user cannot unlock it — the hardware is the
+  /// limit.
+  bool exceedsDevice({required bool isLowEndDevice}) =>
+      isLowEndDevice && rate > maxOnLowEndDevice;
+
+  /// Rate to actually play at, after both caps.
+  ///
+  /// The device cap is applied last and wins: a rate the hardware cannot
+  /// decode is not worth attempting however far the user has got through the
+  /// lesson.
+  PlaybackSpeed cappedFor({
+    required bool isLessonCompleted,
+    required bool isLowEndDevice,
+  }) {
+    final PlaybackSpeed allowed = isLessonCompleted || !needsCompletedLesson
+        ? this
+        : PlaybackSpeed.oneAndHalf;
+
+    return allowed.exceedsDevice(isLowEndDevice: isLowEndDevice)
+        ? PlaybackSpeed.oneAndQuarter
+        : allowed;
+  }
 
   /// Closest offered rate to [rate]; [normal] when nothing was stored.
   ///

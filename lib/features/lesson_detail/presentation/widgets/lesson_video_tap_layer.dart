@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'lesson_video_rewind_hint.dart';
 
 /// Full-surface gesture layer: a single tap toggles the controls, a double tap
-/// on the leading half rewinds, and one on the trailing half is refused.
+/// on the leading half rewinds, and one on the trailing half skips forward —
+/// only as far as the seek cap allows, which [onForward] reports by returning
+/// whether the skip was taken.
 ///
 /// Stays hit-testable while the controls are faded out, so a tap always brings
 /// them back.
@@ -11,13 +13,16 @@ class LessonVideoTapLayer extends StatefulWidget {
   const LessonVideoTapLayer({
     required this.onTap,
     required this.onRewind,
-    required this.onRefuseSkip,
+    required this.onForward,
     super.key,
   });
 
   final VoidCallback onTap;
   final VoidCallback onRewind;
-  final VoidCallback onRefuseSkip;
+
+  /// Returns `true` when the forward skip actually happened, `false` when it
+  /// was refused — only the former flashes the hint.
+  final bool Function() onForward;
 
   @override
   State<LessonVideoTapLayer> createState() => _LessonVideoTapLayerState();
@@ -25,13 +30,23 @@ class LessonVideoTapLayer extends StatefulWidget {
 
 class _LessonVideoTapLayerState extends State<LessonVideoTapLayer> {
   bool _showRewindHint = false;
+  bool _showForwardHint = false;
 
   void _rewind() {
     widget.onRewind();
+    _flash(() => _showRewindHint = true, () => _showRewindHint = false);
+  }
 
-    setState(() => _showRewindHint = true);
+  void _forward() {
+    if (!widget.onForward()) return;
+
+    _flash(() => _showForwardHint = true, () => _showForwardHint = false);
+  }
+
+  void _flash(VoidCallback show, VoidCallback hide) {
+    setState(show);
     Future<void>.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) setState(() => _showRewindHint = false);
+      if (mounted) setState(hide);
     });
   }
 
@@ -52,7 +67,11 @@ class _LessonVideoTapLayerState extends State<LessonVideoTapLayer> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: widget.onTap,
-            onDoubleTap: widget.onRefuseSkip,
+            onDoubleTap: _forward,
+            child: LessonVideoRewindHint(
+              visible: _showForwardHint,
+              isForward: true,
+            ),
           ),
         ),
       ],

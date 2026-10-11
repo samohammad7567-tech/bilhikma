@@ -36,11 +36,10 @@ void main() {
         'bilhikma://open/5',
         '5',
       ]) {
-        final NotificationDestination? target =
-            NotificationDestination.resolve(
-              kind: NotificationKind.newContent,
-              deepLink: link,
-            );
+        final NotificationDestination? target = NotificationDestination.resolve(
+          kind: NotificationKind.newContent,
+          deepLink: link,
+        );
 
         expect(target?.route, AppRoutes.lessonDetail, reason: link);
         expect(lessonId(target), 5, reason: link);
@@ -139,9 +138,7 @@ void main() {
 
   test('nothing to open stays null', () {
     expect(
-      NotificationDestination.resolve(
-        kind: NotificationKind.adminAnnouncement,
-      ),
+      NotificationDestination.resolve(kind: NotificationKind.adminAnnouncement),
       isNull,
     );
     expect(

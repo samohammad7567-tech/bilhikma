@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Required by every build type (debug/profile declare it separately for
          the Flutter tooling only, so release builds need it declared here). -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -12,10 +13,26 @@
          SecurityException. -->
     <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE"/>
 
+    <!-- Background audio. audio_service ships an EMPTY library manifest, so
+         nothing below is merged in for us: the permissions, the service and
+         the media-button receiver all have to be declared by the app or
+         playback crashes the moment it starts.
+         FOREGROUND_SERVICE_MEDIA_PLAYBACK is the Android 14+ half — starting a
+         mediaPlayback foreground service without it throws SecurityException. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+
     <application
         android:label="بالحكمة"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="false"
+        android:largeHeap="true">
+        <!-- largeHeap: the app keeps an ExoPlayer decoder, a WebView and the
+             Syncfusion PDF engine resident at the same time. On a 1-2 GB
+             device the default per-process heap is smaller than that working
+             set, and the OOM killer takes the process mid-video. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,7 +41,18 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:supportsPictureInPicture="true"
+            android:resizeableActivity="true"
+            tools:ignore="Instantiatable">
+            <!-- supportsPictureInPicture is what makes
+                 enterPictureInPictureMode() legal. Without it the call throws
+                 IllegalStateException on the Android main thread, which is a
+                 process-level crash rather than something Dart can catch — and
+                 the video player asks for PiP every time a video opens.
+                 The platform only honours it from API 26; Dart gates the call
+                 on DeviceInfoService.supportsPictureInPicture so nothing is
+                 attempted below that. -->
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -38,6 +66,30 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Hosts playback while the app is backgrounded, and owns the media
+             notification. MainActivity extends AudioServiceActivity so the
+             service can re-attach the engine when the notification is tapped. -->
+        <service
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
+
+        <!-- Headset and lock-screen transport controls. -->
+        <receiver
+            android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            </intent-filter>
+        </receiver>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -53,6 +105,12 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Lets the app check whether YouTube or a browser can take over a
+             video it will not play in-process on an older WebView. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
         </intent>
     </queries>
 </manifest>

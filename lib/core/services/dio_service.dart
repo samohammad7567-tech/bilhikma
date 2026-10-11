@@ -8,8 +8,20 @@ import 'package:dio/dio.dart';
 class DioService {
   static Dio? dio;
 
+  /// Dio's own default for every timeout is `null`, which means wait forever.
+  /// Without these a single unreachable host holds the UI indefinitely — the
+  /// splash screen used to sit there until Android's ANR killer stepped in,
+  /// which users read as the app crashing on launch.
+  ///
+  /// Sized for a slow mobile connection rather than for office Wi-Fi: better
+  /// to let a genuinely slow request finish than to fail a user on 3G.
+  static const Duration _connectTimeout = Duration(seconds: 20);
+  static const Duration _receiveTimeout = Duration(seconds: 40);
+  static const Duration _sendTimeout = Duration(seconds: 40);
+
   static String _storedToken() {
     final Object? token = CacheUtil.get(key: 'token');
+    print(token);
     return token is String ? token : '';
   }
 
@@ -17,6 +29,9 @@ class DioService {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
+        connectTimeout: _connectTimeout,
+        receiveTimeout: _receiveTimeout,
+        sendTimeout: _sendTimeout,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

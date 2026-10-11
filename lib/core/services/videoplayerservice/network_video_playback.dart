@@ -38,7 +38,8 @@ class NetworkVideoPlayback extends VideoPlayback {
   double get playbackSpeed => _value.playbackSpeed;
 
   @override
-  double get aspectRatio => isReady ? _value.aspectRatio : 16 / 9;
+  double get reportedAspectRatio =>
+      isReady ? _value.aspectRatio : VideoPlayback.fallbackAspectRatio;
 
   @override
   String? get errorMessage => _errorMessage ?? _value.errorDescription;
@@ -99,7 +100,9 @@ class NetworkVideoPlayback extends VideoPlayback {
               ? const SizedBox.expand()
               : Center(
                   child: AspectRatio(
-                    aspectRatio: controller.value.aspectRatio,
+                    // The sanitised getter, not controller.value: a stream
+                    // that reports a zero size would assert here.
+                    aspectRatio: aspectRatio,
                     child: vp.VideoPlayer(controller),
                   ),
                 ),

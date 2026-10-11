@@ -51,6 +51,8 @@ class LessonVideoControls extends StatefulWidget {
 }
 
 class _LessonVideoControlsState extends State<LessonVideoControls> {
+  static const Duration _skipStep = Duration(seconds: 10);
+
   final MediaControlsVisibility _visibility = MediaControlsVisibility();
 
   @override
@@ -84,6 +86,30 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
     AppToast.show(context, 'video_no_skip_note'.tr());
   }
 
+  /// Forward double tap: allowed only inside the seek cap — the whole lesson
+  /// once it has been completed, everything already watched before that.
+  bool _forward() {
+    // Never past the end, and never past the cap while one is still in play.
+    final Duration cap = widget.maxPosition < widget.duration
+        ? widget.maxPosition
+        : widget.duration;
+
+    if (widget.position >= cap) {
+      // Only a real restriction is worth a toast; sitting at the end of an
+      // unrestricted lesson is not.
+      if (cap < widget.duration) {
+        _refuseSkip();
+      } else {
+        _visibility.poke();
+      }
+      return false;
+    }
+
+    final Duration target = widget.position + _skipStep;
+    _run(() => widget.onSeek(target > cap ? cap : target));
+    return true;
+  }
+
   Future<void> _pickSpeed() async {
     _visibility.show();
 
@@ -105,7 +131,7 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
         LessonVideoTapLayer(
           onTap: _visibility.toggle,
           onRewind: () => _run(widget.onRewind),
-          onRefuseSkip: _refuseSkip,
+          onForward: _forward,
         ),
 
         if (widget.isBuffering)

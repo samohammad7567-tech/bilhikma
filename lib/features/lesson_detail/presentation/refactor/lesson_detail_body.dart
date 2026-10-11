@@ -5,8 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../textbooks/presentation/screens/book_preview_screen.dart';
 import '../../../../core/widgets/app_error_view.dart';
-import '../../../../core/widgets/coming_soon_sheet.dart';
-import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../data/models/lesson_detail_model.dart';
 import '../cubit/lesson_detail_cubit.dart';
@@ -76,7 +74,7 @@ class LessonDetailBody extends StatelessWidget {
               ),
             ),
 
-            if (detail.isVideo) ...<Widget>[
+            if (detail.isVideo && !state.progress.isCompleted) ...<Widget>[
               SizedBox(height: 10.h),
               LessonDetailInset(
                 child: Text(

@@ -7,6 +7,7 @@ import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/models/lesson_progress_model.dart';
+import '../../../../core/services/device_info_service.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../../data/data_source/lesson_detail_data_source.dart';
 import '../../data/data_source/lesson_playback_data_source.dart';

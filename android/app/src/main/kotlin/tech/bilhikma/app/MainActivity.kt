@@ -3,7 +3,7 @@ package tech.bilhikma.app
 import android.app.Activity
 import android.os.Build
 import android.util.Log
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 
@@ -15,8 +15,14 @@ import io.flutter.plugin.common.EventChannel
  * Whether a capture is reported is decided entirely in Dart from the account's
  * `can_capture_screen`, which arrives with the login response. Nothing on this
  * side needs to know about it, so there is no policy channel here.
+ *
+ * The superclass is [AudioServiceActivity], not `FlutterActivity`: both
+ * audio_service and just_audio_background require it, because tapping the
+ * media notification has to re-attach this activity to the engine the
+ * background service is already driving. With a plain `FlutterActivity` that
+ * hand-off has no route back into the running isolate.
  */
-class MainActivity : FlutterActivity() {
+class MainActivity : AudioServiceActivity() {
 
     private companion object {
         const val TAG = "MainActivity"

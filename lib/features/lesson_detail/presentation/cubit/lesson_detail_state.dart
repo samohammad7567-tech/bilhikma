@@ -79,9 +79,12 @@ final class LessonDetailState {
 
   /// Rate the players actually run at. The stored preference is the user's
   /// choice; rates above the first-watch cap only apply once the lesson has
-  /// been completed.
-  PlaybackSpeed get effectivePlaybackSpeed =>
-      playbackSpeed.cappedFor(isLessonCompleted: progress.isCompleted);
+  /// been completed, and a low-end device is never pushed past what its
+  /// decoder can hold.
+  PlaybackSpeed get effectivePlaybackSpeed => playbackSpeed.cappedFor(
+    isLessonCompleted: progress.isCompleted,
+    isLowEndDevice: DeviceInfoService.isLowEndDevice,
+  );
 
   List<int> get checkpoints => detail?.checkpoints ?? const <int>[];
 
@@ -89,17 +92,28 @@ final class LessonDetailState {
       ? checkpoints[checkpointIndex]
       : null;
 
-  int get seekLimitSeconds => positionSeconds > progress.maxPositionSeconds
-      ? positionSeconds
-      : progress.maxPositionSeconds;
+  /// How far the user may scrub.
+  ///
+  /// During the first watch that is the furthest second actually reached. Once
+  /// the lesson is completed the cap is lifted to the full duration: the
+  /// restriction only exists to stop skipping past unwatched material, and
+  /// there is none left to skip.
+  int get seekLimitSeconds {
+    if (progress.isCompleted) {
+      final int total = detail?.durationSeconds ?? 0;
+      if (total > watchedHighWaterSeconds) return total;
+    }
+
+    return watchedHighWaterSeconds;
+  }
 
   /// Furthest second reached on this device, including seconds watched since
   /// the last acknowledged checkpoint.
   ///
   /// Deliberately separate from [seekLimitSeconds]: that one answers "how far
-  /// may the user scrub", this one answers "how far have they watched". They
-  /// happen to share a formula today — changing the seek policy must not
-  /// silently change what the progress bar shows.
+  /// may the user scrub", this one answers "how far have they watched" —
+  /// changing the seek policy must not silently change what the progress bar
+  /// shows.
   int get watchedHighWaterSeconds =>
       positionSeconds > progress.maxPositionSeconds
       ? positionSeconds

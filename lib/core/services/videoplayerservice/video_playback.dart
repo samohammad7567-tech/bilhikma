@@ -13,6 +13,10 @@ abstract class VideoPlayback extends ChangeNotifier {
     VideoSourceKind.network => NetworkVideoPlayback(item),
   };
 
+  /// Used until a real ratio is known, and whenever the reported one is
+  /// unusable.
+  static const double fallbackAspectRatio = 16 / 9;
+
   final VideoItem item;
 
   bool get isReady;
@@ -28,7 +32,26 @@ abstract class VideoPlayback extends ChangeNotifier {
 
   double get playbackSpeed;
 
-  double get aspectRatio;
+  /// The ratio the backend reports, unsanitised.
+  ///
+  /// Implementations are free to return whatever the player gives them: zero
+  /// before a size is known, or `NaN`/`Infinity` for a stream that reports a
+  /// malformed one. Use [aspectRatio] everywhere outside this class.
+  @protected
+  double get reportedAspectRatio;
+
+  /// Ratio to lay the video surface out at — always finite and greater than
+  /// zero.
+  ///
+  /// This guarantee is the point of the getter. Callers divide the screen
+  /// width by it and hand it to [AspectRatio], and a zero or `NaN` in either
+  /// position is a layout assertion that takes the screen down rather than a
+  /// single bad frame. A stream reporting a zero height used to be enough.
+  double get aspectRatio {
+    final double ratio = reportedAspectRatio;
+
+    return ratio.isFinite && ratio > 0 ? ratio : fallbackAspectRatio;
+  }
 
   String? get errorMessage;
 
