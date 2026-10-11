@@ -51,6 +51,7 @@ import '../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../features/subject_content/data/data_source/subject_content_data_source.dart';
 import '../../features/subject_content/data/repos/subject_content_repo.dart';
 import '../../features/subject_content/presentation/cubit/subject_content_cubit.dart';
+import '../../features/textbooks/data/data_source/book_downloads_data_source.dart';
 import '../../features/textbooks/data/data_source/textbooks_data_source.dart';
 import '../../features/textbooks/data/repos/textbooks_repo.dart';
 import '../../features/subjects/data/data_source/subjects_data_source.dart';
@@ -231,7 +232,10 @@ Future<void> _initSubjectContent() async {
 
 Future<void> _initTextbooks() async {
   getIt
-    ..registerLazySingleton(() => TextbooksRepo(dataSource: getIt()))
+    ..registerLazySingleton(
+      () => TextbooksRepo(dataSource: getIt(), downloads: getIt()),
+    )
+    ..registerLazySingleton(() => BookDownloadsDataSource(textbooks: getIt()))
     ..registerLazySingleton(TextbooksDataSource.new);
 }
 

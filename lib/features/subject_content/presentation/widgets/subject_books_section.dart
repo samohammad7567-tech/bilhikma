@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/models/download_progress.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/models/textbook_model.dart';
 import 'subject_book_card.dart';
@@ -7,19 +8,21 @@ import 'subject_book_card.dart';
 class SubjectBooksSection extends StatelessWidget {
   const SubjectBooksSection({
     required this.books,
-    required this.downloadingBookId,
+    required this.downloadingBookIds,
     required this.previewingBookId,
     required this.onDownload,
     required this.onPreview,
+    required this.progressFor,
     super.key,
     this.downloadedBookIds = const <int>{},
   });
 
   final List<TextbookModel> books;
-  final int? downloadingBookId;
+  final Set<int> downloadingBookIds;
   final int? previewingBookId;
   final ValueChanged<TextbookModel> onDownload;
   final ValueChanged<TextbookModel> onPreview;
+  final DownloadProgress? Function(int bookId) progressFor;
   final Set<int> downloadedBookIds;
 
   @override
@@ -38,7 +41,8 @@ class SubjectBooksSection extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
             child: SubjectBookCard(
               book: book,
-              isDownloading: book.id == downloadingBookId,
+              progress: progressFor(book.id),
+              isDownloading: downloadingBookIds.contains(book.id),
               isPreviewing: book.id == previewingBookId,
               isDownloaded: downloadedBookIds.contains(book.id),
               onDownload: () => onDownload(book),

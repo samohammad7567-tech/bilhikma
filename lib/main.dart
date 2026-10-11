@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bilhikma/core/constants/cache_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +68,7 @@ Future<void> _startApp() async {
     ScreenCapturePolicy.initialize();
   });
   await AppBootstrap.runStep('capture_policy', ScreenCapturePolicy.restore);
-
+  print(CacheUtil.get(key: CacheKeys.deviceUuidKey));
   runApp(
     EasyLocalization(
       supportedLocales: const <Locale>[Locale('ar'), Locale('en')],

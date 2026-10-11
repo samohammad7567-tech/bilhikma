@@ -10,8 +10,9 @@ final class SubjectContentState {
     this.lessons = const <LessonModel>[],
     this.liveSessions = const <LiveSessionModel>[],
     this.albums = const <MediaAlbumModel>[],
-    this.downloadingBookId,
+    this.bookDownloads = const <int, DownloadProgress>{},
     this.previewingBookId,
+    this.previewProgress = DownloadProgress.none,
     this.downloadedBookIds = const <int>{},
     this.errorKey,
     this.messageKey,
@@ -27,9 +28,14 @@ final class SubjectContentState {
 
   final List<MediaAlbumModel> albums;
 
-  final int? downloadingBookId;
+  /// Mirrors the app wide registry, so a download started on an earlier visit
+  /// to this screen is still shown in progress after coming back.
+  final Map<int, DownloadProgress> bookDownloads;
 
   final int? previewingBookId;
+
+  /// Previews are screen local — leaving the screen abandons the wait.
+  final DownloadProgress previewProgress;
 
   final Set<int> downloadedBookIds;
   final String? errorKey;
@@ -46,7 +52,9 @@ final class SubjectContentState {
   List<TextbookModel> get books =>
       content?.textbooks ?? const <TextbookModel>[];
 
-  bool isDownloadingBook(int bookId) => downloadingBookId == bookId;
+  Set<int> get downloadingBookIds => bookDownloads.keys.toSet();
+
+  bool isDownloadingBook(int bookId) => bookDownloads.containsKey(bookId);
 
   bool isPreviewingBook(int bookId) => previewingBookId == bookId;
 
@@ -55,6 +63,14 @@ final class SubjectContentState {
 
   bool isBookDownloaded(int bookId) => downloadedBookIds.contains(bookId);
 
+  /// Progress for [bookId] only while it is the busy one, else null.
+  DownloadProgress? progressFor(int bookId) {
+    final DownloadProgress? download = bookDownloads[bookId];
+    if (download != null) return download;
+
+    return isPreviewingBook(bookId) ? previewProgress : null;
+  }
+
   SubjectContentState copyWith({
     SubjectContentStatus? status,
     LessonCategory? selectedCategory,
@@ -62,14 +78,15 @@ final class SubjectContentState {
     List<LessonModel>? lessons,
     List<LiveSessionModel>? liveSessions,
     List<MediaAlbumModel>? albums,
-    int? downloadingBookId,
+    Map<int, DownloadProgress>? bookDownloads,
     int? previewingBookId,
+    DownloadProgress? previewProgress,
     Set<int>? downloadedBookIds,
     String? errorKey,
     String? messageKey,
     bool clearError = false,
-    bool clearDownloadingBook = false,
     bool clearPreviewingBook = false,
+    bool resetPreviewProgress = false,
   }) => SubjectContentState(
     status: status ?? this.status,
     selectedCategory: selectedCategory ?? this.selectedCategory,
@@ -77,12 +94,13 @@ final class SubjectContentState {
     lessons: lessons ?? this.lessons,
     liveSessions: liveSessions ?? this.liveSessions,
     albums: albums ?? this.albums,
-    downloadingBookId: clearDownloadingBook
-        ? null
-        : downloadingBookId ?? this.downloadingBookId,
+    bookDownloads: bookDownloads ?? this.bookDownloads,
     previewingBookId: clearPreviewingBook
         ? null
         : previewingBookId ?? this.previewingBookId,
+    previewProgress: resetPreviewProgress
+        ? DownloadProgress.none
+        : previewProgress ?? this.previewProgress,
     downloadedBookIds: downloadedBookIds ?? this.downloadedBookIds,
     errorKey: clearError ? null : errorKey ?? this.errorKey,
     messageKey: messageKey,

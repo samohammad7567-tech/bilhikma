@@ -56,7 +56,10 @@ class ScreenCaptureService {
     if (_isListening) return;
 
     _isListening = true;
-
+    debugPrint(
+      '🛡️ [ScreenCapture] Starting listener. '
+      'Platform: $defaultTargetPlatform',
+    );
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         _nativeSubscription = _channel.receiveBroadcastStream().listen(

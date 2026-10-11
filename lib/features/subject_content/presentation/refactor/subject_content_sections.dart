@@ -43,9 +43,10 @@ class SubjectContentSection extends StatelessWidget {
     ),
     LessonCategory.books => SubjectBooksSection(
       books: state.books,
-      downloadingBookId: state.downloadingBookId,
+      downloadingBookIds: state.downloadingBookIds,
       previewingBookId: state.previewingBookId,
       downloadedBookIds: state.downloadedBookIds,
+      progressFor: state.progressFor,
       onDownload: onDownloadBook,
       onPreview: onPreviewBook,
     ),

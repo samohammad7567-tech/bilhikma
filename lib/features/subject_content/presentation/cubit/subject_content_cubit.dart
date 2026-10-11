@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/network/paginated_result.dart';
 import '../../../../core/utils/error_mapper.dart';
+import '../../../../core/utils/download_progress_throttle.dart';
+import '../../../../core/models/download_progress.dart';
 import '../../../../core/enums/lesson_category_enum.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/models/lessons_filter.dart';
@@ -16,6 +18,7 @@ import '../../../../core/models/subject_content_model.dart';
 import '../../../gallery/data/models/media_album_model.dart';
 import '../../../gallery/data/repos/gallery_repo.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
+import '../../../textbooks/data/data_source/book_downloads_data_source.dart';
 import '../../data/repos/subject_content_repo.dart';
 
 part 'subject_content_state.dart';
@@ -29,9 +32,14 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     this.galleryRepo = const GalleryRepo(),
     TextbooksRepo? textbooksRepo,
   }) : textbooksRepo = textbooksRepo ?? TextbooksRepo(),
-       super(const SubjectContentState()) {
+       // Adopt whatever is already downloading, so the first frame after a
+       // remount shows the bar instead of an idle download button.
+       super(
+         SubjectContentState(bookDownloads: BookDownloadsDataSource.snapshot),
+       ) {
     loadContent();
     DownloadedPdfsDataSource.revision.addListener(_onDownloadsChanged);
+    BookDownloadsDataSource.active.addListener(_onActiveDownloadsChanged);
   }
 
   final int categorySubjectId;
@@ -41,9 +49,15 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
   final GalleryRepo galleryRepo;
   final TextbooksRepo textbooksRepo;
 
+  final DownloadProgressThrottle _previewProgress = DownloadProgressThrottle();
+
+  /// Books this instance started, whose outcome it reports itself.
+  final Set<int> _ownDownloads = <int>{};
+
   @override
   Future<void> close() {
     DownloadedPdfsDataSource.revision.removeListener(_onDownloadsChanged);
+    BookDownloadsDataSource.active.removeListener(_onActiveDownloadsChanged);
     return super.close();
   }
 
@@ -94,6 +108,8 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
       );
 
       await _refreshDownloadedBooks();
+      if (isClosed) return;
+      _reportMissedFailures();
 
       try {
         final List<LiveSessionModel> sessions = await liveRepo.fetchSessions();
@@ -135,16 +151,60 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
   Future<void> downloadBook(TextbookModel book) async {
     if (state.isBookBusy(book.id) || state.isBookDownloaded(book.id)) return;
 
-    emit(state.copyWith(downloadingBookId: book.id));
+    _ownDownloads.add(book.id);
 
     await _runBookAction(() async {
       final File file = await textbooksRepo.downloadTextbook(book);
       if (isClosed) return 'book_download_failed';
 
       return file.existsSync() ? 'book_downloaded' : 'book_download_failed';
-    }, clearDownloading: true);
+    }, isPreview: false);
+
+    // Reported here already — do not let this or a later visit toast it again.
+    _ownDownloads.remove(book.id);
+    BookDownloadsDataSource.takeMissedFailure(book.id);
 
     await _refreshDownloadedBooks();
+  }
+
+  void _onActiveDownloadsChanged() {
+    if (isClosed) return;
+
+    final Map<int, DownloadProgress> next = BookDownloadsDataSource.snapshot;
+
+    // Downloads that just ended and were started by an earlier visit: nobody
+    // is awaiting them any more, so their failure is reported from here.
+    final Set<int> orphaned = state.bookDownloads.keys.toSet()
+      ..removeAll(next.keys)
+      ..removeAll(_ownDownloads);
+
+    emit(state.copyWith(bookDownloads: next));
+
+    for (final int bookId in orphaned) {
+      final String? key = BookDownloadsDataSource.takeMissedFailure(bookId);
+      if (key == null) continue;
+
+      emit(state.copyWith(messageKey: key));
+      break;
+    }
+  }
+
+  void _onPreviewProgress(DownloadProgress progress) {
+    if (isClosed) return;
+    if (!_previewProgress.shouldEmit(progress)) return;
+
+    emit(state.copyWith(previewProgress: progress));
+  }
+
+  /// Surfaces a download that failed while this screen was not mounted.
+  void _reportMissedFailures() {
+    for (final TextbookModel book in state.books) {
+      final String? key = BookDownloadsDataSource.takeMissedFailure(book.id);
+      if (key == null) continue;
+
+      emit(state.copyWith(messageKey: key));
+      return;
+    }
   }
 
   void _onDownloadsChanged() => unawaited(_refreshDownloadedBooks());
@@ -164,25 +224,29 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
   Future<String?> previewBook(TextbookModel book) async {
     if (state.isBookBusy(book.id)) return null;
 
-    emit(state.copyWith(previewingBookId: book.id));
+    _previewProgress.reset();
+    emit(state.copyWith(previewingBookId: book.id, resetPreviewProgress: true));
 
     String? path;
 
     await _runBookAction(() async {
-      final File file = await textbooksRepo.fetchForPreview(book);
+      final File file = await textbooksRepo.fetchForPreview(
+        book,
+        onProgress: _onPreviewProgress,
+      );
 
       if (!file.existsSync()) return 'book_download_failed';
 
       path = file.path;
       return null;
-    }, clearDownloading: false);
+    }, isPreview: true);
 
     return path;
   }
 
   Future<void> _runBookAction(
     Future<String?> Function() action, {
-    required bool clearDownloading,
+    required bool isPreview,
   }) async {
     String? messageKey;
 
@@ -199,8 +263,8 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     emit(
       state.copyWith(
         messageKey: messageKey,
-        clearDownloadingBook: clearDownloading,
-        clearPreviewingBook: !clearDownloading,
+        clearPreviewingBook: isPreview,
+        resetPreviewProgress: isPreview,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import '../../../../core/network/json_reader.dart';
+import '../../../../core/utils/byte_format.dart';
 
 class LessonAttachmentModel {
   const LessonAttachmentModel({
@@ -15,19 +16,7 @@ class LessonAttachmentModel {
 
   final int fileSize;
 
-  String get readableSize {
-    if (fileSize <= 0) return '';
-    const List<String> units = <String>['B', 'KB', 'MB', 'GB'];
-
-    double size = fileSize.toDouble();
-    int unit = 0;
-    while (size >= 1024 && unit < units.length - 1) {
-      size /= 1024;
-      unit++;
-    }
-
-    return '${size.toStringAsFixed(unit == 0 ? 0 : 1)} ${units[unit]}';
-  }
+  String get readableSize => ByteFormat.readable(fileSize);
 
   factory LessonAttachmentModel.fromJson(Map<String, dynamic> json) =>
       LessonAttachmentModel(

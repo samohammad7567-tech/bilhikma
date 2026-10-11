@@ -208,6 +208,8 @@
   "no_live_broadcasts": "There are no live broadcasts right now",
   "no_books": "This subject has no books",
   "download_book": "Download the book",
+  "downloading_book": "Downloading the book",
+  "preparing_book": "Preparing the book",
   "preview_book": "Preview the book",
   "book_watermark_note": "The book is downloaded watermarked with your name",
   "book_downloaded": "The book was downloaded successfully",

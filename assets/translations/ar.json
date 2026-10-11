@@ -208,6 +208,8 @@
   "no_live_broadcasts": "لا توجد بثوث مباشرة حالياً",
   "no_books": "لا توجد كتب في هذه المادة",
   "download_book": "تحميل الكتاب",
+  "downloading_book": "جارٍ تحميل الكتاب",
+  "preparing_book": "جارٍ تجهيز الكتاب",
   "preview_book": "معاينة الكتاب",
   "book_watermark_note": "سيتم تحميل الكتاب بعلامة مائية باسمك",
   "book_downloaded": "تم تحميل الكتاب بنجاح",

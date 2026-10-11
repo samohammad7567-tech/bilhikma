@@ -1,4 +1,5 @@
 import '../network/json_reader.dart';
+import '../utils/byte_format.dart';
 
 class TextbookModel {
   const TextbookModel({
@@ -22,19 +23,7 @@ class TextbookModel {
 
   final bool isCurrent;
 
-  String get readableSize {
-    if (fileSize <= 0) return '';
-    const List<String> units = <String>['B', 'KB', 'MB', 'GB'];
-
-    double size = fileSize.toDouble();
-    int unit = 0;
-    while (size >= 1024 && unit < units.length - 1) {
-      size /= 1024;
-      unit++;
-    }
-
-    return '${size.toStringAsFixed(unit == 0 ? 0 : 1)} ${units[unit]}';
-  }
+  String get readableSize => ByteFormat.readable(fileSize);
 
   factory TextbookModel.fromJson(Map<String, dynamic> json) => TextbookModel(
     id: Json.asInt(json['id']),
