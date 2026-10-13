@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/utils/error_mapper.dart';
 import '../../data/models/settings_model.dart';
 import '../../../../core/enums/sleep_timer_option_enum.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../video_player_options.dart';
 import 'video_circle_icon_button.dart';
 

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../cubit/settings_cubit.dart';
 import 'font_size_stepper.dart';
@@ -44,9 +45,8 @@ class FontSizeSheet extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(
-                    context,
-                  ).sectionTitle.copyWith(color: colors.secondaryContainer),
+                  style: AppTheme.styles(context).sectionTitle
+                      .copyWith(color: colors.secondaryContainer),
                 ),
 
                 SizedBox(height: 14.h),

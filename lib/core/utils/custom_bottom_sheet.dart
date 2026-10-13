@@ -2,15 +2,6 @@ import 'package:flutter/material.dart';
 
 class CustomBottomSheet {
   const CustomBottomSheet._();
-
-  /// Share of the screen a sheet may take, leaving the rest as barrier.
-  ///
-  /// Left unbounded, a tall sheet — a long option list, a form pushed up by
-  /// the keyboard, anything at all in landscape — covers the whole screen.
-  /// There is then nothing outside it to tap, and the scroll view below
-  /// swallows every downward drag because a gesture that starts on a
-  /// scrollable belongs to that scrollable, so the sheet can only be closed
-  /// from its own buttons or the system back gesture.
   static const double _maxHeightFactor = 0.85;
 
   static void showModalBottomSheetContainer({

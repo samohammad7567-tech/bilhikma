@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/widgets/ornamented_card.dart';
 import '../../../../core/enums/content_type_enum.dart';

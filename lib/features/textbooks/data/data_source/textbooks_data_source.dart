@@ -102,8 +102,6 @@ class TextbooksDataSource {
         .toSet();
   }
 
-  /// Mints a signed link, then retries once on a fresh link when the first one
-  /// expires mid transfer — large books on slow connections can outlive it.
   Future<File> _downloadFreshLink(
     TextbookModel book,
     DownloadProgressCallback? onProgress,
@@ -126,8 +124,6 @@ class TextbooksDataSource {
     }
   }
 
-  /// Dio reports `-1` as the total when the response carries no
-  /// `Content-Length`; the size the API published for the book stands in.
   ProgressCallback? _adapt(
     TextbookModel book,
     DownloadProgressCallback? onProgress,

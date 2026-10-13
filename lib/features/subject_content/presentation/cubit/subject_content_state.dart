@@ -27,14 +27,9 @@ final class SubjectContentState {
   final List<LiveSessionModel> liveSessions;
 
   final List<MediaAlbumModel> albums;
-
-  /// Mirrors the app wide registry, so a download started on an earlier visit
-  /// to this screen is still shown in progress after coming back.
   final Map<int, DownloadProgress> bookDownloads;
 
   final int? previewingBookId;
-
-  /// Previews are screen local — leaving the screen abandons the wait.
   final DownloadProgress previewProgress;
 
   final Set<int> downloadedBookIds;
@@ -62,8 +57,6 @@ final class SubjectContentState {
       isDownloadingBook(bookId) || isPreviewingBook(bookId);
 
   bool isBookDownloaded(int bookId) => downloadedBookIds.contains(bookId);
-
-  /// Progress for [bookId] only while it is the busy one, else null.
   DownloadProgress? progressFor(int bookId) {
     final DownloadProgress? download = bookDownloads[bookId];
     if (download != null) return download;

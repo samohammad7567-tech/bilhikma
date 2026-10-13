@@ -63,15 +63,6 @@ class DeviceService {
     appVersionField: appVersion,
     appBuildField: appBuild,
   };
-
-  /// Resolves this install's device id, in order of trust, and never throws.
-  ///
-  /// The id identifies the install to the backend, which binds the session to
-  /// it, so losing it signs the user out. The keychain is the primary home,
-  /// but on older Android it loses values after an OS update or a credential
-  /// reset — so a plain mirror in shared preferences is both written and read
-  /// back. The id is an opaque install identifier, not a secret, so the mirror
-  /// costs nothing in confidentiality and buys back the session.
   static Future<String> _readOrCreate() async {
     final String? secure = await SecureStore.read(_key);
     if (secure != null && secure.isNotEmpty) {
@@ -86,8 +77,6 @@ class DeviceService {
         'restoring it to secure storage',
         name: 'device_service',
       );
-
-      // Put it back, so the keychain is authoritative again next launch.
       await SecureStore.write(_key, mirrored);
       return mirrored;
     }
@@ -109,9 +98,6 @@ class DeviceService {
 
   static void _mirror(String id) {
     if (CacheUtil.get(key: _key) == id) return;
-
-    // Fire-and-forget: the value is already in hand, and a failed mirror write
-    // must not delay or fail initialization.
     CacheUtil.setString(key: _key, value: id).ignore();
   }
 }

@@ -28,9 +28,8 @@ class RejectionReasonCard extends StatelessWidget {
             Text(
               'rejection_reason'.tr(),
               textAlign: TextAlign.center,
-              style: AppTheme.styles(
-                context,
-              ).bodyStrong.copyWith(color: colors.secondary),
+              style: AppTheme.styles(context).bodyStrong
+                  .copyWith(color: colors.secondary),
             ),
             SizedBox(height: 6.h),
             Text(

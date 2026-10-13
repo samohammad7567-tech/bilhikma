@@ -1,6 +1,8 @@
 import 'section_title.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../data/models/educational_pathway_model.dart';
 import '../cubit/educational_pathways_cubit.dart';

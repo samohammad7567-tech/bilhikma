@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../themes/app_theme.dart';
 
 class EducationalPathText extends StatelessWidget {
@@ -29,9 +30,6 @@ class EducationalPathText extends StatelessWidget {
         currentStyle ?? styles.labelStrong.copyWith(color: colors.secondary);
 
     final bool isRtl = Directionality.of(context) == TextDirection.rtl;
-
-    // API returns: Parent -> Child
-    // We want to display: Current -> Parent
     final List<String> displaySegments = segments.reversed.toList();
 
     return Wrap(

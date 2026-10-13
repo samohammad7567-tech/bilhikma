@@ -36,7 +36,6 @@ class BookPreviewScreen extends StatelessWidget {
     );
   }
 
-  /// The jump is silent, so say why the book did not open at page one.
   void _announceResume(BuildContext context, BookPreviewState state) =>
       AppToast.show(
         context,

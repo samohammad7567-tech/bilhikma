@@ -24,8 +24,6 @@ class NotificationModel {
   final String? deepLink;
   final bool isRead;
   final DateTime? sentAt;
-
-  /// What the notification refers to, parsed from the API's `data` object.
   final NotificationPayload payload;
 
   bool get hasDeepLink => (deepLink ?? '').isNotEmpty;

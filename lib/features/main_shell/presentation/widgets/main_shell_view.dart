@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/app/cubit/app_preferences_cubit.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../core/drawer/presentation/refactor/app_drawer.dart';

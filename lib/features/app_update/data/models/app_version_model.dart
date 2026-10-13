@@ -1,12 +1,6 @@
 import '../../../../core/enums/app_version_status_enum.dart';
 import '../../../../core/network/json_reader.dart';
 
-/// One platform's update settings, from `GET /public/app-version`.
-///
-/// The endpoint answers with the usual envelope wrapping `data.items`, a row
-/// per platform, and sends no verdict of its own — only the thresholds. So
-/// [status] is resolved here from the running build, comparing **build numbers
-/// only**: the version strings are display text and decide nothing.
 class AppVersionModel {
   const AppVersionModel({
     required this.status,
@@ -25,13 +19,9 @@ class AppVersionModel {
   final String latestVersion;
   final String minimumVersion;
   final int? latestBuild;
-
-  /// Below this the update is forced.
   final int? minimumBuild;
 
   final bool maintenanceMode;
-
-  /// Arrives as `{"ar": ..., "en": ...}` and is read in the active language.
   final String? message;
 
   final String? storeUrl;
@@ -39,12 +29,6 @@ class AppVersionModel {
   bool get hasStoreUrl => (storeUrl ?? '').isNotEmpty;
 
   bool get hasMessage => (message ?? '').isNotEmpty;
-
-  /// Picks this platform's row out of the response and resolves the verdict.
-  ///
-  /// Returns null when there is nothing to act on — no row for this platform,
-  /// or a body in a shape this build does not recognise. A missing answer is
-  /// not a reason to stop anyone, so the caller treats null as "carry on".
   static AppVersionModel? fromResponse(
     Map<String, dynamic> body, {
     required String platform,
@@ -82,13 +66,6 @@ class AppVersionModel {
       storeUrl: Json.asOptionalString(row['store_url']),
     );
   }
-
-  /// Walks the payload to this platform's row.
-  ///
-  /// Three shapes are accepted: `data.items` as documented, a bare `data`
-  /// object, and a flat top-level row. The spec described the flat one and the
-  /// server sends the first, so reading all three keeps a server-side change to
-  /// either from turning into a forced update for everyone.
   static Map<String, dynamic>? _rowFor(
     Map<String, dynamic> body,
     String platform,
@@ -114,17 +91,9 @@ class AppVersionModel {
         return item;
       }
     }
-
-    // A row for another platform says nothing about this one.
     return null;
   }
 
-  /// Build numbers only, in order of severity.
-  ///
-  /// An explicit `status` wins if the server ever starts sending one, as the
-  /// spec originally described; otherwise the thresholds decide. Missing
-  /// thresholds resolve to [AppVersionStatus.ok] — an incomplete row must not
-  /// lock anybody out.
   static AppVersionStatus _resolveStatus({
     required Object? explicit,
     required int currentBuild,

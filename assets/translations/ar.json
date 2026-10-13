@@ -77,6 +77,7 @@
   "upcoming": "قادم",
   "am": "ص",
   "pm": "م",
+  "loading": "جارٍ التحميل…",
   "retry": "إعادة المحاولة",
   "live_broadcast": "البث المباشر",
   "notifications": "الاشعارات",
@@ -187,6 +188,12 @@
   "clear_downloads_confirm": "ستحذف جميع الدروس المنزّلة نهائياً من هذا الجهاز",
   "clear_all": "مسح الكل",
   "downloads_cleared": "تم مسح التنزيلات",
+  "delete": "حذف",
+  "delete_download": "حذف الملف",
+  "delete_download_confirm": "سيُحذف «{name}» نهائياً من هذا الجهاز",
+  "download_deleted": "تم حذف الملف",
+  "download_delete_failed": "تعذر حذف الملف، حاول مرة أخرى",
+  "downloads_clear_failed": "تعذر مسح التنزيلات، حاول مرة أخرى",
   "share_app": "مشاركة التطبيق",
   "app_link_copied": "تم نسخ رابط التطبيق",
   "app_language": "لغة التطبيق",
@@ -315,5 +322,9 @@
   "maintenance_note": "نقوم حالياً بأعمال صيانة لتحسين الخدمة. يرجى المحاولة مرة أخرى لاحقاً.",
   "app_update_current_version": "إصدارك الحالي: {version}",
   "app_update_latest_version": "أحدث إصدار: {version}",
-  "update_store_open_failed": "تعذّر فتح رابط التحديث"
+  "update_store_open_failed": "تعذّر فتح رابط التحديث",
+  "downloading_attachment": "جارٍ تنزيل الملف",
+  "attachment_download_complete": "تم تنزيل الملف",
+  "attachment_download_failed": "تعذر تنزيل الملف، حاول مرة أخرى",
+  "dismiss": "إخفاء"
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '../floating_video_controller.dart';
 import '../video_playback.dart';
 import '../video_player_options.dart';

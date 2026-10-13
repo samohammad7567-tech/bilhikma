@@ -2,8 +2,6 @@ class ByteFormat {
   ByteFormat._();
 
   static const List<String> _units = <String>['B', 'KB', 'MB', 'GB'];
-
-  /// Human readable size, empty when the byte count is unknown.
   static String readable(int bytes) {
     if (bytes <= 0) return '';
 
@@ -17,7 +15,6 @@ class ByteFormat {
     return '${size.toStringAsFixed(unit == 0 ? 0 : 1)} ${_units[unit]}';
   }
 
-  /// Size without its unit, so a pair can share one trailing unit label.
   static String readableValue(int bytes, {required int referenceBytes}) {
     if (bytes < 0) return '';
 

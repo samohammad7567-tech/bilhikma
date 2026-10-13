@@ -20,8 +20,6 @@ class TextbooksRepo {
   final BookDownloadsDataSource downloads;
 
   Future<List<TextbookModel>> fetchTextbooks() => dataSource.fetchTextbooks();
-
-  /// Joins the transfer already running for this book, when there is one.
   Future<File> downloadTextbook(TextbookModel book) => downloads.download(book);
 
   Future<File> fetchForPreview(

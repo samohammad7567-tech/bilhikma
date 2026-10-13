@@ -37,10 +37,7 @@ class SetPasswordCubit extends Cubit<SetPasswordState> {
   }
 
   void passwordChanged(String password) => emit(
-    state.copyWith(
-      password: password,
-      strength: PasswordStrength.of(password),
-    ),
+    state.copyWith(password: password, strength: PasswordStrength.of(password)),
   );
 
   void togglePasswordVisibility() =>

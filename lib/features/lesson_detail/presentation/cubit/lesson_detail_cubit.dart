@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/utils/error_mapper.dart';
 import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/enums/playback_speed_enum.dart';
+import '../../../../core/models/download_progress.dart';
+import '../../../../core/models/file_download_state.dart';
 import '../../../../core/models/lesson_progress_model.dart';
 import '../../../../core/services/device_info_service.dart';
+import '../../../../core/utils/download_progress_throttle.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
 import '../../data/data_source/lesson_detail_data_source.dart';
 import '../../data/data_source/lesson_playback_data_source.dart';
@@ -40,6 +44,9 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
   final LessonDetailRepo repo;
   final LessonPlaybackDataSource playbackStore;
   final PlaybackSpeedDataSource speedStore;
+
+  final Map<int, DownloadProgressThrottle> _attachmentThrottles =
+      <int, DownloadProgressThrottle>{};
 
   bool _isReporting = false;
   PlaybackAccess? _access;
@@ -95,20 +102,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     }
   }
 
-  /// Decides where the lesson picks up, and how much of it the server has
-  /// already credited.
-  ///
-  /// **Position** — this device's saved spot wins whenever there is one;
-  /// otherwise playback resumes from the position the backend credited. A
-  /// lesson the backend already marked complete starts over from the
-  /// beginning, and its stale local spot is dropped.
-  ///
-  /// **Checkpoint index** — always re-derived from the credited position,
-  /// never taken from local storage. The index decides which checkpoints still
-  /// get reported, and reporting is the only thing that moves the percent, so
-  /// it has to mirror exactly what the server acknowledged. A stale local index
-  /// that ran ahead would make the client skip checkpoints the server never
-  /// received, leaving the lesson stuck below 100% and unable to ever complete.
   LessonPlaybackStateModel _restoredCounter(LessonDetailModel detail) {
     final LessonPlaybackStateModel stored = playbackStore.read(id);
     final LessonProgressModel progress = detail.progress;
@@ -135,13 +128,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     );
   }
 
-  /// Seconds watched on this device that no checkpoint ever acknowledged.
-  ///
-  /// Dropped unless the saved spot is genuinely past the credited position:
-  /// anywhere else those seconds were either already counted (the app died
-  /// after the server answered but before the counter was rewritten) or were
-  /// watched on another device, and replaying them would inflate the percent
-  /// and complete the lesson early.
   static int _carriedDelta(
     LessonPlaybackStateModel stored,
     LessonProgressModel progress,
@@ -284,9 +270,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       );
 
       await _persistCounter();
-
-      // Once the server owns a completed lesson the saved spot is noise, and
-      // keeping it would resume the next visit at the final second.
       if (state.progress.isCompleted) playbackStore.clear(id);
     } on AppException catch (error) {
       if (isClosed) return;
@@ -362,32 +345,107 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     if (state.downloadingAttachmentId != null) return;
     if (state.isAttachmentDownloaded(file.id)) return;
 
-    emit(state.copyWith(downloadingAttachmentId: file.id));
+    _attachmentThrottles[file.id] = DownloadProgressThrottle();
+
+    emit(
+      state.copyWith(
+        downloadingAttachmentId: file.id,
+        attachmentDownloads: _withAttachmentDownload(
+          file.id,
+          FileDownloadState.starting(expectedBytes: file.fileSize),
+        ),
+      ),
+    );
 
     try {
-      final File saved = await repo.downloadAttachment(id, file);
+      final File saved = await repo.downloadAttachment(
+        id,
+        file,
+        onProgress: (DownloadProgress progress) =>
+            _onAttachmentProgress(file.id, progress),
+      );
       if (isClosed) return;
+
+      final bool isSaved = saved.existsSync();
 
       emit(
         state.copyWith(
           clearAttachmentBusy: true,
-          messageKey: saved.existsSync()
-              ? 'book_downloaded'
-              : 'book_download_failed',
+          attachmentDownloads: _withAttachmentDownload(
+            file.id,
+            isSaved
+                ? FileDownloadState.completed
+                : FileDownloadState.failed('attachment_download_failed'),
+          ),
+          messageKey: isSaved ? 'book_downloaded' : 'book_download_failed',
         ),
       );
 
       await _refreshDownloadedAttachments();
     } catch (error) {
       if (isClosed) return;
+
+      final String errorKey = ErrorMapper.map(error);
+
       emit(
         state.copyWith(
           clearAttachmentBusy: true,
-          messageKey: ErrorMapper.map(error),
+          attachmentDownloads: _withAttachmentDownload(
+            file.id,
+            FileDownloadState.failed(errorKey),
+          ),
+          messageKey: errorKey,
         ),
       );
+    } finally {
+      _attachmentThrottles.remove(file.id);
     }
   }
+
+  /// Drops a finished bar once the user has acknowledged it.
+  void dismissAttachmentDownload(int attachmentId) {
+    final FileDownloadState? current = state.attachmentDownloads[attachmentId];
+    if (current == null || current.isDownloading) return;
+
+    final Map<int, FileDownloadState> next = <int, FileDownloadState>{
+      ...state.attachmentDownloads,
+    }..remove(attachmentId);
+
+    emit(state.copyWith(attachmentDownloads: next));
+  }
+
+  /// Retries a download that failed: the bar goes back to its running state
+  /// instead of leaving the old failure on screen.
+  Future<void> retryAttachmentDownload(LessonAttachmentModel file) async {
+    dismissAttachmentDownload(file.id);
+
+    await downloadAttachment(file);
+  }
+
+  void _onAttachmentProgress(int attachmentId, DownloadProgress progress) {
+    if (isClosed) return;
+
+    final DownloadProgressThrottle? throttle =
+        _attachmentThrottles[attachmentId];
+    if (throttle != null && !throttle.shouldEmit(progress)) return;
+
+    emit(
+      state.copyWith(
+        attachmentDownloads: _withAttachmentDownload(
+          attachmentId,
+          FileDownloadState.running(progress),
+        ),
+      ),
+    );
+  }
+
+  Map<int, FileDownloadState> _withAttachmentDownload(
+    int attachmentId,
+    FileDownloadState download,
+  ) => <int, FileDownloadState>{
+    ...state.attachmentDownloads,
+    attachmentId: download,
+  };
 
   Future<String?> prepareAttachmentPreview(LessonAttachmentModel file) async {
     if (state.previewingAttachmentId != null) return null;
@@ -434,9 +492,6 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     emit(state.copyWith(isVideoFullscreen: value));
   }
 
-  /// Applies a new playback rate and remembers it for the next lesson.
-  ///
-  /// The fastest rates stay closed until this lesson has been completed once.
   Future<void> setPlaybackSpeed(PlaybackSpeed speed) async {
     if (speed.needsCompletedLesson && !state.progress.isCompleted) return;
     if (state.playbackSpeed == speed) return;

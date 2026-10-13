@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../../core/themes/app_theme.dart';
 
 class LoginRememberMe extends StatelessWidget {
@@ -46,9 +47,8 @@ class LoginRememberMe extends StatelessWidget {
               'remember_me'.tr(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(
-                context,
-              ).linkLabel.copyWith(color: colors.onSurface),
+              style: AppTheme.styles(context).linkLabel
+                  .copyWith(color: colors.onSurface),
             ),
           ),
         ],

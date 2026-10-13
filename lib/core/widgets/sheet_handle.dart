@@ -10,9 +10,8 @@ class SheetHandle extends StatelessWidget {
       width: 42.w,
       height: 4.h,
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.onSurfaceVariant
+            .withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(4.r),
       ),
     );

@@ -9,9 +9,6 @@ class ResetPasswordValidators {
     final String password = value ?? '';
 
     if (password.isEmpty) return 'password_required'.tr();
-
-    // Rejects on the same rules the checklist renders, so the two can never
-    // disagree about whether a password is acceptable.
     final PasswordRequirement? unmet = PasswordRequirement.firstUnsatisfiedIn(
       password,
     );

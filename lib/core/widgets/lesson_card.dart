@@ -61,9 +61,8 @@ class LessonCard extends StatelessWidget {
                 top: 4.h,
                 child: LessonSaveIcon(
                   lessonId: lesson.id,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surface.withValues(alpha: 0.85),
+                  backgroundColor: Theme.of(context).colorScheme.surface
+                      .withValues(alpha: 0.85),
                 ),
               ),
           ],

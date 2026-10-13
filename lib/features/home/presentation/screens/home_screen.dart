@@ -65,9 +65,9 @@ class HomeScreen extends StatelessWidget {
 
             onLiveSessionTap:
                 onLiveSessionTap ??
-                (LiveSessionModel session) => Navigator.of(
-                  context,
-                ).pushNamed(AppRoutes.livePlayer, arguments: session),
+                (LiveSessionModel session) =>
+                    Navigator.of(context)
+                        .pushNamed(AppRoutes.livePlayer, arguments: session),
             onResumeLessonTap:
                 onResumeLessonTap ??
                 (ResumeLessonModel lesson) => _openLesson(context, lesson),

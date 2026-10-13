@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// The "10s" flash shown on the half of the surface that was double tapped.
 class LessonVideoRewindHint extends StatelessWidget {
   const LessonVideoRewindHint({
     required this.visible,

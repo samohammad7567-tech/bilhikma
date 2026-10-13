@@ -153,11 +153,6 @@ class ScreenCaptureService {
       report(
         eventType,
         meta: <String, dynamic>{
-          // Which detector fired: 'platform' is the OS reporting a capture of
-          // this window, 'display' is the second-display inference. The backend
-          // needs the difference to read its own data — a missing 'platform'
-          // recording on a modern device means the detector is not running, not
-          // that nobody recorded.
           if (payload['source'] != null) 'source': payload['source'],
           if (payload['display_name'] != null)
             'display': payload['display_name'],

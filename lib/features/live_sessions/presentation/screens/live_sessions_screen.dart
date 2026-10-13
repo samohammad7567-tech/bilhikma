@@ -44,9 +44,9 @@ class LiveSessionsScreen extends StatelessWidget {
           onMenuTap: onMenuTap,
           child: Builder(
             builder: (BuildContext context) => LiveSessionsBody(
-              onWatch: (LiveSessionModel session) => Navigator.of(
-                context,
-              ).pushNamed(AppRoutes.livePlayer, arguments: session),
+              onWatch: (LiveSessionModel session) =>
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.livePlayer, arguments: session),
               onRemind: (LiveSessionModel session) =>
                   _report(context, 'reminder_saved'),
             ),

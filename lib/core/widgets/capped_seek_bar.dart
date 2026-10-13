@@ -20,9 +20,6 @@ class CappedSeekBar extends StatefulWidget {
   final ValueChanged<Duration> onSeek;
 
   final VoidCallback? onBlocked;
-
-  /// Fired while the user drags the thumb, so an owning overlay can keep
-  /// itself on screen for as long as the interaction lasts.
   final VoidCallback? onInteraction;
 
   @override

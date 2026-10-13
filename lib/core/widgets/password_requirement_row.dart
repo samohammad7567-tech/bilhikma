@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../enums/password_requirement_enum.dart';
 import '../themes/app_theme.dart';
 
-/// A single rule line: an empty circle while unmet, a check once met.
 class PasswordRequirementRow extends StatelessWidget {
   const PasswordRequirementRow({
     required this.requirement,
@@ -50,9 +49,8 @@ class PasswordRequirementRow extends StatelessWidget {
                 textAlign: TextAlign.start,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(
-                  context,
-                ).labelSmall.copyWith(color: tone),
+                style: AppTheme.styles(context).labelSmall
+                    .copyWith(color: tone),
               ),
             ),
           ],

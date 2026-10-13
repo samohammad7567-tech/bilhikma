@@ -77,6 +77,7 @@
   "upcoming": "Upcoming",
   "am": "AM",
   "pm": "PM",
+  "loading": "Loading…",
   "retry": "Retry",
   "live_broadcast": "Live",
   "notifications": "Notifications",
@@ -187,6 +188,12 @@
   "clear_downloads_confirm": "All downloaded lessons will be permanently removed from this device",
   "clear_all": "Clear all",
   "downloads_cleared": "Downloads cleared",
+  "delete": "Delete",
+  "delete_download": "Delete file",
+  "delete_download_confirm": "\"{name}\" will be permanently removed from this device",
+  "download_deleted": "File deleted",
+  "download_delete_failed": "The file could not be deleted, please try again",
+  "downloads_clear_failed": "Downloads could not be cleared, please try again",
   "share_app": "Share the app",
   "app_link_copied": "App link copied",
   "app_language": "App language",
@@ -315,5 +322,9 @@
   "maintenance_note": "We are carrying out maintenance to improve the service. Please try again later.",
   "app_update_current_version": "Your version: {version}",
   "app_update_latest_version": "Latest version: {version}",
-  "update_store_open_failed": "Could not open the update link"
+  "update_store_open_failed": "Could not open the update link",
+  "downloading_attachment": "Downloading the file",
+  "attachment_download_complete": "File downloaded",
+  "attachment_download_failed": "The file could not be downloaded, please try again",
+  "dismiss": "Dismiss"
 }

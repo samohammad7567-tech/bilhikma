@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_progress_bar.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import 'test_timer_chip.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'drawer_profile_initials.dart';
 
 class DrawerProfileMonogram extends StatelessWidget {
@@ -17,7 +18,7 @@ class DrawerProfileMonogram extends StatelessWidget {
         height: size,
         color: Theme.of(context).colorScheme.secondaryContainer,
         alignment: Alignment.center,
-        child: DrawerProfileInitials(),
+        child: const DrawerProfileInitials(),
       ),
     );
   }

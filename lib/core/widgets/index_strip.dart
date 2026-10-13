@@ -18,9 +18,8 @@ class IndexStrip extends StatelessWidget {
       child: Text(
         '$order',
         maxLines: 1,
-        style: AppTheme.styles(
-          context,
-        ).rowTitle.copyWith(color: Theme.of(context).colorScheme.onTertiary),
+        style: AppTheme.styles(context).rowTitle
+            .copyWith(color: Theme.of(context).colorScheme.onTertiary),
       ),
     );
   }

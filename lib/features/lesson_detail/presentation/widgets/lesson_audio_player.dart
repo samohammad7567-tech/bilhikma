@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_toast.dart';

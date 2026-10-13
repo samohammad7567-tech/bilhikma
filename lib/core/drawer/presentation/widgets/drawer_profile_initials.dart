@@ -1,5 +1,7 @@
-import 'package:bilhikma/core/utils/current_user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../themes/app_theme.dart';
 
 class DrawerProfileInitials extends StatelessWidget {
@@ -7,12 +9,16 @@ class DrawerProfileInitials extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      CurrentUser.cachedUser()!.initials,
-      maxLines: 1,
-      style: AppTheme.styles(
-        context,
-      ).cardTitle.copyWith(color: Theme.of(context).colorScheme.tertiary),
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      buildWhen: (ProfileState previous, ProfileState current) =>
+          previous.profile.initials != current.profile.initials,
+      builder: (BuildContext context, ProfileState state) => Text(
+        state.profile.initials,
+        maxLines: 1,
+        style: AppTheme.styles(
+          context,
+        ).cardTitle.copyWith(color: Theme.of(context).colorScheme.tertiary),
+      ),
     );
   }
 }

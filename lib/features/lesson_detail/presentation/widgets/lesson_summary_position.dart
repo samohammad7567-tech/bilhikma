@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../refactor/lesson_progress_view.dart';

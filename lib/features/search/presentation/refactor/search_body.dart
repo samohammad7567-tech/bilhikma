@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/models/lesson_model.dart';
 import '../cubit/search_cubit.dart';
 import '../widgets/search_bar_row.dart';

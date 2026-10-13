@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_assets.dart';
 
 class SplashMedallionEntry extends StatelessWidget {

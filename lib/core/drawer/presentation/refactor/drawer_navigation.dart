@@ -4,6 +4,7 @@ import '../../../di/service_locator.dart';
 import '../../../enums/drawer_destination_enum.dart';
 import '../../../routing/app_routes.dart';
 import '../../../services/device_session_service.dart';
+import '../../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../widgets/logout_confirm_dialog.dart';
 
 class DrawerNavigation {
@@ -49,6 +50,7 @@ class DrawerNavigation {
 
     if (scaffold.mounted) scaffold.closeDrawer();
     DeviceSessionService.logout();
+    getIt<ProfileCubit>().reset();
 
     getIt<GlobalKey<NavigatorState>>().currentState?.pushNamedAndRemoveUntil(
       AppRoutes.login,

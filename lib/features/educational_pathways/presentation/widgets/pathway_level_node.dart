@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../data/models/pathway_level_model.dart';
 import 'pathway_node_row.dart';
 import 'pathway_terms.dart';

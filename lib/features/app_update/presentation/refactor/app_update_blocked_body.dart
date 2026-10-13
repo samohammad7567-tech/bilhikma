@@ -9,12 +9,6 @@ import '../../../../core/widgets/status_header.dart';
 import '../../data/models/app_version_model.dart';
 import '../widgets/app_update_message_card.dart';
 
-/// The dead end for `force_update` and `maintenance`.
-///
-/// There is no "later" and no back button: both statuses mean the app cannot be
-/// used at all. `force_update` gets the one action that resolves it — the
-/// download link. `maintenance` gets none, because nothing the user can do
-/// fixes it; they are told to come back.
 class AppUpdateBlockedBody extends StatelessWidget {
   const AppUpdateBlockedBody({
     required this.version,

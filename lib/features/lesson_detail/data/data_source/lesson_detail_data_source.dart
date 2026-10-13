@@ -7,6 +7,7 @@ import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_envelope.dart';
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/enums/media_source_enum.dart';
+import '../../../../core/models/download_progress.dart';
 import '../../../../core/network/media_access_model.dart';
 import '../../../../core/services/device_service.dart';
 import '../../../../core/utils/error_mapper.dart';
@@ -89,12 +90,17 @@ class LessonDetailDataSource {
 
   Future<File> downloadAttachment(
     int contentId,
-    LessonAttachmentModel file,
-  ) async {
+    LessonAttachmentModel file, {
+    void Function(DownloadProgress progress)? onProgress,
+  }) async {
     final String url = await requestAttachmentUrl(contentId, file.id);
 
     final File saved = await _fetch(
-      () => pdf.downloadPdf(pdfUrl: url, fileName: file.fileName),
+      () => pdf.downloadPdf(
+        pdfUrl: url,
+        fileName: file.fileName,
+        onProgress: _adapt(file, onProgress),
+      ),
     );
 
     await downloads.remember(
@@ -118,6 +124,22 @@ class LessonDetailDataSource {
 
     return _fetch(
       () => pdf.downloadToCache(pdfUrl: url, fileName: file.fileName),
+    );
+  }
+
+  /// Turns Dio's raw byte counts into progress the cubit can emit, falling
+  /// back to the size the backend reported when the response has no length.
+  ProgressCallback? _adapt(
+    LessonAttachmentModel file,
+    void Function(DownloadProgress progress)? onProgress,
+  ) {
+    if (onProgress == null) return null;
+
+    return (int received, int total) => onProgress(
+      DownloadProgress(
+        received: received,
+        total: total,
+      ).withTotalFallback(file.fileSize),
     );
   }
 

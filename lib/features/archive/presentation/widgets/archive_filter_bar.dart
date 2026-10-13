@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/enums/archive_filter_enum.dart';
 import 'archive_filter_segment.dart';
 

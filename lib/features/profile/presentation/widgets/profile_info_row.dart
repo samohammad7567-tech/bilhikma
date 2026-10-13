@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/educational_path_text.dart';
 import '../../../../core/enums/profile_field_enum.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'app_progress_bar.dart';
 import 'brand_badge.dart';
 import 'ornamented_card.dart';

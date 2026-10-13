@@ -8,20 +8,12 @@ import '../../data/repos/app_update_repo.dart';
 
 part 'app_update_state.dart';
 
-/// Owns the launch-time verdict on this build.
-///
-/// It runs alongside the splash animation rather than before it, so the check
-/// costs no visible startup time, and exposes [settled] so the hand-off from
-/// the splash can wait for the answer instead of racing it.
 class AppUpdateCubit extends Cubit<AppUpdateState> {
   AppUpdateCubit({required this.repo}) : super(const AppUpdateInitial());
 
   final AppUpdateRepo repo;
 
   final Completer<void> _settled = Completer<void>();
-
-  /// Completes once a verdict is in. Resolves even when the check failed — a
-  /// failure is itself a verdict, and it is "continue".
   Future<void> get settled => _settled.future;
 
   Future<void> check() async {
@@ -35,9 +27,6 @@ class AppUpdateCubit extends Cubit<AppUpdateState> {
       _markSettled();
       return;
     }
-
-    // No answer means no reason to stop anyone. The data source has already
-    // logged why.
     emit(version == null ? const AppUpdateAllowed() : _verdict(version));
 
     _markSettled();
@@ -49,19 +38,11 @@ class AppUpdateCubit extends Cubit<AppUpdateState> {
     AppVersionStatus.forceUpdate ||
     AppVersionStatus.maintenance => AppUpdateBlocked(version),
   };
-
-  /// "Later" on the optional dialog. The offer is dropped for this launch and
-  /// comes back on the next one, which is what the spec asks for.
   void dismissOptional() {
     if (state is! AppUpdateOptional) return;
     emit(const AppUpdateAllowed());
   }
 
-  /// Opens the download link for whichever state is holding a version.
-  ///
-  /// Returns whether the handover succeeded. A failure re-emits the blocking
-  /// state with an error key so the screen can say so and stay put — there is
-  /// nowhere else for a forced user to go.
   Future<bool> openStore() async {
     final AppVersionModel? version = switch (state) {
       AppUpdateOptional(version: final AppVersionModel it) => it,

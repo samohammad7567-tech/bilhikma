@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../features/app_update/presentation/refactor/app_update_flow.dart';
@@ -39,6 +41,7 @@ import '../../features/subject_content/presentation/screens/subject_content_scre
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/subjects/presentation/screens/subjects_screen.dart';
 import '../di/service_locator.dart';
+import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../services/notification_launcher.dart';
 import '../utils/cache_util.dart';
 import '../utils/orientation/orientation_lock.dart';
@@ -54,10 +57,6 @@ class AppRouter {
 
     switch (settings.name) {
       case AppRoutes.splash:
-        // The version check rides along with the splash: AppUpdateGate starts
-        // it and takes the screen over outright if this build may not run,
-        // while AppUpdateFlow holds the hand-off below long enough to offer an
-        // optional update before the app opens.
         return MaterialPageRoute(
           builder: (_) => AppUpdateGate(
             child: OrientationLock(
@@ -246,6 +245,8 @@ class AppRouter {
       );
 
   static void _onLoggedIn(BuildContext context, LoginResponseModel session) {
+    unawaited(getIt<ProfileCubit>().reload());
+
     final EnrollmentModel? active = session.user?.activeEnrollment;
 
     switch (active?.status) {

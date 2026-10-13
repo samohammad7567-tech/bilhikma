@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../enums/notification_tone_enum.dart';
 
-/// Colours one notification category, in one theme.
-///
-/// Every pair that meets on screen — [title] and [body] over [background],
-/// [onAccent] over [accent] — clears WCAG AA for body text in both themes, so
-/// a card stays readable whichever palette the device is on.
 @immutable
 class NotificationTonePalette {
   const NotificationTonePalette({
@@ -18,24 +13,15 @@ class NotificationTonePalette {
     required this.title,
     required this.body,
   });
-
-  /// Card background while the notification is unread.
   final Color background;
 
   final Color border;
-
-  /// Strongest colour of the family: accent bar, category chip, icon tint.
   final Color accent;
 
   final Color onAccent;
-
-  /// Tint for monochrome artwork. The icon tile is light in both themes, so
-  /// this stays dark in both — unlike [accent], which lightens for dark mode.
   final Color iconInk;
 
   final Color title;
-
-  /// Message and metadata text.
   final Color body;
 
   static NotificationTonePalette of(
@@ -44,10 +30,6 @@ class NotificationTonePalette {
   ) => Theme.of(context).brightness == Brightness.dark
       ? _dark[tone]!
       : _light[tone]!;
-
-  /// Background once the notification has been read: the same hue, settled
-  /// part of the way back towards the page so unread cards keep the most
-  /// weight while the family stays readable at a glance.
   Color readBackground(ColorScheme colors) =>
       Color.lerp(background, colors.surface, 0.45) ?? background;
 

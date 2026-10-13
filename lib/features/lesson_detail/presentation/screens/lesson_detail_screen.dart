@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/enums/content_type_enum.dart';
 import '../cubit/lesson_detail_cubit.dart';

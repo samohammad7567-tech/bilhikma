@@ -1,13 +1,7 @@
 import '../models/country_model.dart';
 
-/// Dialling countries, their calling codes and national-number digit bounds.
-///
-/// Names live here rather than in the translation files because the list is
-/// large, static and only ever rendered in the country picker.
 class AppCountries {
   AppCountries._();
-
-  /// Pre-selected country — the app's primary market.
   static const String defaultIsoCode = 'SY';
 
   static Country get defaultCountry => byIso(defaultIsoCode) ?? all.first;
@@ -21,11 +15,6 @@ class AppCountries {
     return null;
   }
 
-  /// Resolves a stored full number (`+963958953288`) back to its country and
-  /// national part, so a remembered identity repopulates both fields.
-  ///
-  /// Returns `null` when [fullNumber] carries no recognisable calling code —
-  /// a bare local number, for instance.
   static ({Country country, String nationalNumber})? parse(String fullNumber) {
     final String digits = fullNumber.replaceAll(RegExp(r'[^\d+]'), '');
     if (!digits.startsWith('+') && !digits.startsWith('00')) return null;
@@ -37,7 +26,6 @@ class AppCountries {
     Country? best;
     for (final Country country in all) {
       if (!withoutPrefix.startsWith(country.dialCode)) continue;
-      // Longest calling code wins, so +1268 beats +1.
       if (best == null || country.dialCode.length > best.dialCode.length) {
         best = country;
       }
@@ -51,8 +39,6 @@ class AppCountries {
     );
   }
 
-  /// Ordered so the app's main markets surface first, then everything else
-  /// alphabetically by English name.
   static const List<Country> all = <Country>[
     Country('SY', '963', 'Syria', 'سوريا', minLength: 9, maxLength: 9),
     Country(
@@ -92,25 +78,11 @@ class AppCountries {
       minLength: 7,
       maxLength: 7,
     ),
-    Country(
-      'AR',
-      '54',
-      'Argentina',
-      'الأرجنتين',
-      minLength: 10,
-      maxLength: 11,
-    ),
+    Country('AR', '54', 'Argentina', 'الأرجنتين', minLength: 10, maxLength: 11),
     Country('AM', '374', 'Armenia', 'أرمينيا', minLength: 8, maxLength: 8),
     Country('AU', '61', 'Australia', 'أستراليا', minLength: 9, maxLength: 9),
     Country('AT', '43', 'Austria', 'النمسا', minLength: 10, maxLength: 13),
-    Country(
-      'AZ',
-      '994',
-      'Azerbaijan',
-      'أذربيجان',
-      minLength: 9,
-      maxLength: 9,
-    ),
+    Country('AZ', '994', 'Azerbaijan', 'أذربيجان', minLength: 9, maxLength: 9),
     Country('BS', '1242', 'Bahamas', 'الباهاما', minLength: 7, maxLength: 7),
     Country('BH', '973', 'Bahrain', 'البحرين', minLength: 8, maxLength: 8),
     Country(
@@ -152,7 +124,14 @@ class AppCountries {
     Country('KH', '855', 'Cambodia', 'كمبوديا', minLength: 8, maxLength: 9),
     Country('CM', '237', 'Cameroon', 'الكاميرون', minLength: 9, maxLength: 9),
     Country('CA', '1', 'Canada', 'كندا', minLength: 10, maxLength: 10),
-    Country('CV', '238', 'Cape Verde', 'الرأس الأخضر', minLength: 7, maxLength: 7),
+    Country(
+      'CV',
+      '238',
+      'Cape Verde',
+      'الرأس الأخضر',
+      minLength: 7,
+      maxLength: 7,
+    ),
     Country(
       'CF',
       '236',
@@ -207,7 +186,14 @@ class AppCountries {
       maxLength: 7,
     ),
     Country('EC', '593', 'Ecuador', 'الإكوادور', minLength: 9, maxLength: 9),
-    Country('SV', '503', 'El Salvador', 'السلفادور', minLength: 8, maxLength: 8),
+    Country(
+      'SV',
+      '503',
+      'El Salvador',
+      'السلفادور',
+      minLength: 8,
+      maxLength: 8,
+    ),
     Country(
       'GQ',
       '240',
@@ -253,14 +239,7 @@ class AppCountries {
     Country('IT', '39', 'Italy', 'إيطاليا', minLength: 9, maxLength: 11),
     Country('JM', '1876', 'Jamaica', 'جامايكا', minLength: 7, maxLength: 7),
     Country('JP', '81', 'Japan', 'اليابان', minLength: 10, maxLength: 10),
-    Country(
-      'KZ',
-      '7',
-      'Kazakhstan',
-      'كازاخستان',
-      minLength: 10,
-      maxLength: 10,
-    ),
+    Country('KZ', '7', 'Kazakhstan', 'كازاخستان', minLength: 10, maxLength: 10),
     Country('KE', '254', 'Kenya', 'كينيا', minLength: 9, maxLength: 9),
     Country('KI', '686', 'Kiribati', 'كيريباتي', minLength: 5, maxLength: 8),
     Country('XK', '383', 'Kosovo', 'كوسوفو', minLength: 8, maxLength: 9),
@@ -300,18 +279,39 @@ class AppCountries {
     Country('MD', '373', 'Moldova', 'مولدوفا', minLength: 8, maxLength: 8),
     Country('MC', '377', 'Monaco', 'موناكو', minLength: 8, maxLength: 9),
     Country('MN', '976', 'Mongolia', 'منغوليا', minLength: 8, maxLength: 8),
-    Country('ME', '382', 'Montenegro', 'الجبل الأسود', minLength: 8, maxLength: 8),
+    Country(
+      'ME',
+      '382',
+      'Montenegro',
+      'الجبل الأسود',
+      minLength: 8,
+      maxLength: 8,
+    ),
     Country('MA', '212', 'Morocco', 'المغرب', minLength: 9, maxLength: 9),
     Country('MZ', '258', 'Mozambique', 'موزمبيق', minLength: 9, maxLength: 9),
     Country('MM', '95', 'Myanmar', 'ميانمار', minLength: 8, maxLength: 10),
     Country('NA', '264', 'Namibia', 'ناميبيا', minLength: 9, maxLength: 9),
     Country('NP', '977', 'Nepal', 'نيبال', minLength: 10, maxLength: 10),
     Country('NL', '31', 'Netherlands', 'هولندا', minLength: 9, maxLength: 9),
-    Country('NZ', '64', 'New Zealand', 'نيوزيلندا', minLength: 8, maxLength: 10),
+    Country(
+      'NZ',
+      '64',
+      'New Zealand',
+      'نيوزيلندا',
+      minLength: 8,
+      maxLength: 10,
+    ),
     Country('NI', '505', 'Nicaragua', 'نيكاراغوا', minLength: 8, maxLength: 8),
     Country('NE', '227', 'Niger', 'النيجر', minLength: 8, maxLength: 8),
     Country('NG', '234', 'Nigeria', 'نيجيريا', minLength: 10, maxLength: 10),
-    Country('KP', '850', 'North Korea', 'كوريا الشمالية', minLength: 4, maxLength: 10),
+    Country(
+      'KP',
+      '850',
+      'North Korea',
+      'كوريا الشمالية',
+      minLength: 4,
+      maxLength: 10,
+    ),
     Country(
       'MK',
       '389',
@@ -335,17 +335,17 @@ class AppCountries {
     ),
     Country('PY', '595', 'Paraguay', 'باراغواي', minLength: 9, maxLength: 9),
     Country('PE', '51', 'Peru', 'بيرو', minLength: 9, maxLength: 9),
-    Country(
-      'PH',
-      '63',
-      'Philippines',
-      'الفلبين',
-      minLength: 10,
-      maxLength: 10,
-    ),
+    Country('PH', '63', 'Philippines', 'الفلبين', minLength: 10, maxLength: 10),
     Country('PL', '48', 'Poland', 'بولندا', minLength: 9, maxLength: 9),
     Country('PT', '351', 'Portugal', 'البرتغال', minLength: 9, maxLength: 9),
-    Country('PR', '1787', 'Puerto Rico', 'بورتوريكو', minLength: 7, maxLength: 7),
+    Country(
+      'PR',
+      '1787',
+      'Puerto Rico',
+      'بورتوريكو',
+      minLength: 7,
+      maxLength: 7,
+    ),
     Country('RO', '40', 'Romania', 'رومانيا', minLength: 9, maxLength: 9),
     Country('RU', '7', 'Russia', 'روسيا', minLength: 10, maxLength: 10),
     Country('RW', '250', 'Rwanda', 'رواندا', minLength: 9, maxLength: 9),
@@ -374,7 +374,14 @@ class AppCountries {
       maxLength: 7,
     ),
     Country('WS', '685', 'Samoa', 'ساموا', minLength: 5, maxLength: 7),
-    Country('SM', '378', 'San Marino', 'سان مارينو', minLength: 8, maxLength: 10),
+    Country(
+      'SM',
+      '378',
+      'San Marino',
+      'سان مارينو',
+      minLength: 8,
+      maxLength: 10,
+    ),
     Country('SN', '221', 'Senegal', 'السنغال', minLength: 9, maxLength: 9),
     Country('RS', '381', 'Serbia', 'صربيا', minLength: 8, maxLength: 9),
     Country('SC', '248', 'Seychelles', 'سيشل', minLength: 7, maxLength: 7),
@@ -429,14 +436,7 @@ class AppCountries {
     Country('SE', '46', 'Sweden', 'السويد', minLength: 7, maxLength: 9),
     Country('CH', '41', 'Switzerland', 'سويسرا', minLength: 9, maxLength: 9),
     Country('TW', '886', 'Taiwan', 'تايوان', minLength: 9, maxLength: 9),
-    Country(
-      'TJ',
-      '992',
-      'Tajikistan',
-      'طاجيكستان',
-      minLength: 9,
-      maxLength: 9,
-    ),
+    Country('TJ', '992', 'Tajikistan', 'طاجيكستان', minLength: 9, maxLength: 9),
     Country('TZ', '255', 'Tanzania', 'تنزانيا', minLength: 9, maxLength: 9),
     Country('TH', '66', 'Thailand', 'تايلاند', minLength: 9, maxLength: 9),
     Country(
@@ -485,14 +485,7 @@ class AppCountries {
       maxLength: 10,
     ),
     Country('UY', '598', 'Uruguay', 'أوروغواي', minLength: 8, maxLength: 8),
-    Country(
-      'UZ',
-      '998',
-      'Uzbekistan',
-      'أوزبكستان',
-      minLength: 9,
-      maxLength: 9,
-    ),
+    Country('UZ', '998', 'Uzbekistan', 'أوزبكستان', minLength: 9, maxLength: 9),
     Country('VU', '678', 'Vanuatu', 'فانواتو', minLength: 5, maxLength: 7),
     Country(
       'VA',
@@ -502,14 +495,7 @@ class AppCountries {
       minLength: 8,
       maxLength: 10,
     ),
-    Country(
-      'VE',
-      '58',
-      'Venezuela',
-      'فنزويلا',
-      minLength: 10,
-      maxLength: 10,
-    ),
+    Country('VE', '58', 'Venezuela', 'فنزويلا', minLength: 10, maxLength: 10),
     Country('VN', '84', 'Vietnam', 'فيتنام', minLength: 9, maxLength: 10),
     Country('YE', '967', 'Yemen', 'اليمن', minLength: 9, maxLength: 9),
     Country('ZM', '260', 'Zambia', 'زامبيا', minLength: 9, maxLength: 9),

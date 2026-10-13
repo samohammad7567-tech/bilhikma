@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 
-/// Shows the `message` the server sent. Modelled on the rejection-reason card,
-/// since it does the same job: surface server copy the app cannot predict.
 class AppUpdateMessageCard extends StatelessWidget {
   const AppUpdateMessageCard({required this.message, super.key});
 

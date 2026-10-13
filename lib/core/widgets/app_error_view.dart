@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'custom_button.dart';
 import '../themes/app_theme.dart';
 
@@ -30,9 +31,8 @@ class AppErrorView extends StatelessWidget {
             Text(
               message ?? (errorKey ?? 'something_went_wrong').tr(),
               textAlign: TextAlign.center,
-              style: AppTheme.styles(
-                context,
-              ).bodyLarge.copyWith(color: colors.secondary),
+              style: AppTheme.styles(context).bodyLarge
+                  .copyWith(color: colors.secondary),
             ),
 
             SizedBox(height: 20.h),

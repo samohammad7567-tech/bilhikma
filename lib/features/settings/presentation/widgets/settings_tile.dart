@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/enums/settings_action_enum.dart';
 import '../../../../core/themes/app_theme.dart';
 import 'settings_glyph_tile.dart';

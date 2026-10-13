@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/services/device_session_service.dart';
 import '../../../../core/services/screen_capture_policy.dart';
 import '../../../../core/enums/device_session_status_enum.dart';

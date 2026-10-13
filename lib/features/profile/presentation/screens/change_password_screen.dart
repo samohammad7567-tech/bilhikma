@@ -28,8 +28,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   bool _isSaving = false;
   bool _obscure = true;
-
-  /// Mirrors [_next] so the requirements checklist rebuilds on every keystroke.
   String _newPassword = '';
 
   @override
@@ -120,8 +118,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               validator: (String? value) {
                 final String text = value ?? '';
                 if (text.isEmpty) return 'password_required'.tr();
-
-                // Same rules the checklist below renders.
                 final PasswordRequirement? unmet =
                     PasswordRequirement.firstUnsatisfiedIn(text);
                 if (unmet != null) {

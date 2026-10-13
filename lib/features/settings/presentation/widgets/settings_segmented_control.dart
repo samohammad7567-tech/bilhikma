@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'settings_segment_tile.dart';
 
 class SettingsSegmentedControl<T> extends StatelessWidget {

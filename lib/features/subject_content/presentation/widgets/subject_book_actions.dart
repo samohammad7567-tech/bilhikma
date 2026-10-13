@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -20,16 +21,11 @@ class SubjectBookActions extends StatelessWidget {
 
   final VoidCallback onDownload;
   final VoidCallback onPreview;
-
-  /// Non-null only while this book is the one being transferred.
   final DownloadProgress? progress;
 
   final bool isDownloading;
   final bool isPreviewing;
   final bool isDownloaded;
-
-  /// Previewing a book that is not saved yet downloads it to the cache first,
-  /// so that wait gets the same bar as a download.
   bool get _isFetchingPreview => isPreviewing && !isDownloaded;
 
   @override

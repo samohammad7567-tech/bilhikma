@@ -5,27 +5,12 @@ import 'app_routes.dart';
 import 'lesson_detail_args.dart';
 import 'subject_content_args.dart';
 
-/// In-app screen a notification refers to.
-///
-/// Resolution runs in four steps, each a fallback for the one before: the
-/// ids in the API's `data` payload, then a recognised target in the deep
-/// link, then any id the link carries, and finally the notification kind.
-///
-/// The payload leads because it is the only one the listing actually fills:
-/// every notification the service returns has `deep_link: null`, so reading
-/// the link alone sent a lesson notification to the subjects list.
-///
-/// `null` means the notification names no screen — its own content is all
-/// there is, and the caller shows that instead.
 class NotificationDestination {
   const NotificationDestination(this.route, {this.arguments});
 
   final String route;
 
   final Object? arguments;
-
-  /// Where a listed notification should go, or `null` when it refers to
-  /// nothing openable — an announcement with no deep link, for instance.
   static NotificationDestination? resolve({
     required NotificationKind kind,
     NotificationPayload payload = NotificationPayload.none,
@@ -39,11 +24,6 @@ class NotificationDestination {
         _fromKind(kind);
   }
 
-  /// Screen named by the ids the API attaches to the notification.
-  ///
-  /// A live session resolves to the sessions list here: opening the player
-  /// needs the session itself, which only a fetch can supply, so the caller
-  /// handles that case and falls back to this.
   static NotificationDestination? fromPayload(NotificationPayload payload) {
     if (payload.hasContent) {
       return NotificationDestination(
@@ -71,19 +51,12 @@ class NotificationDestination {
     return null;
   }
 
-  /// Target of a `bilhikma://content/5` style link.
-  ///
-  /// Tolerant by design, because the link is composed server side: the
-  /// recognised target may sit anywhere in the path (`/app/contents/5`), ids
-  /// may come from the path or the query (`?content_id=5`), and the web form
-  /// of the same link (`https://host/content/5`) parses identically.
   static NotificationDestination? fromDeepLink(String? link) {
     final _DeepLink parsed = _DeepLink.parse(link);
 
     return _forTarget(parsed) ?? _asLesson(parsed);
   }
 
-  /// Target carried by an FCM `data` payload.
   static NotificationDestination? fromPushData(Map<String, dynamic> data) {
     final NotificationDestination? linked = fromDeepLink(
       _firstString(data, const <String>[
@@ -128,7 +101,6 @@ class NotificationDestination {
     return _fromKind(NotificationKind.fromJson(data['type'] ?? data['kind']));
   }
 
-  /// Screen named by the link itself.
   static NotificationDestination? _forTarget(_DeepLink link) {
     switch (link.target) {
       case 'content' || 'contents' || 'lesson' || 'lessons' || 'media':
@@ -188,13 +160,8 @@ class NotificationDestination {
     }
   }
 
-  /// A link that carries an id but no target the app knows: the API documents
-  /// a lesson as what a deep link points at, so that is the reading.
   static NotificationDestination? _asLesson(_DeepLink link) =>
       link.target.isEmpty ? _lesson(link) : null;
-
-  /// Whether a path segment names a screen. Asks [_forTarget] itself, so the
-  /// vocabulary above stays the only list of target names.
   static bool _isTarget(String segment) =>
       _forTarget(
         _DeepLink(target: segment, id: 1, contentType: ContentType.video),
@@ -207,13 +174,6 @@ class NotificationDestination {
           AppRoutes.lessonDetail,
           arguments: LessonDetailArgs(id: link.id, type: link.contentType),
         );
-
-  /// Last resort: the kind alone. New content with no id in the payload
-  /// cannot name the lesson, so it opens the subjects it was published under.
-  ///
-  /// Account notices and announcements deliberately resolve to nothing. Their
-  /// message is the whole point — sending them to a profile screen that
-  /// repeats none of it loses the thing the user tapped to read.
   static NotificationDestination? _fromKind(NotificationKind kind) =>
       switch (kind) {
         NotificationKind.newContent => const NotificationDestination(
@@ -247,18 +207,13 @@ class NotificationDestination {
   }
 }
 
-/// A deep link reduced to the three things a destination needs.
 class _DeepLink {
   const _DeepLink({
     required this.id,
     required this.contentType,
     this.target = '',
   });
-
-  /// Named target, lowercased and `''` when the link names none.
   final String target;
-
-  /// First positive id found after the target, or anywhere in the link.
   final int id;
 
   final ContentType contentType;
@@ -282,12 +237,7 @@ class _DeepLink {
     final Map<String, String> query = uri.queryParameters;
 
     final List<String> segments =
-        <String>[
-              // A real domain is the server, not a target; a scheme-only
-              // authority such as `bilhikma://content/5` is the target.
-              if (!uri.host.contains('.')) uri.host,
-              ...uri.pathSegments,
-            ]
+        <String>[if (!uri.host.contains('.')) uri.host, ...uri.pathSegments]
             .map((String segment) => segment.trim().toLowerCase())
             .where((String segment) => segment.isNotEmpty)
             .toList(growable: false);

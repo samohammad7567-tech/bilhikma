@@ -15,9 +15,6 @@ class NotificationFormats {
     return _since('since_days', age.inDays);
   }
 
-  /// What the card shows under the message: a relative age for the last
-  /// hour, then the day and clock time, so a notification can be placed
-  /// without doing the arithmetic.
   static String stamp(DateTime? sentAt, {DateTime? now}) {
     if (sentAt == null) return 'notification_scheduled'.tr();
 
@@ -29,7 +26,6 @@ class NotificationFormats {
     return '${dayLabel(sentAt, now: today)} ${clock(sentAt)}';
   }
 
-  /// Heading for a day's group of notifications.
   static String dayLabel(DateTime? sentAt, {DateTime? now}) {
     if (sentAt == null) return 'notification_scheduled'.tr();
 
@@ -41,7 +37,6 @@ class NotificationFormats {
     return '${_two(sentAt.day)}/${_two(sentAt.month)}/${sentAt.year}';
   }
 
-  /// 12 hour clock, because that is how the times read in the design.
   static String clock(DateTime time) {
     final int hour = time.hour % 12 == 0 ? 12 : time.hour % 12;
     final String period = time.hour < 12 ? 'time_am'.tr() : 'time_pm'.tr();
@@ -49,8 +44,6 @@ class NotificationFormats {
     return '${_two(hour)}:${_two(time.minute)} $period';
   }
 
-  /// Days since the epoch in local time, so two timestamps on the same
-  /// calendar day compare equal however many hours apart they are.
   static int dayNumber(DateTime time) => _dayNumber(time);
 
   static int _dayNumber(DateTime time) =>

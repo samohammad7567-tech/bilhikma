@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,22 +10,36 @@ import '../cubit/profile_cubit.dart';
 import '../refactor/profile_body.dart';
 import '../../../../core/widgets/app_toast.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.showBack = true});
   final bool showBack;
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late final ProfileCubit _cubit = getIt<ProfileCubit>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    unawaited(_cubit.refresh());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProfileCubit>(
-      create: (_) => getIt<ProfileCubit>(),
+    return BlocProvider<ProfileCubit>.value(
+      value: _cubit,
       child: BlocListener<ProfileCubit, ProfileState>(
         listenWhen: (ProfileState previous, ProfileState current) =>
             current.messageKey != null,
         listener: _showMessage,
         child: AppSectionScaffold(
           title: context.tr('profile_title'),
-          showBack: showBack,
-          showMenu: !showBack,
+          showBack: widget.showBack,
+          showMenu: !widget.showBack,
           child: const ProfileBody(),
         ),
       ),

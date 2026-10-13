@@ -4,6 +4,7 @@ import '../../features/gallery/data/data_source/gallery_data_source.dart';
 import '../constants/api_endpoints.dart';
 import '../utils/app_logger.dart';
 import '../utils/cache_util.dart';
+import '../utils/current_user.dart';
 import 'device_service.dart';
 import 'dio_service.dart';
 import 'push_notification_service.dart';
@@ -47,10 +48,6 @@ class DeviceSessionService {
 
     final String? boundDevice = await SecureStore.read(_boundDeviceKey);
     final String? boundToken = await SecureStore.read(_boundTokenKey);
-
-    // Either the binding was never written or the keystore lost it. Both are
-    // indistinguishable from here, and neither is grounds for signing the user
-    // out locally — re-bind and let the API be the authority on the session.
     if (boundDevice == null || boundToken == null) {
       AppLogger.info(
         'No local device binding found; re-binding and deferring to the API',
@@ -90,6 +87,7 @@ class DeviceSessionService {
   static Future<void> clear() async {
     CacheUtil.remove(key: tokenKey);
     CacheUtil.remove(key: refreshTokenKey);
+    CurrentUser.clear();
     DioService.updateToken('');
 
     await ScreenCapturePolicy.clear();

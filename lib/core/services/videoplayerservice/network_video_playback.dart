@@ -100,8 +100,6 @@ class NetworkVideoPlayback extends VideoPlayback {
               ? const SizedBox.expand()
               : Center(
                   child: AspectRatio(
-                    // The sanitised getter, not controller.value: a stream
-                    // that reports a zero size would assert here.
                     aspectRatio: aspectRatio,
                     child: vp.VideoPlayer(controller),
                   ),

@@ -4,11 +4,6 @@ import '../di/service_locator.dart';
 import '../routing/app_routes.dart';
 import '../routing/notification_destination.dart';
 
-/// Opens the screen a tapped notification refers to.
-///
-/// A tap can land before the app has anywhere to navigate — a push that cold
-/// starts the app, for instance — so a destination that cannot be shown yet is
-/// held until [markReady] reports signed-in UI is up.
 class NotificationLauncher {
   NotificationLauncher._();
 
@@ -16,12 +11,6 @@ class NotificationLauncher {
 
   NotificationDestination? _pending;
   bool _isReady = false;
-
-  /// Opens [destination].
-  ///
-  /// A tap with nothing specific to open lands on the notifications list when
-  /// it started the app, so the tap is never a dead end; while the app is
-  /// already running it simply comes forward where the user left off.
   void open(NotificationDestination? destination) {
     if (destination != null) {
       _handle(destination);
@@ -33,7 +22,6 @@ class NotificationLauncher {
     _pending = const NotificationDestination(AppRoutes.notification);
   }
 
-  /// Signed-in UI is on screen: replay whatever a tap asked for earlier.
   void markReady() {
     _isReady = true;
 
@@ -44,7 +32,6 @@ class NotificationLauncher {
     WidgetsBinding.instance.addPostFrameCallback((_) => _push(pending));
   }
 
-  /// Back on the sign-in screen: nothing held may be opened any more.
   void markSignedOut() {
     _isReady = false;
     _pending = null;

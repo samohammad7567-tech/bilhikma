@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../../../../core/models/download_progress.dart';
 import '../../../../core/models/lesson_progress_model.dart';
 import '../data_source/lesson_detail_data_source.dart';
 import '../models/lesson_attachment_model.dart';
@@ -20,8 +21,11 @@ class LessonDetailRepo {
   Future<String> requestAttachmentUrl(int contentId, int attachmentId) =>
       dataSource.requestAttachmentUrl(contentId, attachmentId);
 
-  Future<File> downloadAttachment(int contentId, LessonAttachmentModel file) =>
-      dataSource.downloadAttachment(contentId, file);
+  Future<File> downloadAttachment(
+    int contentId,
+    LessonAttachmentModel file, {
+    void Function(DownloadProgress progress)? onProgress,
+  }) => dataSource.downloadAttachment(contentId, file, onProgress: onProgress);
 
   Future<File> fetchAttachmentForPreview(
     int contentId,

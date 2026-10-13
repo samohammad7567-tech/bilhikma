@@ -3,10 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/playback_speed_enum.dart';
 
-/// Compact pill showing the active playback rate.
-///
-/// [onOverlay] paints the translucent dark variant used on top of a video
-/// surface; the themed variant is used inside the audio player card.
 class PlaybackSpeedButton extends StatelessWidget {
   const PlaybackSpeedButton({
     required this.speed,

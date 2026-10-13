@@ -18,16 +18,7 @@ final class NotificationsState {
   final List<NotificationModel> notifications;
 
   final NotificationsFilter filter;
-
-  /// Ids the unread tab is showing.
-  ///
-  /// Frozen when the tab is opened rather than recomputed: reading a card
-  /// marks it read, and a live filter would delete the row out from under
-  /// the finger that tapped it — or empty the list as the user scrolls,
-  /// since scrolling past a card marks it read too.
   final Set<int> unreadView;
-
-  /// Notification whose destination is being fetched.
   final int? openingId;
 
   final String? errorKey;
@@ -55,8 +46,6 @@ final class NotificationsState {
       : notifications;
 
   List<NotificationDayGroup> get groups => NotificationDayGroup.build(visible);
-
-  /// The unread tab can be empty while the list behind it is not.
   bool get hasNothingToShow =>
       status == NotificationsStatus.success && visible.isEmpty;
 

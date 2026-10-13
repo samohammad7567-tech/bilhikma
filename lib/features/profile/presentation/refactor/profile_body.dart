@@ -19,11 +19,11 @@ class ProfileBody extends StatelessWidget {
       builder: (BuildContext context, ProfileState state) {
         final ProfileCubit cubit = context.read<ProfileCubit>();
 
-        if (state.isLoading) {
+        if (state.isFirstLoad) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (state.hasFailed) {
+        if (state.hasFailedOutright) {
           return AppErrorView(
             errorKey: state.errorKey,
             onRetry: cubit.loadProfile,

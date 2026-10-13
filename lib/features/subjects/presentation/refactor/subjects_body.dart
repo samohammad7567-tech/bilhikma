@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/models/subject_model.dart';
 import '../cubit/subjects_cubit.dart';

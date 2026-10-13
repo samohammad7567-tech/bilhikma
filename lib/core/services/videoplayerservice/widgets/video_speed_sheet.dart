@@ -43,9 +43,6 @@ class VideoSpeedSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // Title kept out of the scroll view below: a drag that starts on a
-          // scrollable belongs to that scrollable, so once the rates overflow
-          // there is no part of the sheet left to grab and swipe closed.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Text(
@@ -57,10 +54,6 @@ class VideoSpeedSheet extends StatelessWidget {
               ),
             ),
           ),
-
-          // Loose, so the rates keep their natural height while they fit and
-          // stay unscrollable — a swipe anywhere then closes the sheet, and
-          // only a genuinely overflowing list scrolls instead.
           Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 8),

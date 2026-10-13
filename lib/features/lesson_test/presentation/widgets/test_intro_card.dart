@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/ornamented_card.dart';
 import 'test_intro_card_row.dart';
 
@@ -22,9 +23,8 @@ class TestIntroCard extends StatelessWidget {
               Divider(
                 height: 1.h,
                 thickness: 1,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.08),
+                color: Theme.of(context).colorScheme.onSurface
+                    .withValues(alpha: 0.08),
               ),
 
             TestIntroCardRow(row: rows[index]),

@@ -42,8 +42,11 @@ import '../../features/security/presentation/cubit/security_cubit.dart';
 import '../../features/search/data/data_source/search_data_source.dart';
 import '../../features/search/data/repos/search_repo.dart';
 import '../../features/search/presentation/cubit/search_cubit.dart';
+import '../../features/profile/data/data_source/downloads_log_data_source.dart';
 import '../../features/profile/data/data_source/profile_data_source.dart';
+import '../../features/profile/data/repos/downloads_log_repo.dart';
 import '../../features/profile/data/repos/profile_repo.dart';
+import '../../features/profile/presentation/cubit/downloads_log_cubit.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../features/notifications/data/data_source/notifications_data_source.dart';
 import '../../features/notifications/data/repos/notifications_repo.dart';
@@ -191,9 +194,12 @@ Future<void> _initSettings() async {
 
 Future<void> _initProfile() async {
   getIt
-    ..registerFactory(() => ProfileCubit(repo: getIt()))
+    ..registerLazySingleton(() => ProfileCubit(repo: getIt()))
     ..registerLazySingleton(() => ProfileRepo(dataSource: getIt()))
-    ..registerLazySingleton(ProfileDataSource.new);
+    ..registerLazySingleton(ProfileDataSource.new)
+    ..registerFactory(() => DownloadsLogCubit(repo: getIt()))
+    ..registerLazySingleton(() => DownloadsLogRepo(dataSource: getIt()))
+    ..registerLazySingleton(DownloadsLogDataSource.new);
 }
 
 Future<void> _initNotifications() async {

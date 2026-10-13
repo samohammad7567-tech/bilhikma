@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 import '../cubit/educational_pathways_cubit.dart';

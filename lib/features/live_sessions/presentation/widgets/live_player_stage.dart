@@ -56,15 +56,11 @@ class _LivePlayerStageState extends State<LivePlayerStage> {
 
   void _onPlaybackChanged() {
     if (!mounted) return;
-
-    // Loading / paused / stopped: controls must stay on screen.
     if (!_canAutoHide) {
       _cancelHideTimer();
       if (!_controlsVisible) setState(() => _controlsVisible = true);
       return;
     }
-
-    // Playing: arm the countdown once, never restart it on position ticks.
     if (_controlsVisible && _hideTimer == null) _armHideTimer();
   }
 
@@ -103,7 +99,6 @@ class _LivePlayerStageState extends State<LivePlayerStage> {
 
   void _onPlayPause() {
     unawaited(_playback.togglePlayPause());
-    // The playback listener re-arms the countdown once it is playing again.
     _showControls();
   }
 

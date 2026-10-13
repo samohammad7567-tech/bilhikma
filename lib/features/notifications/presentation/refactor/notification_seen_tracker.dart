@@ -3,16 +3,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
 
-/// Marks notifications read once they have actually been looked at.
-///
-/// A card counts as seen when most of it has stayed inside the viewport for
-/// a moment — flicking straight past it does not count.
 class NotificationSeenTracker {
   NotificationSeenTracker({required this.onSeen});
 
   final ValueChanged<int> onSeen;
-
-  /// Share of a card that must be on screen for it to count.
   static const double _visibleFraction = 0.6;
 
   static const Duration _dwell = Duration(milliseconds: 600);
@@ -21,19 +15,12 @@ class NotificationSeenTracker {
   final Set<int> _seen = <int>{};
 
   Timer? _timer;
-
-  /// Handle to attach to the card for [id], so it can be measured.
   GlobalKey keyFor(int id) => _keys.putIfAbsent(id, GlobalKey.new);
-
-  /// Forgets cards that are no longer in the list, so a notification that
-  /// comes back around is measured again rather than silently skipped.
   void retain(Set<int> ids) {
     _keys.removeWhere((int id, GlobalKey key) => !ids.contains(id));
     _seen.removeWhere((int id) => !ids.contains(id));
   }
 
-  /// Restarts the dwell timer. Called on every scroll tick, so a scan only
-  /// runs once the list has settled.
   void schedule(BuildContext context) {
     _timer?.cancel();
     _timer = Timer(_dwell, () => _scan(context));

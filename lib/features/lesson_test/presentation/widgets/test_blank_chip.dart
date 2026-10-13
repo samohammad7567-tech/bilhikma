@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/app_theme.dart';
 
 class TestBlankChip extends StatelessWidget {
@@ -50,9 +51,8 @@ class TestBlankChip extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: AppTheme.styles(
-            context,
-          ).labelStrong.copyWith(decoration: TextDecoration.underline),
+          style: AppTheme.styles(context).labelStrong
+              .copyWith(decoration: TextDecoration.underline),
         ),
       ),
     );

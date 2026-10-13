@@ -6,11 +6,6 @@ import '../../../../core/widgets/app_toast.dart';
 import '../cubit/app_update_cubit.dart';
 import '../refactor/app_update_blocked_body.dart';
 
-/// Full screen with no way out, for `force_update` and `maintenance`.
-///
-/// `canPop: false` is the "no close button" requirement taken seriously: the
-/// Android back gesture is the close button on this platform, so leaving it
-/// enabled would let the user pop straight back into an app that must not run.
 class AppUpdateBlockedScreen extends StatelessWidget {
   const AppUpdateBlockedScreen({required this.state, super.key});
 

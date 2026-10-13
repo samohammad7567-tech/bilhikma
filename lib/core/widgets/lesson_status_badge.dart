@@ -29,9 +29,8 @@ class LessonStatusBadge extends StatelessWidget {
       child: Text(
         label.tr(),
         maxLines: 1,
-        style: AppTheme.styles(
-          context,
-        ).badgeLabel.copyWith(color: badge.foreground),
+        style: AppTheme.styles(context).badgeLabel
+            .copyWith(color: badge.foreground),
       ),
     );
   }

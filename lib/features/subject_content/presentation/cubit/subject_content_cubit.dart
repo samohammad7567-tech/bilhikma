@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/network/paginated_result.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../../../core/utils/download_progress_throttle.dart';
@@ -32,8 +33,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     this.galleryRepo = const GalleryRepo(),
     TextbooksRepo? textbooksRepo,
   }) : textbooksRepo = textbooksRepo ?? TextbooksRepo(),
-       // Adopt whatever is already downloading, so the first frame after a
-       // remount shows the bar instead of an idle download button.
        super(
          SubjectContentState(bookDownloads: BookDownloadsDataSource.snapshot),
        ) {
@@ -50,8 +49,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
   final TextbooksRepo textbooksRepo;
 
   final DownloadProgressThrottle _previewProgress = DownloadProgressThrottle();
-
-  /// Books this instance started, whose outcome it reports itself.
   final Set<int> _ownDownloads = <int>{};
 
   @override
@@ -159,8 +156,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
 
       return file.existsSync() ? 'book_downloaded' : 'book_download_failed';
     }, isPreview: false);
-
-    // Reported here already — do not let this or a later visit toast it again.
     _ownDownloads.remove(book.id);
     BookDownloadsDataSource.takeMissedFailure(book.id);
 
@@ -171,9 +166,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     if (isClosed) return;
 
     final Map<int, DownloadProgress> next = BookDownloadsDataSource.snapshot;
-
-    // Downloads that just ended and were started by an earlier visit: nobody
-    // is awaiting them any more, so their failure is reported from here.
     final Set<int> orphaned = state.bookDownloads.keys.toSet()
       ..removeAll(next.keys)
       ..removeAll(_ownDownloads);
@@ -196,7 +188,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     emit(state.copyWith(previewProgress: progress));
   }
 
-  /// Surfaces a download that failed while this screen was not mounted.
   void _reportMissedFailures() {
     for (final TextbookModel book in state.books) {
       final String? key = BookDownloadsDataSource.takeMissedFailure(book.id);

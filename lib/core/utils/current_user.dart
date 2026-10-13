@@ -16,6 +16,36 @@ class CurrentUser {
   }
 
   static bool get canCaptureScreen => cachedUser()?.canCaptureScreen ?? false;
+
+  /// Keeps the cached user in step with edits made elsewhere in the app, so
+  /// anything reading the cache never shows login-time data after a change.
+  static Future<void> saveFields({String? fullName, String? email}) async {
+    final Map<String, dynamic>? user = _decode();
+    if (user == null) return;
+
+    bool hasChanged = false;
+
+    final String? name = fullName?.trim();
+    if (name != null && name.isNotEmpty && user['full_name'] != name) {
+      user['full_name'] = name;
+      hasChanged = true;
+    }
+
+    final String? address = email?.trim();
+    if (address != null && user['email'] != address) {
+      user['email'] = address;
+      hasChanged = true;
+    }
+
+    if (!hasChanged) return;
+
+    await CacheUtil.setString(
+      key: CacheKeys.cachedUserKey,
+      value: jsonEncode(user),
+    );
+  }
+
+  static void clear() => CacheUtil.remove(key: CacheKeys.cachedUserKey);
   static Future<void> setCaptureExemption(bool canCaptureScreen) async {
     final Map<String, dynamic>? user = _decode();
     if (user == null || user['can_capture_screen'] == canCaptureScreen) return;

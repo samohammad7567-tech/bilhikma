@@ -19,9 +19,6 @@ enum NotificationKind {
 
   final String key;
   final NotificationTone tone;
-
-  /// Category name shown on the card, so the family is readable without
-  /// relying on colour.
   String get labelKey => switch (this) {
     NotificationKind.newContent => 'notification_kind_new_content',
     NotificationKind.liveSession => 'notification_kind_live_session',
@@ -48,17 +45,10 @@ enum NotificationKind {
     NotificationKind.adminAnnouncement => AppAssets.assetsAdministrativeNotice,
     NotificationKind.custom => AppAssets.assetsCustomNotification,
   };
-
-  /// Artwork that already carries its own rounded tile, drawn whole rather
-  /// than as a glyph inside one.
   bool get hasOwnTile => switch (this) {
     NotificationKind.adminAnnouncement || NotificationKind.custom => true,
     _ => false,
   };
-
-  /// Every glyph is authored as flat artwork on transparency, so it takes
-  /// the tone colour and stays legible in both themes. The two that bring
-  /// their own tile are opaque — tinting those would flood the whole square.
   bool get hasMonochromeIcon => !hasOwnTile;
 
   static NotificationKind fromJson(Object? value) {

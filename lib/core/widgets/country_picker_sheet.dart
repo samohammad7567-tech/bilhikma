@@ -1,5 +1,3 @@
-// easy_localization re-exports intl, whose TextDirection would shadow the
-// framework one used for the LTR dial codes below.
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,8 +8,6 @@ import '../themes/app_theme.dart';
 import 'custom_text_field.dart';
 import 'sheet_handle.dart';
 
-/// Searchable country list. Resolves with the picked [Country], or `null` when
-/// the sheet is dismissed.
 class CountryPickerSheet extends StatefulWidget {
   const CountryPickerSheet({required this.selected, super.key});
 
@@ -55,7 +51,6 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
     final String language = context.locale.languageCode;
 
     return Padding(
-      // Lifts the sheet above the keyboard while searching.
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
@@ -161,10 +156,7 @@ class _CountryTile extends StatelessWidget {
       onTap: onTap,
       selected: isSelected,
       selectedTileColor: colors.tertiary.withValues(alpha: 0.3),
-      leading: Text(
-        country.flag,
-        style: TextStyle(fontSize: 24.sp),
-      ),
+      leading: Text(country.flag, style: TextStyle(fontSize: 24.sp)),
       title: Text(
         country.localizedName(language),
         maxLines: 1,

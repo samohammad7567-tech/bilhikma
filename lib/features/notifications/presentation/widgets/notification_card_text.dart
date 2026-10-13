@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../data/models/notification_model.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
@@ -69,7 +70,6 @@ class NotificationCardText extends StatelessWidget {
     );
   }
 
-  /// `اليوم ١٠:٣٠ ص • جديد` — when it arrived, and whether it is still new.
   String _stamp() {
     final String when = NotificationFormats.stamp(notification.sentAt);
     final String state = notification.isRead

@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../cubit/book_preview_cubit.dart';
 
-/// Drag to cross hundreds of pages at once; the document only moves on
-/// release.
 class BookPageScrubber extends StatelessWidget {
   const BookPageScrubber({
     required this.state,
@@ -43,9 +41,6 @@ class BookPageScrubber extends StatelessWidget {
               thumbColor: colors.secondary,
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
             ),
-            // Left continuous on purpose: `divisions` would draw one tick
-            // per page, and the cubit rounds the value anyway. The page chip
-            // above the slider is the live readout.
             child: Slider(
               value: state.sliderValue,
               min: 1,

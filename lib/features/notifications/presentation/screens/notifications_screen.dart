@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,25 +11,37 @@ import '../cubit/notifications_cubit.dart';
 import '../refactor/notifications_body.dart';
 import '../../../../core/widgets/app_toast.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key, this.showBack = true});
   final bool showBack;
 
   @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  late final NotificationsCubit _cubit = getIt<NotificationsCubit>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    unawaited(_cubit.refresh());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider<NotificationsCubit>.value(
-      value: getIt<NotificationsCubit>(),
+      value: _cubit,
       child: BlocListener<NotificationsCubit, NotificationsState>(
         listenWhen: (NotificationsState previous, NotificationsState current) =>
             current.errorKey != null && current.notifications.isNotEmpty,
         listener: _showRefreshError,
         child: AppSectionScaffold(
           title: context.tr('notifications'),
-          showBack: showBack,
+          showBack: widget.showBack,
           showMenu: true,
-          // Only when pushed: as a tab the shell already hosts the drawer,
-          // and a second one would just shadow it.
-          drawer: showBack ? const AppDrawer() : null,
+          drawer: widget.showBack ? const AppDrawer() : null,
           child: const NotificationsBody(),
         ),
       ),

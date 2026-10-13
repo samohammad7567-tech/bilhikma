@@ -8,6 +8,8 @@ class ProfileRepo {
 
   Future<ProfileModel> fetchProfile() => dataSource.fetchProfile();
 
+  ProfileModel? cachedProfile() => dataSource.cachedProfile();
+
   Future<void> updateProfile({String? fullName, String? email}) =>
       dataSource.updateProfile(fullName: fullName, email: email);
 

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_progress_bar.dart';
@@ -59,8 +60,6 @@ class BookDownloadProgress extends StatelessWidget {
     );
   }
 
-  /// Shown until the first byte count arrives, or when the response carries no
-  /// length and the API never published a size for the book.
   Widget _indeterminate(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final double height = 6.h;

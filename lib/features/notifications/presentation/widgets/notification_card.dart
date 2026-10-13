@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/notification_tone_palette.dart';
 import '../../data/models/notification_model.dart';
 import 'notification_kind_tile.dart';
@@ -15,11 +16,7 @@ class NotificationCard extends StatelessWidget {
 
   final NotificationModel notification;
   final VoidCallback? onTap;
-
-  /// A live session is fetched before its screen can open.
   final bool isOpening;
-
-  /// Width of the accent bar down the leading edge.
   static const double _barWidth = 4;
 
   @override
@@ -32,9 +29,6 @@ class NotificationCard extends StatelessWidget {
     );
 
     final bool isUnread = !notification.isRead;
-
-    // Read cards keep their family colour but settle towards the page, so
-    // unread ones still carry the most weight.
     final Color background = isUnread
         ? tone.background
         : tone.readBackground(colors);
@@ -47,7 +41,6 @@ class NotificationCard extends StatelessWidget {
         onTap: onTap,
         child: IntrinsicHeight(
           child: Row(
-            // Stretch so the accent bar runs the full height of the card.
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Container(

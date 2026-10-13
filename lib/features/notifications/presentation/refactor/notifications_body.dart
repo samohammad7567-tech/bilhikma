@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/routing/notification_destination.dart';
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../../../../core/widgets/app_error_view.dart';
@@ -67,8 +68,6 @@ class NotificationsBody extends StatelessWidget {
     );
   }
 
-  /// A notification that names a screen opens it; one that names none shows
-  /// its own content instead, so no card is a dead tap.
   Future<void> _open(
     BuildContext context,
     NotificationsCubit cubit,

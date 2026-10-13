@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../refactor/test_blank_segments.dart';
 import '../../../../core/themes/app_theme.dart';
 import 'test_blank_chip.dart';

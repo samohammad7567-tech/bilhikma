@@ -20,10 +20,6 @@ class DownloadedPdfsDataSource {
 
   static String attachmentKey(int contentId, int attachmentId) =>
       'attachment:$contentId:$attachmentId';
-
-  /// The logical key a saved file belongs to, so a document opened from the
-  /// downloads log shares its reading position with the same book opened from
-  /// its subject. Null for a file nothing claims any more.
   String? keyForFile(String fileName) {
     for (final MapEntry<String, String> entry in _entries().entries) {
       if (entry.value == fileName) return entry.key;
@@ -43,6 +39,37 @@ class DownloadedPdfsDataSource {
 
     await forget(key);
     return null;
+  }
+
+  Future<List<File>> listFiles() async {
+    final Directory library = await PdfService.libraryDirectory();
+    if (!library.existsSync()) return const <File>[];
+
+    final List<File> files = library
+        .listSync()
+        .whereType<File>()
+        .where((File file) => file.path.toLowerCase().endsWith('.pdf'))
+        .toList();
+
+    files.sort(
+      (File a, File b) =>
+          b.statSync().modified.compareTo(a.statSync().modified),
+    );
+
+    return files;
+  }
+
+  Future<void> deleteFileNamed(String name) async {
+    final String? key = keyForFile(name);
+
+    if (key != null) {
+      await reader.forgetPosition(key);
+      await _forgetAll(<String>[key]);
+      return;
+    }
+
+    await _deleteByName(name);
+    revision.value++;
   }
 
   Future<Set<String>> available(Iterable<String> keys) async {
@@ -92,8 +119,6 @@ class DownloadedPdfsDataSource {
     } catch (_) {}
 
     CacheUtil.remove(key: _key);
-
-    // The files are gone, so the pages they were open at mean nothing.
     await reader.clearPositions();
 
     revision.value++;

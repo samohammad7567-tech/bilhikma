@@ -79,8 +79,6 @@ class _NotificationsListState extends State<NotificationsList> {
     );
   }
 
-  /// Headers and cards flattened into one list, so the day a notification
-  /// arrived scrolls away with it.
   List<Widget> _rows() {
     final List<Widget> rows = <Widget>[];
 
@@ -106,8 +104,6 @@ class _NotificationsListState extends State<NotificationsList> {
       isOpening: widget.openingId == item.id,
       onTap: () => widget.onOpen(item),
     );
-
-    // Only unread cards are measured — the rest have nothing left to mark.
     if (item.isRead) return card;
 
     return KeyedSubtree(key: _tracker.keyFor(item.id), child: card);

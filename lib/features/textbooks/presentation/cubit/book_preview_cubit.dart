@@ -12,9 +12,6 @@ import '../../data/repos/pdf_reader_repo.dart';
 part 'book_preview_state.dart';
 
 class BookPreviewCubit extends Cubit<BookPreviewState> {
-  /// The saved position is read synchronously here so the viewer can be built
-  /// already pointing at the right page — jumping after load would show the
-  /// first page, then scroll, on every open.
   BookPreviewCubit({
     required BookPreviewArgs args,
     PdfReaderRepo repo = const PdfReaderRepo(),
@@ -30,25 +27,14 @@ class BookPreviewCubit extends Cubit<BookPreviewState> {
 
   final BookPreviewArgs args;
   final PdfReaderRepo repo;
-
-  /// Where the document was left, for the viewer's initial page and zoom.
   final ReadingPosition resume;
 
   final PdfViewerController controller = PdfViewerController();
-
-  /// The viewer's own outline panel is reached through its state, not the
-  /// controller — this is the handle to it.
   final GlobalKey<SfPdfViewerState> viewerKey = GlobalKey<SfPdfViewerState>();
-
-  /// Page turns are frequent and each save writes preferences, so the write
-  /// trails the reader rather than following every turn.
   static const Duration _saveDelay = Duration(milliseconds: 1200);
 
   Timer? _saveTimer;
   PdfTextSearchResult? _search;
-
-  /// The saved page is honoured once, so a document reloaded for any reason
-  /// stays on the page being read.
   bool _hasRestored = false;
 
   @override
@@ -84,9 +70,6 @@ class BookPreviewCubit extends Cubit<BookPreviewState> {
     _settleOnPage(target);
   }
 
-  /// `initialPageNumber` is ignored by the viewer when it falls outside the
-  /// document, which happens when a book is replaced by a shorter edition.
-  /// The jump is deferred so it does not race the viewer's own initial one.
   void _settleOnPage(int target) {
     if (controller.pageNumber == target) return;
 
@@ -110,9 +93,6 @@ class BookPreviewCubit extends Cubit<BookPreviewState> {
     _scheduleSave();
   }
 
-  /// Live value while the scrubber is dragged — the document is only moved on
-  /// release, since rendering every page dragged past is what makes a long
-  /// book crawl.
   void scrubTo(double value) {
     if (!state.hasPages) return;
 
@@ -244,8 +224,6 @@ class BookPreviewCubit extends Cubit<BookPreviewState> {
     );
   }
 
-  /// A malformed outline tree is common in scanned books, and reading it must
-  /// not take the viewer down — it only decides whether a button is shown.
   int _outlineCount(PdfDocumentLoadedDetails details) {
     try {
       return details.document.bookmarks.count;

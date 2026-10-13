@@ -5,8 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/enums/notification_kind_enum.dart';
 import '../../../../core/themes/notification_kind_accents.dart';
 
-/// Names the category in words, so the card is still identifiable to anyone
-/// who cannot tell the tones apart.
 class NotificationKindChip extends StatelessWidget {
   const NotificationKindChip({required this.kind, super.key});
 

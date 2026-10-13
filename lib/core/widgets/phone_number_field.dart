@@ -1,5 +1,3 @@
-// easy_localization re-exports intl, whose TextDirection would shadow the
-// framework one used for the LTR dial code below.
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,11 +11,6 @@ import '../utils/phone_number_input_formatter.dart';
 import 'country_picker_sheet.dart';
 import 'custom_text_field.dart';
 
-/// Country selector stacked above a local-number input.
-///
-/// [controller] is kept in sync with the full E.164 number (`+963958953288`),
-/// so the cubits reading it need no changes. The user never types `+` or the
-/// calling code.
 class PhoneNumberField extends StatefulWidget {
   const PhoneNumberField({
     required this.controller,
@@ -27,8 +20,6 @@ class PhoneNumberField extends StatefulWidget {
     this.borderRadius,
     this.suffixIcon,
   });
-
-  /// Receives the full E.164 number on every edit.
   final TextEditingController controller;
 
   final Color? fillColour;
@@ -47,9 +38,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   @override
   void initState() {
     super.initState();
-
-    // A remembered identity arrives as a full number; split it back apart so
-    // both the selector and the input repopulate.
     final ({Country country, String nationalNumber})? parsed =
         AppCountries.parse(widget.controller.text);
 
@@ -69,9 +57,9 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     super.dispose();
   }
 
-  /// Digits the user typed, minus any local trunk prefix.
-  String get _nationalDigits =>
-      _national.text.replaceAll(RegExp(r'\D'), '').replaceFirst(RegExp('^0+'), '');
+  String get _nationalDigits => _national.text
+      .replaceAll(RegExp(r'\D'), '')
+      .replaceFirst(RegExp('^0+'), '');
 
   void _syncController() {
     final String digits = _nationalDigits;
@@ -87,7 +75,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
 
     setState(() {
       _country = picked;
-      // Re-space the existing digits into the new country's grouping.
       _national.text = picked.formatNational(
         _nationalDigits.length > picked.maxLength
             ? _nationalDigits.substring(0, picked.maxLength)
@@ -120,8 +107,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               },
             );
     }
-
-    // The app-wide rule, unchanged, applied to the composed number.
     if (!AppRegex.isValidPhone(_country.toE164(digits))) {
       return 'valid_phone_required'.tr();
     }
@@ -132,7 +117,8 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final Color fill = widget.fillColour ?? colors.tertiary.withValues(alpha: 0.4);
+    final Color fill =
+        widget.fillColour ?? colors.tertiary.withValues(alpha: 0.4);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -247,9 +233,8 @@ class _CountrySelectorTile extends StatelessWidget {
                 country.displayDialCode,
                 textDirection: TextDirection.ltr,
                 maxLines: 1,
-                style: AppTheme.styles(
-                  context,
-                ).labelMedium.copyWith(color: colors.onSurfaceVariant),
+                style: AppTheme.styles(context).labelMedium
+                    .copyWith(color: colors.onSurfaceVariant),
               ),
 
               Icon(

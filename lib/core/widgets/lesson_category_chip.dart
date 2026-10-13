@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../utils/lesson_view_data.dart';
 import '../enums/lesson_category_enum.dart';
 import '../themes/app_theme.dart';
@@ -46,9 +47,8 @@ class LessonCategoryChip extends StatelessWidget {
                 category.label.tr(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(
-                  context,
-                ).labelMedium.copyWith(color: foreground),
+                style: AppTheme.styles(context).labelMedium
+                    .copyWith(color: foreground),
               ),
             ],
           ),

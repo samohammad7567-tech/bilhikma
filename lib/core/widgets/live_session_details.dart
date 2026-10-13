@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../utils/live_formats.dart';
 import '../models/live_session_model.dart';
 import '../themes/app_theme.dart';
@@ -40,9 +41,8 @@ class LiveSessionDetails extends StatelessWidget {
             textAlign: TextAlign.start,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).labelStrong.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+            style: AppTheme.styles(context).labelStrong
+                .copyWith(color: Theme.of(context).colorScheme.secondary),
           ),
 
           SizedBox(height: 10.h),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/widgets/app_empty_view.dart';
 
 class LiveSessionsEmptyView extends StatelessWidget {

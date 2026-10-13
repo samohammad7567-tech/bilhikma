@@ -8,17 +8,11 @@ import '../../../../core/utils/download_progress_throttle.dart';
 import '../../../../core/utils/error_mapper.dart';
 import 'textbooks_data_source.dart';
 
-/// Owns book downloads for the whole app so a transfer outlives the screen
-/// that started it: popping back shows the bar where it actually is, and a
-/// second tap joins the running download instead of starting another one.
 class BookDownloadsDataSource {
   BookDownloadsDataSource({TextbooksDataSource? textbooks})
     : textbooks = textbooks ?? TextbooksDataSource();
 
   final TextbooksDataSource textbooks;
-
-  /// Static so every instance shares one view of what is in flight, however
-  /// that instance was built.
   static final ValueNotifier<Map<int, DownloadProgress>> active =
       ValueNotifier<Map<int, DownloadProgress>>(
         const <int, DownloadProgress>{},
@@ -28,20 +22,13 @@ class BookDownloadsDataSource {
 
   static final Map<int, DownloadProgressThrottle> _throttles =
       <int, DownloadProgressThrottle>{};
-
-  /// Error keys from downloads that ended while no screen was listening.
   static final Map<int, String> _missedFailures = <int, String>{};
 
   static bool isDownloading(int bookId) => _inFlight.containsKey(bookId);
 
   static Map<int, DownloadProgress> get snapshot => active.value;
-
-  /// Reads and clears the failure, so it is reported once and not again.
   static String? takeMissedFailure(int bookId) =>
       _missedFailures.remove(bookId);
-
-  /// Returns the download already running for this book when there is one, so
-  /// every caller awaits the same transfer.
   Future<File> download(TextbookModel book) {
     final Future<File>? running = _inFlight[book.id];
     if (running != null) return running;

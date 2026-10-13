@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/app_colors.dart';
 import '../../data/models/pathway_term_model.dart';
 import 'pathway_node_row.dart';

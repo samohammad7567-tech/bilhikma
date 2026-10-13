@@ -49,17 +49,6 @@ class FloatingVideoController extends ChangeNotifier {
     await playback.initialize();
   }
 
-  /// Asks for Picture-in-Picture, but only where the platform can grant it.
-  ///
-  /// Two independent gates, because the failure is not recoverable in Dart:
-  /// `enterPictureInPictureMode()` on an activity that cannot host PiP throws
-  /// `IllegalStateException` on the Android main thread, which takes the
-  /// process down rather than completing this future with an error. The
-  /// `.catchError` that used to wrap it could never have caught that.
-  ///
-  /// [DeviceInfoService.supportsPictureInPicture] rules out API < 26, where
-  /// PiP does not exist at all; [Floating.isPipAvailable] then asks the
-  /// platform whether this particular device and user allow it.
   Future<void> _enablePictureInPicture() async {
     if (!enablePictureInPicture) return;
     if (!DeviceInfoService.supportsPictureInPicture) return;

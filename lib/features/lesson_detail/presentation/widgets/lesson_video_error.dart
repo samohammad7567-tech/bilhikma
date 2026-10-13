@@ -5,19 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 
-/// Shown in place of the video surface when playback could not start.
-///
-/// Without this the stage is a black rectangle: an ExoPlayer decoder error or
-/// a YouTube player that never became ready leaves nothing on screen and no
-/// way to try again. On older hardware that is the single most likely outcome
-/// for a high-bitrate stream, so it is the case that most needs an answer.
 class LessonVideoError extends StatelessWidget {
   const LessonVideoError({required this.onRetry, super.key, this.details});
 
   final VoidCallback onRetry;
-
-  /// The underlying player message. Shown only in debug — it is decoder and
-  /// codec wording that means nothing to a learner.
   final String? details;
 
   @override

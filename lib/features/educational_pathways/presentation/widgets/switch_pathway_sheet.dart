@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../cubit/educational_pathways_cubit.dart';
 import 'switch_pathway_form.dart';

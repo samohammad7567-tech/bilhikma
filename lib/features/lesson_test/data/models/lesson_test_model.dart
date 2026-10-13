@@ -44,9 +44,9 @@ class LessonTestModel {
           70,
         ),
         retryAfterDays: _orDefault(Json.asInt(json['retry_after_days']), 3),
-        questions: Json.asMapList(
-          json['questions'],
-        ).map(TestQuestionModel.fromJson).toList(growable: false),
+        questions: Json.asMapList(json['questions'])
+            .map(TestQuestionModel.fromJson)
+            .toList(growable: false),
       );
 
   static int _orDefault(int value, int fallback) =>

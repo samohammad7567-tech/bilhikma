@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../floating_video_controller.dart';
 import '../video_playback.dart';
 import '../video_player_options.dart';

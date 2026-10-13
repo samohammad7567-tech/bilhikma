@@ -112,8 +112,6 @@ class AppAssets {
 
   static const String assetsYourRequestAccepted =
       "assets/your_request_accepted.png";
-
-  // Notification category artwork.
   static const String assetsNewContentNotification =
       "assets/new_content_notification.png";
   static const String assetsLiveSessionNotification =

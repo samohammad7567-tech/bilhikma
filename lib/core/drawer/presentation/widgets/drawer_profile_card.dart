@@ -1,7 +1,8 @@
-import 'package:bilhikma/core/utils/current_user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../themes/app_theme.dart';
 import '../../../widgets/ornamented_card.dart';
 import 'drawer_profile_monogram.dart';
@@ -26,21 +27,25 @@ class DrawerProfileCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
           child: Row(
             children: <Widget>[
-              DrawerProfileMonogram(avatarUrl: ''),
+              const DrawerProfileMonogram(avatarUrl: ''),
 
               SizedBox(width: 12.w),
 
               Expanded(
-                child: Text(
-                  CurrentUser.cachedUser()!.fullName,
-                  textAlign: TextAlign.start,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).cardTitle.copyWith(
-                    color: accent,
-                    decoration: TextDecoration.underline,
-                    decorationStyle: TextDecorationStyle.dashed,
-                    decorationColor: accent,
+                child: BlocBuilder<ProfileCubit, ProfileState>(
+                  buildWhen: (ProfileState previous, ProfileState current) =>
+                      previous.profile.name != current.profile.name,
+                  builder: (BuildContext context, ProfileState state) => Text(
+                    state.profile.name,
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTheme.styles(context).cardTitle.copyWith(
+                      color: accent,
+                      decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.dashed,
+                      decorationColor: accent,
+                    ),
                   ),
                 ),
               ),

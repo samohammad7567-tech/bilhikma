@@ -2,16 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../enums/notification_kind_enum.dart';
 
-/// One colour per notification category, used for the chip that names it.
-///
-/// The tone palette colours the card itself and has three families, which is
-/// deliberately coarse. The chip is where a category is told apart from its
-/// siblings, so it gets its own hue: two live notices and an account notice
-/// otherwise look identical at a glance.
 class NotificationKindAccents {
   NotificationKindAccents._();
-
-  /// Share of the accent mixed into the chip background.
   static const double chipTint = 0.16;
 
   static Color of(BuildContext context, NotificationKind kind) =>
@@ -29,9 +21,6 @@ class NotificationKindAccents {
     NotificationKind.adminAnnouncement: Color(0xff7A6A4C),
     NotificationKind.custom: Color(0xff1E9E74),
   };
-
-  /// Lifted for dark cards — the light values sit too close to the surface
-  /// to read as text.
   static const Map<NotificationKind, Color> _dark = <NotificationKind, Color>{
     NotificationKind.newContent: Color(0xff7FC68F),
     NotificationKind.liveSession: Color(0xffD9B86B),

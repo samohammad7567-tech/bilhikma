@@ -45,8 +45,6 @@ class BookReaderActions extends StatelessWidget {
           onPressed: state.isLoaded ? onSearch : null,
           colors: colors,
         ),
-
-        // Shows the layout tapping switches to, not the current one.
         _action(
           icon: state.layout.isSingle
               ? Icons.view_day_outlined
@@ -61,7 +59,6 @@ class BookReaderActions extends StatelessWidget {
     );
   }
 
-  /// Tapping the page count is the shortest route to an exact page.
   Widget _pageChip(BuildContext context, ColorScheme colors) {
     final String label = state.hasPages
         ? 'reader_page_position'.tr(

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_circle_avatar.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_test_model.dart';
@@ -65,9 +66,8 @@ class LessonTestIntroBody extends StatelessWidget {
             namedArgs: <String, String>{'percent': '${test.passPercent}'},
           ),
           textAlign: TextAlign.center,
-          style: AppTheme.styles(context).bodyStrong.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: AppTheme.styles(context).bodyStrong
+              .copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
 
         SizedBox(height: 40.h),

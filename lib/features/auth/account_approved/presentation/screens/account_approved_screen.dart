@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../refactor/account_approved_body.dart';
 
 class AccountApprovedScreen extends StatelessWidget {

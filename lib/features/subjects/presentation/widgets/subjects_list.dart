@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/subject_card.dart';
 import '../../../../core/models/subject_model.dart';

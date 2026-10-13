@@ -7,10 +7,6 @@ import '../../../../core/widgets/playback_speed_sheet.dart';
 import 'lesson_audio_play_button.dart';
 import 'lesson_audio_skip_button.dart';
 
-/// Transport row of the audio player.
-///
-/// The rate pill sits at the start of the row; the flexible slot on either
-/// side keeps the transport buttons centred whatever the pill's width.
 class LessonAudioControlsRow extends StatelessWidget {
   const LessonAudioControlsRow({
     required this.isPlaying,

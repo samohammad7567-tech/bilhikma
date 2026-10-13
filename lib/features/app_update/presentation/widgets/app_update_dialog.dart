@@ -7,11 +7,6 @@ import '../../data/models/app_version_model.dart';
 import 'app_update_dialog_actions.dart';
 import 'app_update_dialog_header.dart';
 
-/// The `optional_update` offer: a newer build exists, this one still works.
-///
-/// Returns true for "update", false for "later". Dismissing it by tapping
-/// outside counts as "later" — the offer is not binding, so there is no reason
-/// to trap the user in it.
 class AppUpdateDialog extends StatelessWidget {
   const AppUpdateDialog({required this.version, super.key});
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/app_theme.dart';
 import 'live_session_card_dot.dart';
 
@@ -29,9 +30,8 @@ class LiveSessionCardStatusBadge extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(
-              context,
-            ).pillLabel.copyWith(color: colors.onPrimaryContainer),
+            style: AppTheme.styles(context).pillLabel
+                .copyWith(color: colors.onPrimaryContainer),
           ),
         ],
       ),

@@ -10,10 +10,6 @@ import '../refactor/notification_formats.dart';
 import 'notification_kind_chip.dart';
 import 'notification_kind_tile.dart';
 
-/// The whole notification, for the ones that refer to no screen.
-///
-/// An announcement is only ever its own text and picture, and the card clamps
-/// the message to two lines — without this there is nowhere to read the rest.
 class NotificationDetailsSheet extends StatelessWidget {
   const NotificationDetailsSheet({required this.notification, super.key});
 
@@ -71,9 +67,6 @@ class NotificationDetailsSheet extends StatelessWidget {
           _image(context),
           SizedBox(height: 12.h),
         ],
-
-        // Not clamped: the message is the reason this sheet exists, and some
-        // announcements are a numbered list several lines long.
         Text(
           notification.message,
           textAlign: TextAlign.start,

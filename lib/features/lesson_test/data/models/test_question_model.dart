@@ -68,18 +68,18 @@ class TestQuestionModel {
         prompt: Json.asString(json['prompt'] ?? json['title']),
         body: Json.asOptionalString(json['body'] ?? json['template']),
         timeLimit: Json.asDuration(json['time_limit'] ?? json['duration']),
-        options: Json.asMapList(
-          json['options'],
-        ).map(TestOptionModel.fromJson).toList(growable: false),
-        blanks: Json.asMapList(
-          json['blanks'],
-        ).map(TestBlankModel.fromJson).toList(growable: false),
-        pairs: Json.asMapList(
-          json['pairs'],
-        ).map(TestPairModel.fromJson).toList(growable: false),
-        sentences: Json.asMapList(
-          json['sentences'],
-        ).map(TestSentenceModel.fromJson).toList(growable: false),
+        options: Json.asMapList(json['options'])
+            .map(TestOptionModel.fromJson)
+            .toList(growable: false),
+        blanks: Json.asMapList(json['blanks'])
+            .map(TestBlankModel.fromJson)
+            .toList(growable: false),
+        pairs: Json.asMapList(json['pairs'])
+            .map(TestPairModel.fromJson)
+            .toList(growable: false),
+        sentences: Json.asMapList(json['sentences'])
+            .map(TestSentenceModel.fromJson)
+            .toList(growable: false),
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{

@@ -1,4 +1,5 @@
 import 'orientation_util.dart';
+
 import 'package:flutter/material.dart';
 
 class OrientationLock extends StatefulWidget {

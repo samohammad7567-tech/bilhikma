@@ -8,7 +8,6 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 
-/// Exact page entry, for when a reader knows the number they want.
 class BookPageJumpSheet extends StatefulWidget {
   const BookPageJumpSheet({
     required this.pageCount,
@@ -90,9 +89,8 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
-            style: AppTheme.styles(
-              context,
-            ).cardCaption.copyWith(color: Theme.of(context).colorScheme.error),
+            style: AppTheme.styles(context).cardCaption
+                .copyWith(color: Theme.of(context).colorScheme.error),
           ),
         ],
 

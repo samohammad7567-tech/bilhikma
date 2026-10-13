@@ -6,10 +6,6 @@ import '../enums/password_requirement_enum.dart';
 import '../themes/app_theme.dart';
 import 'password_requirement_row.dart';
 
-/// Live checklist of [PasswordRequirement] shown under a password field.
-///
-/// Rebuilt from [password] on every keystroke, so a rule flips to a check the
-/// moment it is met and back to a circle if the user deletes what satisfied it.
 class PasswordRequirementsChecklist extends StatelessWidget {
   const PasswordRequirementsChecklist({required this.password, super.key});
 

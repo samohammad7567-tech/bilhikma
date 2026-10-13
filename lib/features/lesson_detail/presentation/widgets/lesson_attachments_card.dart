@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/models/file_download_state.dart';
 import '../../../../core/widgets/ornamented_card.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -12,15 +13,22 @@ class LessonAttachmentsCard extends StatelessWidget {
     required this.attachments,
     required this.onDownload,
     required this.onPreview,
+    required this.onRetry,
+    required this.onDismissDownload,
     this.downloadingId,
     this.previewingId,
     this.downloadedIds = const <int>{},
+    this.downloads = const <int, FileDownloadState>{},
     super.key,
   });
 
   final List<LessonAttachmentModel> attachments;
   final ValueChanged<LessonAttachmentModel> onDownload;
   final ValueChanged<LessonAttachmentModel> onPreview;
+  final ValueChanged<LessonAttachmentModel> onRetry;
+  final ValueChanged<int> onDismissDownload;
+
+  final Map<int, FileDownloadState> downloads;
 
   final int? downloadingId;
   final int? previewingId;
@@ -50,6 +58,9 @@ class LessonAttachmentsCard extends StatelessWidget {
               file: file,
               onDownload: () => onDownload(file),
               onPreview: () => onPreview(file),
+              onRetry: () => onRetry(file),
+              onDismissDownload: () => onDismissDownload(file.id),
+              download: downloads[file.id],
               isDownloading: downloadingId == file.id,
               isPreviewing: previewingId == file.id,
               isDownloaded: downloadedIds.contains(file.id),

@@ -41,9 +41,9 @@ class SubjectContentScreen extends StatelessWidget {
               onMenuTap: () => Scaffold.of(context).openDrawer(),
               onLessonTap: (LessonModel lesson) => _openLesson(context, lesson),
 
-              onWatchLive: (LiveSessionModel session) => Navigator.of(
-                context,
-              ).pushNamed(AppRoutes.livePlayer, arguments: session),
+              onWatchLive: (LiveSessionModel session) =>
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.livePlayer, arguments: session),
               onRemindLive: (LiveSessionModel session) =>
                   _report(context, 'reminder_saved'),
               onDownloadBook: (TextbookModel book) =>
@@ -51,9 +51,9 @@ class SubjectContentScreen extends StatelessWidget {
               onPreviewBook: (TextbookModel book) =>
                   _previewBook(context, book),
 
-              onAlbumTap: (MediaAlbumModel album) => Navigator.of(
-                context,
-              ).pushNamed(AppRoutes.pictures, arguments: album.id),
+              onAlbumTap: (MediaAlbumModel album) =>
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.pictures, arguments: album.id),
             ),
           ),
         ),

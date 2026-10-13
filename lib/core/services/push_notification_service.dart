@@ -10,26 +10,13 @@ import '../routing/notification_destination.dart';
 import '../utils/app_logger.dart';
 import 'dio_service.dart';
 import 'notification_launcher.dart';
+import 'push_event_bus.dart';
 
-/// Push notifications, set up so that nothing here can stop the app.
-///
-/// Every call below depends on Google Play services, the network, or both.
-/// Neither is guaranteed: an older phone may carry a Play services build too
-/// old to mint a token, a de-Googled ROM has none at all, and a slow or
-/// captive network makes `getToken()` take tens of seconds before failing with
-/// `SERVICE_NOT_AVAILABLE`. Push is a feature, not a precondition for the app
-/// running, so each stage is guarded and time-boxed and the whole thing is
-/// started *after* the first frame.
 class PushNotificationService {
   PushNotificationService._();
 
   static const String _logName = 'push';
-
-  /// Talking to Play services and then to Google. Generous, because this now
-  /// runs behind a live UI where a slow answer costs the user nothing.
   static const Duration _remoteTimeout = Duration(seconds: 20);
-
-  /// Platform-local work: channel creation, reading the launch intent.
   static const Duration _localTimeout = Duration(seconds: 8);
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
@@ -47,13 +34,7 @@ class PushNotificationService {
   static String? _token;
 
   static String? get token => _token;
-
-  /// True when messaging is wired up and a token was obtained. False means the
-  /// app is running without push — a normal state, not an error.
   static bool get isReady => _isReady;
-
-  /// Sets up messaging. Safe to call more than once; only the first call does
-  /// work. Never throws, so it is safe to leave unawaited.
   static Future<void> ensureInitialized() async {
     if (_hasStarted) return;
     _hasStarted = true;
@@ -62,9 +43,6 @@ class PushNotificationService {
 
     await _initializeLocalNotifications();
     await _requestPermission();
-
-    // Listeners go up before the token is fetched: the fetch can take twenty
-    // seconds, and a message arriving in that window should still be handled.
     _attachMessageListeners();
 
     await _resolveToken();
@@ -79,9 +57,6 @@ class PushNotificationService {
     );
   }
 
-  /// Returns false when Firebase cannot start — a missing or malformed
-  /// `google-services.json`, or Play services too old to host it. Everything
-  /// downstream is pointless in that case.
   static Future<bool> _initializeFirebase() async {
     try {
       await Firebase.initializeApp().timeout(_remoteTimeout);
@@ -159,7 +134,7 @@ class PushNotificationService {
         ),
       );
 
-      FirebaseMessaging.onMessage.listen(_showForegroundNotification);
+      FirebaseMessaging.onMessage.listen(_onForegroundMessage);
       FirebaseMessaging.onMessageOpenedApp.listen(_openFromMessage);
     } catch (error, stackTrace) {
       AppLogger.error(
@@ -171,17 +146,12 @@ class PushNotificationService {
     }
   }
 
-  /// The single most failure-prone call in the app on older hardware: it needs
-  /// a current Play services and a reachable Google endpoint, and reports
-  /// neither problem quickly.
   static Future<void> _resolveToken() async {
     try {
       _token = await FirebaseMessaging.instance.getToken().timeout(
         _remoteTimeout,
       );
     } catch (error) {
-      // SERVICE_NOT_AVAILABLE, MISSING_INSTANCEID_SERVICE, a timeout on a bad
-      // link — all mean the same thing here, and none of them is fatal.
       AppLogger.warning(
         'FCM token unavailable; continuing without push',
         name: _logName,
@@ -215,8 +185,6 @@ class PushNotificationService {
     }
   }
 
-  /// A notification tap that started the app: the destination is queued and
-  /// opened once the app has signed-in UI to navigate from.
   static Future<void> _handleLaunchTap() async {
     try {
       final RemoteMessage? initial = await FirebaseMessaging.instance
@@ -244,9 +212,19 @@ class PushNotificationService {
     }
   }
 
-  static void _openFromMessage(RemoteMessage message) => NotificationLauncher
-      .instance
-      .open(NotificationDestination.fromPushData(message.data));
+  static Future<void> _onForegroundMessage(RemoteMessage message) async {
+    PushEventBus.instance.emit(message.data);
+
+    await _showForegroundNotification(message);
+  }
+
+  static void _openFromMessage(RemoteMessage message) {
+    PushEventBus.instance.emit(message.data);
+
+    NotificationLauncher.instance.open(
+      NotificationDestination.fromPushData(message.data),
+    );
+  }
 
   static void _onLocalNotificationTap(NotificationResponse response) =>
       _openFromPayload(response.payload);
@@ -259,13 +237,16 @@ class PushNotificationService {
 
     try {
       final Object? decoded = jsonDecode(payload);
+      if (decoded is! Map) {
+        NotificationLauncher.instance.open(null);
+        return;
+      }
+
+      final Map<String, dynamic> data = Map<String, dynamic>.from(decoded);
+      PushEventBus.instance.emit(data);
 
       NotificationLauncher.instance.open(
-        decoded is Map
-            ? NotificationDestination.fromPushData(
-                Map<String, dynamic>.from(decoded),
-              )
-            : null,
+        NotificationDestination.fromPushData(data),
       );
     } on FormatException {
       NotificationLauncher.instance.open(null);

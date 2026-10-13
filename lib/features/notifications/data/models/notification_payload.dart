@@ -1,10 +1,6 @@
 import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/network/json_reader.dart';
 
-/// The `data` object the API attaches to a notification.
-///
-/// `deep_link` comes back null on every notification the service sends, so
-/// this is the only thing that says what a notification is actually about.
 class NotificationPayload {
   const NotificationPayload({
     this.contentId = 0,
@@ -26,8 +22,6 @@ class NotificationPayload {
   bool get hasLiveSession => liveSessionId > 0;
 
   bool get hasSubject => categorySubjectId > 0;
-
-  /// True when the payload names something the app can open.
   bool get hasTarget => hasContent || hasLiveSession || hasSubject;
 
   factory NotificationPayload.fromJson(Object? raw) {

@@ -86,17 +86,12 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
     AppToast.show(context, 'video_no_skip_note'.tr());
   }
 
-  /// Forward double tap: allowed only inside the seek cap — the whole lesson
-  /// once it has been completed, everything already watched before that.
   bool _forward() {
-    // Never past the end, and never past the cap while one is still in play.
     final Duration cap = widget.maxPosition < widget.duration
         ? widget.maxPosition
         : widget.duration;
 
     if (widget.position >= cap) {
-      // Only a real restriction is worth a toast; sitting at the end of an
-      // unrestricted lesson is not.
       if (cap < widget.duration) {
         _refuseSkip();
       } else {

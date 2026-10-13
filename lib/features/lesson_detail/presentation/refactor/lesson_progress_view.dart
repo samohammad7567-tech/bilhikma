@@ -1,10 +1,5 @@
 import '../cubit/lesson_detail_cubit.dart';
 
-/// UI-ready progress numbers for the lesson summary card.
-///
-/// Carries both tracks: [confirmed] is what the server credited, [pending] is
-/// the optimistic local value shown between checkpoints. Widgets render them,
-/// nothing else reads them.
 class LessonProgressView {
   const LessonProgressView({
     required this.totalSeconds,
@@ -27,11 +22,6 @@ class LessonProgressView {
   final double confirmed;
 
   final double pending;
-
-  /// Rounded down so the label never reads 100% before the final checkpoint
-  /// has actually been acknowledged.
   int get percent => (pending * 100).floor();
-
-  /// True while local playback is ahead of what the server has credited.
   bool get hasPending => pending > confirmed;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/themes/app_theme.dart';
 
 class TestPairBadge extends StatelessWidget {
@@ -25,9 +26,8 @@ class TestPairBadge extends StatelessWidget {
       child: Text(
         '$value',
         maxLines: 1,
-        style: AppTheme.styles(
-          context,
-        ).badgeLabel.copyWith(color: colors.onSecondary),
+        style: AppTheme.styles(context).badgeLabel
+            .copyWith(color: colors.onSecondary),
       ),
     );
   }

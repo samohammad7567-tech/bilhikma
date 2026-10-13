@@ -1,7 +1,5 @@
 class AppRegex {
   AppRegex._();
-
-  /// Shortest password the app accepts when a new one is being created.
   static const int passwordMinLength = 6;
 
   static final RegExp email = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');

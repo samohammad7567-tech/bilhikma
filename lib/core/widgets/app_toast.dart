@@ -166,9 +166,8 @@ class _ToastViewState extends State<_ToastView>
                         widget.message,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTheme.styles(
-                          context,
-                        ).labelMedium.copyWith(color: colors.onSecondary),
+                        style: AppTheme.styles(context).labelMedium
+                            .copyWith(color: colors.onSecondary),
                       ),
                     ),
                   ],

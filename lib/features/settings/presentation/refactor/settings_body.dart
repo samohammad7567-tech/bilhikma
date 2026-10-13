@@ -25,8 +25,6 @@ class SettingsBody extends StatelessWidget {
             const SettingsLanguageCard(),
 
             SizedBox(height: 16.h),
-
-            // const SettingsThemeCard(),
           ],
         );
       },

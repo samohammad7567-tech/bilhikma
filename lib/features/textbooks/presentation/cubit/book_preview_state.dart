@@ -23,13 +23,9 @@ final class BookPreviewState {
   final BookPageLayout layout;
 
   final bool isLoaded;
-
-  /// The document opened at a saved page rather than at the beginning.
   final bool isResumed;
 
   final bool hasOutline;
-
-  /// Set only while the scrubber is held down.
   final int? scrubPage;
 
   final bool isSearchOpen;
@@ -43,9 +39,6 @@ final class BookPreviewState {
   bool get hasPages => pageCount > 0;
 
   bool get hasFailed => errorKey != null;
-
-  /// What the page label shows: the dragged page while scrubbing, so the
-  /// number tracks the thumb without moving the document.
   int get shownPage => scrubPage ?? page;
 
   double get sliderValue =>
@@ -60,9 +53,6 @@ final class BookPreviewState {
   bool get hasQuery => query.isNotEmpty;
 
   bool get hasMatches => matchCount > 0;
-
-  /// Only meaningful once the sweep is done — a partial count reads as a
-  /// result that keeps changing.
   bool get hasNoMatches => hasQuery && !isSearching && matchCount == 0;
 
   BookPreviewState copyWith({

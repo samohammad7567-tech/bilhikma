@@ -7,7 +7,6 @@ import '../services/device_info_service.dart';
 import '../themes/app_theme.dart';
 import 'sheet_handle.dart';
 
-/// Playback rate picker shared by the lesson audio and video players.
 class PlaybackSpeedSheet extends StatelessWidget {
   const PlaybackSpeedSheet({
     required this.current,
@@ -17,17 +16,9 @@ class PlaybackSpeedSheet extends StatelessWidget {
   });
 
   final PlaybackSpeed current;
-
-  /// Fastest rates stay locked until the lesson has been completed once.
   final bool isLessonCompleted;
 
   final ValueChanged<PlaybackSpeed> onSelected;
-
-  /// Share of the screen the sheet may take, leaving the rest as barrier.
-  ///
-  /// Without a cap the option list is tall enough to cover a fullscreen
-  /// landscape video outright, so there is no barrier left to tap and the
-  /// sheet can only be closed by picking a rate or pressing back.
   static const double _maxHeightFactor = 0.85;
 
   static Future<void> show({
@@ -53,12 +44,6 @@ class PlaybackSpeedSheet extends StatelessWidget {
   );
 
   bool get _isLowEndDevice => DeviceInfoService.isLowEndDevice;
-
-  /// Why some rates are greyed out, or null when none are.
-  ///
-  /// The device limit is named first: it is the one the user cannot lift by
-  /// finishing the lesson, so explaining the other cap instead would be
-  /// actively misleading.
   String? get _noteKey {
     if (_isLowEndDevice) return 'playback_speed_device_note';
     if (!isLessonCompleted) return 'playback_speed_locked_note';
@@ -82,10 +67,6 @@ class PlaybackSpeedSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Deliberately outside the scroll view below. A drag that starts
-            // on a scrollable is claimed by that scrollable, so once the
-            // options overflow there would be nowhere left to grab the sheet
-            // and swipe it closed.
             Padding(
               padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
               child: Column(
@@ -104,10 +85,6 @@ class PlaybackSpeedSheet extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Loose, so the list keeps its natural height whenever it fits and
-            // stays unscrollable — then a swipe anywhere on the sheet closes
-            // it, and only a genuinely overflowing list scrolls instead.
             Flexible(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),

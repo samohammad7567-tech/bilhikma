@@ -5,18 +5,9 @@ import '../../../../core/enums/book_page_layout_enum.dart';
 import '../../../../core/utils/cache_util.dart';
 import '../models/reading_position.dart';
 
-/// What the PDF reader remembers between sessions: where each document was
-/// left, and how the user prefers pages laid out.
 class PdfReaderDataSource {
   const PdfReaderDataSource();
-
-  /// Positions are pruned to the most recently read documents, so a long
-  /// lived install does not grow the preference file without bound.
   static const int _maxPositions = 120;
-
-  /// Read synchronously: preferences are open before the first frame, so the
-  /// viewer can be built already pointing at the saved page rather than
-  /// jumping there after a load.
   ReadingPosition? positionFor(String key) {
     final Map<String, dynamic> entries = _entries();
 
@@ -52,8 +43,6 @@ class PdfReaderDataSource {
 
   Future<void> saveLayout(BookPageLayout layout) =>
       CacheUtil.setString(key: CacheKeys.pdfPageLayout, value: layout.key);
-
-  /// Drops the least recently read entries once the store is over size.
   Map<String, dynamic> _pruned(Map<String, dynamic> entries) {
     if (entries.length <= _maxPositions) return entries;
 

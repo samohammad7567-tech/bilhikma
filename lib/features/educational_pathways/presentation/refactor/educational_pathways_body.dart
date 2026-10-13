@@ -1,8 +1,10 @@
 import '../widgets/switch_pathway_sheet.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../cubit/educational_pathways_cubit.dart';
@@ -44,9 +46,9 @@ class EducationalPathwaysBody extends StatelessWidget {
                 height: 40,
                 threeRadius: 8.r,
                 lastRadius: 8.r,
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.secondaryContainer,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer,
                 elevation: 0,
               ),
             ),

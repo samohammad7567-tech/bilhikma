@@ -106,8 +106,6 @@ class _BookSearchFieldState extends State<BookSearchField> {
     );
   }
 
-  /// A sweep over a long book reports matches as it goes, so the count is
-  /// labelled as partial until it settles.
   String _label(BookPreviewState state) {
     if (state.hasNoMatches) return 'reader_no_matches'.tr();
 

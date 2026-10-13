@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/book_preview_args.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
@@ -115,7 +116,10 @@ class LessonDetailBody extends StatelessWidget {
                   downloadingId: state.downloadingAttachmentId,
                   previewingId: state.previewingAttachmentId,
                   downloadedIds: state.downloadedAttachmentIds,
+                  downloads: state.attachmentDownloads,
                   onDownload: cubit.downloadAttachment,
+                  onRetry: cubit.retryAttachmentDownload,
+                  onDismissDownload: cubit.dismissAttachmentDownload,
                   onPreview: (LessonAttachmentModel file) =>
                       _previewAttachment(context, cubit, file),
                 ),
@@ -132,27 +136,7 @@ class LessonDetailBody extends StatelessWidget {
               ),
             ],
 
-            if (!detail.isArticle) ...<Widget>[
-              SizedBox(height: 20.h),
-              // LessonDetailInset(
-              //   child: CustomButton(
-              //     onPressed:
-              //         onGoToTest ??
-              //         () => ComingSoonSheet.show(
-              //           context,
-              //           messageKey: 'coming_soon_test',
-              //         ),
-              //     text: 'go_to_test'.tr(),
-              //     width: double.infinity,
-              //     height: 46,
-              //     threeRadius: 8.r,
-              //     lastRadius: 8.r,
-              //     backgroundColor: Theme.of(context).colorScheme.secondary,
-              //     textColor: Theme.of(context).colorScheme.onSecondary,
-              //     elevation: 0,
-              //   ),
-              // ),
-            ],
+            if (!detail.isArticle) ...<Widget>[SizedBox(height: 20.h)],
           ],
         );
       },

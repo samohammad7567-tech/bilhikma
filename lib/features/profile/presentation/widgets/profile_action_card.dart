@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/enums/profile_action_enum.dart';
 import 'profile_action_row.dart';
 

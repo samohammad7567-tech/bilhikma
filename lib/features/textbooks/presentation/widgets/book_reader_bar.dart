@@ -5,7 +5,6 @@ import '../cubit/book_preview_cubit.dart';
 import 'book_page_scrubber.dart';
 import 'book_reader_actions.dart';
 
-/// Everything needed to get around a long document, kept off the page itself.
 class BookReaderBar extends StatelessWidget {
   const BookReaderBar({
     required this.state,

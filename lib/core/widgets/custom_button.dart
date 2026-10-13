@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../themes/app_theme.dart';
 
 class CustomButton extends StatelessWidget {
@@ -74,9 +75,8 @@ class CustomButton extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: textColor == null
                     ? AppTheme.styles(context).buttonLabel
-                    : AppTheme.styles(
-                        context,
-                      ).buttonLabel.copyWith(color: textColor),
+                    : AppTheme.styles(context).buttonLabel
+                          .copyWith(color: textColor),
               ),
       ),
     );

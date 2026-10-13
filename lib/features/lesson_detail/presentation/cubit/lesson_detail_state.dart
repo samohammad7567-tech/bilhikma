@@ -22,6 +22,7 @@ final class LessonDetailState {
     this.downloadingAttachmentId,
     this.previewingAttachmentId,
     this.downloadedAttachmentIds = const <int>{},
+    this.attachmentDownloads = const <int, FileDownloadState>{},
     this.errorKey,
     this.errorMessage,
     this.messageKey,
@@ -59,6 +60,10 @@ final class LessonDetailState {
 
   final Set<int> downloadedAttachmentIds;
 
+  /// Live download state per attachment id: running progress, or the
+  /// completed / failed outcome of the last attempt.
+  final Map<int, FileDownloadState> attachmentDownloads;
+
   final String? errorKey;
 
   final String? errorMessage;
@@ -76,11 +81,6 @@ final class LessonDetailState {
   bool get canPlay => playbackUrl != null;
 
   bool get isArticleRead => progress.isCompleted;
-
-  /// Rate the players actually run at. The stored preference is the user's
-  /// choice; rates above the first-watch cap only apply once the lesson has
-  /// been completed, and a low-end device is never pushed past what its
-  /// decoder can hold.
   PlaybackSpeed get effectivePlaybackSpeed => playbackSpeed.cappedFor(
     isLessonCompleted: progress.isCompleted,
     isLowEndDevice: DeviceInfoService.isLowEndDevice,
@@ -91,13 +91,6 @@ final class LessonDetailState {
   int? get nextCheckpointSeconds => checkpointIndex < checkpoints.length
       ? checkpoints[checkpointIndex]
       : null;
-
-  /// How far the user may scrub.
-  ///
-  /// During the first watch that is the furthest second actually reached. Once
-  /// the lesson is completed the cap is lifted to the full duration: the
-  /// restriction only exists to stop skipping past unwatched material, and
-  /// there is none left to skip.
   int get seekLimitSeconds {
     if (progress.isCompleted) {
       final int total = detail?.durationSeconds ?? 0;
@@ -107,35 +100,13 @@ final class LessonDetailState {
     return watchedHighWaterSeconds;
   }
 
-  /// Furthest second reached on this device, including seconds watched since
-  /// the last acknowledged checkpoint.
-  ///
-  /// Deliberately separate from [seekLimitSeconds]: that one answers "how far
-  /// may the user scrub", this one answers "how far have they watched" —
-  /// changing the seek policy must not silently change what the progress bar
-  /// shows.
   int get watchedHighWaterSeconds =>
       positionSeconds > progress.maxPositionSeconds
       ? positionSeconds
       : progress.maxPositionSeconds;
-
-  /// Ceiling on every progress track until the server confirms completion.
-  ///
-  /// A full 100% is the signal that the lesson is finished, so no track may
-  /// reach it on local playback alone — only [LessonProgressModel.isCompleted]
-  /// may take it there.
   static const double _unconfirmedCeiling = 0.99;
-
-  /// Progress the server has actually credited. The only value that may inform
-  /// what gets reported, unlocked, or marked complete.
   double get confirmedProgress =>
       progress.isCompleted ? 1 : _capped(progress.progress);
-
-  /// Optimistic progress derived from local playback, for display only.
-  ///
-  /// Checkpoints sit at quartiles of the duration, so on long lessons the
-  /// credited percent can sit still for a very long time. This fills the gap
-  /// between checkpoints; it is never sent anywhere.
   double get localProgress {
     final int total = detail?.durationSeconds ?? 0;
     if (total <= 0) return confirmedProgress;
@@ -143,8 +114,6 @@ final class LessonDetailState {
     return _capped((watchedHighWaterSeconds / total).clamp(0.0, 1.0));
   }
 
-  /// What the progress bar renders. Never falls below [confirmedProgress], so
-  /// a rejected seek pulls it back down to whatever the server credited.
   double get displayProgress {
     if (progress.isCompleted) return 1;
 
@@ -157,18 +126,13 @@ final class LessonDetailState {
       value > _unconfirmedCeiling ? _unconfirmedCeiling : value;
 
   Duration get seekLimit => Duration(seconds: seekLimitSeconds);
-
-  /// Second the player seeks to when it is created for this lesson.
-  ///
-  /// Just the current position: it is seeded at load time with this device's
-  /// saved spot, or the backend's credited position when there is none, and
-  /// then tracks playback so a player rebuilt mid-lesson — a refreshed media
-  /// link, a rotation — picks up where the user actually is rather than
-  /// jumping back to where the session opened.
   int get resumeSeconds => positionSeconds;
 
   bool isAttachmentDownloaded(int attachmentId) =>
       downloadedAttachmentIds.contains(attachmentId);
+
+  FileDownloadState? attachmentDownloadFor(int attachmentId) =>
+      attachmentDownloads[attachmentId];
 
   LessonDetailState copyWith({
     LessonDetailStatus? status,
@@ -189,6 +153,7 @@ final class LessonDetailState {
     int? downloadingAttachmentId,
     int? previewingAttachmentId,
     Set<int>? downloadedAttachmentIds,
+    Map<int, FileDownloadState>? attachmentDownloads,
     bool clearAttachmentBusy = false,
     String? errorKey,
     String? errorMessage,
@@ -220,6 +185,7 @@ final class LessonDetailState {
         : previewingAttachmentId ?? this.previewingAttachmentId,
     downloadedAttachmentIds:
         downloadedAttachmentIds ?? this.downloadedAttachmentIds,
+    attachmentDownloads: attachmentDownloads ?? this.attachmentDownloads,
     errorKey: clearError ? null : errorKey ?? this.errorKey,
     errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     messageKey: clearMessage ? null : messageKey,

@@ -93,10 +93,6 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
 
     final VideoItem? item = VideoItem.fromUrl(url, id: 'lesson-audio');
     if (item == null) return;
-
-    // Captured before the first await: once the reporter starts ticking it
-    // drives `resumeSeconds`, so reading it after the gap would resume from
-    // wherever the loading player happened to sit rather than the saved spot.
     final int resumeTarget = widget.resumeSeconds;
 
     final VideoPlayback playback = VideoPlayback.forItem(item);
@@ -120,8 +116,6 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
     await playback.setPlaybackSpeed(widget.speed.rate);
   }
 
-  /// A rate set before the player is ready is dropped by some backends
-  /// (YouTube in particular), so it is applied once more on first ready.
   void _onPlaybackChanged() {
     final VideoPlayback? playback = _playback;
     if (_hasAppliedSpeed || playback == null || !playback.isReady) return;

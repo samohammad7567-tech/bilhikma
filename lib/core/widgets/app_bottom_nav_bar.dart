@@ -3,6 +3,7 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../enums/app_tab_enum.dart';
 import '../themes/app_theme.dart';
 import 'bottom_nav_tab_icon.dart';
@@ -38,8 +39,6 @@ class AppBottomNavBar extends StatelessWidget {
           onTap: (int index) => onTabSelected(AppTab.values[index]),
           color: colors.secondary,
           backgroundColor: Colors.transparent,
-          // The halo is painted by BottomNavTabIcon so it shows for every
-          // selected tab; the package's own disc would double it.
           buttonBackgroundColor: Colors.transparent,
           iconPadding: 0,
           height: barHeight,

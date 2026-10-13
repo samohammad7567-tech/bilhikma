@@ -58,8 +58,6 @@ class LessonVideoStage extends StatefulWidget {
 }
 
 class _LessonVideoStageState extends State<LessonVideoStage> {
-  /// Shape of the inline (non-fullscreen) stage. Slightly taller than the
-  /// video itself so the controls have room without overlaying the picture.
   static const double _stageAspectRatio = 16 / 10;
 
   late final LessonPlaybackReporter _reporter = LessonPlaybackReporter(
@@ -121,10 +119,6 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
 
     final VideoItem? item = VideoItem.fromUrl(url, id: 'lesson-video');
     if (item == null) return;
-
-    // Captured before the first await: once the reporter starts ticking it
-    // drives `resumeSeconds`, so reading it after the gap would resume from
-    // wherever the loading player happened to sit rather than the saved spot.
     final int resumeTarget = widget.resumeSeconds;
 
     final VideoPlayback playback = VideoPlayback.forItem(item);
@@ -148,8 +142,6 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     await playback.setPlaybackSpeed(widget.speed.rate);
   }
 
-  /// A rate set before the player is ready is dropped by some backends
-  /// (YouTube in particular), so it is applied once more on first ready.
   void _onPlaybackChanged() {
     final VideoPlayback? playback = _playback;
     if (_hasAppliedSpeed || playback == null || !playback.isReady) return;
@@ -200,12 +192,6 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
     final VideoPlayback? playback = _playback;
 
     final Size screen = MediaQuery.sizeOf(context);
-
-    // The real viewport, never double.infinity. In the fullscreen tree the
-    // parent is a Scaffold body and an infinite height resolves, but the
-    // normal tree places this inside a ListView — an unbounded vertical
-    // constraint, where it asserts "BoxConstraints forces an infinite height"
-    // and takes the frame with it. The transition builds in both.
     final double height = widget.isFullscreen
         ? screen.height
         : screen.width / _stageAspectRatio;
@@ -223,8 +209,6 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
             : ListenableBuilder(
                 listenable: playback,
                 builder: (BuildContext context, _) {
-                  // A failed player must not stay a black rectangle: the user
-                  // gets told, and gets a way to try again.
                   final String? failure = playback.errorMessage;
                   if (failure != null) {
                     return LessonVideoError(

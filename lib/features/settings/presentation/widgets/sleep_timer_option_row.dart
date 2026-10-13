@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../../../core/enums/sleep_timer_option_enum.dart';
 import '../refactor/settings_formats.dart';
 import '../../../../core/themes/app_theme.dart';

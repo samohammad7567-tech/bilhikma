@@ -34,9 +34,8 @@ class LivePlayerSummaryCard extends StatelessWidget {
             Text(
               description,
               textAlign: TextAlign.start,
-              style: AppTheme.styles(context).labelStrong.copyWith(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              style: AppTheme.styles(context).labelStrong
+                  .copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
           ],
 

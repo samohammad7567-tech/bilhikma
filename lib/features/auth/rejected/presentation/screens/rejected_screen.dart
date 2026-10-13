@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../refactor/rejected_body.dart';
 
 class RejectedScreen extends StatelessWidget {

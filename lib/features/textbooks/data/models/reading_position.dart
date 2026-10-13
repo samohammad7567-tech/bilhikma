@@ -1,6 +1,5 @@
 import '../../../../core/network/json_reader.dart';
 
-/// Where the reader left a document, so reopening it resumes in place.
 class ReadingPosition {
   const ReadingPosition({
     required this.page,
@@ -15,14 +14,9 @@ class ReadingPosition {
   final DateTime? updatedAt;
 
   static const ReadingPosition start = ReadingPosition(page: 1);
-
-  /// Page 1 is where an unread document opens anyway — nothing to restore.
   bool get isResumable => page > 1;
 
   int get millisSinceEpoch => updatedAt?.millisecondsSinceEpoch ?? 0;
-
-  /// Clamped so a position saved before a file was replaced by a shorter one
-  /// cannot open the viewer past its last page.
   int pageWithin(int totalPages) {
     if (totalPages <= 0) return page < 1 ? 1 : page;
 
@@ -43,9 +37,6 @@ class ReadingPosition {
     'zoom': zoom,
     'updated_at': millisSinceEpoch,
   };
-
-  /// Caps zoom at the viewer's own maximum: a stored value outside the
-  /// allowed range opens the document at an unusable scale.
   static const double minZoom = 1;
   static const double maxZoom = 3;
 
