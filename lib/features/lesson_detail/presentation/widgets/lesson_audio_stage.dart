@@ -47,7 +47,11 @@ class LessonAudioStage extends StatefulWidget {
   State<LessonAudioStage> createState() => _LessonAudioStageState();
 }
 
-class _LessonAudioStageState extends State<LessonAudioStage> {
+class _LessonAudioStageState extends State<LessonAudioStage>
+    with AutomaticKeepAliveClientMixin<LessonAudioStage> {
+  @override
+  bool get wantKeepAlive => true;
+
   late final LessonPlaybackReporter _reporter = LessonPlaybackReporter(
     onTick: (int position, int played) => widget.onTick(position, played),
     onEnded: (int duration) => widget.onEnded(duration),
@@ -133,6 +137,8 @@ class _LessonAudioStageState extends State<LessonAudioStage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final VideoPlayback? playback = _playback;
 
     if (playback == null) {

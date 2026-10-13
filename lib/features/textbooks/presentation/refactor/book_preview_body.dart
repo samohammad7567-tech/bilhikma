@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/routing/book_preview_args.dart';
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../cubit/book_preview_cubit.dart';
@@ -10,9 +11,9 @@ import '../widgets/book_reader_bar.dart';
 import '../widgets/book_search_field.dart';
 
 class BookPreviewBody extends StatelessWidget {
-  const BookPreviewBody({required this.filePath, super.key});
+  const BookPreviewBody({required this.args, super.key});
 
-  final String filePath;
+  final BookPreviewArgs args;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class BookPreviewBody extends StatelessWidget {
             Expanded(
               child: BookPdfView(
                 cubit: cubit,
-                filePath: filePath,
+                args: args,
                 layout: state.layout,
                 initialPage: state.page,
               ),

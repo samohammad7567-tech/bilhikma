@@ -14,6 +14,7 @@ class SubjectBookCard extends StatelessWidget {
     required this.book,
     required this.onDownload,
     required this.onPreview,
+    required this.onOpen,
     super.key,
     this.progress,
     this.isDownloading = false,
@@ -24,6 +25,7 @@ class SubjectBookCard extends StatelessWidget {
   final TextbookModel book;
   final VoidCallback onDownload;
   final VoidCallback onPreview;
+  final VoidCallback onOpen;
 
   final DownloadProgress? progress;
 
@@ -63,6 +65,7 @@ class SubjectBookCard extends StatelessWidget {
             isDownloaded: isDownloaded,
             onDownload: onDownload,
             onPreview: onPreview,
+            onOpen: onOpen,
           ),
         ],
       ),

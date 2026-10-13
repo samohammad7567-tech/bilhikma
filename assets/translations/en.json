@@ -293,13 +293,13 @@
   "recover_account_email_hint": "Enter your registered email to receive the verification code",
   "recover_account_phone_hint": "Enter your registered phone number to receive the verification code",
   "via_email": "By email",
-  "via_sms": "By text message (SMS)",
+  "via_sms": "By phone number",
   "send_verification_code": "Send verification code",
   "remembered_password": "Remembered your password?",
   "reset_code_sent": "Verification code sent",
   "set_password_title": "Set password",
   "new_password_heading": "New password",
-  "set_password_hint": "Enter the code you received and your new password",
+  "set_password_hint": "Enter the code sent to the email address associated with your account and your new password",
   "new_password_label": "New password",
   "confirm_new_password_label": "Confirm new password",
   "confirm_save_and_login": "Save and sign in",
@@ -326,5 +326,7 @@
   "downloading_attachment": "Downloading the file",
   "attachment_download_complete": "File downloaded",
   "attachment_download_failed": "The file could not be downloaded, please try again",
-  "dismiss": "Dismiss"
+  "dismiss": "Dismiss",
+  "open_book": "Open the book",
+  "open": "Open"
 }

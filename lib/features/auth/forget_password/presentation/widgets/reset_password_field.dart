@@ -39,7 +39,7 @@ class ResetPasswordField extends StatelessWidget {
         onChanged?.call(value ?? '');
         return null;
       },
-      suffixIcon: FieldIconBox(
+      prefixIcon: FieldIconBox(
         asset: AppAssets.assetsLockIcon,
         onTap: onToggle,
       ),

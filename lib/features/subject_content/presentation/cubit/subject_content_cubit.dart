@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/network/paginated_result.dart';
 import '../../../../core/utils/error_mapper.dart';
-import '../../../../core/utils/download_progress_throttle.dart';
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/enums/lesson_category_enum.dart';
 import '../../../../core/models/lesson_model.dart';
@@ -48,7 +47,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
   final GalleryRepo galleryRepo;
   final TextbooksRepo textbooksRepo;
 
-  final DownloadProgressThrottle _previewProgress = DownloadProgressThrottle();
   final Set<int> _ownDownloads = <int>{};
 
   @override
@@ -181,13 +179,6 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     }
   }
 
-  void _onPreviewProgress(DownloadProgress progress) {
-    if (isClosed) return;
-    if (!_previewProgress.shouldEmit(progress)) return;
-
-    emit(state.copyWith(previewProgress: progress));
-  }
-
   void _reportMissedFailures() {
     for (final TextbookModel book in state.books) {
       final String? key = BookDownloadsDataSource.takeMissedFailure(book.id);
@@ -212,23 +203,44 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     emit(state.copyWith(downloadedBookIds: downloaded));
   }
 
+  /// Asks the backend for a signed URL so the reader can open the book
+  /// straight from the network, with no download step first.
   Future<String?> previewBook(TextbookModel book) async {
     if (state.isBookBusy(book.id)) return null;
 
-    _previewProgress.reset();
+    emit(state.copyWith(previewingBookId: book.id, resetPreviewProgress: true));
+
+    String? url;
+
+    await _runBookAction(() async {
+      final String link = await textbooksRepo.previewUrl(book);
+      if (link.trim().isEmpty) return 'book_download_failed';
+
+      url = link;
+      return null;
+    }, isPreview: true);
+
+    return url;
+  }
+
+  /// Opens the copy already on the device: no network, no download. If the
+  /// file has been deleted behind our back, the card falls back to Download.
+  Future<String?> openBook(TextbookModel book) async {
+    if (state.isBookBusy(book.id)) return null;
+
     emit(state.copyWith(previewingBookId: book.id, resetPreviewProgress: true));
 
     String? path;
 
     await _runBookAction(() async {
-      final File file = await textbooksRepo.fetchForPreview(
-        book,
-        onProgress: _onPreviewProgress,
-      );
+      final File? saved = await textbooksRepo.downloadedFile(book);
+      if (saved == null) {
+        await _refreshDownloadedBooks();
 
-      if (!file.existsSync()) return 'book_download_failed';
+        return 'reader_load_failed';
+      }
 
-      path = file.path;
+      path = saved.path;
       return null;
     }, isPreview: true);
 

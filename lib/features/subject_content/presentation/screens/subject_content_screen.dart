@@ -41,19 +41,20 @@ class SubjectContentScreen extends StatelessWidget {
               onMenuTap: () => Scaffold.of(context).openDrawer(),
               onLessonTap: (LessonModel lesson) => _openLesson(context, lesson),
 
-              onWatchLive: (LiveSessionModel session) =>
-                  Navigator.of(context)
-                      .pushNamed(AppRoutes.livePlayer, arguments: session),
+              onWatchLive: (LiveSessionModel session) => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.livePlayer, arguments: session),
               onRemindLive: (LiveSessionModel session) =>
                   _report(context, 'reminder_saved'),
               onDownloadBook: (TextbookModel book) =>
                   context.read<SubjectContentCubit>().downloadBook(book),
               onPreviewBook: (TextbookModel book) =>
                   _previewBook(context, book),
+              onOpenBook: (TextbookModel book) => _openBook(context, book),
 
-              onAlbumTap: (MediaAlbumModel album) =>
-                  Navigator.of(context)
-                      .pushNamed(AppRoutes.pictures, arguments: album.id),
+              onAlbumTap: (MediaAlbumModel album) => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.pictures, arguments: album.id),
             ),
           ),
         ),
@@ -63,7 +64,26 @@ class SubjectContentScreen extends StatelessWidget {
 
   Future<void> _previewBook(BuildContext context, TextbookModel book) async {
     final NavigatorState navigator = Navigator.of(context);
-    final String? path = await context.read<SubjectContentCubit>().previewBook(
+    final String? url = await context.read<SubjectContentCubit>().previewBook(
+      book,
+    );
+
+    if (url == null) return;
+
+    navigator.pushNamed(
+      AppRoutes.bookPreview,
+      arguments: BookPreviewArgs.network(
+        url: url,
+        title: book.title,
+        contentId: book.id,
+        resumeKey: DownloadedPdfsDataSource.bookKey(book.id),
+      ),
+    );
+  }
+
+  Future<void> _openBook(BuildContext context, TextbookModel book) async {
+    final NavigatorState navigator = Navigator.of(context);
+    final String? path = await context.read<SubjectContentCubit>().openBook(
       book,
     );
 

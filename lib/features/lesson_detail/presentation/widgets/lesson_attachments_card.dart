@@ -13,6 +13,7 @@ class LessonAttachmentsCard extends StatelessWidget {
     required this.attachments,
     required this.onDownload,
     required this.onPreview,
+    required this.onOpen,
     required this.onRetry,
     required this.onDismissDownload,
     this.downloadingId,
@@ -25,6 +26,7 @@ class LessonAttachmentsCard extends StatelessWidget {
   final List<LessonAttachmentModel> attachments;
   final ValueChanged<LessonAttachmentModel> onDownload;
   final ValueChanged<LessonAttachmentModel> onPreview;
+  final ValueChanged<LessonAttachmentModel> onOpen;
   final ValueChanged<LessonAttachmentModel> onRetry;
   final ValueChanged<int> onDismissDownload;
 
@@ -58,6 +60,7 @@ class LessonAttachmentsCard extends StatelessWidget {
               file: file,
               onDownload: () => onDownload(file),
               onPreview: () => onPreview(file),
+              onOpen: () => onOpen(file),
               onRetry: () => onRetry(file),
               onDismissDownload: () => onDismissDownload(file.id),
               download: downloads[file.id],

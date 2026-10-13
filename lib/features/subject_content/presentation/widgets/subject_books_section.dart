@@ -13,6 +13,7 @@ class SubjectBooksSection extends StatelessWidget {
     required this.previewingBookId,
     required this.onDownload,
     required this.onPreview,
+    required this.onOpen,
     required this.progressFor,
     super.key,
     this.downloadedBookIds = const <int>{},
@@ -23,6 +24,7 @@ class SubjectBooksSection extends StatelessWidget {
   final int? previewingBookId;
   final ValueChanged<TextbookModel> onDownload;
   final ValueChanged<TextbookModel> onPreview;
+  final ValueChanged<TextbookModel> onOpen;
   final DownloadProgress? Function(int bookId) progressFor;
   final Set<int> downloadedBookIds;
 
@@ -48,6 +50,7 @@ class SubjectBooksSection extends StatelessWidget {
               isDownloaded: downloadedBookIds.contains(book.id),
               onDownload: () => onDownload(book),
               onPreview: () => onPreview(book),
+              onOpen: () => onOpen(book),
             ),
           ),
       ],

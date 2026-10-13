@@ -447,19 +447,66 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     attachmentId: download,
   };
 
+  /// Asks the backend for a signed URL so the reader can open the document
+  /// straight from the network, with no download step first.
   Future<String?> prepareAttachmentPreview(LessonAttachmentModel file) async {
     if (state.previewingAttachmentId != null) return null;
 
     emit(state.copyWith(previewingAttachmentId: file.id));
 
     try {
-      final File ready = await repo.fetchAttachmentForPreview(id, file);
+      final String url = await repo.attachmentPreviewUrl(id, file.id);
       if (isClosed) return null;
 
       emit(state.copyWith(clearAttachmentBusy: true));
-      return ready.existsSync() ? ready.path : null;
+
+      return url.trim().isEmpty ? null : url;
+    } on AppException catch (error) {
+      if (isClosed) return null;
+
+      emit(state.copyWith(clearAttachmentBusy: true, messageKey: error.key));
+      return null;
     } catch (error) {
       if (isClosed) return null;
+      emit(
+        state.copyWith(
+          clearAttachmentBusy: true,
+          messageKey: ErrorMapper.map(error),
+        ),
+      );
+      return null;
+    }
+  }
+
+  /// Opens the copy already on the device: no network, no download. If the
+  /// file has been deleted behind our back, the row falls back to Download.
+  Future<String?> openAttachment(LessonAttachmentModel file) async {
+    if (state.previewingAttachmentId != null) return null;
+
+    emit(state.copyWith(previewingAttachmentId: file.id));
+
+    try {
+      final File? saved = await repo.downloadedAttachmentFile(id, file);
+      if (isClosed) return null;
+
+      if (saved == null) {
+        emit(
+          state.copyWith(
+            clearAttachmentBusy: true,
+            messageKey: 'reader_load_failed',
+          ),
+        );
+
+        await _refreshDownloadedAttachments();
+        return null;
+      }
+
+      emit(state.copyWith(clearAttachmentBusy: true));
+
+      return saved.path;
+    } catch (error) {
+      if (isClosed) return null;
+
       emit(
         state.copyWith(
           clearAttachmentBusy: true,

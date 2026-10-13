@@ -21,16 +21,19 @@ class LessonDetailRepo {
   Future<String> requestAttachmentUrl(int contentId, int attachmentId) =>
       dataSource.requestAttachmentUrl(contentId, attachmentId);
 
+  Future<String> attachmentPreviewUrl(int contentId, int attachmentId) =>
+      dataSource.requestAttachmentUrl(contentId, attachmentId);
+
   Future<File> downloadAttachment(
     int contentId,
     LessonAttachmentModel file, {
     void Function(DownloadProgress progress)? onProgress,
   }) => dataSource.downloadAttachment(contentId, file, onProgress: onProgress);
 
-  Future<File> fetchAttachmentForPreview(
+  Future<File?> downloadedAttachmentFile(
     int contentId,
     LessonAttachmentModel file,
-  ) => dataSource.fetchAttachmentForPreview(contentId, file);
+  ) => dataSource.downloadedAttachmentFile(contentId, file.id);
 
   Future<Set<int>> downloadedAttachmentIds(
     int contentId,

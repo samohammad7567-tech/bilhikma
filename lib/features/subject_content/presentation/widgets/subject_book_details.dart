@@ -35,8 +35,9 @@ class SubjectBookDetails extends StatelessWidget {
             textAlign: TextAlign.start,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).labelStrong
-                .copyWith(color: Theme.of(context).colorScheme.secondary),
+            style: AppTheme.styles(context).labelStrong.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
 
           SizedBox(height: 10.h),

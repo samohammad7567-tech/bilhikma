@@ -12,6 +12,7 @@ class SubjectBookActions extends StatelessWidget {
   const SubjectBookActions({
     required this.onDownload,
     required this.onPreview,
+    required this.onOpen,
     super.key,
     this.progress,
     this.isDownloading = false,
@@ -21,18 +22,22 @@ class SubjectBookActions extends StatelessWidget {
 
   final VoidCallback onDownload;
   final VoidCallback onPreview;
+  final VoidCallback onOpen;
+
   final DownloadProgress? progress;
 
   final bool isDownloading;
   final bool isPreviewing;
   final bool isDownloaded;
-  bool get _isFetchingPreview => isPreviewing && !isDownloaded;
 
   @override
   Widget build(BuildContext context) {
-    final DownloadProgress? active = progress;
+    // A downloaded book is read from disk, so previewing it over the network
+    // would only be slower: the single action becomes Open.
+    if (isDownloaded) return _openButton(context);
 
-    if (active != null && (isDownloading || _isFetchingPreview)) {
+    final DownloadProgress? active = progress;
+    if (active != null && (isDownloading || isPreviewing)) {
       return BookDownloadProgress(
         progress: active,
         labelKey: isDownloading ? 'downloading_book' : 'preparing_book',
@@ -43,55 +48,51 @@ class SubjectBookActions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (!isDownloaded) ...<Widget>[
-          CustomButton(
-            onPressed: onDownload,
-            text: 'download_book'.tr(),
-            width: double.infinity,
-            height: 46.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
-            elevation: 0,
-            isLoading: isDownloading,
-            loadingWidth: 22.w,
-            loadingHeight: 22.w,
-          ),
+        CustomButton(
+          onPressed: onDownload,
+          text: 'download_book'.tr(),
+          width: double.infinity,
+          height: 46.h,
+          threeRadius: 8.r,
+          lastRadius: 8.r,
+          elevation: 0,
+          isLoading: isDownloading,
+          loadingWidth: 22.w,
+          loadingHeight: 22.w,
+        ),
 
-          SizedBox(height: 10.h),
+        SizedBox(height: 10.h),
 
-          Text(
-            'book_watermark_note'.tr(),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).cardCaption,
-          ),
+        Text(
+          'book_watermark_note'.tr(),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: AppTheme.styles(context).cardCaption,
+        ),
 
-          SizedBox(height: 10.h),
-        ],
+        SizedBox(height: 10.h),
 
         _previewButton(context),
       ],
     );
   }
 
+  Widget _openButton(BuildContext context) => CustomButton(
+    onPressed: onOpen,
+    text: 'open_book'.tr(),
+    width: double.infinity,
+    height: 46.h,
+    threeRadius: 8.r,
+    lastRadius: 8.r,
+    elevation: 0,
+    isLoading: isPreviewing,
+    loadingWidth: 22.w,
+    loadingHeight: 22.w,
+  );
+
   Widget _previewButton(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-
-    if (isDownloaded) {
-      return CustomButton(
-        onPressed: onPreview,
-        text: 'preview_book'.tr(),
-        width: double.infinity,
-        height: 46.h,
-        threeRadius: 8.r,
-        lastRadius: 8.r,
-        elevation: 0,
-        isLoading: isPreviewing,
-        loadingWidth: 22.w,
-        loadingHeight: 22.w,
-      );
-    }
 
     return CustomOutlineButton(
       onPressed: onPreview,

@@ -13,6 +13,7 @@ class LessonAttachmentRow extends StatelessWidget {
     required this.file,
     required this.onDownload,
     required this.onPreview,
+    required this.onOpen,
     required this.onRetry,
     required this.onDismissDownload,
     this.download,
@@ -25,6 +26,7 @@ class LessonAttachmentRow extends StatelessWidget {
   final LessonAttachmentModel file;
   final VoidCallback onDownload;
   final VoidCallback onPreview;
+  final VoidCallback onOpen;
   final VoidCallback onRetry;
   final VoidCallback onDismissDownload;
 
@@ -98,16 +100,18 @@ class LessonAttachmentRow extends StatelessWidget {
   }
 
   Widget _actions() {
-    final Widget preview = LessonAttachmentAction(
-      labelKey: 'preview',
-      icon: Icons.visibility_outlined,
-      isFilled: isDownloaded,
-      isExpanded: true,
-      onPressed: onPreview,
-      isBusy: isPreviewing,
-    );
-
-    if (isDownloaded) return preview;
+    // A downloaded file is read from disk, so previewing it over the network
+    // would only be slower: the single action becomes Open.
+    if (isDownloaded) {
+      return LessonAttachmentAction(
+        labelKey: 'open',
+        icon: Icons.folder_open_outlined,
+        isFilled: true,
+        isExpanded: true,
+        onPressed: onOpen,
+        isBusy: isPreviewing,
+      );
+    }
 
     return Row(
       children: <Widget>[
@@ -124,7 +128,16 @@ class LessonAttachmentRow extends StatelessWidget {
 
         SizedBox(width: 6.w),
 
-        Expanded(child: preview),
+        Expanded(
+          child: LessonAttachmentAction(
+            labelKey: 'preview',
+            icon: Icons.visibility_outlined,
+            isFilled: false,
+            isExpanded: true,
+            onPressed: onPreview,
+            isBusy: isPreviewing,
+          ),
+        ),
       ],
     );
   }

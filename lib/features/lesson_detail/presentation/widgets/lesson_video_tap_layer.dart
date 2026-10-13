@@ -48,7 +48,7 @@ class _LessonVideoTapLayerState extends State<LessonVideoTapLayer> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: widget.onTap,
-            onDoubleTap: _rewind,
+            onDoubleTap: _forward,
             child: LessonVideoRewindHint(visible: _showRewindHint),
           ),
         ),
@@ -57,7 +57,7 @@ class _LessonVideoTapLayerState extends State<LessonVideoTapLayer> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: widget.onTap,
-            onDoubleTap: _forward,
+            onDoubleTap: _rewind,
             child: LessonVideoRewindHint(
               visible: _showForwardHint,
               isForward: true,

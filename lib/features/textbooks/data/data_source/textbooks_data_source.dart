@@ -72,25 +72,9 @@ class TextbooksDataSource {
     return file;
   }
 
-  Future<File> fetchForPreview(
-    TextbookModel book, {
-    DownloadProgressCallback? onProgress,
-  }) async {
-    final File? saved = await downloads.fileFor(
-      DownloadedPdfsDataSource.bookKey(book.id),
-    );
-    if (saved != null) return saved;
-
-    return _downloadFreshLink(
-      book,
-      onProgress,
-      (String url, ProgressCallback? progress) => pdf.downloadToCache(
-        pdfUrl: url,
-        fileName: book.title,
-        onProgress: progress,
-      ),
-    );
-  }
+  /// The copy already on this device, or null once it has been deleted.
+  Future<File?> downloadedBookFile(int bookId) =>
+      downloads.fileFor(DownloadedPdfsDataSource.bookKey(bookId));
 
   Future<Set<int>> downloadedBookIds(Iterable<int> bookIds) async {
     final Set<String> keys = await downloads.available(

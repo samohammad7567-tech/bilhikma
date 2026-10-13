@@ -80,8 +80,9 @@ class _AlbumRow extends StatelessWidget {
                       album.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
 
                     if ((album.description ?? '').isNotEmpty) ...<Widget>[

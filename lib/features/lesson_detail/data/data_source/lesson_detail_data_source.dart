@@ -111,22 +111,6 @@ class LessonDetailDataSource {
     return saved;
   }
 
-  Future<File> fetchAttachmentForPreview(
-    int contentId,
-    LessonAttachmentModel file,
-  ) async {
-    final File? saved = await downloads.fileFor(
-      DownloadedPdfsDataSource.attachmentKey(contentId, file.id),
-    );
-    if (saved != null) return saved;
-
-    final String url = await requestAttachmentUrl(contentId, file.id);
-
-    return _fetch(
-      () => pdf.downloadToCache(pdfUrl: url, fileName: file.fileName),
-    );
-  }
-
   /// Turns Dio's raw byte counts into progress the cubit can emit, falling
   /// back to the size the backend reported when the response has no length.
   ProgressCallback? _adapt(
@@ -142,6 +126,12 @@ class LessonDetailDataSource {
       ).withTotalFallback(file.fileSize),
     );
   }
+
+  /// The copy already on this device, or null once it has been deleted.
+  Future<File?> downloadedAttachmentFile(int contentId, int attachmentId) =>
+      downloads.fileFor(
+        DownloadedPdfsDataSource.attachmentKey(contentId, attachmentId),
+      );
 
   Future<Set<int>> downloadedAttachmentIds(
     int contentId,

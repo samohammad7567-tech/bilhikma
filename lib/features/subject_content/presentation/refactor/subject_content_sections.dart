@@ -19,6 +19,7 @@ class SubjectContentSection extends StatelessWidget {
     required this.onRemindLive,
     required this.onDownloadBook,
     required this.onPreviewBook,
+    required this.onOpenBook,
     required this.onAlbumTap,
     super.key,
   });
@@ -29,6 +30,7 @@ class SubjectContentSection extends StatelessWidget {
   final ValueChanged<LiveSessionModel> onRemindLive;
   final ValueChanged<TextbookModel> onDownloadBook;
   final ValueChanged<TextbookModel> onPreviewBook;
+  final ValueChanged<TextbookModel> onOpenBook;
   final ValueChanged<MediaAlbumModel> onAlbumTap;
 
   @override
@@ -50,6 +52,7 @@ class SubjectContentSection extends StatelessWidget {
       progressFor: state.progressFor,
       onDownload: onDownloadBook,
       onPreview: onPreviewBook,
+      onOpen: onOpenBook,
     ),
     LessonCategory.pictures => SubjectAlbumsSection(
       albums: state.albums,

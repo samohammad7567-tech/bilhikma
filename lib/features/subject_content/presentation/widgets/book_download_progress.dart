@@ -37,7 +37,7 @@ class BookDownloadProgress extends StatelessWidget {
               ),
             ),
 
-            if (ratio.isNotEmpty) ...<Widget>[
+            if (progress.hasStarted && ratio.isNotEmpty) ...<Widget>[
               SizedBox(width: 8.w),
 
               Text(

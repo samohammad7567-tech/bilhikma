@@ -293,13 +293,13 @@
   "recover_account_email_hint": "أدخل بريدك الإلكتروني المسجل لإرسال رمز التحقق",
   "recover_account_phone_hint": "أدخل رقم هاتفك المسجل لإرسال رمز التحقق",
   "via_email": "عبر البريد الإلكتروني",
-  "via_sms": "عبر رسالة نصية (SMS)",
+  "via_sms": "عبر رقم الهاتف",
   "send_verification_code": "إرسال رمز التحقق",
   "remembered_password": "تذكرت كلمة المرور؟",
   "reset_code_sent": "تم إرسال رمز التحقق",
   "set_password_title": "تعيين كلمة المرور",
   "new_password_heading": "كلمة مرور جديدة",
-  "set_password_hint": "أدخل الرمز المرسل وكلمة المرور الجديدة",
+  "set_password_hint": "أدخل الرمز المرسل إلى البريد الإلكتروني المرتبط بحسابك وكلمة المرور الجديدة",
   "new_password_label": "كلمة المرور الجديدة",
   "confirm_new_password_label": "تأكيد كلمة المرور الجديدة",
   "confirm_save_and_login": "تأكيد الحفظ و التسجيل",
@@ -326,5 +326,7 @@
   "downloading_attachment": "جارٍ تنزيل الملف",
   "attachment_download_complete": "تم تنزيل الملف",
   "attachment_download_failed": "تعذر تنزيل الملف، حاول مرة أخرى",
-  "dismiss": "إخفاء"
+  "dismiss": "إخفاء",
+  "open_book": "فتح الكتاب",
+  "open": "فتح"
 }

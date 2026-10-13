@@ -22,10 +22,11 @@ class TextbooksRepo {
   Future<List<TextbookModel>> fetchTextbooks() => dataSource.fetchTextbooks();
   Future<File> downloadTextbook(TextbookModel book) => downloads.download(book);
 
-  Future<File> fetchForPreview(
-    TextbookModel book, {
-    DownloadProgressCallback? onProgress,
-  }) => dataSource.fetchForPreview(book, onProgress: onProgress);
+  Future<String> previewUrl(TextbookModel book) =>
+      dataSource.requestDownloadUrl(book.id);
+
+  Future<File?> downloadedFile(TextbookModel book) =>
+      dataSource.downloadedBookFile(book.id);
 
   Future<Set<int>> downloadedBookIds(Iterable<int> bookIds) =>
       dataSource.downloadedBookIds(bookIds);

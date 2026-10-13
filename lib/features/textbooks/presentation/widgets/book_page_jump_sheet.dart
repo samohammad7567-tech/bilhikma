@@ -89,8 +89,9 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
-            style: AppTheme.styles(context).cardCaption
-                .copyWith(color: Theme.of(context).colorScheme.error),
+            style: AppTheme.styles(
+              context,
+            ).cardCaption.copyWith(color: Theme.of(context).colorScheme.error),
           ),
         ],
 

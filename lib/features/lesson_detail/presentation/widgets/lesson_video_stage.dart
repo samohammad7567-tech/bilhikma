@@ -57,8 +57,12 @@ class LessonVideoStage extends StatefulWidget {
   State<LessonVideoStage> createState() => _LessonVideoStageState();
 }
 
-class _LessonVideoStageState extends State<LessonVideoStage> {
+class _LessonVideoStageState extends State<LessonVideoStage>
+    with AutomaticKeepAliveClientMixin<LessonVideoStage> {
   static const double _stageAspectRatio = 16 / 10;
+
+  @override
+  bool get wantKeepAlive => true;
 
   late final LessonPlaybackReporter _reporter = LessonPlaybackReporter(
     onTick: (int position, int played) => widget.onTick(position, played),
@@ -189,6 +193,8 @@ class _LessonVideoStageState extends State<LessonVideoStage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final VideoPlayback? playback = _playback;
 
     final Size screen = MediaQuery.sizeOf(context);

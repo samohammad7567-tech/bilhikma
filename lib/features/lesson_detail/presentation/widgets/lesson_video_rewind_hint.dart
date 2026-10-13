@@ -25,8 +25,8 @@ class LessonVideoRewindHint extends StatelessWidget {
             children: <Widget>[
               Icon(
                 isForward
-                    ? Icons.fast_forward_rounded
-                    : Icons.fast_rewind_rounded,
+                    ? Icons.fast_rewind_rounded
+                    : Icons.fast_forward_rounded,
                 color: Colors.white,
                 size: 30.sp,
               ),

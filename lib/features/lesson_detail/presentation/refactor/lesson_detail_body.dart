@@ -118,6 +118,8 @@ class LessonDetailBody extends StatelessWidget {
                   downloadedIds: state.downloadedAttachmentIds,
                   downloads: state.attachmentDownloads,
                   onDownload: cubit.downloadAttachment,
+                  onOpen: (LessonAttachmentModel file) =>
+                      _openAttachment(context, cubit, file),
                   onRetry: cubit.retryAttachmentDownload,
                   onDismissDownload: cubit.dismissAttachmentDownload,
                   onPreview: (LessonAttachmentModel file) =>
@@ -143,13 +145,13 @@ class LessonDetailBody extends StatelessWidget {
     );
   }
 
-  Future<void> _previewAttachment(
+  Future<void> _openAttachment(
     BuildContext context,
     LessonDetailCubit cubit,
     LessonAttachmentModel file,
   ) async {
     final NavigatorState navigator = Navigator.of(context);
-    final String? path = await cubit.prepareAttachmentPreview(file);
+    final String? path = await cubit.openAttachment(file);
 
     if (path == null) return;
 
@@ -157,6 +159,27 @@ class LessonDetailBody extends StatelessWidget {
       AppRoutes.bookPreview,
       arguments: BookPreviewArgs(
         filePath: path,
+        title: file.fileName,
+        contentId: cubit.id,
+        resumeKey: DownloadedPdfsDataSource.attachmentKey(cubit.id, file.id),
+      ),
+    );
+  }
+
+  Future<void> _previewAttachment(
+    BuildContext context,
+    LessonDetailCubit cubit,
+    LessonAttachmentModel file,
+  ) async {
+    final NavigatorState navigator = Navigator.of(context);
+    final String? url = await cubit.prepareAttachmentPreview(file);
+
+    if (url == null) return;
+
+    navigator.pushNamed(
+      AppRoutes.bookPreview,
+      arguments: BookPreviewArgs.network(
+        url: url,
         title: file.fileName,
         contentId: cubit.id,
         resumeKey: DownloadedPdfsDataSource.attachmentKey(cubit.id, file.id),
