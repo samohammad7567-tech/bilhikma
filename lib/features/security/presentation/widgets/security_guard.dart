@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/routing/app_routes.dart';
+import '../../../../core/services/session_guard.dart';
 import '../cubit/security_cubit.dart';
 import '../../../../core/widgets/app_toast.dart';
 
@@ -62,9 +62,6 @@ class SecurityGuard extends StatelessWidget {
       ),
     );
 
-    getIt<GlobalKey<NavigatorState>>().currentState?.pushNamedAndRemoveUntil(
-      AppRoutes.login,
-      (Route<dynamic> route) => false,
-    );
+    await SessionGuard.forceSignOut();
   }
 }

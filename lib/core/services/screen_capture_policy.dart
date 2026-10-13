@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import '../../features/profile/data/models/profile_model.dart';
 import '../../features/profile/data/repos/profile_repo.dart';
 import '../../features/security/data/models/security_event_model.dart';
-import '../utils/cache_util.dart';
 import '../utils/current_user.dart';
 import 'device_session_service.dart';
 import 'screen_capture_service.dart';
@@ -61,8 +60,5 @@ class ScreenCapturePolicy {
 
   static Future<void> clear() => resolve(canCaptureScreen: false);
 
-  static bool get _hasSession {
-    final Object? token = CacheUtil.get(key: DeviceSessionService.tokenKey);
-    return token is String && token.isNotEmpty;
-  }
+  static bool get _hasSession => DeviceSessionService.hasSession;
 }

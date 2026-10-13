@@ -276,6 +276,7 @@
   "no_test_questions": "This test has no questions",
   "session_expired": "Your session has expired, please log in again",
   "access_denied": "This content is not available in your class",
+  "suspended_account": "Your account has been suspended. Please contact the administration",
   "not_found": "The requested item was not found",
   "validation_error": "Please check the information you entered",
   "too_many_requests": "Too many attempts, please try again later",

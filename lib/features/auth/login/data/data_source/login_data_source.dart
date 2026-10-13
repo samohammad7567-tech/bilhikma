@@ -7,6 +7,7 @@ import '../../../../../core/network/api_envelope.dart';
 import '../../../../../core/services/device_service.dart';
 import '../../../../../core/services/device_session_service.dart';
 import '../../../../../core/services/dio_service.dart';
+import '../../../../../core/services/account_suspension_service.dart';
 import '../../../../../core/services/push_notification_service.dart';
 import '../../../../../core/services/screen_capture_policy.dart';
 import '../../../../../core/utils/cache_util.dart';
@@ -44,6 +45,13 @@ class LoginDataSource {
 
     if (!session.hasSession) {
       throw const AppException('something_went_wrong');
+    }
+
+    // Nothing is persisted for a suspended account: the student stays on the
+    // login screen with the reason instead of entering the app and being
+    // thrown out by the first request.
+    if (session.user?.isSuspended ?? false) {
+      throw const AppException(AccountSuspensionService.errorKey);
     }
 
     await _persistSession(

@@ -5,18 +5,17 @@ import 'package:flutter/widgets.dart';
 
 import '../../features/auth/login/data/models/refresh_token_response_model.dart';
 import '../constants/api_endpoints.dart';
-import '../di/service_locator.dart';
-import '../routing/app_routes.dart';
+import '../services/account_suspension_service.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
+import '../services/session_guard.dart';
+import '../utils/app_logger.dart';
 import '../utils/cache_util.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
 
   Future<String?>? _refreshFuture;
-
-  bool _isLoggingOut = false;
 
   AuthInterceptor({required this.dio});
 
@@ -35,6 +34,20 @@ class AuthInterceptor extends Interceptor {
     final statusCode = err.response?.statusCode;
 
     if (statusCode == 403 && !isAuthEndpoint) {
+      // A suspension takes hold on the very next request: the token the
+      // student already holds starts answering 403. Every other 403 — a locked
+      // lesson, a class that is not theirs — leaves the session alone.
+      if (AccountSuspensionService.indicatesSuspension(err)) {
+        AppLogger.info(
+          'The account was suspended; signing out of $path',
+          name: 'auth',
+        );
+
+        await SessionGuard.forceSignOut(
+          noticeKey: AccountSuspensionService.errorKey,
+        );
+      }
+
       return handler.reject(err);
     }
 
@@ -206,25 +219,6 @@ class AuthInterceptor extends Interceptor {
     );
   }
 
-  Future<void> _handleLogoutOnce() async {
-    if (_isLoggingOut) {
-      return;
-    }
-
-    _isLoggingOut = true;
-
-    try {
-      await DeviceSessionService.clear();
-
-      final navigator = getIt<GlobalKey<NavigatorState>>().currentState;
-
-      if (navigator == null) {
-        return;
-      }
-
-      navigator.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
-    } finally {
-      _isLoggingOut = false;
-    }
-  }
+  Future<void> _handleLogoutOnce() =>
+      SessionGuard.forceSignOut(noticeKey: 'session_expired');
 }

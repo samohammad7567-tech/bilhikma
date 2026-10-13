@@ -1,12 +1,9 @@
-import '../routing/app_routes.dart';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 
 import '../constants/api_endpoints.dart';
-import '../di/service_locator.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
+import '../services/session_guard.dart';
 import '../utils/app_language.dart';
 
 class DeviceInterceptor extends Interceptor {
@@ -36,11 +33,9 @@ class DeviceInterceptor extends Interceptor {
       return;
     }
 
-    await DeviceSessionService.clear();
-
-    final navigator = getIt<GlobalKey<NavigatorState>>().currentState;
-
-    navigator?.pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+    await SessionGuard.forceSignOut(
+      noticeKey: 'session_bound_to_another_device',
+    );
 
     handler.reject(err);
   }

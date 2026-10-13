@@ -69,7 +69,12 @@ class LoginCubit extends Cubit<LoginState> {
     } on AppException catch (error) {
       if (isClosed) return;
       emit(
-        state.copyWith(status: LoginStatus.failure, errorKey: error.message),
+        state.copyWith(
+          status: LoginStatus.failure,
+          // The server message when it sent one, the mapped key otherwise, so
+          // a refusal the client raised itself is still shown.
+          errorKey: error.message ?? error.key,
+        ),
       );
     } catch (error, stackTrace) {
       if (isClosed) return;

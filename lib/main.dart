@@ -9,6 +9,7 @@ import 'bilhikma_app.dart';
 import 'core/app/app_bootstrap.dart';
 import 'core/app/bloc/app_bloc_observer.dart';
 import 'core/di/service_locator.dart';
+import 'core/services/account_status_watcher.dart';
 import 'core/services/app_lifecycle_service.dart';
 import 'core/services/device_info_service.dart';
 import 'core/services/device_service.dart';
@@ -41,6 +42,10 @@ Future<void> _startApp() async {
   AppBootstrap.runSyncStep(
     'lifecycle',
     AppLifecycleService.instance.initialize,
+  );
+  AppBootstrap.runSyncStep(
+    'account_status_watch',
+    AccountStatusWatcher.initialize,
   );
   AppBootstrap.runSyncStep('capture_watch', () {
     ScreenCaptureService.instance.attach(getIt());

@@ -31,6 +31,8 @@ class AuthUserModel {
 
   final List<EnrollmentModel> enrollments;
 
+  bool get isSuspended => status == AccountStatus.suspended;
+
   String get initials => fullName
       .trim()
       .split(RegExp(r'\s+'))
@@ -56,6 +58,7 @@ class AuthUserModel {
     email: Json.asOptionalString(json['email']),
     phone: Json.asOptionalString(json['phone']),
     role: Json.asOptionalString(json['role']),
+    status: AccountStatus.maybeFromJson(json['status']) ?? AccountStatus.active,
     studentNo: Json.asOptionalString(json['student_no']),
     activeEnrollmentId: Json.asOptionalInt(json['active_enrollment_id']),
     canCaptureScreen: Json.asBool(json['can_capture_screen']),
@@ -71,7 +74,7 @@ class AuthUserModel {
     'email': email,
     'phone': phone,
     'role': role,
-    'status': status.name,
+    'status': status.key,
     'student_no': studentNo,
     'active_enrollment_id': activeEnrollmentId,
     'can_capture_screen': canCaptureScreen,

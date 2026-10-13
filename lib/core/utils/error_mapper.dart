@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../network/api_envelope.dart';
+import '../services/account_suspension_service.dart';
 import '../services/device_session_service.dart';
 
 class AppException implements Exception {
@@ -72,6 +73,10 @@ class ErrorMapper {
   static String _mapDio(DioException error) {
     if (DeviceSessionService.isDeviceConflict(error)) {
       return 'device_already_linked';
+    }
+
+    if (AccountSuspensionService.indicatesSuspension(error)) {
+      return AccountSuspensionService.errorKey;
     }
 
     switch (error.type) {

@@ -33,6 +33,13 @@ class DeviceSessionService {
       'fcm_token': PushNotificationService.token,
   };
 
+  /// Whether a token is stored at all, which is as much as the device can say
+  /// about being signed in without asking the API.
+  static bool get hasSession {
+    final Object? token = CacheUtil.get(key: tokenKey);
+    return token is String && token.isNotEmpty;
+  }
+
   static Future<void> bind(String accessToken) async {
     await DeviceService.ensureInitialized();
 

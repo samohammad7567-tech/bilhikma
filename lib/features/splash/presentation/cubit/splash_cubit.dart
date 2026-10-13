@@ -22,7 +22,12 @@ class SplashCubit extends Cubit<SplashState> {
 
     emit(
       SplashCompleted(
-        isLoggedIn: status == DeviceSessionStatus.valid,
+        // The profile read above is also what catches a suspension taken while
+        // the app was closed: it signs the student out, so the stored session
+        // is checked once more rather than trusting the pre-flight answer.
+        isLoggedIn:
+            status == DeviceSessionStatus.valid &&
+            DeviceSessionService.hasSession,
         noticeKey: status == DeviceSessionStatus.deviceMismatch
             ? 'session_bound_to_another_device'
             : null,
