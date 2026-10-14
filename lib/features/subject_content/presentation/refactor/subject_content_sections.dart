@@ -18,6 +18,7 @@ class SubjectContentSection extends StatelessWidget {
     required this.onWatchLive,
     required this.onRemindLive,
     required this.onDownloadBook,
+    required this.onCancelBookDownload,
     required this.onPreviewBook,
     required this.onOpenBook,
     required this.onAlbumTap,
@@ -29,6 +30,7 @@ class SubjectContentSection extends StatelessWidget {
   final ValueChanged<LiveSessionModel> onWatchLive;
   final ValueChanged<LiveSessionModel> onRemindLive;
   final ValueChanged<TextbookModel> onDownloadBook;
+  final ValueChanged<TextbookModel> onCancelBookDownload;
   final ValueChanged<TextbookModel> onPreviewBook;
   final ValueChanged<TextbookModel> onOpenBook;
   final ValueChanged<MediaAlbumModel> onAlbumTap;
@@ -49,8 +51,10 @@ class SubjectContentSection extends StatelessWidget {
       downloadingBookIds: state.downloadingBookIds,
       previewingBookId: state.previewingBookId,
       downloadedBookIds: state.downloadedBookIds,
+      cancellingBookIds: state.cancellingBookIds,
       progressFor: state.progressFor,
       onDownload: onDownloadBook,
+      onCancelDownload: onCancelBookDownload,
       onPreview: onPreviewBook,
       onOpen: onOpenBook,
     ),

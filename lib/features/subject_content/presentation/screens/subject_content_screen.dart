@@ -48,6 +48,8 @@ class SubjectContentScreen extends StatelessWidget {
                   _report(context, 'reminder_saved'),
               onDownloadBook: (TextbookModel book) =>
                   context.read<SubjectContentCubit>().downloadBook(book),
+              onCancelBookDownload: (TextbookModel book) =>
+                  context.read<SubjectContentCubit>().cancelBookDownload(book),
               onPreviewBook: (TextbookModel book) =>
                   _previewBook(context, book),
               onOpenBook: (TextbookModel book) => _openBook(context, book),

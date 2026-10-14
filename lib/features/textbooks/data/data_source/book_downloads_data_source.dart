@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/models/download_progress.dart';
@@ -20,11 +21,20 @@ class BookDownloadsDataSource {
 
   static final Map<int, Future<File>> _inFlight = <int, Future<File>>{};
 
+  /// One token per running download, so a single book can be stopped without
+  /// touching the others.
+  static final Map<int, CancelToken> _tokens = <int, CancelToken>{};
+
   static final Map<int, DownloadProgressThrottle> _throttles =
       <int, DownloadProgressThrottle>{};
   static final Map<int, String> _missedFailures = <int, String>{};
 
   static bool isDownloading(int bookId) => _inFlight.containsKey(bookId);
+
+  /// Whether a stop has already been asked for and the download is only
+  /// winding down.
+  static bool isCancelling(int bookId) =>
+      _tokens[bookId]?.isCancelled ?? false;
 
   static Map<int, DownloadProgress> get snapshot => active.value;
   static String? takeMissedFailure(int bookId) =>
@@ -34,6 +44,7 @@ class BookDownloadsDataSource {
     if (running != null) return running;
 
     _throttles[book.id] = DownloadProgressThrottle();
+    _tokens[book.id] = CancelToken();
     _missedFailures.remove(book.id);
     _publish(book.id, DownloadProgress.none);
 
@@ -43,15 +54,32 @@ class BookDownloadsDataSource {
     return task;
   }
 
+  /// Stops the download of [bookId], wherever it was started from. The partly
+  /// written file is discarded, so nothing half a book long is left behind.
+  void cancel(int bookId) {
+    final CancelToken? token = _tokens[bookId];
+    if (token == null || token.isCancelled) return;
+
+    token.cancel(TextbooksDataSource.cancelledKey);
+  }
+
   Future<File> _run(TextbookModel book) async {
     try {
       return await textbooks.downloadTextbook(
         book,
         onProgress: (DownloadProgress progress) =>
             _onProgress(book.id, progress),
+        cancelToken: _tokens[book.id],
       );
     } catch (error) {
-      _missedFailures[book.id] = ErrorMapper.map(error);
+      final String key = ErrorMapper.map(error);
+
+      // A cancel is the student's own decision, not something a screen that
+      // did not ask for the download has to be told about.
+      if (key != TextbooksDataSource.cancelledKey) {
+        _missedFailures[book.id] = key;
+      }
+
       rethrow;
     } finally {
       _finish(book.id);
@@ -72,6 +100,7 @@ class BookDownloadsDataSource {
   void _finish(int bookId) {
     _inFlight.remove(bookId);
     _throttles.remove(bookId);
+    _tokens.remove(bookId);
 
     final Map<int, DownloadProgress> next = <int, DownloadProgress>{
       ...active.value,

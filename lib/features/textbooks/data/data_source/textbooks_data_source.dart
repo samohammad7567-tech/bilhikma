@@ -29,6 +29,11 @@ class TextbooksDataSource {
 
   static const String _expiredKey = 'media_link_expired';
 
+  /// The key a download that the student stopped on purpose ends with, so the
+  /// UI can say "cancelled" instead of reporting a failure nothing went wrong
+  /// with.
+  static const String cancelledKey = 'book_download_cancelled';
+
   Future<List<TextbookModel>> fetchTextbooks() async {
     final PaginatedResult<TextbookModel> page = await client
         .getPage<TextbookModel>(ApiEndpoints.textbooks, TextbookModel.fromJson);
@@ -56,6 +61,7 @@ class TextbooksDataSource {
   Future<File> downloadTextbook(
     TextbookModel book, {
     DownloadProgressCallback? onProgress,
+    CancelToken? cancelToken,
   }) async {
     final File file = await _downloadFreshLink(
       book,
@@ -64,7 +70,9 @@ class TextbooksDataSource {
         pdfUrl: url,
         fileName: book.title,
         onProgress: progress,
+        cancelToken: cancelToken,
       ),
+      cancelToken: cancelToken,
     );
 
     await downloads.remember(DownloadedPdfsDataSource.bookKey(book.id), file);
@@ -89,11 +97,12 @@ class TextbooksDataSource {
   Future<File> _downloadFreshLink(
     TextbookModel book,
     DownloadProgressCallback? onProgress,
-    Future<File> Function(String url, ProgressCallback? progress) run,
-  ) async {
+    Future<File> Function(String url, ProgressCallback? progress) run, {
+    CancelToken? cancelToken,
+  }) async {
     final ProgressCallback? progress = _adapt(book, onProgress);
 
-    final String url = await requestDownloadUrl(book.id);
+    final String url = await _freshUrl(book.id, cancelToken);
 
     try {
       return await _fetch(() => run(url, progress));
@@ -102,9 +111,30 @@ class TextbooksDataSource {
 
       onProgress?.call(DownloadProgress.none);
 
-      final String fresh = await requestDownloadUrl(book.id);
+      final String fresh = await _freshUrl(book.id, cancelToken);
 
       return _fetch(() => run(fresh, progress));
+    }
+  }
+
+  /// Asks for a signed link, and gives up the moment the student has cancelled.
+  ///
+  /// The signing request itself carries no cancel token, so a cancel landing
+  /// while it is in the air would otherwise be noticed only once the transfer
+  /// had already started.
+  Future<String> _freshUrl(int bookId, CancelToken? cancelToken) async {
+    _throwIfCancelled(cancelToken);
+
+    final String url = await requestDownloadUrl(bookId);
+
+    _throwIfCancelled(cancelToken);
+
+    return url;
+  }
+
+  void _throwIfCancelled(CancelToken? cancelToken) {
+    if (cancelToken?.isCancelled ?? false) {
+      throw const AppException(cancelledKey);
     }
   }
 
@@ -126,6 +156,9 @@ class TextbooksDataSource {
     try {
       return await request();
     } on DioException catch (error) {
+      if (error.type == DioExceptionType.cancel) {
+        throw const AppException(cancelledKey);
+      }
       if (error.response?.statusCode == 403) {
         throw const AppException(_expiredKey, statusCode: 403);
       }

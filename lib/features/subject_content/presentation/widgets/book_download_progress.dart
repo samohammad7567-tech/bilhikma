@@ -11,15 +11,25 @@ class BookDownloadProgress extends StatelessWidget {
     required this.progress,
     required this.labelKey,
     super.key,
+    this.onCancel,
+    this.isCancelling = false,
   });
 
   final DownloadProgress progress;
   final String labelKey;
 
+  /// Stops the transfer. Left null for work that cannot be called off, such
+  /// as preparing a book for preview.
+  final VoidCallback? onCancel;
+
+  /// A stop has been asked for and the transfer is winding down.
+  final bool isCancelling;
+
   @override
   Widget build(BuildContext context) {
     final double? fraction = progress.fraction;
     final String ratio = progress.readableRatio;
+    final bool showRatio = progress.hasStarted && ratio.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -29,7 +39,7 @@ class BookDownloadProgress extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Text(
-                labelKey.tr(),
+                isCancelling ? 'cancelling_download'.tr() : labelKey.tr(),
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -37,7 +47,7 @@ class BookDownloadProgress extends StatelessWidget {
               ),
             ),
 
-            if (progress.hasStarted && ratio.isNotEmpty) ...<Widget>[
+            if (showRatio && !isCancelling) ...<Widget>[
               SizedBox(width: 8.w),
 
               Text(
@@ -46,6 +56,12 @@ class BookDownloadProgress extends StatelessWidget {
                 maxLines: 1,
                 style: AppTheme.styles(context).cardCaption,
               ),
+            ],
+
+            if (onCancel != null) ...<Widget>[
+              SizedBox(width: 4.w),
+
+              _cancelButton(context),
             ],
           ],
         ),
@@ -57,6 +73,28 @@ class BookDownloadProgress extends StatelessWidget {
         else
           _indeterminate(context),
       ],
+    );
+  }
+
+  Widget _cancelButton(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Tooltip(
+      message: 'cancel_download'.tr(),
+      child: InkWell(
+        onTap: isCancelling ? null : onCancel,
+        borderRadius: BorderRadius.circular(20.r),
+        child: Padding(
+          padding: EdgeInsets.all(4.w),
+          child: Icon(
+            Icons.close_rounded,
+            size: 18.w,
+            color: isCancelling
+                ? colors.onSurfaceVariant.withValues(alpha: 0.5)
+                : colors.error,
+          ),
+        ),
+      ),
     );
   }
 

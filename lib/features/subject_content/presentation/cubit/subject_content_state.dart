@@ -11,6 +11,7 @@ final class SubjectContentState {
     this.liveSessions = const <LiveSessionModel>[],
     this.albums = const <MediaAlbumModel>[],
     this.bookDownloads = const <int, DownloadProgress>{},
+    this.cancellingBookIds = const <int>{},
     this.previewingBookId,
     this.previewProgress = DownloadProgress.none,
     this.downloadedBookIds = const <int>{},
@@ -28,6 +29,9 @@ final class SubjectContentState {
 
   final List<MediaAlbumModel> albums;
   final Map<int, DownloadProgress> bookDownloads;
+
+  /// Books a stop has been asked for, until the transfer actually ends.
+  final Set<int> cancellingBookIds;
 
   final int? previewingBookId;
   final DownloadProgress previewProgress;
@@ -53,6 +57,8 @@ final class SubjectContentState {
 
   bool isPreviewingBook(int bookId) => previewingBookId == bookId;
 
+  bool isCancellingBook(int bookId) => cancellingBookIds.contains(bookId);
+
   bool isBookBusy(int bookId) =>
       isDownloadingBook(bookId) || isPreviewingBook(bookId);
 
@@ -72,6 +78,7 @@ final class SubjectContentState {
     List<LiveSessionModel>? liveSessions,
     List<MediaAlbumModel>? albums,
     Map<int, DownloadProgress>? bookDownloads,
+    Set<int>? cancellingBookIds,
     int? previewingBookId,
     DownloadProgress? previewProgress,
     Set<int>? downloadedBookIds,
@@ -88,6 +95,7 @@ final class SubjectContentState {
     liveSessions: liveSessions ?? this.liveSessions,
     albums: albums ?? this.albums,
     bookDownloads: bookDownloads ?? this.bookDownloads,
+    cancellingBookIds: cancellingBookIds ?? this.cancellingBookIds,
     previewingBookId: clearPreviewingBook
         ? null
         : previewingBookId ?? this.previewingBookId,

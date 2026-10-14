@@ -26,22 +26,26 @@ class PdfService {
     required String pdfUrl,
     String? fileName,
     ProgressCallback? onProgress,
+    CancelToken? cancelToken,
   }) async => _download(
     pdfUrl: pdfUrl,
     directory: await libraryDirectory(),
     fileName: fileName,
     onProgress: onProgress,
+    cancelToken: cancelToken,
   );
 
   Future<File> downloadToCache({
     required String pdfUrl,
     String? fileName,
     ProgressCallback? onProgress,
+    CancelToken? cancelToken,
   }) async => _download(
     pdfUrl: pdfUrl,
     directory: await cacheDirectory(),
     fileName: fileName,
     onProgress: onProgress,
+    cancelToken: cancelToken,
   );
 
   Future<void> clearCache() async {
@@ -53,11 +57,15 @@ class PdfService {
     } catch (_) {}
   }
 
+  /// Writes [pdfUrl] into [directory]. A [cancelToken] the caller holds on to
+  /// lets the transfer be stopped halfway; the half-written file is deleted on
+  /// the way out, exactly as it is for any other failure.
   Future<File> _download({
     required String pdfUrl,
     required Directory directory,
     String? fileName,
     ProgressCallback? onProgress,
+    CancelToken? cancelToken,
   }) async {
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
@@ -69,7 +77,12 @@ class PdfService {
     if (file.existsSync()) await file.delete();
 
     try {
-      await dio.download(pdfUrl, path, onReceiveProgress: onProgress);
+      await dio.download(
+        pdfUrl,
+        path,
+        onReceiveProgress: onProgress,
+        cancelToken: cancelToken,
+      );
     } catch (_) {
       if (file.existsSync()) await file.delete();
       rethrow;

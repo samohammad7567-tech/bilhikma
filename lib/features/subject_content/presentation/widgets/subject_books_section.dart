@@ -16,7 +16,9 @@ class SubjectBooksSection extends StatelessWidget {
     required this.onOpen,
     required this.progressFor,
     super.key,
+    this.onCancelDownload,
     this.downloadedBookIds = const <int>{},
+    this.cancellingBookIds = const <int>{},
   });
 
   final List<TextbookModel> books;
@@ -25,8 +27,10 @@ class SubjectBooksSection extends StatelessWidget {
   final ValueChanged<TextbookModel> onDownload;
   final ValueChanged<TextbookModel> onPreview;
   final ValueChanged<TextbookModel> onOpen;
+  final ValueChanged<TextbookModel>? onCancelDownload;
   final DownloadProgress? Function(int bookId) progressFor;
   final Set<int> downloadedBookIds;
+  final Set<int> cancellingBookIds;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,11 @@ class SubjectBooksSection extends StatelessWidget {
               isDownloading: downloadingBookIds.contains(book.id),
               isPreviewing: book.id == previewingBookId,
               isDownloaded: downloadedBookIds.contains(book.id),
+              isCancelling: cancellingBookIds.contains(book.id),
               onDownload: () => onDownload(book),
+              onCancelDownload: onCancelDownload == null
+                  ? null
+                  : () => onCancelDownload!(book),
               onPreview: () => onPreview(book),
               onOpen: () => onOpen(book),
             ),

@@ -156,8 +156,36 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
     }, isPreview: false);
     _ownDownloads.remove(book.id);
     BookDownloadsDataSource.takeMissedFailure(book.id);
+    _dropCancelling(book.id);
 
     await _refreshDownloadedBooks();
+  }
+
+  /// Stops a download the student no longer wants. The partly written file is
+  /// discarded by the data source, so the card goes back to offering Download
+  /// rather than pretending a book is on the device.
+  void cancelBookDownload(TextbookModel book) {
+    if (!state.isDownloadingBook(book.id) || state.isCancellingBook(book.id)) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        cancellingBookIds: <int>{...state.cancellingBookIds, book.id},
+      ),
+    );
+
+    textbooksRepo.cancelDownload(book.id);
+  }
+
+  void _dropCancelling(int bookId) {
+    if (isClosed || !state.isCancellingBook(bookId)) return;
+
+    emit(
+      state.copyWith(
+        cancellingBookIds: <int>{...state.cancellingBookIds}..remove(bookId),
+      ),
+    );
   }
 
   void _onActiveDownloadsChanged() {
@@ -168,7 +196,14 @@ class SubjectContentCubit extends Cubit<SubjectContentState> {
       ..removeAll(next.keys)
       ..removeAll(_ownDownloads);
 
-    emit(state.copyWith(bookDownloads: next));
+    emit(
+      state.copyWith(
+        bookDownloads: next,
+        cancellingBookIds: state.cancellingBookIds
+            .where(next.containsKey)
+            .toSet(),
+      ),
+    );
 
     for (final int bookId in orphaned) {
       final String? key = BookDownloadsDataSource.takeMissedFailure(bookId);

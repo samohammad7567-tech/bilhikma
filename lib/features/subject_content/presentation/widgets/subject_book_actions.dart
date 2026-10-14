@@ -14,21 +14,27 @@ class SubjectBookActions extends StatelessWidget {
     required this.onPreview,
     required this.onOpen,
     super.key,
+    this.onCancelDownload,
     this.progress,
     this.isDownloading = false,
     this.isPreviewing = false,
     this.isDownloaded = false,
+    this.isCancelling = false,
   });
 
   final VoidCallback onDownload;
   final VoidCallback onPreview;
   final VoidCallback onOpen;
 
+  /// Stops a running download. Null when the screen offers no way to stop it.
+  final VoidCallback? onCancelDownload;
+
   final DownloadProgress? progress;
 
   final bool isDownloading;
   final bool isPreviewing;
   final bool isDownloaded;
+  final bool isCancelling;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +47,10 @@ class SubjectBookActions extends StatelessWidget {
       return BookDownloadProgress(
         progress: active,
         labelKey: isDownloading ? 'downloading_book' : 'preparing_book',
+        // Preparing a preview is a single signed-link request: there is
+        // nothing long-running to call off, so only a download gets a stop.
+        onCancel: isDownloading ? onCancelDownload : null,
+        isCancelling: isCancelling,
       );
     }
 

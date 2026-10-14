@@ -16,16 +16,19 @@ class SubjectBookCard extends StatelessWidget {
     required this.onPreview,
     required this.onOpen,
     super.key,
+    this.onCancelDownload,
     this.progress,
     this.isDownloading = false,
     this.isPreviewing = false,
     this.isDownloaded = false,
+    this.isCancelling = false,
   });
 
   final TextbookModel book;
   final VoidCallback onDownload;
   final VoidCallback onPreview;
   final VoidCallback onOpen;
+  final VoidCallback? onCancelDownload;
 
   final DownloadProgress? progress;
 
@@ -33,6 +36,7 @@ class SubjectBookCard extends StatelessWidget {
   final bool isPreviewing;
 
   final bool isDownloaded;
+  final bool isCancelling;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,9 @@ class SubjectBookCard extends StatelessWidget {
             isDownloading: isDownloading,
             isPreviewing: isPreviewing,
             isDownloaded: isDownloaded,
+            isCancelling: isCancelling,
             onDownload: onDownload,
+            onCancelDownload: onCancelDownload,
             onPreview: onPreview,
             onOpen: onOpen,
           ),

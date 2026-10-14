@@ -22,6 +22,8 @@ class TextbooksRepo {
   Future<List<TextbookModel>> fetchTextbooks() => dataSource.fetchTextbooks();
   Future<File> downloadTextbook(TextbookModel book) => downloads.download(book);
 
+  void cancelDownload(int bookId) => downloads.cancel(bookId);
+
   Future<String> previewUrl(TextbookModel book) =>
       dataSource.requestDownloadUrl(book.id);
 
