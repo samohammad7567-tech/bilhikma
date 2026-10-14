@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
-import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 import '../../data/models/notification_model.dart';
 import '../refactor/notification_formats.dart';
+import 'notification_image.dart';
 import 'notification_kind_chip.dart';
 import 'notification_kind_tile.dart';
 
@@ -64,7 +64,7 @@ class NotificationDetailsSheet extends StatelessWidget {
         SizedBox(height: 12.h),
 
         if (notification.hasImage) ...<Widget>[
-          _image(context),
+          _image(),
           SizedBox(height: 12.h),
         ],
         Text(
@@ -87,17 +87,8 @@ class NotificationDetailsSheet extends StatelessWidget {
     );
   }
 
-  Widget _image(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(12.r),
-    child: AppNetworkImage(
-      url: notification.imageUrl!,
-      height: 170.h,
-      fit: BoxFit.cover,
-      errorWidget: const SizedBox.shrink(),
-      placeholder: SizedBox(
-        height: 170.h,
-        child: const Center(child: CircularProgressIndicator()),
-      ),
-    ),
+  Widget _image() => NotificationImage(
+    url: notification.imageUrl!,
+    heroTag: 'notification-image-${notification.id}',
   );
 }

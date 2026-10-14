@@ -118,6 +118,7 @@
   "notifications_filter_unread": "Unread ({count})",
   "notification_state_new": "New",
   "notification_state_read": "Read",
+  "view_image": "View image",
   "since_now": "Just now",
   "since_minutes": "{count} minutes ago",
   "since_hours": "{count} hours ago",

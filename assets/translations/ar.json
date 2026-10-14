@@ -118,6 +118,7 @@
   "notifications_filter_unread": "غير المقروءة ({count})",
   "notification_state_new": "جديد",
   "notification_state_read": "مقروء",
+  "view_image": "عرض الصورة",
   "since_now": "الآن",
   "since_minutes": "منذ {count} دقائق",
   "since_hours": "منذ {count} ساعات",
