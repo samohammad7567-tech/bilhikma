@@ -49,7 +49,12 @@ class DrawerNavigation {
     if (!isConfirmed) return;
 
     if (scaffold.mounted) scaffold.closeDrawer();
-    DeviceSessionService.logout();
+
+    // Awaited, so the token is gone before the login screen is on: left to
+    // run on its own, it keeps a usable session alive for as long as the
+    // remote call takes, and a resume or a push landing in that window is
+    // refused with a 401 the interceptor announces as an expiry.
+    await DeviceSessionService.logout();
     getIt<ProfileCubit>().reset();
 
     getIt<GlobalKey<NavigatorState>>().currentState?.pushNamedAndRemoveUntil(

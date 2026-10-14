@@ -74,12 +74,20 @@ class DeviceSessionService {
         : DeviceSessionStatus.deviceMismatch;
   }
 
+  /// How long telling the server may take before the local session is dropped
+  /// regardless. The server is worth waiting a moment for, but not worth
+  /// leaving a working token on the device while a dead network runs down the
+  /// request timeout: anything firing in that window is refused, and the
+  /// student is told their session expired on the login screen they just
+  /// reached.
+  static const Duration _remoteLogoutTimeout = Duration(seconds: 5);
+
   static Future<void> logout() async {
     try {
       await DioService.post(
         ApiEndpoints.logout,
         data: <String, dynamic>{'device_uuid': DeviceService.deviceUuid},
-      );
+      ).timeout(_remoteLogoutTimeout);
     } catch (error) {
       AppLogger.warning(
         'Remote logout failed, clearing the local session anyway',

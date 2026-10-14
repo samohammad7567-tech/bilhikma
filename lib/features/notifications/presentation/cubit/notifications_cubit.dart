@@ -6,6 +6,7 @@ import '../../../../core/models/live_session_model.dart';
 import '../../../../core/routing/notification_destination.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/services/app_lifecycle_service.dart';
+import '../../../../core/services/device_session_service.dart';
 import '../../../../core/services/push_event_bus.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../../live_sessions/data/repos/live_sessions_repo.dart';
@@ -46,12 +47,23 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   /// newest notifications without touching the visible content first.
   void _listenForNewNotifications() {
     _pushSubscription = PushEventBus.instance.stream.listen(
-      (Map<String, dynamic> _) => unawaited(_load(silent: true)),
+      (Map<String, dynamic> _) => _refreshInBackground(),
     );
 
     _resumeSubscription = AppLifecycleService.instance.onResumed.listen(
-      (void _) => unawaited(_load(silent: true)),
+      (void _) => _refreshInBackground(),
     );
+  }
+
+  /// Signing out leaves this cubit alive in the service locator, so both
+  /// subscriptions outlive the session they were opened for. Asking for a
+  /// signed-out student's notifications earns a 401, which the auth
+  /// interceptor reads as an expired session and announces on the login
+  /// screen they are already looking at.
+  void _refreshInBackground() {
+    if (!DeviceSessionService.hasSession) return;
+
+    unawaited(_load(silent: true));
   }
 
   @override
