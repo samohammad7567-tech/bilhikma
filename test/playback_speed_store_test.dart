@@ -1,87 +1,55 @@
-import 'package:bilhikma/core/constants/cache_keys.dart';
-import 'package:bilhikma/core/enums/content_type_enum.dart';
 import 'package:bilhikma/core/enums/playback_speed_enum.dart';
-import 'package:bilhikma/core/utils/cache_util.dart';
 import 'package:bilhikma/features/lesson_detail/data/data_source/playback_speed_data_source.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-/// Empties the three keys the store reads, then seeds the one speed the app
-/// kept before audio and video were split.
-Future<void> _clearStoredSpeeds({double? legacyRate}) async {
-  CacheUtil.remove(key: CacheKeys.audioPlaybackSpeed);
-  CacheUtil.remove(key: CacheKeys.videoPlaybackSpeed);
-  CacheUtil.remove(key: CacheKeys.legacyPlaybackSpeed);
-
-  if (legacyRate == null) return;
-
-  await CacheUtil.setDouble(
-    key: CacheKeys.legacyPlaybackSpeed,
-    value: legacyRate,
-  );
-}
 
 void main() {
   const PlaybackSpeedDataSource store = PlaybackSpeedDataSource();
 
-  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(PlaybackSpeedDataSource.clear);
 
-  setUpAll(() async {
-    SharedPreferences.setMockInitialValues(<String, Object>{});
-    await CacheUtil.init();
+  test('a lesson starts at 1x', () {
+    expect(store.read(41), PlaybackSpeed.normal);
   });
 
-  test('audio and video keep their own speed', () async {
-    await _clearStoredSpeeds();
-
-    await store.write(ContentType.audio, PlaybackSpeed.oneAndThreeQuarters);
+  test('every lesson keeps its own speed', () {
+    store.write(41, PlaybackSpeed.oneAndThreeQuarters);
 
     expect(
-      store.read(ContentType.audio),
+      store.read(41),
       PlaybackSpeed.oneAndThreeQuarters,
-      reason: 'the speed just chosen for audio',
+      reason: 'the speed just chosen for this lesson',
     );
     expect(
-      store.read(ContentType.video),
+      store.read(42),
       PlaybackSpeed.normal,
-      reason: 'video must not follow the audio choice',
+      reason: 'another lesson must not follow that choice',
     );
 
-    await store.write(ContentType.video, PlaybackSpeed.oneAndQuarter);
+    store.write(42, PlaybackSpeed.oneAndQuarter);
 
-    expect(store.read(ContentType.video), PlaybackSpeed.oneAndQuarter);
+    expect(store.read(42), PlaybackSpeed.oneAndQuarter);
     expect(
-      store.read(ContentType.audio),
+      store.read(41),
       PlaybackSpeed.oneAndThreeQuarters,
-      reason: 'audio keeps what it had',
+      reason: 'the first lesson keeps what it had',
     );
   });
 
-  test('a speed stored before the split still applies to both', () async {
-    await _clearStoredSpeeds(legacyRate: 1.5);
+  test('a lesson can be put back to 1x', () {
+    store.write(41, PlaybackSpeed.twice);
+    store.write(41, PlaybackSpeed.normal);
 
-    expect(store.read(ContentType.audio), PlaybackSpeed.oneAndHalf);
-    expect(store.read(ContentType.video), PlaybackSpeed.oneAndHalf);
+    expect(store.read(41), PlaybackSpeed.normal);
   });
 
-  test('once a kind has its own speed the old one is ignored', () async {
-    await _clearStoredSpeeds(legacyRate: 1.5);
+  test('nothing survives the app being closed', () {
+    store.write(41, PlaybackSpeed.twice);
+    store.write(42, PlaybackSpeed.half);
 
-    await store.write(ContentType.audio, PlaybackSpeed.twice);
+    // Which is all a restart is, for a store that only lives in memory.
+    PlaybackSpeedDataSource.clear();
 
-    expect(store.read(ContentType.audio), PlaybackSpeed.twice);
-    expect(
-      store.read(ContentType.video),
-      PlaybackSpeed.oneAndHalf,
-      reason: 'video has not been chosen yet, so it still reads the old speed',
-    );
-  });
-
-  test('an article falls in with video rather than losing the speed', () async {
-    await _clearStoredSpeeds();
-
-    await store.write(ContentType.video, PlaybackSpeed.threeQuarters);
-
-    expect(store.read(ContentType.article), PlaybackSpeed.threeQuarters);
+    expect(store.read(41), PlaybackSpeed.normal);
+    expect(store.read(42), PlaybackSpeed.normal);
   });
 }

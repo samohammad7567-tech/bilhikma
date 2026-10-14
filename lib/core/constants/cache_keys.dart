@@ -3,11 +3,6 @@ class CacheKeys {
   static const String isDark = 'isDark';
   static const String fontScale = 'font_scale';
   static const String sleepTimerMinutes = 'sleep_timer_minutes';
-  /// Audio and video each keep their own playback speed. The old shared key is
-  /// still read once, so a speed chosen before the split is not lost.
-  static const String legacyPlaybackSpeed = 'playback_speed';
-  static const String audioPlaybackSpeed = 'audio_playback_speed';
-  static const String videoPlaybackSpeed = 'video_playback_speed';
   static const String rememberMeKey = 'remember_me';
   static const String rememberedIdentifierKey = 'remembered_identifier';
   static const String rememberedMethodKey = 'remembered_login_method';
