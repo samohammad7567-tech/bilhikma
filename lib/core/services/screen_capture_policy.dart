@@ -40,10 +40,10 @@ class ScreenCapturePolicy {
     await resolve(canCaptureScreen: CurrentUser.canCaptureScreen);
   }
 
-  /// Re-reads the exemption from the API, which is also what catches an
-  /// account the platform has moved out of the active state: the read goes
-  /// through the watcher, which signs the student out rather than handing back
-  /// a profile. An unreadable answer keeps the exemption already in force.
+  /// Re-reads the exemption from the API, which is also what catches a session
+  /// the platform has closed: the read goes through the watcher, and a refusal
+  /// ends the session on the way back rather than handing over a profile. An
+  /// unreadable answer keeps the exemption already in force.
   static Future<void> refresh() async {
     if (!_hasSession) return clear();
 

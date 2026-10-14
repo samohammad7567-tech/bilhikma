@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screen_wake_service.dart';
 import 'network_video_playback.dart';
 import 'video_item.dart';
 import 'youtube_video_playback.dart';
@@ -60,4 +61,27 @@ abstract class VideoPlayback extends ChangeNotifier {
   }
 
   Widget buildSurface({Key? key, Widget? overlay});
+
+  /// Whether the display should be held awake while this source plays.
+  ///
+  /// True for both kinds: a lesson is watched or listened to without the
+  /// screen being touched, so the OS display timeout would otherwise fire
+  /// mid-playback. Override in a subclass to opt a source out.
+  @protected
+  bool get keepsScreenAwake => true;
+
+  /// Every state change from both subclasses funnels through here, which makes
+  /// it the one place that can keep the wakelock in step with [isPlaying] —
+  /// held while playing, released on pause, end, error and teardown.
+  @override
+  void notifyListeners() {
+    ScreenWakeService.request(this, keepAwake: keepsScreenAwake && isPlaying);
+    super.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    ScreenWakeService.release(this);
+    super.dispose();
+  }
 }

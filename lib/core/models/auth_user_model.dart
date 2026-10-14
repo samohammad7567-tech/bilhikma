@@ -1,4 +1,3 @@
-import '../enums/account_status_enum.dart';
 import '../network/json_reader.dart';
 import 'enrollment_model.dart';
 
@@ -9,7 +8,6 @@ class AuthUserModel {
     this.email,
     this.phone,
     this.role,
-    this.status = AccountStatus.active,
     this.studentNo,
     this.activeEnrollmentId,
     this.canCaptureScreen = false,
@@ -22,7 +20,6 @@ class AuthUserModel {
   final String? phone;
 
   final String? role;
-  final AccountStatus status;
 
   final String? studentNo;
   final int? activeEnrollmentId;
@@ -30,10 +27,6 @@ class AuthUserModel {
   final bool canCaptureScreen;
 
   final List<EnrollmentModel> enrollments;
-
-  /// Whether the platform still lets this account into the app. Every other
-  /// state ends the session.
-  bool get isActive => status.isActive;
 
   String get initials => fullName
       .trim()
@@ -60,7 +53,6 @@ class AuthUserModel {
     email: Json.asOptionalString(json['email']),
     phone: Json.asOptionalString(json['phone']),
     role: Json.asOptionalString(json['role']),
-    status: AccountStatus.maybeFromJson(json['status']) ?? AccountStatus.active,
     studentNo: Json.asOptionalString(json['student_no']),
     activeEnrollmentId: Json.asOptionalInt(json['active_enrollment_id']),
     canCaptureScreen: Json.asBool(json['can_capture_screen']),
@@ -76,7 +68,6 @@ class AuthUserModel {
     'email': email,
     'phone': phone,
     'role': role,
-    'status': status.key,
     'student_no': studentNo,
     'active_enrollment_id': activeEnrollmentId,
     'can_capture_screen': canCaptureScreen,

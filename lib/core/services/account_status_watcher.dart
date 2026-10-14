@@ -4,32 +4,32 @@ import 'package:flutter/widgets.dart';
 
 import '../../features/profile/data/models/profile_model.dart';
 import '../../features/profile/data/repos/profile_repo.dart';
-import '../enums/account_status_enum.dart';
+import '../enums/notification_kind_enum.dart';
 import '../utils/app_logger.dart';
-import 'account_state_service.dart';
 import 'app_lifecycle_service.dart';
 import 'device_session_service.dart';
 import 'push_event_bus.dart';
-import 'session_guard.dart';
 
-/// Keeps the app honest about the state of the account it is signed in with
-/// while it sits open.
+/// Keeps the app from sitting on a session the platform has already closed.
 ///
-/// Only an active account may stay in the app. Moving a student out of that
-/// state is a dashboard action, so nothing on the device knows about it until
-/// the platform says so. Three things tell the app, and all three end on the
-/// login screen: the `account_status` push the platform sends, the 403 a
-/// no-longer-active token starts answering — read in the auth interceptor —
-/// and the poll this watcher runs while the app is in front, so a student
-/// sitting on a screen is signed out within [pollInterval] instead of
-/// whenever they next happen to tap something.
+/// Shutting an account out is a dashboard action, so nothing on the device
+/// knows about it until the API is asked. This watcher does the asking: it
+/// polls while the app is in front and asks again the moment a push says
+/// something about the account, so a student sitting on a screen is dropped
+/// within [pollInterval] instead of whenever they next happen to tap
+/// something.
+///
+/// It does not decide anything. Whether the session survives is read off the
+/// code the API answers with — in `ErrorMapper`, acted on by `SessionGuard` —
+/// so a state the dashboard invents after this build ships still ends the
+/// session, having never been named anywhere in the app.
 class AccountStatusWatcher {
   AccountStatusWatcher._();
 
   static const String _logName = 'account_status';
 
   /// How often the foreground poll asks the API about the account. Short
-  /// enough that a state change lands while the student is still looking at
+  /// enough that a closed session lands while the student is still looking at
   /// the screen, long enough to cost one small request a minute.
   static const Duration pollInterval = Duration(seconds: 60);
 
@@ -43,6 +43,13 @@ class AccountStatusWatcher {
 
   static Future<ProfileModel?>? _inFlight;
 
+  /// Fields a push may name its subject in.
+  static const Set<String> _typeFields = <String>{
+    'type',
+    'notification_type',
+    'kind',
+  };
+
   static void initialize() {
     _pushes ??= PushEventBus.instance.stream.listen(_onPush);
     _lifecycle ??= AppLifecycleService.instance.onStateChanged.listen(
@@ -52,8 +59,7 @@ class AccountStatusWatcher {
     _startPolling();
   }
 
-  /// Reads the account as the API has it now and acts on the state it comes
-  /// back with.
+  /// Reads the account as the API has it now.
   ///
   /// Callers share one request: coming back to the foreground makes both the
   /// capture policy and this watcher want the profile, and the API should be
@@ -75,7 +81,7 @@ class AccountStatusWatcher {
   }
 
   /// Asks the API for the account as it stands now, without waiting on the
-  /// answer.
+  /// answer. A closed session is refused, and the refusal ends it.
   static Future<void> verifyNow() async {
     await readProfile();
   }
@@ -83,23 +89,27 @@ class AccountStatusWatcher {
   static void _onPush(Map<String, dynamic> data) {
     if (!DeviceSessionService.hasSession) return;
 
-    final AccountStatus? announced = AccountStateService.statusFromBody(data);
-
-    if (announced != null && !announced.isActive) {
-      AppLogger.info(
-        'Push announced the account as ${announced.key}; signing out',
-        name: _logName,
-      );
-
-      unawaited(_signOut(announced));
-      return;
-    }
-
-    // An announcement that names no state can just as easily be a
-    // reactivation, so the API is asked instead of guessed at.
-    if (!AccountStateService.isAccountStatusPush(data)) return;
+    // A push about the account carries no verdict of its own: it is as likely
+    // to be a reactivation as a shut-out, and it is not the API refusing
+    // anything. So it is treated as a prompt to ask, never as the answer.
+    if (!_isAccountStatusPush(data)) return;
 
     unawaited(verifyNow());
+  }
+
+  /// True when a push is about the account itself, which is the cue to ask the
+  /// API where the session stands now.
+  static bool _isAccountStatusPush(Map<String, dynamic> data) {
+    for (final String field in _typeFields) {
+      final Object? value = data[field];
+      if (value is! String) continue;
+
+      if (NotificationKind.fromJson(value) == NotificationKind.accountStatus) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   static void _onLifecycleChanged(AppLifecycleState state) {
@@ -123,18 +133,13 @@ class AccountStatusWatcher {
     if (!DeviceSessionService.hasSession) return null;
 
     try {
-      final ProfileModel profile = await _profile.fetchProfile();
-
-      final AccountStatus? state = profile.status;
-      if (state != null && !state.isActive) await _signOut(state);
-
-      return profile;
+      return await _profile.fetchProfile();
     } catch (error) {
-      // A no-longer-active token is refused, and the auth interceptor turns
-      // that refusal into a forced sign-out, so there is nothing left to do
-      // with the failure here beyond not crashing on it.
+      // A closed session is refused, and that refusal has already ended it by
+      // the time the failure gets here, so there is nothing left to do with it
+      // beyond not crashing on it.
       AppLogger.warning(
-        'Account state could not be re-read',
+        'The account could not be re-read',
         name: _logName,
         error: error,
       );
@@ -142,9 +147,4 @@ class AccountStatusWatcher {
       return null;
     }
   }
-
-  static Future<void> _signOut(AccountStatus state) =>
-      SessionGuard.forceSignOut(
-        noticeKey: AccountStateService.noticeKeyFor(state),
-      );
 }

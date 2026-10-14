@@ -7,13 +7,11 @@ import '../../../../../core/network/api_envelope.dart';
 import '../../../../../core/services/device_service.dart';
 import '../../../../../core/services/device_session_service.dart';
 import '../../../../../core/services/dio_service.dart';
-import '../../../../../core/services/account_state_service.dart';
 import '../../../../../core/services/push_notification_service.dart';
 import '../../../../../core/services/screen_capture_policy.dart';
 import '../../../../../core/utils/cache_util.dart';
 import '../../../../../core/utils/error_mapper.dart';
 import '../../../../../core/models/auth_user_model.dart';
-import '../../../../../core/enums/account_status_enum.dart';
 import '../../../../../core/enums/login_method_enum.dart';
 import '../models/login_request_model.dart';
 import '../models/login_response_model.dart';
@@ -48,15 +46,10 @@ class LoginDataSource {
       throw const AppException('something_went_wrong');
     }
 
-    // Nothing is persisted unless the account is active: the student stays on
-    // the login screen with the reason instead of entering the app and being
-    // thrown out by the first request.
-    final AccountStatus state = session.user?.status ?? AccountStatus.active;
-
-    if (!state.isActive) {
-      throw AppException(AccountStateService.noticeKeyFor(state));
-    }
-
+    // An account the platform will not let in is refused by this very call,
+    // and `ApiClient` has already turned that refusal into the message the
+    // student is shown, so there is nothing left to check against the user
+    // object: reaching this line means a session was handed over.
     await _persistSession(
       session,
       identifier: request.identifier,

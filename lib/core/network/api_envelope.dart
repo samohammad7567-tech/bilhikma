@@ -14,7 +14,11 @@ class ApiEnvelope {
 
   final Map<String, List<String>> errors;
 
-  bool get isSuccess => statusCode == 1;
+  /// The code this API answers a successful call with. Every other code is a
+  /// refusal, and [ErrorMapper] decides which of them end the session.
+  static const int successCode = 1;
+
+  bool get isSuccess => statusCode == successCode;
 
   Map<String, dynamic> get dataMap => Json.asMap(data);
 

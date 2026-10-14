@@ -27,6 +27,9 @@ dependencies:
   just_audio: ^0.10.6
   youtube_player_flutter: ^9.1.1
   video_player: ^2.13.0
+  # Holds FLAG_KEEP_SCREEN_ON (Android) / idleTimerDisabled (iOS) while a
+  # lesson plays — see core/services/screen_wake_service.dart.
+  wakelock_plus: ^1.2.0
   floating: ^6.0.0
   just_audio_background: ^0.0.1-beta.17
   share_plus: ^13.3.0
@@ -46,6 +49,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # Lets screen_wake_service_test fake the wakelock platform channel.
+  wakelock_plus_platform_interface: ^1.2.0
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
 

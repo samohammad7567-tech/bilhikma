@@ -66,8 +66,8 @@ class LessonAudioPlayer extends StatelessWidget {
             speed: speed,
             onSpeedChanged: onSpeedChanged,
             isLessonCompleted: isLessonCompleted,
-            onRewind: onSeek == null ? null : () => _rewind(onSeek),
-            onForward: onSeek == null ? null : () => _forward(context, onSeek),
+            onRewind: onSeek == null ? null : () => _forward(context, onSeek),
+            onForward: onSeek == null ? null : () => _rewind(onSeek),
           ),
 
           SizedBox(height: 12.h),

@@ -5,13 +5,12 @@ import 'package:flutter/widgets.dart';
 
 import '../../features/auth/login/data/models/refresh_token_response_model.dart';
 import '../constants/api_endpoints.dart';
-import '../enums/account_status_enum.dart';
-import '../services/account_state_service.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
 import '../services/session_guard.dart';
 import '../utils/app_logger.dart';
 import '../utils/cache_util.dart';
+import '../utils/error_mapper.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
@@ -34,23 +33,19 @@ class AuthInterceptor extends Interceptor {
 
     final statusCode = err.response?.statusCode;
 
-    if (statusCode == 403 && !isAuthEndpoint) {
-      // Moving an account out of the active state takes hold on the very next
-      // request: the token the student already holds starts answering 403.
-      // Every other 403 — a locked lesson, a class that is not theirs —
-      // leaves the session alone.
-      final AccountStatus? state = AccountStateService.refusedState(err);
+    // A code the session cannot survive ends it here, whatever the request
+    // was and whatever the body says. 401 is the exception: it is the one
+    // refusal a session can still be saved from, so it goes through the
+    // refresh below and only ends the session if that fails.
+    if (!isAuthEndpoint &&
+        statusCode != 401 &&
+        ErrorMapper.endsSession(statusCode)) {
+      AppLogger.info(
+        'The API refused $path with $statusCode; signing out',
+        name: 'auth',
+      );
 
-      if (state != null) {
-        AppLogger.info(
-          'The account is ${state.key}; signing out of $path',
-          name: 'auth',
-        );
-
-        await SessionGuard.forceSignOut(
-          noticeKey: AccountStateService.noticeKeyFor(state),
-        );
-      }
+      await _handleLogoutOnce();
 
       return handler.reject(err);
     }
@@ -224,5 +219,5 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _handleLogoutOnce() =>
-      SessionGuard.forceSignOut(noticeKey: 'session_expired');
+      SessionGuard.forceSignOut(noticeKey: ErrorMapper.sessionEndedKey);
 }

@@ -46,7 +46,7 @@ class LessonAudioControlsRow extends StatelessWidget {
           ),
         ),
 
-        LessonAudioSkipButton(icon: Icons.skip_previous, onTap: onRewind),
+        LessonAudioSkipButton(icon: Icons.skip_next, onTap: onRewind),
 
         SizedBox(width: 22.w),
 
@@ -58,7 +58,7 @@ class LessonAudioControlsRow extends StatelessWidget {
 
         SizedBox(width: 22.w),
 
-        LessonAudioSkipButton(icon: Icons.skip_next, onTap: onForward),
+        LessonAudioSkipButton(icon: Icons.skip_previous, onTap: onForward),
 
         const Expanded(child: SizedBox.shrink()),
       ],

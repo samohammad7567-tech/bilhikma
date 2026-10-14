@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../services/dio_service.dart';
+import '../services/session_guard.dart';
 import '../utils/error_mapper.dart';
 import 'api_envelope.dart';
 import 'paginated_result.dart';
@@ -73,7 +74,15 @@ class ApiClient {
 
       return envelope;
     } catch (error) {
-      throw ErrorMapper.toException(error);
+      final AppException exception = ErrorMapper.toException(error);
+
+      // A refusal can arrive without the transport ever failing — this API
+      // answers 200 with its own code in the body — and those never reach the
+      // Dio interceptor. Reading the verdict here as well is what makes the
+      // session depend on the code alone, whichever way the code arrived.
+      await SessionGuard.endIfRefused(exception);
+
+      throw exception;
     }
   }
 }
