@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,32 +60,37 @@ class OtpCodeField extends StatelessWidget {
               colors.tertiary.withValues(alpha: 0.35),
             );
 
-            return Pinput(
-              controller: controller,
-              length: length,
-              onChanged: onChanged,
-              keyboardType: TextInputType.number,
-              showCursor: false,
-
-              forceErrorState: errorKey != null,
-              showErrorWhenFocused: true,
-              separatorBuilder: (_) => SizedBox(width: gap),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              preFilledWidget: Text(
-                '-',
-                style: digitStyle.copyWith(
-                  color: colors.onSurface.withValues(alpha: 0.4),
+            // The OTP is always latin digits, so the boxes must fill from the
+            // left even when the app locale is Arabic (RTL).
+            return Directionality(
+              textDirection: TextDirection.ltr,
+              child: Pinput(
+                controller: controller,
+                length: length,
+                onChanged: onChanged,
+                keyboardType: TextInputType.number,
+                showCursor: false,
+                forceErrorState: errorKey != null,
+                showErrorWhenFocused: true,
+                separatorBuilder: (_) => SizedBox(width: gap),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                preFilledWidget: Text(
+                  '-',
+                  textDirection: TextDirection.ltr,
+                  style: digitStyle.copyWith(
+                    color: colors.onSurface.withValues(alpha: 0.4),
+                  ),
                 ),
+                defaultPinTheme: restingTheme,
+                followingPinTheme: restingTheme,
+                focusedPinTheme: boxTheme(colors.tertiary),
+                submittedPinTheme: boxTheme(
+                  isVerified ? colors.primaryContainer : colors.tertiary,
+                ),
+                errorPinTheme: boxTheme(colors.error),
               ),
-              defaultPinTheme: restingTheme,
-              followingPinTheme: restingTheme,
-              focusedPinTheme: boxTheme(colors.tertiary),
-              submittedPinTheme: boxTheme(
-                isVerified ? colors.primaryContainer : colors.tertiary,
-              ),
-              errorPinTheme: boxTheme(colors.error),
             );
           },
         ),

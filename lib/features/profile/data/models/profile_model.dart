@@ -1,3 +1,4 @@
+import '../../../../core/enums/account_status_enum.dart';
 import '../../../../core/network/json_reader.dart';
 
 class ProfileModel {
@@ -12,6 +13,7 @@ class ProfileModel {
     this.studentNo = '',
     this.avatarUrl,
     this.canCaptureScreen = false,
+    this.status,
   });
 
   final String id;
@@ -28,6 +30,10 @@ class ProfileModel {
   final String? avatarUrl;
 
   final bool canCaptureScreen;
+
+  /// The account's own state, when the payload carries it. Null means the
+  /// response said nothing about it, which is not the same as being active.
+  final AccountStatus? status;
 
   String get initials => name
       .trim()
@@ -55,6 +61,7 @@ class ProfileModel {
     String? studentNo,
     String? avatarUrl,
     bool? canCaptureScreen,
+    AccountStatus? status,
   }) => ProfileModel(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -66,6 +73,7 @@ class ProfileModel {
     studentNo: studentNo ?? this.studentNo,
     avatarUrl: avatarUrl ?? this.avatarUrl,
     canCaptureScreen: canCaptureScreen ?? this.canCaptureScreen,
+    status: status ?? this.status,
   );
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
@@ -79,6 +87,9 @@ class ProfileModel {
     studentNo: '${json['student_no'] ?? ''}',
     avatarUrl: _optional(json['avatar_url'] ?? json['avatar']),
     canCaptureScreen: Json.asBool(json['can_capture_screen']),
+    status: AccountStatus.maybeFromJson(
+      json['status'] ?? json['account_status'],
+    ),
   );
   Map<String, dynamic> toJson() => <String, dynamic>{
     'name': name,

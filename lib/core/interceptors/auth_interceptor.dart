@@ -5,7 +5,8 @@ import 'package:flutter/widgets.dart';
 
 import '../../features/auth/login/data/models/refresh_token_response_model.dart';
 import '../constants/api_endpoints.dart';
-import '../services/account_suspension_service.dart';
+import '../enums/account_status_enum.dart';
+import '../services/account_state_service.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
 import '../services/session_guard.dart';
@@ -34,17 +35,20 @@ class AuthInterceptor extends Interceptor {
     final statusCode = err.response?.statusCode;
 
     if (statusCode == 403 && !isAuthEndpoint) {
-      // A suspension takes hold on the very next request: the token the
-      // student already holds starts answering 403. Every other 403 — a locked
-      // lesson, a class that is not theirs — leaves the session alone.
-      if (AccountSuspensionService.indicatesSuspension(err)) {
+      // Moving an account out of the active state takes hold on the very next
+      // request: the token the student already holds starts answering 403.
+      // Every other 403 — a locked lesson, a class that is not theirs —
+      // leaves the session alone.
+      final AccountStatus? state = AccountStateService.refusedState(err);
+
+      if (state != null) {
         AppLogger.info(
-          'The account was suspended; signing out of $path',
+          'The account is ${state.key}; signing out of $path',
           name: 'auth',
         );
 
         await SessionGuard.forceSignOut(
-          noticeKey: AccountSuspensionService.errorKey,
+          noticeKey: AccountStateService.noticeKeyFor(state),
         );
       }
 

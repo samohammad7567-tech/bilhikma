@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -33,6 +33,7 @@ class ResetPasswordField extends StatelessWidget {
       borderColor: Colors.transparent,
       borderRadius: 12.r,
       hintText: 'password'.tr(),
+      textDirection: TextDirection.ltr,
       obscureText: obscure,
       validator: validator,
       onChanged: (String? value) {

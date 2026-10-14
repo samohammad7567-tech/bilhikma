@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 
+import '../enums/account_status_enum.dart';
 import '../network/api_envelope.dart';
-import '../services/account_suspension_service.dart';
+import '../services/account_state_service.dart';
 import '../services/device_session_service.dart';
 
 class AppException implements Exception {
@@ -75,9 +76,8 @@ class ErrorMapper {
       return 'device_already_linked';
     }
 
-    if (AccountSuspensionService.indicatesSuspension(error)) {
-      return AccountSuspensionService.errorKey;
-    }
+    final AccountStatus? state = AccountStateService.refusedState(error);
+    if (state != null) return AccountStateService.noticeKeyFor(state);
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

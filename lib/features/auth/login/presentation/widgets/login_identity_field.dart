@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -31,6 +31,7 @@ class LoginIdentityField extends StatelessWidget {
         key: const ValueKey<LoginMethod>(LoginMethod.email),
         controller: emailController,
         hintText: 'email'.tr(),
+        textDirection: TextDirection.ltr,
         suffixIcon: AppIcon(
           size: 20.w,
           padding: EdgeInsetsGeometry.all(12),

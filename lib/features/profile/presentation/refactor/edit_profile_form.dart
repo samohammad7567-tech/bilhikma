@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -95,6 +95,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             filled: true,
             fillColour: fill,
             hintText: 'email'.tr(),
+            textDirection: TextDirection.ltr,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
           ),
@@ -108,6 +109,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             fillColour: fill,
             readOnly: true,
             overrideValidator: true,
+            textDirection: TextDirection.ltr,
             suffixIcon: Icon(Icons.lock_outline, size: 18.w),
           ),
 

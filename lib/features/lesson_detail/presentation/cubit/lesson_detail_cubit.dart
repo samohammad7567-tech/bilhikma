@@ -32,7 +32,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     this.speedStore = const PlaybackSpeedDataSource(),
   }) : repo = repo ?? LessonDetailRepo(),
        super(const LessonDetailState()) {
-    emit(state.copyWith(playbackSpeed: speedStore.read()));
+    emit(state.copyWith(playbackSpeed: speedStore.read(type)));
     loadLesson();
     DownloadedPdfsDataSource.revision.addListener(_onDownloadsChanged);
   }
@@ -78,6 +78,9 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
           status: LessonDetailStatus.success,
           detail: detail,
           progress: detail.progress,
+          // The lesson itself settles which speed applies: the type the route
+          // guessed may not be the type the API returned.
+          playbackSpeed: speedStore.read(detail.type),
           isLocked: detail.isLocked,
           positionSeconds: restored.positionSeconds,
           checkpointIndex: restored.nextCheckpointIndex,
@@ -539,12 +542,16 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     emit(state.copyWith(isVideoFullscreen: value));
   }
 
+  /// The media the stored speed belongs to: what the API returned once the
+  /// lesson is loaded, what the route asked for until then.
+  ContentType get _speedTrack => state.detail?.type ?? type;
+
   Future<void> setPlaybackSpeed(PlaybackSpeed speed) async {
     if (speed.needsCompletedLesson && !state.progress.isCompleted) return;
     if (state.playbackSpeed == speed) return;
 
     emit(state.copyWith(playbackSpeed: speed));
-    await speedStore.write(speed);
+    await speedStore.write(_speedTrack, speed);
   }
 
   void reportMessage(String messageKey) =>

@@ -31,7 +31,9 @@ class AuthUserModel {
 
   final List<EnrollmentModel> enrollments;
 
-  bool get isSuspended => status == AccountStatus.suspended;
+  /// Whether the platform still lets this account into the app. Every other
+  /// state ends the session.
+  bool get isActive => status.isActive;
 
   String get initials => fullName
       .trim()

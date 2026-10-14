@@ -1,4 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:bilhikma/core/constants/app_assets.dart';
+import 'package:bilhikma/core/widgets/app_icon.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,20 +43,16 @@ class LoginForm extends StatelessWidget {
                 filled: true,
                 fillColour: colors.tertiary.withValues(alpha: 0.4),
                 hintText: 'password'.tr(),
+                textDirection: TextDirection.ltr,
 
                 suffixIcon: GestureDetector(
                   onTap: cubit.togglePasswordVisibility,
                   child: Padding(
                     padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      state.obscurePassword
-                          ? Icons.lock_outline
-                          : Icons.lock_open_outlined,
-
-                      size: 24.w,
-                      color: state.obscurePassword
-                          ? colors.onSurfaceVariant
-                          : colors.secondary,
+                    child: AppIcon(
+                      size: 20.w,
+                      asset: AppAssets.assetsLockIcon,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),

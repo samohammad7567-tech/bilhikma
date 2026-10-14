@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -89,6 +89,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ).colorScheme.tertiary.withValues(alpha: 0.4),
               obscureText: _obscure,
               hintText: 'current_password'.tr(),
+              textDirection: TextDirection.ltr,
               suffixIcon: IconButton(
                 onPressed: () => setState(() => _obscure = !_obscure),
                 icon: Icon(
@@ -111,6 +112,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ).colorScheme.tertiary.withValues(alpha: 0.4),
               obscureText: _obscure,
               hintText: 'new_password'.tr(),
+              textDirection: TextDirection.ltr,
               onChanged: (String? value) {
                 setState(() => _newPassword = value ?? '');
                 return null;
@@ -144,6 +146,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ).colorScheme.tertiary.withValues(alpha: 0.4),
               obscureText: _obscure,
               hintText: 'confirm_new_password'.tr(),
+              textDirection: TextDirection.ltr,
               validator: (String? value) =>
                   value != _next.text ? 'passwords_do_not_match'.tr() : null,
             ),

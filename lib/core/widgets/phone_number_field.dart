@@ -141,6 +141,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           borderColor: widget.borderColor,
           borderRadius: widget.borderRadius,
           hintText: 'phone_number'.tr(),
+          textDirection: TextDirection.ltr,
           keyboardType: TextInputType.phone,
           suffixIcon: widget.suffixIcon,
           prefixIcon: Padding(

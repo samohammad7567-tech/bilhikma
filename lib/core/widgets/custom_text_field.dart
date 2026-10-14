@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatters,
     this.onFieldSubmitted,
     this.textInputAction,
+    this.textDirection,
   });
 
   final String? Function(String?)? validator;
@@ -52,14 +53,24 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputAction? textInputAction;
 
+  /// Forces the typed value to read left-to-right while the app stays RTL.
+  /// Used for Latin-only data (email, phone, password), where the bidi
+  /// algorithm otherwise reorders `@`, `.`, `+` and digits unpredictably.
+  /// Hint, error and icon placement keep following the app direction.
+  final TextDirection? textDirection;
+
   @override
   Widget build(BuildContext context) {
     final Color outline = borderColor ?? Theme.of(context).colorScheme.outline;
     final BorderRadius radius = BorderRadius.circular(borderRadius ?? 15.r);
 
+    final bool isLtr = textDirection == TextDirection.ltr;
+
     return TextFormField(
       controller: controller,
       style: AppTheme.styles(context).fieldInput,
+      textDirection: textDirection,
+      textAlign: isLtr ? TextAlign.left : TextAlign.start,
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
@@ -97,6 +108,7 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
         hintText: hintText,
+        hintTextDirection: isLtr ? Directionality.of(context) : null,
         hintStyle: hintStyle ?? AppTheme.styles(context).fieldHint,
         errorStyle: AppTheme.styles(context).fieldError,
       ),

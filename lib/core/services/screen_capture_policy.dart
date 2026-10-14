@@ -1,18 +1,14 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-
 import '../../features/profile/data/models/profile_model.dart';
-import '../../features/profile/data/repos/profile_repo.dart';
 import '../../features/security/data/models/security_event_model.dart';
 import '../utils/current_user.dart';
+import 'account_status_watcher.dart';
 import 'device_session_service.dart';
 import 'screen_capture_service.dart';
 
 class ScreenCapturePolicy {
   ScreenCapturePolicy._();
-
-  static const ProfileRepo _profile = ProfileRepo();
 
   static bool _isExempt = false;
 
@@ -44,18 +40,19 @@ class ScreenCapturePolicy {
     await resolve(canCaptureScreen: CurrentUser.canCaptureScreen);
   }
 
+  /// Re-reads the exemption from the API, which is also what catches an
+  /// account the platform has moved out of the active state: the read goes
+  /// through the watcher, which signs the student out rather than handing back
+  /// a profile. An unreadable answer keeps the exemption already in force.
   static Future<void> refresh() async {
     if (!_hasSession) return clear();
 
-    try {
-      final ProfileModel profile = await _profile.fetchProfile();
+    final ProfileModel? profile = await AccountStatusWatcher.readProfile();
 
-      await resolve(canCaptureScreen: profile.canCaptureScreen);
-    } catch (error) {
-      debugPrint('Capture exemption unreadable, keeping the last one: $error');
-
-      await resolve(canCaptureScreen: CurrentUser.canCaptureScreen);
-    }
+    await resolve(
+      canCaptureScreen:
+          profile?.canCaptureScreen ?? CurrentUser.canCaptureScreen,
+    );
   }
 
   static Future<void> clear() => resolve(canCaptureScreen: false);
