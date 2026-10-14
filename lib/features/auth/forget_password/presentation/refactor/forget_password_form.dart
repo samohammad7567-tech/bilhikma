@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../cubit/forget_password_cubit.dart';
 import '../widgets/back_to_login_row.dart';
-import '../widgets/reset_channel_selector.dart';
 import '../widgets/reset_identity_field.dart';
 
 class ForgetPasswordForm extends StatelessWidget {
@@ -26,18 +25,7 @@ class ForgetPasswordForm extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              ResetIdentityField(
-                channel: state.channel,
-                emailController: cubit.emailController,
-                phoneController: cubit.phoneController,
-              ),
-
-              SizedBox(height: 22.h),
-
-              ResetChannelSelector(
-                selected: state.channel,
-                onChanged: cubit.selectChannel,
-              ),
+              ResetIdentityField(controller: cubit.emailController),
 
               SizedBox(height: 34.h),
 

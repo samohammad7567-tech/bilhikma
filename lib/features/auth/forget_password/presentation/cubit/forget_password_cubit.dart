@@ -17,14 +17,14 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
 
-  void selectChannel(ResetChannel channel) {
-    if (state.isLoading || channel == state.channel) return;
+  /// Carries over the address already typed on the login screen, so the user
+  /// does not type it twice. Ignores anything empty.
+  void prefillEmail(String? email) {
+    final String value = (email ?? '').trim();
+    if (value.isEmpty) return;
 
-    emit(
-      state.copyWith(status: ForgetPasswordStatus.initial, channel: channel),
-    );
+    emailController.text = value;
   }
 
   Future<void> submit() async {
@@ -32,9 +32,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
     if (form == null || !form.validate()) return;
     if (state.isLoading) return;
 
-    final String identifier = state.wantsEmailAddress
-        ? emailController.text.trim()
-        : phoneController.text.trim();
+    final String identifier = emailController.text.trim();
 
     emit(state.copyWith(status: ForgetPasswordStatus.loading));
 
@@ -70,7 +68,6 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   @override
   Future<void> close() {
     emailController.dispose();
-    phoneController.dispose();
     return super.close();
   }
 }

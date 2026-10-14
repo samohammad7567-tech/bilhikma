@@ -8,7 +8,7 @@ import 'login_form.dart';
 class LoginBody extends StatelessWidget {
   const LoginBody({super.key, this.onForgotPassword});
 
-  final VoidCallback? onForgotPassword;
+  final void Function(String email)? onForgotPassword;
 
   @override
   Widget build(BuildContext context) {

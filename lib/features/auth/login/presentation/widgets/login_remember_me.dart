@@ -47,8 +47,9 @@ class LoginRememberMe extends StatelessWidget {
               'remember_me'.tr(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).linkLabel
-                  .copyWith(color: colors.onSurface),
+              style: AppTheme.styles(
+                context,
+              ).linkLabel.copyWith(color: colors.onSurface),
             ),
           ),
         ],

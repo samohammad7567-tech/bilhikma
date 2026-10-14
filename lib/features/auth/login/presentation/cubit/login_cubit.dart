@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/utils/app_regex.dart';
 import '../../../../../core/utils/error_mapper.dart';
 import '../../../../../core/enums/login_method_enum.dart';
 import '../../data/models/login_request_model.dart';
@@ -25,6 +26,14 @@ class LoginCubit extends Cubit<LoginState> {
     emit(
       state.copyWith(status: LoginStatus.initial, method: state.method.toggled),
     );
+  }
+
+  /// Email to carry into the recover-account screen: only a well formed
+  /// address is worth prefilling there.
+  String get recoveryEmail {
+    final String email = emailController.text.trim();
+
+    return AppRegex.isValidEmail(email) ? email : '';
   }
 
   void togglePasswordVisibility() =>

@@ -9,15 +9,23 @@ import '../refactor/set_password_args.dart';
 import '../../../../../core/widgets/app_toast.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
-  const ForgetPasswordScreen({super.key, this.onCodeSent, this.onBackToLogin});
+  const ForgetPasswordScreen({
+    super.key,
+    this.onCodeSent,
+    this.onBackToLogin,
+    this.initialEmail,
+  });
 
   final void Function(BuildContext context, SetPasswordArgs args)? onCodeSent;
   final VoidCallback? onBackToLogin;
 
+  /// Email already typed on the login screen, prefilled into the form.
+  final String? initialEmail;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ForgetPasswordCubit>(
-      create: (_) => getIt<ForgetPasswordCubit>(),
+      create: (_) => getIt<ForgetPasswordCubit>()..prefillEmail(initialEmail),
       child: BlocListener<ForgetPasswordCubit, ForgetPasswordState>(
         listenWhen:
             (ForgetPasswordState previous, ForgetPasswordState current) =>

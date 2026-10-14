@@ -14,7 +14,8 @@ class LoginScreen extends StatelessWidget {
   final void Function(BuildContext context, LoginResponseModel session)?
   onLoggedIn;
 
-  final VoidCallback? onForgotPassword;
+  /// Receives the email typed on this screen, empty when there is none.
+  final void Function(String email)? onForgotPassword;
 
   @override
   Widget build(BuildContext context) {

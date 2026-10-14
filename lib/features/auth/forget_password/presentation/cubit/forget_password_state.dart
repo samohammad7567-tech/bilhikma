@@ -18,8 +18,6 @@ final class ForgetPasswordState {
 
   bool get isLoading => status == ForgetPasswordStatus.loading;
 
-  bool get wantsEmailAddress => channel.wantsEmailAddress;
-
   ForgetPasswordState copyWith({
     ForgetPasswordStatus? status,
     ResetChannel? channel,

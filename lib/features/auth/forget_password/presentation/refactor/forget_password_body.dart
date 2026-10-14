@@ -1,10 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/widgets/app_top_bar.dart';
-import '../cubit/forget_password_cubit.dart';
 import '../widgets/reset_password_header.dart';
 import 'forget_password_form.dart';
 
@@ -34,22 +32,9 @@ class ForgetPasswordBody extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  BlocBuilder<ForgetPasswordCubit, ForgetPasswordState>(
-                    buildWhen:
-                        (
-                          ForgetPasswordState previous,
-                          ForgetPasswordState current,
-                        ) =>
-                            previous.wantsEmailAddress !=
-                            current.wantsEmailAddress,
-                    builder:
-                        (BuildContext context, ForgetPasswordState state) =>
-                            ResetPasswordHeader(
-                              headingKey: 'recover_account',
-                              hintKey: state.wantsEmailAddress
-                                  ? 'recover_account_email_hint'
-                                  : 'recover_account_phone_hint',
-                            ),
+                  const ResetPasswordHeader(
+                    headingKey: 'recover_account',
+                    hintKey: 'recover_account_email_hint',
                   ),
 
                   SizedBox(height: 26.h),

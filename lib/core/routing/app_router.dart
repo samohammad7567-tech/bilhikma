@@ -71,15 +71,18 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => LoginScreen(
             onLoggedIn: _onLoggedIn,
-            onForgotPassword: () => getIt<GlobalKey<NavigatorState>>()
-                .currentState
-                ?.pushNamed(AppRoutes.forgetPassword),
+            onForgotPassword: (String email) =>
+                getIt<GlobalKey<NavigatorState>>().currentState?.pushNamed(
+                  AppRoutes.forgetPassword,
+                  arguments: email,
+                ),
           ),
         );
 
       case AppRoutes.forgetPassword:
         return MaterialPageRoute(
           builder: (_) => ForgetPasswordScreen(
+            initialEmail: args is String ? args : null,
             onCodeSent: (BuildContext context, SetPasswordArgs args) =>
                 Navigator.of(
                   context,

@@ -17,7 +17,7 @@ import '../widgets/login_or_divider.dart';
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key, this.onForgotPassword});
 
-  final VoidCallback? onForgotPassword;
+  final void Function(String email)? onForgotPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,8 @@ class LoginForm extends StatelessWidget {
               LoginOptionsRow(
                 rememberMe: state.rememberMe,
                 onRememberMeChanged: cubit.toggleRememberMe,
-                onForgotPassword: onForgotPassword,
+                onForgotPassword: () =>
+                    onForgotPassword?.call(cubit.recoveryEmail),
               ),
               SizedBox(height: 32.h),
               CustomButton(

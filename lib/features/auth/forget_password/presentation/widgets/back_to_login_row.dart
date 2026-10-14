@@ -21,8 +21,9 @@ class BackToLoginRow extends StatelessWidget {
             'remembered_password'.tr(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).linkLabel
-                .copyWith(color: colors.onSurface),
+            style: AppTheme.styles(
+              context,
+            ).linkLabel.copyWith(color: colors.onSurface),
           ),
         ),
 
