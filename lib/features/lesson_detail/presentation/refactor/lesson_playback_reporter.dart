@@ -8,6 +8,12 @@ class LessonPlaybackReporter {
   static const Duration _tick = Duration(seconds: 1);
 
   static const Duration _endWindow = Duration(milliseconds: 400);
+
+  /// Grace period between end-of-media and the final checkpoint report.
+  ///
+  /// Gives a checkpoint fired by the last tick time to land first, so the
+  /// cubit's `_isReporting` guard cannot swallow the end-of-media report.
+  static const Duration _endReportDelay = Duration(milliseconds: 1500);
   static const Duration _durationTimeout = Duration(seconds: 10);
   static const Duration _durationPoll = Duration(milliseconds: 250);
 
@@ -16,6 +22,7 @@ class LessonPlaybackReporter {
 
   VideoPlayback? _playback;
   Timer? _ticker;
+  Timer? _endTimer;
   int _lastPositionSeconds = -1;
   bool _hasEnded = false;
   void attach(VideoPlayback playback) {
@@ -32,8 +39,15 @@ class LessonPlaybackReporter {
     _ticker?.cancel();
     _ticker = null;
 
+    _cancelEndReport();
+
     _playback?.removeListener(_watchForEnd);
     _playback = null;
+  }
+
+  void _cancelEndReport() {
+    _endTimer?.cancel();
+    _endTimer = null;
   }
 
   Future<void> beginReportingAt(int seconds) async {
@@ -76,6 +90,7 @@ class LessonPlaybackReporter {
     if (playback == null) return;
 
     _hasEnded = false;
+    _cancelEndReport();
 
     await playback.seekTo(Duration(seconds: seconds < 0 ? 0 : seconds));
   }
@@ -105,6 +120,15 @@ class LessonPlaybackReporter {
 
     _hasEnded = true;
 
-    onEnded(duration.inSeconds);
+    // Deliberately delayed rather than reported inline: see _endReportDelay.
+    // Cancelled by detach() and by seeking away, so it can never fire into a
+    // torn-down playback or a closed cubit.
+    _cancelEndReport();
+    _endTimer = Timer(_endReportDelay, () {
+      _endTimer = null;
+      if (_playback == null) return;
+
+      onEnded(duration.inSeconds);
+    });
   }
 }

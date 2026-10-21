@@ -29,7 +29,7 @@ class LiveSessionsBody extends StatelessWidget {
 
         if (state.hasFailed) {
           return AppErrorView(
-            errorKey: state.errorKey,
+            errorKey: "state.messageKey",
             onRetry: cubit.loadSessions,
           );
         }

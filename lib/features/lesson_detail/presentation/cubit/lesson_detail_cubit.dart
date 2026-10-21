@@ -49,6 +49,13 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       <int, DownloadProgressThrottle>{};
 
   bool _isReporting = false;
+
+  /// The checkpoint POST currently in flight, if any.
+  ///
+  /// The end-of-media report has to wait for it: `_reportDueCheckpoint`
+  /// drops its call when `_isReporting` is set, which would otherwise lose
+  /// the final checkpoint whenever the last tick is still being sent.
+  Future<void>? _reportInFlight;
   PlaybackAccess? _access;
   bool _isProgressHalted = false;
   static const Duration _correctionCooldown = Duration(seconds: 5);
@@ -221,6 +228,15 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     emit(state.copyWith(positionSeconds: durationSeconds));
 
     await _persistCounter();
+
+    // A checkpoint from the last tick can still be on the wire. Let it settle
+    // so the guard in _reportDueCheckpoint does not discard the final report.
+    final Future<void>? inFlight = _reportInFlight;
+    if (inFlight != null) {
+      await inFlight.catchError((Object _) {});
+      if (isClosed) return;
+    }
+
     await _reportDueCheckpoint(atEnd: true);
   }
 
@@ -230,7 +246,14 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     if (!atEnd && state.positionSeconds < checkpoint) return;
     if (_isCoolingDown) return;
 
-    await _sendCheckpoint(checkpoint);
+    final Future<void> report = _sendCheckpoint(checkpoint);
+    _reportInFlight = report;
+
+    try {
+      await report;
+    } finally {
+      if (identical(_reportInFlight, report)) _reportInFlight = null;
+    }
   }
 
   bool get _isCoolingDown {

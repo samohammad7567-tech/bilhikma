@@ -62,7 +62,7 @@ class AppRouter {
             child: OrientationLock(
               child: SplashScreen(onCompleted: _onSplashCompleted),
             ),
-          ),
+          ),  
         );
 
       case AppRoutes.login:

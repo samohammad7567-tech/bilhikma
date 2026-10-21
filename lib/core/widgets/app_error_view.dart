@@ -31,8 +31,9 @@ class AppErrorView extends StatelessWidget {
             Text(
               message ?? (errorKey ?? 'something_went_wrong').tr(),
               textAlign: TextAlign.center,
-              style: AppTheme.styles(context).bodyLarge
-                  .copyWith(color: colors.secondary),
+              style: AppTheme.styles(
+                context,
+              ).bodyLarge.copyWith(color: colors.secondary),
             ),
 
             SizedBox(height: 20.h),

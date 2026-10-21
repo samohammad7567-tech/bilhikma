@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_progress_bar.dart';
+import '../../../../core/widgets/custom_outline_button.dart';
 
 class BookDownloadProgress extends StatelessWidget {
   const BookDownloadProgress({
@@ -57,12 +58,6 @@ class BookDownloadProgress extends StatelessWidget {
                 style: AppTheme.styles(context).cardCaption,
               ),
             ],
-
-            if (onCancel != null) ...<Widget>[
-              SizedBox(width: 4.w),
-
-              _cancelButton(context),
-            ],
           ],
         ),
 
@@ -72,29 +67,37 @@ class BookDownloadProgress extends StatelessWidget {
           AppProgressBar(progress: fraction, height: 6.h)
         else
           _indeterminate(context),
+
+        if (onCancel != null) ...<Widget>[
+          SizedBox(height: 12.h),
+
+          _cancelButton(context),
+        ],
       ],
     );
   }
 
+  /// A full-width, labelled stop — same shape as the Download and Preview
+  /// buttons the card shows the rest of the time, so it reads as the action it
+  /// is rather than as a decoration on the progress row.
   Widget _cancelButton(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    return Tooltip(
-      message: 'cancel_download'.tr(),
-      child: InkWell(
-        onTap: isCancelling ? null : onCancel,
-        borderRadius: BorderRadius.circular(20.r),
-        child: Padding(
-          padding: EdgeInsets.all(4.w),
-          child: Icon(
-            Icons.close_rounded,
-            size: 18.w,
-            color: isCancelling
-                ? colors.onSurfaceVariant.withValues(alpha: 0.5)
-                : colors.error,
-          ),
-        ),
-      ),
+    return CustomOutlineButton(
+      onPressed: onCancel!,
+      text: 'cancel_download'.tr(),
+      width: double.infinity,
+      height: 46.h,
+      threeRadius: 8.r,
+      lastRadius: 8.r,
+      borderColor: colors.error,
+      textColor: colors.error,
+      backgroundColor: colors.error.withValues(alpha: 0.06),
+      // Winding down: the spinner replaces the label and the button stops
+      // taking taps, so a second tap cannot queue a second cancel.
+      isLoading: isCancelling,
+      loadingWidth: 20.w,
+      loadingHeight: 20.w,
     );
   }
 

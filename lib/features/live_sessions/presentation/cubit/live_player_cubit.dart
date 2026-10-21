@@ -62,9 +62,13 @@ class LivePlayerCubit extends Cubit<LivePlayerState> {
 
       _startHeartbeat();
     } on AppException catch (error) {
+      print(error.statusCode);
       if (isClosed) return;
       emit(
-        state.copyWith(status: LivePlayerStatus.failure, errorKey: error.key),
+        state.copyWith(
+          status: LivePlayerStatus.failure,
+          errorKey: error.message,
+        ),
       );
     } catch (error) {
       if (isClosed) return;

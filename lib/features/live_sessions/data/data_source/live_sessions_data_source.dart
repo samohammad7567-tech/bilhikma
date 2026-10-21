@@ -16,7 +16,7 @@ class LiveSessionsDataSource {
           ApiEndpoints.liveSessions,
           LiveSessionModel.fromJson,
         );
-
+    print(page.items.first.youtubeUrl);
     return page.items;
   }
 

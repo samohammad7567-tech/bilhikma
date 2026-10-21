@@ -43,6 +43,8 @@ class LiveSessionsCubit extends Cubit<LiveSessionsState> {
         state.copyWith(status: LiveSessionsStatus.failure, errorKey: error.key),
       );
     } catch (error) {
+      print("${error.runtimeType}************************");
+
       if (isClosed) return;
       emit(
         state.copyWith(
