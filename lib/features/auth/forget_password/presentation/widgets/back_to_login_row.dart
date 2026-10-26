@@ -30,16 +30,20 @@ class BackToLoginRow extends StatelessWidget {
         SizedBox(width: 6.w),
 
         Flexible(
-          child: GestureDetector(
+          child: InkWell(
             onTap: onLogin,
-            child: Text(
-              'login'.tr(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).linkLabel.copyWith(
-                fontWeight: FontWeight.w700,
-                decoration: TextDecoration.underline,
-                decorationColor: colors.secondary,
+            borderRadius: BorderRadius.circular(6.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+              child: Text(
+                'login'.tr(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.styles(context).linkLabel.copyWith(
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
+                  decorationColor: colors.secondary,
+                ),
               ),
             ),
           ),

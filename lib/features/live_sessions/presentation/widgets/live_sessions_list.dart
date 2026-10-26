@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/live_session_model.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
 import '../../../../core/widgets/live_session_tile.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 
@@ -33,10 +34,13 @@ class LiveSessionsList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final LiveSessionModel session = sessions[index];
 
-        return LiveSessionTile(
-          session: session,
-          onWatch: () => onWatch(session),
-          onRemind: () => onRemind(session),
+        return AppFadeSlideIn(
+          index: index,
+          child: LiveSessionTile(
+            session: session,
+            onWatch: () => onWatch(session),
+            onRemind: () => onRemind(session),
+          ),
         );
       },
     );

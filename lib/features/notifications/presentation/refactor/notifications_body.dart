@@ -5,12 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/routing/notification_destination.dart';
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../../../../core/widgets/app_error_view.dart';
+import '../../../../core/widgets/app_state_switcher.dart';
 import '../../data/models/notification_model.dart';
 import '../cubit/notifications_cubit.dart';
 import 'notifications_list.dart';
 import '../widgets/notification_details_sheet.dart';
 import '../widgets/notification_filter_tabs.dart';
 import '../widgets/notifications_empty_view.dart';
+import '../widgets/notifications_skeleton.dart';
 
 class NotificationsBody extends StatelessWidget {
   const NotificationsBody({super.key});
@@ -18,53 +20,59 @@ class NotificationsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationsCubit, NotificationsState>(
-      builder: (BuildContext context, NotificationsState state) {
-        final NotificationsCubit cubit = context.read<NotificationsCubit>();
+      builder: (BuildContext context, NotificationsState state) =>
+          AppStateSwitcher(child: _content(context, state)),
+    );
+  }
 
-        if (state.isFirstLoad) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  Widget _content(BuildContext context, NotificationsState state) {
+    final NotificationsCubit cubit = context.read<NotificationsCubit>();
 
-        if (state.hasFailedOutright) {
-          return AppErrorView(
-            errorKey: state.errorKey,
-            onRetry: cubit.loadNotifications,
-          );
-        }
+    if (state.isFirstLoad) return const NotificationsSkeleton();
 
-        return Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 4.h),
-              child: NotificationFilterTabs(
-                filter: state.filter,
-                totalCount: state.notifications.length,
-                unreadCount: state.unreadCount,
-                onSelected: cubit.selectFilter,
-              ),
+    if (state.hasFailedOutright) {
+      return AppErrorView(
+        errorKey: state.errorKey,
+        onRetry: cubit.loadNotifications,
+      );
+    }
+
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 4.h),
+          child: NotificationFilterTabs(
+            filter: state.filter,
+            totalCount: state.notifications.length,
+            unreadCount: state.unreadCount,
+            onSelected: cubit.selectFilter,
+          ),
+        ),
+
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: cubit.refresh,
+            child: AppStateSwitcher(
+              child: state.hasNothingToShow
+                  ? NotificationsEmptyView(
+                      messageKey: state.isUnreadTab
+                          ? 'no_unread_notifications'
+                          : 'no_notifications',
+                    )
+                  : NotificationsList(
+                      // Keyed by filter so switching tabs cross-fades
+                      // instead of cutting to the other list.
+                      key: ValueKey<NotificationsFilter>(state.filter),
+                      groups: state.groups,
+                      openingId: state.openingId,
+                      onSeen: cubit.markSeen,
+                      onOpen: (NotificationModel item) =>
+                          _open(context, cubit, item),
+                    ),
             ),
-
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: cubit.refresh,
-                child: state.hasNothingToShow
-                    ? NotificationsEmptyView(
-                        messageKey: state.isUnreadTab
-                            ? 'no_unread_notifications'
-                            : 'no_notifications',
-                      )
-                    : NotificationsList(
-                        groups: state.groups,
-                        openingId: state.openingId,
-                        onSeen: cubit.markSeen,
-                        onOpen: (NotificationModel item) =>
-                            _open(context, cubit, item),
-                      ),
-              ),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
     );
   }
 

@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/widgets/app_empty_view.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
 import '../../../../core/widgets/subject_card.dart';
 import '../../../../core/models/live_session_model.dart';
 import '../../data/models/resume_lesson_model.dart';
@@ -43,34 +45,45 @@ class HomeSections extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverList(
             delegate: SliverChildListDelegate(<Widget>[
-              InstitutionCard(
-                institution: state.context?.entityName ?? '',
-                path: state.classPath,
+              AppFadeSlideIn(
+                child: InstitutionCard(
+                  institution: state.context?.entityName ?? '',
+                  path: state.classPath,
+                ),
               ),
               SizedBox(height: 14.h),
 
-              HomeStatsRow(
-                overallProgress: state.overallProgress,
-                lessonsCount: state.lessonsCount,
-                subjectsCount: state.subjectsCount,
+              AppFadeSlideIn(
+                index: 1,
+                child: HomeStatsRow(
+                  overallProgress: state.overallProgress,
+                  lessonsCount: state.lessonsCount,
+                  subjectsCount: state.subjectsCount,
+                ),
               ),
 
               if (live != null) ...<Widget>[
                 SizedBox(height: 14.h),
-                LiveSessionCard(
-                  session: live,
-                  onTap: onLiveSessionTap == null
-                      ? null
-                      : () => onLiveSessionTap!(live),
+                AppFadeSlideIn(
+                  index: 2,
+                  child: LiveSessionCard(
+                    session: live,
+                    onTap: onLiveSessionTap == null
+                        ? null
+                        : () => onLiveSessionTap!(live),
+                  ),
                 ),
               ],
 
               SizedBox(height: 20.h),
 
-              SectionHeader(
-                title: context.tr('study_subjects'),
-                subtitle: className,
-                onViewAll: onViewAllSubjects,
+              AppFadeSlideIn(
+                index: 3,
+                child: SectionHeader(
+                  title: context.tr('study_subjects'),
+                  subtitle: className,
+                  onViewAll: onViewAllSubjects,
+                ),
               ),
 
               SizedBox(height: 12.h),
@@ -78,25 +91,40 @@ class HomeSections extends StatelessWidget {
           ),
         ),
 
-        SliverList.builder(
-          itemCount: state.subjects.length,
-          itemBuilder: (BuildContext context, int index) {
-            final SubjectModel subject = state.subjects[index];
+        if (state.subjects.isEmpty)
+          const SliverToBoxAdapter(
+            child: AppEmptyView(
+              icon: Icons.menu_book_outlined,
+              messageKey: 'no_subjects',
+            ),
+          )
+        else
+          SliverList.builder(
+            itemCount: state.subjects.length,
+            itemBuilder: (BuildContext context, int index) {
+              final SubjectModel subject = state.subjects[index];
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: SubjectCard(
-                title: subject.name,
-                subtitle: HomeFormats.lessons(subject.lessonsCount),
-                progress: subject.progress,
-                order: subject.position,
-                onTap: onSubjectTap == null
-                    ? null
-                    : () => onSubjectTap!(subject),
-              ),
-            );
-          },
-        ),
+              return AppFadeSlideIn(
+                // Continues the run started by the cards above it.
+                index: index + 4,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  child: SubjectCard(
+                    title: subject.name,
+                    subtitle: HomeFormats.lessons(subject.lessonsCount),
+                    progress: subject.progress,
+                    order: subject.position,
+                    onTap: onSubjectTap == null
+                        ? null
+                        : () => onSubjectTap!(subject),
+                  ),
+                ),
+              );
+            },
+          ),
 
         if (resume != null)
           SliverPadding(

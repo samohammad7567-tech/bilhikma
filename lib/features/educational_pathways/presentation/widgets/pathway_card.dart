@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/themes/app_motion.dart';
 import '../../data/models/educational_pathway_model.dart';
 import '../refactor/pathway_view_data.dart';
 import 'pathway_info_row.dart';
@@ -50,10 +51,16 @@ class PathwayCard extends StatelessWidget {
 
           SizedBox(height: 8.h),
 
-          PathwayTree(
-            pathway: pathway,
-            expandedNodeIds: expandedNodeIds,
-            onToggle: onToggle,
+          // Expanding a node used to snap the card to its new height.
+          AnimatedSize(
+            duration: AppMotion.normal,
+            curve: AppMotion.enter,
+            alignment: Alignment.topCenter,
+            child: PathwayTree(
+              pathway: pathway,
+              expandedNodeIds: expandedNodeIds,
+              onToggle: onToggle,
+            ),
           ),
         ],
       ),

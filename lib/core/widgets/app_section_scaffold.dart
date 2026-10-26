@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'app_content_width.dart';
 import 'app_drawer_menu_button.dart';
 import 'app_top_bar.dart';
 
@@ -41,31 +43,38 @@ class AppSectionScaffold extends StatelessWidget {
       drawer: drawer,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Builder(
-                builder: (BuildContext barContext) => AppTopBar(
-                  title: title,
-                  onBack: showBack
-                      ? onBack ?? () => Navigator.of(barContext).pop()
-                      : null,
-                  leading:
-                      leading ??
-                      _menuButton(
-                        barContext,
-                        hasHostDrawer,
-                        hasOwnDrawer,
-                        host,
-                      ),
-                  trailing: trailing,
+        child: AppContentWidth(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                child: Builder(
+                  builder: (BuildContext barContext) {
+                    final Widget? menu = _menuButton(
+                      barContext,
+                      hasHostDrawer,
+                      hasOwnDrawer,
+                      host,
+                    );
+
+                    return AppTopBar(
+                      title: title,
+                      onBack: showBack
+                          ? onBack ?? () => Navigator.of(barContext).pop()
+                          : null,
+                      // With a back button the menu becomes the second start-side
+                      // action instead of replacing it.
+                      leading: showBack ? leading : leading ?? menu,
+                      secondaryLeading: showBack ? menu : null,
+                      trailing: trailing,
+                    );
+                  },
                 ),
               ),
-            ),
 
-            Expanded(child: child),
-          ],
+              Expanded(child: child),
+            ],
+          ),
         ),
       ),
     );

@@ -5,11 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
+import '../../../../core/widgets/app_state_switcher.dart';
 import '../../../../core/models/subject_content_model.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../cubit/lessons_cubit.dart';
 import '../../../../core/widgets/lesson_card.dart';
+import '../../../../core/widgets/loading/app_inline_loader.dart';
+import '../../../../core/widgets/loading/skeletons/lesson_cards_skeleton.dart';
 import 'lesson_media_tabs.dart';
+import 'lessons_skeleton.dart';
 import '../../../../core/widgets/lesson_subject_header.dart';
 
 class LessonsContent extends StatelessWidget {
@@ -19,10 +24,11 @@ class LessonsContent extends StatelessWidget {
   final ValueChanged<LessonModel>? onLessonTap;
 
   @override
-  Widget build(BuildContext context) {
-    if (state.isFirstLoad) {
-      return const Center(child: CircularProgressIndicator());
-    }
+  Widget build(BuildContext context) =>
+      AppStateSwitcher(child: _content(context));
+
+  Widget _content(BuildContext context) {
+    if (state.isFirstLoad) return const LessonsSkeleton();
 
     final SubjectContentModel? subject = state.subject;
     if (subject == null) {
@@ -31,8 +37,6 @@ class LessonsContent extends StatelessWidget {
         onRetry: context.read<LessonsCubit>().load,
       );
     }
-
-    final List<LessonModel> lessons = state.lessons;
 
     return RefreshIndicator(
       onRefresh: context.read<LessonsCubit>().refresh,
@@ -57,43 +61,57 @@ class LessonsContent extends StatelessWidget {
 
           SizedBox(height: 16.h),
 
-          if (state.isLoading)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 32.h),
-              child: const Center(child: CircularProgressIndicator()),
-            )
-          else if (lessons.isEmpty)
-            const AppEmptyView(
-              icon: Icons.menu_book_outlined,
-              messageKey: 'no_lessons_in_section',
-            )
-          else ...<Widget>[
-            for (final LessonModel lesson in lessons)
-              Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
-                child: LessonCard(
-                  lesson: lesson,
-                  onTap: onLessonTap == null
-                      ? null
-                      : () => onLessonTap!(lesson),
-                ),
-              ),
+          AppStateSwitcher(child: _lessons(context)),
 
-            if (state.hasMore)
-              Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
-                child: Center(
-                  child: state.isLoadingMore
-                      ? const CircularProgressIndicator()
-                      : TextButton(
-                          onPressed: context.read<LessonsCubit>().loadMore,
-                          child: Text('view_all'.tr()),
-                        ),
-                ),
-              ),
-          ],
+          if (state.hasMore && !state.isLoading) _loadMore(context),
         ],
       ),
     );
   }
+
+  Widget _lessons(BuildContext context) {
+    // A type switch loads a different set, so the old cards are replaced rather
+    // than left standing — but by skeletons of the same height, so the list
+    // keeps its extent and the scroll position holds.
+    if (state.isLoading) return const LessonCardsSkeleton();
+
+    final List<LessonModel> lessons = state.lessons;
+
+    if (lessons.isEmpty) {
+      return const AppEmptyView(
+        icon: Icons.menu_book_outlined,
+        messageKey: 'no_lessons_in_section',
+      );
+    }
+
+    return Column(
+      children: <Widget>[
+        for (int index = 0; index < lessons.length; index++)
+          AppFadeSlideIn(
+            index: index,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+              child: LessonCard(
+                lesson: lessons[index],
+                onTap: onLessonTap == null
+                    ? null
+                    : () => onLessonTap!(lessons[index]),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _loadMore(BuildContext context) => Padding(
+    padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+    child: Center(
+      child: state.isLoadingMore
+          ? const AppInlineLoader()
+          : TextButton(
+              onPressed: context.read<LessonsCubit>().loadMore,
+              child: Text('load_more'.tr()),
+            ),
+    ),
+  );
 }

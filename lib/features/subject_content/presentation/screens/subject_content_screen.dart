@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/drawer/presentation/refactor/app_drawer.dart';
+import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/routing/lesson_detail_args.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/models/textbook_model.dart';
@@ -32,13 +33,12 @@ class SubjectContentScreen extends StatelessWidget {
                 current.messageKey != null ||
                 (current.errorKey != null && current.content != null),
         listener: _showMessage,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+        child: AppSectionScaffold(
+          title: context.tr('subject_content'),
           drawer: const AppDrawer(),
-          body: Builder(
+          showMenu: true,
+          child: Builder(
             builder: (BuildContext context) => SubjectContentBody(
-              onBack: () => Navigator.of(context).pop(),
-              onMenuTap: () => Scaffold.of(context).openDrawer(),
               onLessonTap: (LessonModel lesson) => _openLesson(context, lesson),
 
               onWatchLive: (LiveSessionModel session) => Navigator.of(

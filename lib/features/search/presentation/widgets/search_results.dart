@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/widgets/lesson_card.dart';
 import '../cubit/search_cubit.dart';
+import 'search_results_skeleton.dart';
 
 class SearchResults extends StatelessWidget {
   const SearchResults({required this.state, this.onResultTap, super.key});
@@ -16,9 +18,9 @@ class SearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.isFirstLoad) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    // Covers a repeat query too: the previous results belong to a different
+    // query, so they are replaced by the skeleton rather than left standing.
+    if (state.isLoading) return const SearchResultsSkeleton();
 
     if (state.hasFailed) {
       return AppErrorView(
@@ -43,11 +45,14 @@ class SearchResults extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final LessonModel result = results[index];
 
-        return Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
-          child: LessonCard(
-            lesson: result,
-            onTap: onResultTap == null ? null : () => onResultTap!(result),
+        return AppFadeSlideIn(
+          index: index,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            child: LessonCard(
+              lesson: result,
+              onTap: onResultTap == null ? null : () => onResultTap!(result),
+            ),
           ),
         );
       },

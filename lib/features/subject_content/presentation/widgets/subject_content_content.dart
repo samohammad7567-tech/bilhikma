@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_error_view.dart';
+import '../../../../core/widgets/app_state_switcher.dart';
+import '../../../../core/enums/lesson_category_enum.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/models/subject_content_model.dart';
 import '../../../../core/widgets/lesson_category_chips.dart';
@@ -12,6 +14,7 @@ import '../../../gallery/data/models/media_album_model.dart';
 import '../../../../core/models/live_session_model.dart';
 import '../cubit/subject_content_cubit.dart';
 import '../refactor/subject_content_sections.dart';
+import 'subject_content_skeleton.dart';
 
 class SubjectContentContent extends StatelessWidget {
   const SubjectContentContent({
@@ -38,10 +41,11 @@ class SubjectContentContent extends StatelessWidget {
   final ValueChanged<MediaAlbumModel> onAlbumTap;
 
   @override
-  Widget build(BuildContext context) {
-    if (state.isFirstLoad) {
-      return const Center(child: CircularProgressIndicator());
-    }
+  Widget build(BuildContext context) =>
+      AppStateSwitcher(child: _content(context));
+
+  Widget _content(BuildContext context) {
+    if (state.isFirstLoad) return const SubjectContentSkeleton();
 
     final SubjectContentModel? subject = state.subject;
     if (subject == null) {
@@ -72,16 +76,21 @@ class SubjectContentContent extends StatelessWidget {
 
           SizedBox(height: 16.h),
 
-          SubjectContentSection(
-            state: state,
-            onLessonTap: onLessonTap,
-            onWatchLive: onWatchLive,
-            onRemindLive: onRemindLive,
-            onDownloadBook: onDownloadBook,
-            onCancelBookDownload: onCancelBookDownload,
-            onPreviewBook: onPreviewBook,
-            onOpenBook: onOpenBook,
-            onAlbumTap: onAlbumTap,
+          AppStateSwitcher(
+            child: SubjectContentSection(
+              // Keyed by category so the chips cross-fade their section
+              // instead of cutting straight to it.
+              key: ValueKey<LessonCategory>(state.selectedCategory),
+              state: state,
+              onLessonTap: onLessonTap,
+              onWatchLive: onWatchLive,
+              onRemindLive: onRemindLive,
+              onDownloadBook: onDownloadBook,
+              onCancelBookDownload: onCancelBookDownload,
+              onPreviewBook: onPreviewBook,
+              onOpenBook: onOpenBook,
+              onAlbumTap: onAlbumTap,
+            ),
           ),
         ],
       ),

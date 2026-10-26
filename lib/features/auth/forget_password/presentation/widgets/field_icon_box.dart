@@ -22,10 +22,11 @@ class FieldIconBox extends StatelessWidget {
 
     if (onTap == null) return box;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: box,
+    return Material(
+      color: Colors.transparent,
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(onTap: onTap, child: box),
     );
   }
 }

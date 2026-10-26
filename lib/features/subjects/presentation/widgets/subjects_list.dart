@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
 import '../../../../core/widgets/subject_card.dart';
 import '../../../../core/models/subject_model.dart';
 import '../refactor/subjects_formats.dart';
@@ -41,12 +42,15 @@ class SubjectsList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final SubjectModel subject = subjects[index];
 
-        return SubjectCard(
-          title: subject.name,
-          subtitle: SubjectsFormats.lessons(subject.lessonsCount),
-          progress: subject.progress,
-          order: subject.position,
-          onTap: onSubjectTap == null ? null : () => onSubjectTap!(subject),
+        return AppFadeSlideIn(
+          index: index,
+          child: SubjectCard(
+            title: subject.name,
+            subtitle: SubjectsFormats.lessons(subject.lessonsCount),
+            progress: subject.progress,
+            order: subject.position,
+            onTap: onSubjectTap == null ? null : () => onSubjectTap!(subject),
+          ),
         );
       },
     );

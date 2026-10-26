@@ -45,10 +45,11 @@ class LoginForm extends StatelessWidget {
                 hintText: 'password'.tr(),
                 textDirection: TextDirection.ltr,
 
-                suffixIcon: GestureDetector(
+                suffixIcon: InkWell(
                   onTap: cubit.togglePasswordVisibility,
+                  customBorder: const CircleBorder(),
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12.w),
                     child: AppIcon(
                       size: 20.w,
                       asset: AppAssets.assetsLockIcon,
@@ -85,7 +86,7 @@ class LoginForm extends StatelessWidget {
                 onPressed: cubit.submit,
                 text: 'login'.tr(),
                 width: double.infinity,
-                height: 40,
+                height: 40.h,
                 threeRadius: 8.r,
                 lastRadius: 8.r,
                 backgroundColor: colors.secondary,
@@ -104,7 +105,7 @@ class LoginForm extends StatelessWidget {
                     ? 'login_with_phone'.tr()
                     : 'login_with_email'.tr(),
                 width: double.infinity,
-                height: 40,
+                height: 40.h,
                 threeRadius: 8.r,
                 lastRadius: 8.r,
                 borderColor: colors.secondary,

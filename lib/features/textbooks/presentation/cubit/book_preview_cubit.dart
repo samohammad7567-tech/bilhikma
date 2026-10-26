@@ -86,6 +86,14 @@ class BookPreviewCubit extends Cubit<BookPreviewState> {
     emit(state.copyWith(errorKey: 'reader_load_failed'));
   }
 
+  /// Clearing the error unmounts the failed viewer and mounts a fresh one,
+  /// which restarts the document load.
+  void retryLoad() {
+    if (isClosed || !state.hasFailed) return;
+
+    emit(state.copyWith(isLoaded: false, clearError: true));
+  }
+
   void onPageChanged(PdfPageChangedDetails details) {
     if (isClosed) return;
 

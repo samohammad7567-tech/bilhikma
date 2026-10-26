@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../themes/app_motion.dart';
+
 class AppNetworkImage extends StatelessWidget {
   const AppNetworkImage({
     required this.url,
@@ -40,7 +42,9 @@ class AppNetworkImage extends StatelessWidget {
       height: height,
       memCacheWidth: memCacheWidth,
 
-      fadeInDuration: Duration.zero,
+      // Remote images used to pop in; they now cross-fade. The fade-out stays
+      // instant so a replaced image never shows through the one under it.
+      fadeInDuration: AppMotion.normal,
       fadeOutDuration: Duration.zero,
       placeholder: placeholder == null
           ? null

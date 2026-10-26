@@ -18,28 +18,20 @@ class LoginBody extends StatelessWidget {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
             child: ConstrainedBox(
+              // minHeight fills the viewport; `spaceEvenly` distributes the
+              // slack, so no `Expanded` (and no `IntrinsicHeight`) is needed.
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(height: 8.h),
-                    const Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: LoginLanguageToggle(),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          const LoginHeader(),
-                          LoginForm(onForgotPassword: onForgotPassword),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  const Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: LoginLanguageToggle(),
+                  ),
+                  const LoginHeader(),
+                  LoginForm(onForgotPassword: onForgotPassword),
+                ],
               ),
             ),
           );

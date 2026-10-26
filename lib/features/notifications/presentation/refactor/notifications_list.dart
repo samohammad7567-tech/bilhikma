@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../data/models/notification_model.dart';
 import '../widgets/notification_card.dart';
 import '../widgets/notification_day_header.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import 'notification_day_group.dart';
 import 'notification_seen_tracker.dart';
@@ -58,7 +59,11 @@ class _NotificationsListState extends State<NotificationsList> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> rows = _rows();
+    // A flat list of day labels and notifications — references only, so the
+    // rows themselves are still built lazily by the builder below. Flattening
+    // into `List<Widget>` defeated that and rebuilt every row of the history on
+    // every state change.
+    final List<Object> rows = _rows();
 
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
@@ -74,29 +79,30 @@ class _NotificationsListState extends State<NotificationsList> {
           AppBottomNavBar.barHeight + 24.h,
         ),
         itemCount: rows.length,
-        itemBuilder: (BuildContext context, int index) => rows[index],
+        itemBuilder: (BuildContext context, int index) =>
+            _row(rows[index], index),
       ),
     );
   }
 
-  List<Widget> _rows() {
-    final List<Widget> rows = <Widget>[];
+  Widget _row(Object row, int index) {
+    if (row is String) return NotificationDayHeader(label: row);
 
-    for (final NotificationDayGroup group in widget.groups) {
-      rows.add(NotificationDayHeader(label: group.label));
-
-      for (final NotificationModel item in group.items) {
-        rows.add(
-          Padding(
-            padding: EdgeInsets.only(bottom: 10.h),
-            child: _card(item),
-          ),
-        );
-      }
-    }
-
-    return rows;
+    return AppFadeSlideIn(
+      index: index,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 10.h),
+        child: _card(row as NotificationModel),
+      ),
+    );
   }
+
+  List<Object> _rows() => <Object>[
+    for (final NotificationDayGroup group in widget.groups) ...<Object>[
+      group.label,
+      ...group.items,
+    ],
+  ];
 
   Widget _card(NotificationModel item) {
     final Widget card = NotificationCard(

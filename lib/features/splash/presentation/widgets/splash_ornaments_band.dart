@@ -27,24 +27,24 @@ class SplashOrnamentsBand extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
-          Positioned(
-            left: -overflow,
+          PositionedDirectional(
+            start: -overflow,
             child: SplashMedallionEntry(
               entry: ornamentsEntry,
               size: medallionSize,
-              fromLeft: true,
+              fromStart: true,
             ),
           ),
-          Positioned(
-            right: -overflow,
+          PositionedDirectional(
+            end: -overflow,
             child: SplashMedallionEntry(
               entry: ornamentsEntry,
               size: medallionSize,
-              fromLeft: false,
+              fromStart: false,
             ),
           ),
 
-          Positioned(
+          PositionedDirectional(
             bottom: 0,
             child: SplashLogoPop(pop: logoPop, settle: logoSettle),
           ),

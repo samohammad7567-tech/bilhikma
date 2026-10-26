@@ -67,6 +67,7 @@
   "study_subjects": "Subjects",
   "study_subjects_tab": "Study subjects",
   "view_all": "View all",
+  "load_more": "Load more",
   "lesson_count": "{count} lessons",
   "minute_count": "{count} minutes",
   "subject_duration": "{subject} - {duration}",

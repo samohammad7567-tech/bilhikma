@@ -6,7 +6,10 @@ import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/widgets/lesson_card.dart';
+import '../../../../core/widgets/app_fade_slide_in.dart';
+import '../../../../core/widgets/app_state_switcher.dart';
 import '../cubit/archive_cubit.dart';
+import 'archive_skeleton.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 
 class ArchiveContent extends StatelessWidget {
@@ -16,10 +19,11 @@ class ArchiveContent extends StatelessWidget {
   final ValueChanged<LessonModel>? onLessonTap;
 
   @override
-  Widget build(BuildContext context) {
-    if (state.isFirstLoad) {
-      return const Center(child: CircularProgressIndicator());
-    }
+  Widget build(BuildContext context) =>
+      AppStateSwitcher(child: _content(context));
+
+  Widget _content(BuildContext context) {
+    if (state.isFirstLoad) return const ArchiveSkeleton();
 
     if (state.hasFailed) {
       return AppErrorView(
@@ -41,20 +45,23 @@ class ArchiveContent extends StatelessWidget {
         slivers: [
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
-              16,
-              12,
-              16,
+              16.w,
+              12.h,
+              16.w,
               AppBottomNavBar.barHeight + 12.h,
             ),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final lesson = state.visibleItems[index];
 
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  child: LessonCard(
-                    lesson: lesson,
-                    onTap: () => onLessonTap?.call(lesson),
+                return AppFadeSlideIn(
+                  index: index,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    child: LessonCard(
+                      lesson: lesson,
+                      onTap: () => onLessonTap?.call(lesson),
+                    ),
                   ),
                 );
               }, childCount: state.visibleItems.length),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/screen_size.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../data/models/gallery_image_model.dart';
 import 'gallery_tile.dart';
@@ -28,7 +29,7 @@ class GalleryGrid extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
       itemCount: images.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: columnsFor(context),
         mainAxisSpacing: 12.h,
         crossAxisSpacing: 12.w,
       ),
@@ -41,5 +42,13 @@ class GalleryGrid extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// Two up on a phone; a tablet has the room for three, and a large one four.
+  /// Shared with `GallerySkeleton` so both lay out on the same grid.
+  static int columnsFor(BuildContext context) {
+    if (!ScreenSize.isTablet(context)) return 2;
+
+    return ScreenSize.size(context).shortestSide >= 840 ? 4 : 3;
   }
 }

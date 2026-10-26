@@ -51,7 +51,9 @@ class LessonDetailBody extends StatelessWidget {
           );
         }
 
-        if (detail == null || state.isLoading) {
+        // Only gate on a missing detail: gating on `isLoading` too would tear
+        // down the mounted video/audio stage on every reload.
+        if (detail == null) {
           return const Center(child: CircularProgressIndicator());
         }
 

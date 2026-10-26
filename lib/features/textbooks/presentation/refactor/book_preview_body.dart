@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/routing/book_preview_args.dart';
 import '../../../../core/utils/custom_bottom_sheet.dart';
-import '../../../../core/widgets/app_empty_view.dart';
+import '../../../../core/widgets/app_error_view.dart';
 import '../cubit/book_preview_cubit.dart';
 import '../widgets/book_page_jump_sheet.dart';
+import '../widgets/book_page_skeleton.dart';
 import '../widgets/book_pdf_view.dart';
 import '../widgets/book_reader_bar.dart';
 import '../widgets/book_search_field.dart';
@@ -22,9 +23,9 @@ class BookPreviewBody extends StatelessWidget {
     return BlocBuilder<BookPreviewCubit, BookPreviewState>(
       builder: (BuildContext context, BookPreviewState state) {
         if (state.hasFailed) {
-          return AppEmptyView(
-            icon: Icons.broken_image_outlined,
-            messageKey: state.errorKey ?? 'reader_load_failed',
+          return AppErrorView(
+            errorKey: state.errorKey ?? 'reader_load_failed',
+            onRetry: cubit.retryLoad,
           );
         }
 
@@ -40,11 +41,20 @@ class BookPreviewBody extends StatelessWidget {
               ),
 
             Expanded(
-              child: BookPdfView(
-                cubit: cubit,
-                args: args,
-                layout: state.layout,
-                initialPage: state.page,
+              // The skeleton covers the viewer rather than replacing it: the
+              // viewer is what loads the document, so it has to stay mounted.
+              child: Stack(
+                children: <Widget>[
+                  BookPdfView(
+                    cubit: cubit,
+                    args: args,
+                    layout: state.layout,
+                    initialPage: state.page,
+                  ),
+
+                  if (!state.isLoaded)
+                    const Positioned.fill(child: BookPageSkeleton()),
+                ],
               ),
             ),
 

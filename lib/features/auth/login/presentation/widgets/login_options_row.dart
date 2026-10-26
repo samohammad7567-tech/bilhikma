@@ -23,13 +23,17 @@ class LoginOptionsRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          child: GestureDetector(
+          child: InkWell(
             onTap: onForgotPassword,
-            child: Text(
-              'forgot_password'.tr(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).linkLabel,
+            borderRadius: BorderRadius.circular(6.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+              child: Text(
+                'forgot_password'.tr(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.styles(context).linkLabel,
+              ),
             ),
           ),
         ),

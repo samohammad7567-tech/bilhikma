@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_screen_util.dart';
 import 'app_colors.dart';
+import 'app_page_transitions.dart';
 
 class AppTheme {
   AppTheme._();
@@ -78,6 +79,8 @@ class AppTheme {
       ),
       colorScheme: lightColorScheme,
 
+      pageTransitionsTheme: appPageTransitionsTheme,
+
       textTheme: const AppTextStyles(lightColorScheme).textTheme,
     );
   }
@@ -97,6 +100,8 @@ class AppTheme {
       iconTheme: IconThemeData(color: darkColorScheme.primary),
 
       colorScheme: darkColorScheme,
+
+      pageTransitionsTheme: appPageTransitionsTheme,
 
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xff1E1E1E),

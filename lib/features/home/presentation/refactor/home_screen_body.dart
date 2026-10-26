@@ -7,8 +7,11 @@ import '../../data/models/resume_lesson_model.dart';
 import '../../../../core/models/subject_model.dart';
 import '../cubit/home_cubit.dart';
 import '../widgets/home_top_bar.dart';
+import '../../../../core/widgets/app_content_width.dart';
 import '../../../../core/widgets/app_error_view.dart';
+import '../../../../core/widgets/app_state_switcher.dart';
 import '../widgets/home_sections.dart';
+import '../widgets/home_skeleton.dart';
 
 class HomeScreenBody extends StatelessWidget {
   const HomeScreenBody({
@@ -38,49 +41,51 @@ class HomeScreenBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            child: HomeTopBar(
-              onMenuTap: onMenuTap,
-              onNotificationsTap: onNotificationsTap,
-              unreadNotifications: unreadNotifications,
+      child: AppContentWidth(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: HomeTopBar(
+                onMenuTap: onMenuTap,
+                onNotificationsTap: onNotificationsTap,
+                unreadNotifications: unreadNotifications,
+              ),
             ),
-          ),
 
-          Expanded(
-            child: BlocBuilder<HomeCubit, HomeState>(
-              builder: (BuildContext context, HomeState state) {
-                if (state.isFirstLoad) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (state.overview == null) {
-                  return AppErrorView(
-                    errorKey: state.errorKey,
-                    onRetry: context.read<HomeCubit>().loadOverview,
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () => Future.wait<void>(<Future<void>>[
-                    context.read<HomeCubit>().refresh(),
-                    if (onRefreshNotifications != null)
-                      onRefreshNotifications!(),
-                  ]),
-                  child: HomeSections(
-                    state: state,
-                    onViewAllSubjects: onViewAllSubjects,
-                    onSubjectTap: onSubjectTap,
-                    onLiveSessionTap: onLiveSessionTap,
-                    onResumeLessonTap: onResumeLessonTap,
-                  ),
-                );
-              },
+            Expanded(
+              child: BlocBuilder<HomeCubit, HomeState>(
+                builder: (BuildContext context, HomeState state) =>
+                    AppStateSwitcher(child: _content(context, state)),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context, HomeState state) {
+    if (state.isFirstLoad) return const HomeSkeleton();
+
+    if (state.overview == null) {
+      return AppErrorView(
+        errorKey: state.errorKey,
+        onRetry: context.read<HomeCubit>().loadOverview,
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => Future.wait<void>(<Future<void>>[
+        context.read<HomeCubit>().refresh(),
+        if (onRefreshNotifications != null) onRefreshNotifications!(),
+      ]),
+      child: HomeSections(
+        state: state,
+        onViewAllSubjects: onViewAllSubjects,
+        onSubjectTap: onSubjectTap,
+        onLiveSessionTap: onLiveSessionTap,
+        onResumeLessonTap: onResumeLessonTap,
       ),
     );
   }
