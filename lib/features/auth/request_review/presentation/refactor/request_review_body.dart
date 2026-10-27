@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/widgets/app_content_width.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/status_header.dart';
 import '../widgets/info_card.dart';
@@ -48,52 +49,55 @@ class RequestReviewBody extends StatelessWidget {
     ];
 
     return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 50.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            SizedBox(height: 24.h),
+      child: AppContentWidth(
+        maxWidth: 600,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 50.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SizedBox(height: 24.h),
 
-            StatusHeader(
-              title: context.tr('request_under_review'),
-              note: 'request_under_review_note'.tr(),
-            ),
-
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  AppIcon(asset: AppAssets.assetsPending, size: 70.w),
-
-                  SizedBox(height: 24.h),
-
-                  InfoCard(items: items),
-                ],
+              StatusHeader(
+                title: context.tr('request_under_review'),
+                note: 'request_under_review_note'.tr(),
               ),
-            ),
 
-            CustomButton(
-              onPressed:
-                  onBackToLogin ??
-                  () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      AppRoutes.login,
-                      (route) => false,
-                    );
-                  },
-              text: 'back_to_login'.tr(),
-              width: double.infinity,
-              height: 40,
-              threeRadius: 8.r,
-              lastRadius: 8.r,
-              backgroundColor: colors.secondary,
-              textColor: colors.onSecondary,
-              elevation: 0,
-            ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    AppIcon(asset: AppAssets.assetsPending, size: 70.w),
 
-            SizedBox(height: 24.h),
-          ],
+                    SizedBox(height: 24.h),
+
+                    InfoCard(items: items),
+                  ],
+                ),
+              ),
+
+              CustomButton(
+                onPressed:
+                    onBackToLogin ??
+                    () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        AppRoutes.login,
+                        (route) => false,
+                      );
+                    },
+                text: 'back_to_login'.tr(),
+                width: double.infinity,
+                height: 40,
+                threeRadius: 8.r,
+                lastRadius: 8.r,
+                backgroundColor: colors.secondary,
+                textColor: colors.onSecondary,
+                elevation: 0,
+              ),
+
+              SizedBox(height: 24.h),
+            ],
+          ),
         ),
       ),
     );

@@ -29,6 +29,7 @@ class BookPreviewScreen extends StatelessWidget {
           contentId: args.contentId,
           child: AppSectionScaffold(
             title: args.title,
+            maxContentWidth: double.infinity,
             child: BookPreviewBody(args: args),
           ),
         ),

@@ -98,6 +98,9 @@ class _Shell extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) =>
-      AppSectionScaffold(title: context.tr('live_broadcast'), child: child);
+  Widget build(BuildContext context) => AppSectionScaffold(
+    title: context.tr('live_broadcast'),
+    maxContentWidth: double.infinity,
+    child: child,
+  );
 }

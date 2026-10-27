@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_content_width.dart';
 import 'app_drawer_menu_button.dart';
 import 'app_top_bar.dart';
 
@@ -15,6 +16,7 @@ class AppSectionScaffold extends StatelessWidget {
     this.leading,
     this.trailing,
     this.drawer,
+    this.maxContentWidth = 900,
   });
 
   final String title;
@@ -30,6 +32,8 @@ class AppSectionScaffold extends StatelessWidget {
 
   final Widget? drawer;
 
+  final double maxContentWidth;
+
   @override
   Widget build(BuildContext context) {
     final ScaffoldState? host = Scaffold.maybeOf(context);
@@ -41,31 +45,34 @@ class AppSectionScaffold extends StatelessWidget {
       drawer: drawer,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Builder(
-                builder: (BuildContext barContext) => AppTopBar(
-                  title: title,
-                  onBack: showBack
-                      ? onBack ?? () => Navigator.of(barContext).pop()
-                      : null,
-                  leading:
-                      leading ??
-                      _menuButton(
-                        barContext,
-                        hasHostDrawer,
-                        hasOwnDrawer,
-                        host,
-                      ),
-                  trailing: trailing,
+        child: AppContentWidth(
+          maxWidth: maxContentWidth,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Builder(
+                  builder: (BuildContext barContext) => AppTopBar(
+                    title: title,
+                    onBack: showBack
+                        ? onBack ?? () => Navigator.of(barContext).pop()
+                        : null,
+                    leading:
+                        leading ??
+                        _menuButton(
+                          barContext,
+                          hasHostDrawer,
+                          hasOwnDrawer,
+                          host,
+                        ),
+                    trailing: trailing,
+                  ),
                 ),
               ),
-            ),
 
-            Expanded(child: child),
-          ],
+              Expanded(child: child),
+            ],
+          ),
         ),
       ),
     );

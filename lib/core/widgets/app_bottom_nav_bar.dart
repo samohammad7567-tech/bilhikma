@@ -18,14 +18,21 @@ class AppBottomNavBar extends StatelessWidget {
   final AppTab selectedTab;
   final ValueChanged<AppTab> onTabSelected;
 
-  static double get barHeight => 70.h;
+  static const double _minBarHeight = 64;
+  static const double _maxBarHeight = 76;
+  static const double _labelFontSize = 12;
+
+  static double get barHeight =>
+      (70.h).clamp(_minBarHeight, _maxBarHeight).toDouble();
 
   static const double _maxLabelTextScale = 1;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final TextStyle labelStyle = AppTheme.styles(context).navLabel;
+    final TextStyle labelStyle = AppTheme.styles(
+      context,
+    ).navLabel.copyWith(fontSize: _labelFontSize);
 
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: _maxLabelTextScale,

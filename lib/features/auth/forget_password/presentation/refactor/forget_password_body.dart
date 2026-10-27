@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/widgets/app_content_width.dart';
 import '../../../../../core/widgets/app_top_bar.dart';
 import '../widgets/reset_password_header.dart';
 import 'forget_password_form.dart';
@@ -26,21 +27,25 @@ class ForgetPasswordBody extends StatelessWidget {
           ),
 
           Expanded(
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.fromLTRB(40.w, 20.h, 40.w, 32.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const ResetPasswordHeader(
-                    headingKey: 'recover_account',
-                    hintKey: 'recover_account_email_hint',
-                  ),
+            child: AppContentWidth(
+              maxWidth: 560,
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: EdgeInsets.fromLTRB(40.w, 20.h, 40.w, 32.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const ResetPasswordHeader(
+                      headingKey: 'recover_account',
+                      hintKey: 'recover_account_email_hint',
+                    ),
 
-                  SizedBox(height: 26.h),
+                    SizedBox(height: 26.h),
 
-                  ForgetPasswordForm(onBackToLogin: onBackToLogin),
-                ],
+                    ForgetPasswordForm(onBackToLogin: onBackToLogin),
+                  ],
+                ),
               ),
             ),
           ),

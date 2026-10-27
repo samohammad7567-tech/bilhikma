@@ -23,21 +23,31 @@ class GalleryGrid extends StatelessWidget {
       );
     }
 
-    return GridView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-      itemCount: images.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12.h,
-        crossAxisSpacing: 12.w,
-      ),
-      itemBuilder: (BuildContext context, int index) {
-        final GalleryImageModel image = images[index];
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final int crossAxisCount = constraints.maxWidth >= 900
+            ? 4
+            : constraints.maxWidth >= 600
+            ? 3
+            : 2;
 
-        return GalleryTile(
-          image: image,
-          onTap: onImageTap == null ? null : () => onImageTap!(index),
+        return GridView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
+          itemCount: images.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 12.h,
+            crossAxisSpacing: 12.w,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            final GalleryImageModel image = images[index];
+
+            return GalleryTile(
+              image: image,
+              onTap: onImageTap == null ? null : () => onImageTap!(index),
+            );
+          },
         );
       },
     );

@@ -43,12 +43,12 @@ class EducationalPathwaysBody extends StatelessWidget {
                 onPressed: () => SwitchPathwaySheet.show(context, cubit),
                 text: 'switch_educational_path'.tr(),
                 width: double.infinity,
-                height: 40,
+                height: 48.h.clamp(44, 56).toDouble(),
                 threeRadius: 8.r,
                 lastRadius: 8.r,
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .secondaryContainer,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.secondaryContainer,
                 elevation: 0,
               ),
             ),
