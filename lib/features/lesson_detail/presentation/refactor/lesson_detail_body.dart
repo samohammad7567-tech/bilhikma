@@ -1,3 +1,5 @@
+import 'package:bilhikma/core/widgets/coming_soon_sheet.dart';
+import 'package:bilhikma/core/widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +88,6 @@ class LessonDetailBody extends StatelessWidget {
                 ),
               ),
             ],
-
             if (description != null) ...<Widget>[
               SizedBox(height: 18.h),
               LessonDetailInset(
@@ -139,6 +140,28 @@ class LessonDetailBody extends StatelessWidget {
             ],
 
             if (!detail.isArticle) ...<Widget>[SizedBox(height: 20.h)],
+
+            if (!detail.isArticle) ...<Widget>[
+              SizedBox(height: 20.h),
+              LessonDetailInset(
+                child: CustomButton(
+                  onPressed:
+                      onGoToTest ??
+                      () => ComingSoonSheet.show(
+                        context,
+                        messageKey: 'coming_soon_test',
+                      ),
+                  text: 'go_to_test'.tr(),
+                  width: double.infinity,
+                  height: 46,
+                  threeRadius: 8.r,
+                  lastRadius: 8.r,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  textColor: Theme.of(context).colorScheme.onSecondary,
+                  elevation: 0,
+                ),
+              ),
+            ],
           ],
         );
       },

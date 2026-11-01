@@ -10,7 +10,7 @@ class TestQuestionPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     prompt,
-    textAlign: TextAlign.center,
+    textAlign: TextAlign.start,
     style: AppTheme.styles(context).labelStrong,
   );
 }

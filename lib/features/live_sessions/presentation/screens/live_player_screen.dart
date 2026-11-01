@@ -22,6 +22,8 @@ class LivePlayerScreen extends StatefulWidget {
 }
 
 class _LivePlayerScreenState extends State<LivePlayerScreen> {
+  final GlobalKey _stageKey = GlobalKey();
+
   bool _isFullscreen = false;
 
   @override
@@ -57,6 +59,7 @@ class _LivePlayerScreenState extends State<LivePlayerScreen> {
                   }
 
                   final Widget stage = LivePlayerStage(
+                    key: _stageKey,
                     item: state.item!,
                     isFullscreen: _isFullscreen,
                     onFullscreenChanged: (bool value) =>

@@ -45,7 +45,7 @@ class _LivePlayerStageState extends State<LivePlayerStage> {
   void dispose() {
     _cancelHideTimer();
     _playback.removeListener(_onPlaybackChanged);
-    _restoreOrientation();
+    if (widget.isFullscreen) _restoreOrientation();
     _playback.dispose();
     super.dispose();
   }
