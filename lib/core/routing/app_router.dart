@@ -18,6 +18,7 @@ import '../models/enrollment_model.dart';
 import '../../features/educational_pathways/presentation/screens/educational_pathways_screen.dart';
 import '../../features/gallery/presentation/screens/gallery_screen.dart';
 import 'lesson_detail_args.dart';
+import '../../features/lesson_detail/data/models/lesson_detail_model.dart';
 import '../../features/lesson_detail/presentation/screens/lesson_detail_screen.dart';
 import '../../features/lesson_test/presentation/refactor/lesson_test_args.dart';
 import '../../features/lesson_test/presentation/screens/lesson_test_screen.dart';
@@ -62,7 +63,7 @@ class AppRouter {
             child: OrientationLock(
               child: SplashScreen(onCompleted: _onSplashCompleted),
             ),
-          ),  
+          ),
         );
 
       case AppRoutes.login:
@@ -178,17 +179,25 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => LessonDetailScreen(
             args: detailArgs,
-            onGoToTest: () => _push(
+            onGoToTest: (LessonDetailModel detail) => _push(
               AppRoutes.lessonTest,
-              LessonTestArgs(lessonId: '${detailArgs.id}'),
+              LessonTestArgs(
+                lessonId: detail.id,
+                lessonTitle: detail.title,
+                categorySubjectId: detail.categorySubjectId,
+              ),
             ),
           ),
         );
 
       case AppRoutes.lessonTest:
         return MaterialPageRoute(
-          builder: (_) =>
-              LessonTestScreen(args: LessonTestArgs.fromRoute(args)),
+          builder: (_) => LessonTestScreen(
+            args: LessonTestArgs.fromRoute(args),
+            onNextLesson: (int lessonId) => unawaited(
+              _push(AppRoutes.lessonDetail, LessonDetailArgs(id: lessonId)),
+            ),
+          ),
         );
 
       case AppRoutes.subjectContent:
@@ -241,11 +250,12 @@ class AppRouter {
     );
   }
 
-  static void _push(String route, Object arguments) =>
-      getIt<GlobalKey<NavigatorState>>().currentState?.pushNamed(
-        route,
-        arguments: arguments,
-      );
+  static Future<void> _push(String route, Object arguments) async {
+    await getIt<GlobalKey<NavigatorState>>().currentState?.pushNamed(
+      route,
+      arguments: arguments,
+    );
+  }
 
   static void _onLoggedIn(BuildContext context, LoginResponseModel session) {
     unawaited(getIt<ProfileCubit>().reload());

@@ -23,8 +23,9 @@ class TestIntroCard extends StatelessWidget {
               Divider(
                 height: 1.h,
                 thickness: 1,
-                color: Theme.of(context).colorScheme.onSurface
-                    .withValues(alpha: 0.08),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.08),
               ),
 
             TestIntroCardRow(row: rows[index]),

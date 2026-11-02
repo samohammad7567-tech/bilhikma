@@ -5,6 +5,7 @@ import '../../data/models/test_question_model.dart';
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../widgets/test_choice_question.dart';
+import '../widgets/test_dropdown_blanks_question.dart';
 import '../widgets/test_fill_blanks_question.dart';
 import '../widgets/test_match_pairs_question.dart';
 import '../widgets/test_order_sentences_question.dart';
@@ -34,10 +35,28 @@ class TestQuestionView extends StatelessWidget {
         return TestChoiceQuestion(
           question: question,
           answer: answer,
-          onSelect: cubit.selectOption,
+          onSelect: question.type.isTrueFalse
+              ? (String optionId) {
+                  final bool value = optionId.toLowerCase() == 'true';
+                  cubit.selectBoolean(value);
+                }
+              : cubit.selectOption,
         );
 
       case TestQuestionType.fillBlanks:
+        if (question.blankInputMode?.key == 'dropdown') {
+          return TestDropdownBlanksQuestion(
+            question: question,
+            answer: answer,
+            selectedBlankId: state.selectedBlankId,
+            onBlankTap: (String blankId) => answer.blankValue(blankId) == null
+                ? cubit.selectBlank(blankId)
+                : cubit.clearBlank(blankId),
+            onChoiceSelected: (String blankId, String optionId) =>
+                cubit.selectBlankChoice(blankId: blankId, optionId: optionId),
+          );
+        }
+
         return TestFillBlanksQuestion(
           question: question,
           answer: answer,
@@ -61,11 +80,9 @@ class TestQuestionView extends StatelessWidget {
         return TestMatchPairsQuestion(
           question: question,
           answer: answer,
-          matchOrder: state.matchOrderOf(question.id),
+          matchOrder: state.rightOrderOf(question.id),
           selectedPromptId: state.selectedPromptId,
-          onPromptTap: (String pairId) => answer.matchOf(pairId) == null
-              ? cubit.selectPrompt(pairId)
-              : cubit.clearPair(pairId),
+          onPromptTap: cubit.selectPrompt,
           onMatchTap: cubit.linkMatch,
         );
 

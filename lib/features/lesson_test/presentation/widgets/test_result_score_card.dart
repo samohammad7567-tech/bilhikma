@@ -2,18 +2,19 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../data/models/test_result_model.dart';
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
+import '../../data/models/quiz_attempt_model.dart';
 
 class TestResultScoreCard extends StatelessWidget {
   const TestResultScoreCard({required this.result, super.key});
 
-  final TestResultModel result;
+  final QuizAttemptModel result;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final bool passed = result.passed;
+    final bool passed = result.isPassed == true;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
@@ -28,10 +29,10 @@ class TestResultScoreCard extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Text(
-                'score_value'.tr(
+                LangKeys.quizScoreValue.tr(
                   namedArgs: <String, String>{
-                    'correct': '${result.correctCount}',
-                    'total': '${result.totalCount}',
+                    'score': _number(result.score),
+                    'max': _number(result.maxScore),
                   },
                 ),
                 textAlign: TextAlign.center,
@@ -48,7 +49,7 @@ class TestResultScoreCard extends StatelessWidget {
 
             Expanded(
               child: Text(
-                '${result.scorePercent} %',
+                '${result.scorePercent ?? 0} %',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 style: AppTheme.styles(context).statusTitle.copyWith(
@@ -60,5 +61,13 @@ class TestResultScoreCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _number(double? value) {
+    if (value == null) return '-';
+
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(1);
   }
 }

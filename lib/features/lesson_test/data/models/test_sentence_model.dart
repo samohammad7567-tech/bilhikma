@@ -4,7 +4,7 @@ class TestSentenceModel {
   const TestSentenceModel({
     required this.id,
     required this.text,
-    required this.position,
+    this.position = 0,
   });
 
   final String id;
@@ -16,7 +16,7 @@ class TestSentenceModel {
       TestSentenceModel(
         id: Json.asString(json['id']),
         text: Json.asString(json['text'] ?? json['sentence']),
-        position: Json.asInt(json['position'] ?? json['order']),
+        position: Json.asOptionalInt(json['position'] ?? json['order']) ?? 0,
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{

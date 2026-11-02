@@ -38,6 +38,16 @@ class ApiEndpoints {
 
   static String contentDetail(int contentId) => '/user/content/$contentId';
 
+  static String contentQuiz(int contentId) => '/user/content/$contentId/quiz';
+
+  static String quizAttempts(int quizId) => '/user/quizzes/$quizId/attempts';
+
+  static String quizAttemptSubmit(int attemptId) =>
+      '/user/quiz-attempts/$attemptId/submit';
+
+  static String quizMyAttempts(int quizId) =>
+      '/user/quizzes/$quizId/my-attempts';
+
   static String contentAccessToken(int contentId) =>
       '/user/content/$contentId/access-token';
 

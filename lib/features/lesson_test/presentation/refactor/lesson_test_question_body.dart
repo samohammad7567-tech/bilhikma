@@ -30,6 +30,8 @@ class LessonTestQuestionBody extends StatelessWidget {
           progress: state.progress,
           questionRemaining: state.questionRemaining,
           questionElapsed: state.questionElapsed,
+          showTotalTimer: state.hasTimeLimit,
+          showQuestionTimer: question.timeLimit != null,
         ),
 
         SizedBox(height: 22.h),
@@ -50,6 +52,7 @@ class LessonTestQuestionBody extends StatelessWidget {
         TestNavButtons(
           isFirstQuestion: state.isFirstQuestion,
           isLastQuestion: state.isLastQuestion,
+          isSubmitting: state.isSubmitting,
           onNext: cubit.goNext,
           onPrevious: cubit.goPrevious,
         ),

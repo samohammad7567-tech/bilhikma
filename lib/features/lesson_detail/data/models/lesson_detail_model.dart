@@ -3,6 +3,7 @@ import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/models/lesson_progress_model.dart';
 import '../../../../core/enums/lesson_status_enum.dart';
 import 'lesson_attachment_model.dart';
+import 'quiz_summary_model.dart';
 
 class LessonDetailModel {
   const LessonDetailModel({
@@ -21,6 +22,7 @@ class LessonDetailModel {
     this.articleBody,
     this.attachments = const <LessonAttachmentModel>[],
     this.progress = const LessonProgressModel(),
+    this.quiz,
   });
 
   final int id;
@@ -43,6 +45,7 @@ class LessonDetailModel {
   final String? articleBody;
   final List<LessonAttachmentModel> attachments;
   final LessonProgressModel progress;
+  final QuizSummaryModel? quiz;
 
   Duration get duration => Duration(seconds: durationSeconds);
 
@@ -53,6 +56,12 @@ class LessonDetailModel {
   bool get isPlayable => type.isPlayable;
 
   bool get hasAttachments => attachments.isNotEmpty;
+
+  bool get hasQuiz => quiz != null;
+
+  bool get isQuizBlocking => quiz?.isBlocking ?? false;
+
+  bool get hasPassedQuiz => quiz?.hasPassed ?? false;
 
   bool get hasCheckpoints => checkpoints.isNotEmpty;
 
@@ -89,5 +98,11 @@ class LessonDetailModel {
           LessonAttachmentModel.fromJson,
         ),
         progress: LessonProgressModel.fromJson(Json.asMap(data['progress'])),
+        quiz: _quizFromJson(data['quiz']),
       );
+
+  static QuizSummaryModel? _quizFromJson(Object? value) {
+    final Map<String, dynamic>? quiz = Json.asOptionalMap(value);
+    return quiz == null ? null : QuizSummaryModel.fromJson(quiz);
+  }
 }

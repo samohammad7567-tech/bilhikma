@@ -11,11 +11,13 @@ class TestNavButtons extends StatelessWidget {
     required this.isLastQuestion,
     required this.onNext,
     required this.onPrevious,
+    this.isSubmitting = false,
     super.key,
   });
 
   final bool isFirstQuestion;
   final bool isLastQuestion;
+  final bool isSubmitting;
 
   final VoidCallback onNext;
   final VoidCallback onPrevious;
@@ -29,12 +31,13 @@ class TestNavButtons extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: CustomButton(
-            onPressed: onNext,
+            onPressed: isSubmitting ? () {} : onNext,
             text: isLastQuestion ? 'finish_test'.tr() : 'next_question'.tr(),
             width: double.infinity,
             height: height,
             threeRadius: 8.r,
             lastRadius: 8.r,
+            isLoading: isSubmitting,
             backgroundColor: colors.secondary,
             textColor: colors.onSecondary,
             elevation: 0,
@@ -45,9 +48,9 @@ class TestNavButtons extends StatelessWidget {
 
         Expanded(
           child: Opacity(
-            opacity: isFirstQuestion ? 0.5 : 1,
+            opacity: isFirstQuestion || isSubmitting ? 0.5 : 1,
             child: CustomOutlineButton(
-              onPressed: isFirstQuestion ? () {} : onPrevious,
+              onPressed: isFirstQuestion || isSubmitting ? () {} : onPrevious,
               text: 'previous_question'.tr(),
               width: double.infinity,
               height: height,

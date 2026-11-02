@@ -51,8 +51,9 @@ class TestBlankChip extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: AppTheme.styles(context).labelStrong
-              .copyWith(decoration: TextDecoration.underline),
+          style: AppTheme.styles(
+            context,
+          ).labelStrong.copyWith(decoration: TextDecoration.underline),
         ),
       ),
     );

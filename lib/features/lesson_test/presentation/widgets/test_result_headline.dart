@@ -2,18 +2,19 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../data/models/test_result_model.dart';
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
+import '../../data/models/quiz_attempt_model.dart';
 
 class TestResultHeadline extends StatelessWidget {
   const TestResultHeadline({required this.result, super.key});
 
-  final TestResultModel result;
+  final QuizAttemptModel result;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final bool passed = result.passed;
+    final bool passed = result.isPassed == true;
 
     return Column(
       children: <Widget>[
@@ -29,13 +30,7 @@ class TestResultHeadline extends StatelessWidget {
         SizedBox(height: 6.h),
 
         Text(
-          passed
-              ? 'test_passed_note'.tr()
-              : 'test_failed_note'.tr(
-                  namedArgs: <String, String>{
-                    'days': '${result.retryAfterDays}',
-                  },
-                ),
+          passed ? 'test_passed_note'.tr() : LangKeys.quizFailedNote.tr(),
           textAlign: TextAlign.center,
           style: AppTheme.styles(context).labelStrong,
         ),

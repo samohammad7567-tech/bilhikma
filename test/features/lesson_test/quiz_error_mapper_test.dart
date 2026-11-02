@@ -1,0 +1,179 @@
+import 'package:bilhikma/core/network/api_client.dart';
+import 'package:bilhikma/core/network/api_envelope.dart';
+import 'package:bilhikma/core/utils/error_mapper.dart';
+import 'package:bilhikma/features/lesson_test/data/data_source/lesson_test_data_source.dart';
+import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
+import 'package:bilhikma/features/lesson_test/data/quiz_error_mapper.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class _FakeClient extends ApiClient {
+  _FakeClient(this.response);
+
+  final ApiEnvelope response;
+  String? lastPath;
+  Object? lastData;
+
+  @override
+  Future<ApiEnvelope> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    lastPath = path;
+    return response;
+  }
+
+  @override
+  Future<ApiEnvelope> post(String path, {Object? data}) async {
+    lastPath = path;
+    lastData = data;
+    return response;
+  }
+}
+
+ApiEnvelope _envelope(Object? data) =>
+    ApiEnvelope(statusCode: ApiEnvelope.successCode, data: data);
+
+void main() {
+  group('quiz error mapping', () {
+    test('keeps quiz 403s local and maps the stable reason first', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'session_expired',
+          statusCode: 403,
+          endsSession: true,
+          errors: <String, List<String>>{
+            'reason': <String>['video_required'],
+          },
+        ),
+      );
+
+      expect(translated.key, 'quiz_video_incomplete');
+      expect(translated.endsSession, isFalse);
+    });
+
+    test('maps a locked 403 from the message fallback', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'session_expired',
+          statusCode: 403,
+          message: 'This quiz is locked until the video is complete',
+          endsSession: true,
+        ),
+      );
+
+      expect(translated.key, 'quiz_video_incomplete');
+      expect(translated.endsSession, isFalse);
+    });
+
+    test('maps validation reasons without hiding the original errors', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'validation_error',
+          statusCode: 422,
+          errors: <String, List<String>>{
+            'answers': <String>['invalid'],
+            'code': <String>['attempts_exhausted'],
+          },
+        ),
+      );
+
+      expect(translated.key, 'quiz_attempts_exhausted');
+      expect(translated.errors, contains('answers'));
+    });
+
+    test('keeps 401 on the normal session path', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'session_expired',
+          statusCode: 401,
+          endsSession: true,
+        ),
+      );
+
+      expect(translated.key, 'session_expired');
+      expect(translated.endsSession, isTrue);
+    });
+  });
+
+  group('lesson test data source', () {
+    test('loads the overview from the content quiz endpoint', () async {
+      final _FakeClient client = _FakeClient(
+        _envelope(<String, dynamic>{
+          'id': 4,
+          'content_id': 9,
+          'title': 'Quiz',
+          'question_count': 3,
+          'pass_score': 50,
+        }),
+      );
+      final LessonTestDataSource source = LessonTestDataSource(client: client);
+
+      final LessonTestModel quiz = await source.fetchQuiz(9);
+
+      expect(client.lastPath, '/user/content/9/quiz');
+      expect(quiz.id, 4);
+      expect(quiz.questionCount, 3);
+    });
+
+    test(
+      'posts an empty body to start and an answers envelope to submit',
+      () async {
+        final _FakeClient startClient = _FakeClient(
+          _envelope(<String, dynamic>{
+            'id': 5,
+            'quiz_id': 4,
+            'student_id': 9,
+            'attempt_no': 1,
+            'answers': <Map<String, dynamic>>[],
+          }),
+        );
+        final LessonTestDataSource source = LessonTestDataSource(
+          client: startClient,
+        );
+
+        final QuizAttemptModel attempt = await source.startAttempt(4);
+
+        expect(startClient.lastPath, '/user/quizzes/4/attempts');
+        expect(startClient.lastData, isNull);
+        expect(attempt.id, 5);
+
+        final _FakeClient submitClient = _FakeClient(
+          _envelope(<String, dynamic>{
+            'id': 5,
+            'quiz_id': 4,
+            'student_id': 9,
+            'attempt_no': 1,
+            'score': 2,
+            'max_score': 4,
+            'answers': <Map<String, dynamic>>[],
+          }),
+        );
+        await LessonTestDataSource(client: submitClient).submitAttempt(5, {
+          'q1': <String, dynamic>{'option_id': 'o1'},
+        });
+
+        expect(submitClient.lastPath, '/user/quiz-attempts/5/submit');
+        expect(submitClient.lastData, <String, dynamic>{
+          'answers': <String, Map<String, dynamic>>{
+            'q1': <String, dynamic>{'option_id': 'o1'},
+          },
+        });
+      },
+    );
+
+    test(
+      'reads the attempts list from either a list or an items map',
+      () async {
+        final _FakeClient listClient = _FakeClient(
+          _envelope(<Map<String, dynamic>>[]),
+        );
+        expect(
+          await LessonTestDataSource(client: listClient).fetchMyAttempts(4),
+          isEmpty,
+        );
+        expect(listClient.lastPath, '/user/quizzes/4/my-attempts');
+      },
+    );
+  });
+}

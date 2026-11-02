@@ -29,26 +29,28 @@ class TestIntroCardRow extends StatelessWidget {
           ),
           SizedBox(width: 12.w),
 
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                row.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).labelSmall,
-              ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  row.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTheme.styles(context).labelSmall,
+                ),
 
-              SizedBox(height: 2.h),
+                SizedBox(height: 2.h),
 
-              Text(
-                row.value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).labelStrong,
-              ),
-            ],
+                Text(
+                  row.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTheme.styles(context).labelStrong,
+                ),
+              ],
+            ),
           ),
         ],
       ),

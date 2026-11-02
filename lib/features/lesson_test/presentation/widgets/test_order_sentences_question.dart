@@ -39,11 +39,9 @@ class TestOrderSentencesQuestion extends StatelessWidget {
           itemCount: sentences.length,
           onReorderItem: onReorder,
 
-          proxyDecorator: (
-            Widget child,
-            int index,
-            Animation<double> animation,
-          ) => Material(color: Colors.transparent, child: child),
+          proxyDecorator:
+              (Widget child, int index, Animation<double> animation) =>
+                  Material(color: Colors.transparent, child: child),
           itemBuilder: (BuildContext context, int index) {
             final TestSentenceModel sentence = sentences[index];
 

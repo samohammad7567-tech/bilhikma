@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../features/auth/login/data/models/refresh_token_response_model.dart';
 import '../constants/api_endpoints.dart';
+import '../network/session_policy.dart';
 import '../services/device_service.dart';
 import '../services/device_session_service.dart';
 import '../services/session_guard.dart';
@@ -33,13 +34,19 @@ class AuthInterceptor extends Interceptor {
 
     final statusCode = err.response?.statusCode;
 
+    final bool endOnForbidden =
+        requestOptions.extra['end_session_on_forbidden'] != false;
+
     // A code the session cannot survive ends it here, whatever the request
     // was and whatever the body says. 401 is the exception: it is the one
     // refusal a session can still be saved from, so it goes through the
     // refresh below and only ends the session if that fails.
     if (!isAuthEndpoint &&
         statusCode != 401 &&
-        ErrorMapper.endsSession(statusCode)) {
+        SessionPolicy.shouldEndStatus(
+          statusCode,
+          endOnForbidden: endOnForbidden,
+        )) {
       AppLogger.info(
         'The API refused $path with $statusCode; signing out',
         name: 'auth',

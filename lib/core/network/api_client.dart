@@ -5,26 +5,35 @@ import '../services/session_guard.dart';
 import '../utils/error_mapper.dart';
 import 'api_envelope.dart';
 import 'paginated_result.dart';
+import 'session_policy.dart';
 
 class ApiClient {
-  const ApiClient();
+  const ApiClient({this.endSessionOnForbidden = true});
+
+  final bool endSessionOnForbidden;
+
+  Map<String, dynamic>? get _extra => endSessionOnForbidden
+      ? null
+      : const <String, dynamic>{'end_session_on_forbidden': false};
 
   Future<ApiEnvelope> get(
     String path, {
     Map<String, dynamic>? queryParameters,
-  }) => _send(() => DioService.get(path, queryParameters: queryParameters));
+  }) => _send(
+    () => DioService.get(path, queryParameters: queryParameters, extra: _extra),
+  );
 
   Future<ApiEnvelope> post(String path, {Object? data}) =>
-      _send(() => DioService.post(path, data: data));
+      _send(() => DioService.post(path, data: data, extra: _extra));
 
   Future<ApiEnvelope> put(String path, {Object? data}) =>
-      _send(() => DioService.put(path, data: data));
+      _send(() => DioService.put(path, data: data, extra: _extra));
 
   Future<ApiEnvelope> patch(String path, {Object? data}) =>
-      _send(() => DioService.patch(path, data: data));
+      _send(() => DioService.patch(path, data: data, extra: _extra));
 
   Future<ApiEnvelope> delete(String path) =>
-      _send(() => DioService.delete(path));
+      _send(() => DioService.delete(path, extra: _extra));
 
   Future<T> getObject<T>(
     String path,
@@ -80,7 +89,12 @@ class ApiClient {
       // answers 200 with its own code in the body — and those never reach the
       // Dio interceptor. Reading the verdict here as well is what makes the
       // session depend on the code alone, whichever way the code arrived.
-      await SessionGuard.endIfRefused(exception);
+      if (SessionPolicy.shouldEnd(
+        exception,
+        endOnForbidden: endSessionOnForbidden,
+      )) {
+        await SessionGuard.endIfRefused(exception);
+      }
 
       throw exception;
     }

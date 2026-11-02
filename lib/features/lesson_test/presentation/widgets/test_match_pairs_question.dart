@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/test_answer_model.dart';
-import '../../data/models/test_pair_model.dart';
+import '../../data/models/test_match_item_model.dart';
 import '../../data/models/test_question_model.dart';
 import 'test_pair_tile.dart';
 import 'test_question_prompt.dart';
@@ -30,8 +30,6 @@ class TestMatchPairsQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> linkOrder = answer.pairs.keys.toList(growable: false);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -43,77 +41,90 @@ class TestMatchPairsQuestion extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(child: _prompts(linkOrder)),
+            Expanded(child: _leftItems),
 
             SizedBox(width: 10.w),
 
-            Expanded(child: _matches(linkOrder)),
+            Expanded(child: _rightItems),
           ],
         ),
       ],
     );
   }
 
-  Widget _prompts(List<String> linkOrder) => Column(
+  Widget get _leftItems => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
-    children: question.pairs
+    children: question.leftItems
         .map(
-          (TestPairModel pair) => Padding(
+          (TestMatchItemModel item) => Padding(
             padding: EdgeInsets.only(bottom: 10.h),
             child: TestPairTile(
-              text: pair.prompt,
-              isSelected: selectedPromptId == pair.id,
-              badge: _badgeOf(linkOrder, pair.id),
-              onTap: () => onPromptTap(pair.id),
+              text: item.text,
+              isSelected: selectedPromptId == item.id,
+              badge: _leftBadge(item.id),
+              onTap: () => onPromptTap(item.id),
             ),
           ),
         )
         .toList(growable: false),
   );
 
-  Widget _matches(List<String> linkOrder) => Column(
+  Widget get _rightItems => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
-    children: _orderedMatches
+    children: _orderedRights
         .map(
-          (TestPairModel pair) => Padding(
+          (TestMatchItemModel item) => Padding(
             padding: EdgeInsets.only(bottom: 10.h),
             child: TestPairTile(
-              text: pair.match,
+              text: item.text,
               isMuted: true,
               isSelected: false,
-              badge: _badgeOfMatch(linkOrder, pair.id),
-              onTap: () => onMatchTap(pair.id),
+              badge: _rightBadge(item.id),
+              onTap: () => onMatchTap(item.id),
             ),
           ),
         )
         .toList(growable: false),
   );
 
-  List<TestPairModel> get _orderedMatches {
-    if (matchOrder.isEmpty) return question.pairs;
+  List<TestMatchItemModel> get _orderedRights {
+    if (matchOrder.isEmpty) return question.rightItems;
 
-    final List<TestPairModel> ordered = <TestPairModel>[];
+    final List<TestMatchItemModel> ordered = <TestMatchItemModel>[];
 
-    for (final String pairId in matchOrder) {
-      for (final TestPairModel pair in question.pairs) {
-        if (pair.id == pairId) ordered.add(pair);
+    for (final String rightId in matchOrder) {
+      for (final TestMatchItemModel item in question.rightItems) {
+        if (item.id == rightId) ordered.add(item);
       }
     }
 
-    return ordered.length == question.pairs.length ? ordered : question.pairs;
+    return ordered.length == question.rightItems.length
+        ? ordered
+        : question.rightItems;
   }
 
-  int? _badgeOf(List<String> linkOrder, String promptId) {
-    final int index = linkOrder.indexOf(promptId);
+  int? _leftBadge(String leftId) {
+    final int index = question.leftItems.indexWhere(
+      (TestMatchItemModel item) => item.id == leftId,
+    );
+    if (index == -1) return null;
+
+    final bool isMatched = answer.matches.values.any(
+      (String value) => value == leftId,
+    );
+
+    return isMatched ? index + 1 : null;
+  }
+
+  int? _rightBadge(String rightId) {
+    final String? leftId = answer.leftForRight(rightId);
+    if (leftId == null) return null;
+
+    final int index = question.leftItems.indexWhere(
+      (TestMatchItemModel item) => item.id == leftId,
+    );
     return index == -1 ? null : index + 1;
-  }
-
-  int? _badgeOfMatch(List<String> linkOrder, String matchId) {
-    for (int index = 0; index < linkOrder.length; index++) {
-      if (answer.matchOf(linkOrder[index]) == matchId) return index + 1;
-    }
-    return null;
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/enums/content_type_enum.dart';
 import '../cubit/lesson_detail_cubit.dart';
+import '../../data/models/lesson_detail_model.dart';
 import '../../../../core/routing/lesson_detail_args.dart';
 import '../refactor/lesson_detail_body.dart';
 import '../../../security/presentation/widgets/security_watch.dart';
@@ -17,7 +18,7 @@ class LessonDetailScreen extends StatefulWidget {
 
   final LessonDetailArgs args;
 
-  final VoidCallback? onGoToTest;
+  final Future<void> Function(LessonDetailModel detail)? onGoToTest;
 
   @override
   State<LessonDetailScreen> createState() => _LessonDetailScreenState();
@@ -46,7 +47,13 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                     previous.isVideoFullscreen != current.isVideoFullscreen,
             builder: (BuildContext context, LessonDetailState state) {
               final Widget body = LessonDetailBody(
-                onGoToTest: widget.onGoToTest,
+                onGoToTest: widget.onGoToTest == null
+                    ? null
+                    : (LessonDetailModel detail) async {
+                        await widget.onGoToTest!(detail);
+                        if (!context.mounted) return;
+                        await context.read<LessonDetailCubit>().loadLesson();
+                      },
                 videoStageKey: _videoStageKey,
               );
 

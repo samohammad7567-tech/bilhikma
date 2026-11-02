@@ -53,8 +53,9 @@ class TestPairTile extends StatelessWidget {
                 child: Text(
                   text,
                   textAlign: TextAlign.start,
-                  style: AppTheme.styles(context).cardBlurb
-                      .copyWith(color: colors.onSurface),
+                  style: AppTheme.styles(
+                    context,
+                  ).cardBlurb.copyWith(color: colors.onSurface),
                 ),
               ),
 

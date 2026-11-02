@@ -27,7 +27,7 @@ import '../widgets/lesson_locked_view.dart';
 class LessonDetailBody extends StatelessWidget {
   const LessonDetailBody({super.key, this.onGoToTest, this.videoStageKey});
 
-  final VoidCallback? onGoToTest;
+  final Future<void> Function(LessonDetailModel detail)? onGoToTest;
 
   final Key? videoStageKey;
 
@@ -139,26 +139,50 @@ class LessonDetailBody extends StatelessWidget {
               ),
             ],
 
-            if (!detail.isArticle) ...<Widget>[SizedBox(height: 20.h)],
-
-            if (!detail.isArticle) ...<Widget>[
+            if (detail.hasQuiz) ...<Widget>[
               SizedBox(height: 20.h),
               LessonDetailInset(
-                child: CustomButton(
-                  onPressed:
-                      onGoToTest ??
-                      () => ComingSoonSheet.show(
-                        context,
-                        messageKey: 'coming_soon_test',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (detail.hasPassedQuiz) ...<Widget>[
+                      Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.check_circle,
+                            size: 18.r,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          SizedBox(width: 6.w),
+                          Expanded(
+                            child: Text(
+                              'test_passed_note'.tr(),
+                              style: AppTheme.styles(context).cardCaption,
+                            ),
+                          ),
+                        ],
                       ),
-                  text: 'go_to_test'.tr(),
-                  width: double.infinity,
-                  height: 46,
-                  threeRadius: 8.r,
-                  lastRadius: 8.r,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  textColor: Theme.of(context).colorScheme.onSecondary,
-                  elevation: 0,
+                      SizedBox(height: 10.h),
+                    ],
+                    CustomButton(
+                      onPressed: detail.isLocked
+                          ? () {}
+                          : () => onGoToTest == null
+                                ? ComingSoonSheet.show(
+                                    context,
+                                    messageKey: 'coming_soon_test',
+                                  )
+                                : onGoToTest!(detail),
+                      text: 'go_to_test'.tr(),
+                      width: double.infinity,
+                      height: 46,
+                      threeRadius: 8.r,
+                      lastRadius: 8.r,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      elevation: 0,
+                    ),
+                  ],
                 ),
               ),
             ],

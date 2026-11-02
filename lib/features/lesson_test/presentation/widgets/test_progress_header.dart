@@ -16,6 +16,8 @@ class TestProgressHeader extends StatelessWidget {
     super.key,
     this.questionRemaining,
     this.questionElapsed = Duration.zero,
+    this.showTotalTimer = true,
+    this.showQuestionTimer = true,
   });
 
   final Duration remaining;
@@ -27,33 +29,38 @@ class TestProgressHeader extends StatelessWidget {
   final Duration? questionRemaining;
   final Duration questionElapsed;
 
+  final bool showTotalTimer;
+  final bool showQuestionTimer;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
-          'total_time'.tr(),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          style: AppTheme.styles(context).labelSmall,
-        ),
+        if (showTotalTimer) ...<Widget>[
+          Text(
+            'total_time'.tr(),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: AppTheme.styles(context).labelSmall,
+          ),
 
-        SizedBox(height: 4.h),
+          SizedBox(height: 4.h),
 
-        Align(
-          alignment: Alignment.center,
-          child: TestTimerChip(
-            label: 'minute_value'.tr(
-              namedArgs: <String, String>{
-                'time': LessonDetailFormats.clock(remaining),
-              },
+          Align(
+            alignment: Alignment.center,
+            child: TestTimerChip(
+              label: 'minute_value'.tr(
+                namedArgs: <String, String>{
+                  'time': LessonDetailFormats.clock(remaining),
+                },
+              ),
             ),
           ),
-        ),
 
-        SizedBox(height: 10.h),
+          SizedBox(height: 10.h),
+        ],
 
         Row(
           children: <Widget>[
@@ -80,17 +87,19 @@ class TestProgressHeader extends StatelessWidget {
 
         AppProgressBar(progress: progress, showPercent: false),
 
-        SizedBox(height: 8.h),
+        if (showQuestionTimer) ...<Widget>[
+          SizedBox(height: 8.h),
 
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: TestTimerChip(
-            icon: Icons.access_time,
-            label: LessonDetailFormats.clock(
-              questionRemaining ?? questionElapsed,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TestTimerChip(
+              icon: Icons.access_time,
+              label: LessonDetailFormats.clock(
+                questionRemaining ?? questionElapsed,
+              ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }

@@ -71,6 +71,7 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
             controller: _controllerFor(activeBlankId),
             filled: true,
             maxLines: 3,
+            maxLength: _maxLengthOf(activeBlankId),
             hintText: 'type_your_answer'.tr(),
             onChanged: (String? value) {
               widget.onTyped(blankId: activeBlankId, value: value ?? '');
@@ -88,6 +89,13 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
 
     final List<TestBlankModel> blanks = widget.question.blanks;
     return blanks.isEmpty ? null : blanks.first.id;
+  }
+
+  int? _maxLengthOf(String blankId) {
+    for (final TestBlankModel blank in widget.question.blanks) {
+      if (blank.id == blankId) return blank.maxLength;
+    }
+    return null;
   }
 
   TextEditingController _controllerFor(String blankId) {

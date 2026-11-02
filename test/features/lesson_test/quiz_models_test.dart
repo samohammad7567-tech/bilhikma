@@ -1,0 +1,358 @@
+import 'package:bilhikma/core/enums/blank_input_mode_enum.dart';
+import 'package:bilhikma/core/enums/test_question_type_enum.dart';
+import 'package:bilhikma/core/network/session_policy.dart';
+import 'package:bilhikma/core/utils/error_mapper.dart';
+import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/test_answer_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/test_question_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/test_sentence_model.dart';
+import 'package:bilhikma/features/lesson_detail/data/models/lesson_detail_model.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+Map<String, dynamic> _attempt({
+  required String id,
+  required String type,
+  required String text,
+  Map<String, dynamic> details = const <String, dynamic>{},
+}) => <String, dynamic>{
+  'question_id': id,
+  'question_text': text,
+  'question_type': type,
+  'score': 2,
+  'options': <String, dynamic>{'default_time_seconds': 60, 'details': details},
+  'selected_option_id': null,
+  'selected_boolean': null,
+  'answer_text': null,
+  'is_correct': null,
+  'awarded_score': null,
+  'given_answer': null,
+};
+
+void main() {
+  group('quiz overview', () {
+    test('parses server overview values', () {
+      final LessonTestModel quiz = LessonTestModel.fromJson(<String, dynamic>{
+        'id': 2,
+        'content_id': 11,
+        'title': 'Quiz',
+        'instructions': 'Read carefully',
+        'pass_score': 60,
+        'max_attempts': null,
+        'retry_cooldown_minutes': 15,
+        'time_limit_minutes': null,
+        'shuffle_questions': true,
+        'is_blocking': true,
+        'show_correct_answers': false,
+        'is_published': true,
+        'selection_mode': 'random',
+        'question_count': 7,
+        'total_score': 14,
+        'attempts_used': 1,
+        'attempts_left': null,
+        'has_passed': false,
+        'next_attempt_at': null,
+      });
+
+      expect(quiz.id, 2);
+      expect(quiz.contentId, 11);
+      expect(quiz.passScore, 60);
+      expect(quiz.hasUnlimitedAttempts, isTrue);
+      expect(quiz.hasTimeLimit, isFalse);
+      expect(quiz.questionCount, 7);
+      expect(quiz.isBlocking, isTrue);
+    });
+  });
+
+  group('attempt parsing', () {
+    test('parses all seven question types', () {
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{
+          'id': 5,
+          'quiz_id': 2,
+          'student_id': 9,
+          'attempt_no': 1,
+          'max_score': 14,
+          'review_status': 'none',
+          'started_at': '2099-01-01T10:00:00Z',
+          'expires_at': '2099-01-01T10:30:00Z',
+          'has_expired': false,
+          'policy_snapshot': <String, dynamic>{'pass_score': 60},
+          'answers': <Map<String, dynamic>>[
+            _attempt(
+              id: '1',
+              type: 'mcq_single',
+              text: 'Pick one',
+              details: <String, dynamic>{
+                'choice_variant': 'best_answer',
+                'options': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'o1', 'text': 'A'},
+                  <String, dynamic>{'id': 'o2', 'text': 'B'},
+                ],
+              },
+            ),
+            _attempt(
+              id: '2',
+              type: 'mcq_multiple',
+              text: 'Pick many',
+              details: <String, dynamic>{
+                'max_selections': 2,
+                'options': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'o3', 'text': 'C'},
+                  <String, dynamic>{'id': 'o4', 'text': 'D'},
+                ],
+              },
+            ),
+            _attempt(id: '3', type: 'true_false', text: 'True?'),
+            _attempt(
+              id: '4',
+              type: 'fill_blank_choice',
+              text: 'Choose {{1}}',
+              details: <String, dynamic>{
+                'blank_input_mode': 'word_bank',
+                'word_bank': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'w1', 'text': 'word'},
+                ],
+                'blanks': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'b_1', 'blank_index': 1},
+                ],
+              },
+            ),
+            _attempt(
+              id: '5',
+              type: 'fill_blank_typed',
+              text: 'Type {{1}}',
+              details: <String, dynamic>{
+                'blanks': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'b_1',
+                    'blank_index': 1,
+                    'max_length': 30,
+                  },
+                ],
+              },
+            ),
+            _attempt(
+              id: '6',
+              type: 'matching',
+              text: 'Match',
+              details: <String, dynamic>{
+                'pairs': <String, dynamic>{
+                  'left': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'l1', 'text': 'Left'},
+                  ],
+                  'right': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'r1', 'text': 'Right'},
+                  ],
+                },
+              },
+            ),
+            _attempt(
+              id: '7',
+              type: 'ordering',
+              text: 'Order',
+              details: <String, dynamic>{
+                'items': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'i1', 'text': 'One'},
+                  <String, dynamic>{'id': 'i2', 'text': 'Two'},
+                ],
+              },
+            ),
+          ],
+        },
+      );
+
+      expect(attempt.questions, hasLength(7));
+      expect(attempt.questions[0].type, TestQuestionType.singleChoice);
+      expect(attempt.questions[0].isBestAnswer, isTrue);
+      expect(attempt.questions[1].effectiveMaxSelections, 2);
+      expect(attempt.questions[2].type, TestQuestionType.trueFalse);
+      expect(attempt.questions[3].blankInputMode, BlankInputMode.wordBank);
+      expect(attempt.questions[3].body, 'Choose {{b_1}}');
+      expect(attempt.questions[4].body, 'Type {{b_1}}');
+      expect(attempt.questions[5].rightItems.single.id, 'r1');
+      expect(attempt.questions[6].sentences, hasLength(2));
+      expect(attempt.isSubmitted, isFalse);
+      expect(attempt.hasExpired, isFalse);
+    });
+
+    test('marks a submitted attempt from score even without submitted_at', () {
+      final QuizAttemptModel attempt =
+          QuizAttemptModel.fromJson(<String, dynamic>{
+            'id': 5,
+            'quiz_id': 2,
+            'student_id': 9,
+            'attempt_no': 1,
+            'score': 10,
+            'max_score': 14,
+            'review_status': 'none',
+            'answers': <Map<String, dynamic>>[],
+          });
+
+      expect(attempt.isSubmitted, isTrue);
+    });
+  });
+
+  group('answer serialization', () {
+    const TestQuestionModel single = TestQuestionModel(
+      id: '1',
+      type: TestQuestionType.singleChoice,
+      prompt: 'Pick one',
+      options: <TestOptionModel>[
+        TestOptionModel(id: 'o1', label: 'A'),
+        TestOptionModel(id: 'o2', label: 'B'),
+      ],
+    );
+
+    const TestQuestionModel multiple = TestQuestionModel(
+      id: '2',
+      type: TestQuestionType.multiChoice,
+      prompt: 'Pick many',
+      options: <TestOptionModel>[
+        TestOptionModel(id: 'o1', label: 'A'),
+        TestOptionModel(id: 'o2', label: 'B'),
+      ],
+      maxSelections: 2,
+    );
+
+    const TestQuestionModel matching = TestQuestionModel(
+      id: '6',
+      type: TestQuestionType.matchPairs,
+      prompt: 'Match',
+      leftItems: <TestMatchItemModel>[
+        TestMatchItemModel(id: 'l1', text: 'Left'),
+      ],
+      rightItems: <TestMatchItemModel>[
+        TestMatchItemModel(id: 'r1', text: 'Right'),
+      ],
+    );
+
+    const TestQuestionModel ordering = TestQuestionModel(
+      id: '7',
+      type: TestQuestionType.orderSentences,
+      prompt: 'Order',
+      sentences: <TestSentenceModel>[
+        TestSentenceModel(id: 'i1', text: 'One'),
+        TestSentenceModel(id: 'i2', text: 'Two'),
+      ],
+    );
+
+    test('uses the exact server keys and types', () {
+      expect(
+        const TestAnswerModel(
+          optionIds: <String>['o1'],
+        ).toSubmissionJson(single),
+        <String, dynamic>{'option_id': 'o1'},
+      );
+      expect(
+        const TestAnswerModel(
+          optionIds: <String>['o1', 'o2'],
+        ).toSubmissionJson(multiple),
+        <String, dynamic>{
+          'option_ids': <String>['o1', 'o2'],
+        },
+      );
+      expect(
+        const TestAnswerModel(boolean: true).toSubmissionJson(
+          const TestQuestionModel(
+            id: '3',
+            type: TestQuestionType.trueFalse,
+            prompt: 'True?',
+          ),
+        ),
+        <String, dynamic>{'boolean': true},
+      );
+      expect(
+        const TestAnswerModel(
+          matches: <String, String>{'r1': 'l1'},
+        ).toSubmissionJson(matching),
+        <String, dynamic>{
+          'matches': <String, String>{'r1': 'l1'},
+        },
+      );
+      expect(
+        const TestAnswerModel(
+          order: <String>['i2', 'i1'],
+        ).toSubmissionJson(ordering),
+        <String, dynamic>{
+          'order': <String>['i2', 'i1'],
+        },
+      );
+    });
+
+    test('rejects invalid structures without judging correctness', () {
+      expect(
+        () => const TestAnswerModel(
+          optionIds: <String>['o1', 'o1'],
+        ).toSubmissionJson(multiple),
+        throwsA(isA<AnswerValidationException>()),
+      );
+      expect(
+        () => const TestAnswerModel(
+          optionIds: <String>['missing'],
+        ).toSubmissionJson(single),
+        throwsA(isA<AnswerValidationException>()),
+      );
+      expect(
+        () => const TestAnswerModel(
+          matches: <String, String>{'r1': 'l1', 'r2': 'l1'},
+        ).toSubmissionJson(matching),
+        throwsA(isA<AnswerValidationException>()),
+      );
+      expect(
+        () => const TestAnswerModel(
+          order: <String>['i1'],
+        ).toSubmissionJson(ordering),
+        throwsA(isA<AnswerValidationException>()),
+      );
+    });
+  });
+
+  group('lesson detail quiz summary', () {
+    test('keeps a missing quiz as null and parses a present one', () {
+      final LessonDetailModel withoutQuiz = LessonDetailModel.fromData(
+        <String, dynamic>{'id': 1, 'title': 'Lesson', 'type': 'article'},
+      );
+      final LessonDetailModel withQuiz = LessonDetailModel.fromData(
+        <String, dynamic>{
+          'id': 1,
+          'title': 'Lesson',
+          'type': 'article',
+          'quiz': <String, dynamic>{
+            'id': 8,
+            'is_blocking': true,
+            'has_passed': true,
+          },
+        },
+      );
+
+      expect(withoutQuiz.hasQuiz, isFalse);
+      expect(withQuiz.hasQuiz, isTrue);
+      expect(withQuiz.quiz?.id, 8);
+      expect(withQuiz.isQuizBlocking, isTrue);
+      expect(withQuiz.hasPassedQuiz, isTrue);
+    });
+  });
+
+  group('session policy', () {
+    const AppException forbidden = AppException(
+      'session_expired',
+      statusCode: 403,
+      endsSession: true,
+    );
+
+    test('quiz requests can keep a forbidden response local', () {
+      expect(
+        SessionPolicy.shouldEnd(forbidden, endOnForbidden: false),
+        isFalse,
+      );
+      expect(SessionPolicy.shouldEnd(forbidden, endOnForbidden: true), isTrue);
+    });
+
+    test('401 remains a session code', () {
+      expect(SessionPolicy.shouldEndStatus(401, endOnForbidden: false), isTrue);
+    });
+  });
+}

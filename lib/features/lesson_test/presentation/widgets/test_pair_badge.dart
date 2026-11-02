@@ -26,8 +26,9 @@ class TestPairBadge extends StatelessWidget {
       child: Text(
         '$value',
         maxLines: 1,
-        style: AppTheme.styles(context).badgeLabel
-            .copyWith(color: colors.onSecondary),
+        style: AppTheme.styles(
+          context,
+        ).badgeLabel.copyWith(color: colors.onSecondary),
       ),
     );
   }

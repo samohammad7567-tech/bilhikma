@@ -1,0 +1,31 @@
+class LangKeys {
+  LangKeys._();
+
+  static const String quizNotFound = 'quiz_not_found';
+  static const String quizUnavailable = 'quiz_unavailable';
+  static const String quizLocked = 'quiz_locked';
+  static const String quizVideoIncomplete = 'quiz_video_incomplete';
+  static const String quizAttemptsExhausted = 'quiz_attempts_exhausted';
+  static const String quizCooldown = 'quiz_cooldown';
+  static const String quizAlreadySubmitted = 'quiz_already_submitted';
+  static const String quizAnswersInvalid = 'quiz_answers_invalid';
+  static const String quizPendingReview = 'quiz_pending_review';
+  static const String quizPassed = 'quiz_passed';
+  static const String quizAttemptsLeft = 'quiz_attempts_left';
+  static const String quizAttemptsUnlimited = 'quiz_attempts_unlimited';
+  static const String quizNoAttemptsLeft = 'quiz_no_attempts_left';
+  static const String quizNextAttemptAt = 'quiz_next_attempt_at';
+  static const String quizInstructions = 'quiz_instructions';
+  static const String quizTotalScore = 'quiz_total_score';
+  static const String quizScoreValue = 'quiz_score_value';
+  static const String quizBestAnswer = 'quiz_best_answer';
+  static const String quizMaxSelections = 'quiz_max_selections';
+  static const String quizMaxSelectionsReached = 'quiz_max_selections_reached';
+  static const String nextLessonLocked = 'next_lesson_locked';
+  static const String quizUnsupportedQuestion = 'quiz_unsupported_question';
+  static const String quizFailedNote = 'quiz_failed_note';
+  static const String passThreshold = 'pass_threshold';
+  static const String quizTrue = 'quiz_true';
+  static const String quizFalse = 'quiz_false';
+  static const String quizTimeUp = 'test_time_up';
+}
