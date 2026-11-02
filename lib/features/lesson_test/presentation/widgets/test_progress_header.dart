@@ -14,10 +14,7 @@ class TestProgressHeader extends StatelessWidget {
     required this.questionCount,
     required this.progress,
     super.key,
-    this.questionRemaining,
-    this.questionElapsed = Duration.zero,
     this.showTotalTimer = true,
-    this.showQuestionTimer = true,
   });
 
   final Duration remaining;
@@ -26,11 +23,7 @@ class TestProgressHeader extends StatelessWidget {
   final int questionCount;
   final double progress;
 
-  final Duration? questionRemaining;
-  final Duration questionElapsed;
-
   final bool showTotalTimer;
-  final bool showQuestionTimer;
 
   @override
   Widget build(BuildContext context) {
@@ -86,20 +79,6 @@ class TestProgressHeader extends StatelessWidget {
         SizedBox(height: 6.h),
 
         AppProgressBar(progress: progress, showPercent: false),
-
-        if (showQuestionTimer) ...<Widget>[
-          SizedBox(height: 8.h),
-
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: TestTimerChip(
-              icon: Icons.access_time,
-              label: LessonDetailFormats.clock(
-                questionRemaining ?? questionElapsed,
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }

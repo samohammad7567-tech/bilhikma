@@ -13,10 +13,13 @@ class TestOrderSentencesQuestion extends StatelessWidget {
     required this.answer,
     required this.onReorder,
     super.key,
+    this.questionRemaining,
   });
 
   final TestQuestionModel question;
   final TestAnswerModel answer;
+
+  final Duration? questionRemaining;
 
   final void Function(int oldIndex, int newIndex) onReorder;
 
@@ -28,7 +31,10 @@ class TestOrderSentencesQuestion extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TestQuestionPrompt(prompt: question.prompt),
+        TestQuestionPrompt(
+          prompt: question.prompt,
+          remaining: questionRemaining,
+        ),
 
         SizedBox(height: 18.h),
 

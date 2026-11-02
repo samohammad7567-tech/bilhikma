@@ -16,6 +16,12 @@ class LangKeys {
   static const String quizNoAttemptsLeft = 'quiz_no_attempts_left';
   static const String quizNextAttemptAt = 'quiz_next_attempt_at';
   static const String quizInstructions = 'quiz_instructions';
+  static const String quizStartConfirmTitle = 'quiz_start_confirm_title';
+  static const String quizStartConfirmMessage = 'quiz_start_confirm_message';
+  static const String quizLeaveConfirmTitle = 'quiz_leave_confirm_title';
+  static const String quizLeaveConfirmMessage = 'quiz_leave_confirm_message';
+  static const String quizLeaveConfirmAction = 'quiz_leave_confirm_action';
+  static const String startTest = 'start_test';
   static const String quizTotalScore = 'quiz_total_score';
   static const String quizScoreValue = 'quiz_score_value';
   static const String quizBestAnswer = 'quiz_best_answer';

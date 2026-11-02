@@ -16,6 +16,7 @@ class TestMatchPairsQuestion extends StatelessWidget {
     required this.onMatchTap,
     super.key,
     this.selectedPromptId,
+    this.questionRemaining,
   });
 
   final TestQuestionModel question;
@@ -27,6 +28,7 @@ class TestMatchPairsQuestion extends StatelessWidget {
   final ValueChanged<String> onMatchTap;
 
   final String? selectedPromptId;
+  final Duration? questionRemaining;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,10 @@ class TestMatchPairsQuestion extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TestQuestionPrompt(prompt: question.prompt),
+        TestQuestionPrompt(
+          prompt: question.prompt,
+          remaining: questionRemaining,
+        ),
 
         SizedBox(height: 18.h),
 

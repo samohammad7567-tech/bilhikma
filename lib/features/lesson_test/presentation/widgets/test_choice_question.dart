@@ -15,10 +15,13 @@ class TestChoiceQuestion extends StatelessWidget {
     required this.answer,
     required this.onSelect,
     super.key,
+    this.questionRemaining,
   });
 
   final TestQuestionModel question;
   final TestAnswerModel answer;
+
+  final Duration? questionRemaining;
 
   final ValueChanged<String> onSelect;
 
@@ -30,7 +33,10 @@ class TestChoiceQuestion extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TestQuestionPrompt(prompt: question.prompt),
+        TestQuestionPrompt(
+          prompt: question.prompt,
+          remaining: questionRemaining,
+        ),
 
         if (question.isBestAnswer) ...<Widget>[
           SizedBox(height: 8.h),

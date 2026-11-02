@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
@@ -16,12 +16,15 @@ class TestQuestionView extends StatelessWidget {
     required this.cubit,
     required this.state,
     required this.question,
+    required this.questionRemaining,
     super.key,
   });
 
   final LessonTestCubit cubit;
   final LessonTestState state;
   final TestQuestionModel question;
+
+  final Duration? questionRemaining;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +37,7 @@ class TestQuestionView extends StatelessWidget {
       case TestQuestionType.trueFalse:
         return TestChoiceQuestion(
           question: question,
+          questionRemaining: questionRemaining,
           answer: answer,
           onSelect: question.type.isTrueFalse
               ? (String optionId) {
@@ -47,6 +51,7 @@ class TestQuestionView extends StatelessWidget {
         if (question.blankInputMode?.key == 'dropdown') {
           return TestDropdownBlanksQuestion(
             question: question,
+          questionRemaining: questionRemaining,
             answer: answer,
             selectedBlankId: state.selectedBlankId,
             onBlankTap: (String blankId) => answer.blankValue(blankId) == null
@@ -59,6 +64,7 @@ class TestQuestionView extends StatelessWidget {
 
         return TestFillBlanksQuestion(
           question: question,
+          questionRemaining: questionRemaining,
           answer: answer,
           selectedBlankId: state.selectedBlankId,
           onBlankTap: (String blankId) => answer.blankValue(blankId) == null
@@ -70,6 +76,7 @@ class TestQuestionView extends StatelessWidget {
       case TestQuestionType.typedBlanks:
         return TestTypedBlanksQuestion(
           question: question,
+          questionRemaining: questionRemaining,
           answer: answer,
           selectedBlankId: state.selectedBlankId,
           onBlankTap: cubit.selectBlank,
@@ -79,6 +86,7 @@ class TestQuestionView extends StatelessWidget {
       case TestQuestionType.matchPairs:
         return TestMatchPairsQuestion(
           question: question,
+          questionRemaining: questionRemaining,
           answer: answer,
           matchOrder: state.rightOrderOf(question.id),
           selectedPromptId: state.selectedPromptId,
@@ -89,6 +97,7 @@ class TestQuestionView extends StatelessWidget {
       case TestQuestionType.orderSentences:
         return TestOrderSentencesQuestion(
           question: question,
+          questionRemaining: questionRemaining,
           answer: answer,
           onReorder: cubit.reorderSentences,
         );

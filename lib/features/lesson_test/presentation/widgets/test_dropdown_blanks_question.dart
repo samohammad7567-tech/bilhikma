@@ -18,6 +18,7 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
     required this.onChoiceSelected,
     super.key,
     this.selectedBlankId,
+    this.questionRemaining,
   });
 
   final TestQuestionModel question;
@@ -27,6 +28,7 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
   final void Function(String blankId, String optionId) onChoiceSelected;
 
   final String? selectedBlankId;
+  final Duration? questionRemaining;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,10 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TestQuestionPrompt(prompt: question.prompt),
+        TestQuestionPrompt(
+          prompt: question.prompt,
+          remaining: questionRemaining,
+        ),
 
         SizedBox(height: 20.h),
 

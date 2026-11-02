@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_circle_avatar.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_test_model.dart';
 import '../cubit/lesson_test_cubit.dart';
+import '../widgets/quiz_start_dialog.dart';
 import '../widgets/test_intro_card.dart';
 
 class LessonTestIntroBody extends StatelessWidget {
@@ -90,8 +91,8 @@ class LessonTestIntroBody extends StatelessWidget {
 
         SizedBox(height: 30.h),
         CustomButton(
-          onPressed: state.canStart ? onStart : () {},
-          text: 'start_test'.tr(),
+          onPressed: state.canStart ? () => _confirmStart(context) : () {},
+          text: LangKeys.startTest.tr(),
           width: double.infinity,
           height: 48.h,
           threeRadius: 8.r,
@@ -105,6 +106,13 @@ class LessonTestIntroBody extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _confirmStart(BuildContext context) async {
+    final bool isReady = await QuizStartDialog.show(context);
+    if (!isReady || !context.mounted) return;
+
+    onStart();
   }
 
   List<TestIntroRow> _rows(LessonTestModel quiz) => <TestIntroRow>[

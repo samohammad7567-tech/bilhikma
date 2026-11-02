@@ -28,10 +28,7 @@ class LessonTestQuestionBody extends StatelessWidget {
           questionNumber: state.currentIndex + 1,
           questionCount: state.questionCount,
           progress: state.progress,
-          questionRemaining: state.questionRemaining,
-          questionElapsed: state.questionElapsed,
           showTotalTimer: state.hasTimeLimit,
-          showQuestionTimer: question.timeLimit != null,
         ),
 
         SizedBox(height: 22.h),
@@ -43,6 +40,7 @@ class LessonTestQuestionBody extends StatelessWidget {
               cubit: cubit,
               state: state,
               question: question,
+              questionRemaining: state.questionRemaining,
             ),
           ),
         ),

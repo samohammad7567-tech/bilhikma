@@ -1263,7 +1263,9 @@ retake while attempts remain, unless product decides otherwise.
 5. On `404`, emit `failure` with `quiz_not_found` (or a dedicated empty state).
 6. On `403`, emit `failure` with `quiz_locked` / `quiz_unavailable`; never sign out.
 
-Do not start an attempt automatically. The student must tap the start button.
+Do not start an attempt automatically. The student must tap the start button, and the
+intro must show a confirmation dialog first (see 8.2) because starting consumes an
+attempt even if the student leaves immediately.
 
 ### 7.3 Starting an attempt
 
@@ -1360,7 +1362,8 @@ Question-level timer:
   start/resume. The backend does not expose per-question elapsed time, so a resumed
   attempt resets the question timer.
 - `questionRemaining = question.timeLimit - questionElapsed`
-- display it only when `timeLimit != null`
+- display it beside the question prompt only when `default_time_seconds` is non-null;
+  empty `options` (true/false) and `null` both mean "no question timer"
 - do not auto-submit when a question timer reaches zero unless the backend explicitly
   requires it; the attempt-level `expires_at` is authoritative
 
@@ -1495,6 +1498,11 @@ Display:
   - disabled when `!canStart`
   - `isLoading: state.isStarting`
   - inline loading only; do not block the whole screen
+  - before calling `startAttempt()`, show `AppConfirmDialog` with
+    `quiz_start_confirm_title` / `quiz_start_confirm_message` (`QuizStartDialog` in
+    `presentation/widgets/quiz_start_dialog.dart`) explaining that one attempt is used
+    immediately even if the student exits before answering all questions; start only
+    on confirmation
 
 ### 8.3 Choice questions
 
@@ -1580,6 +1588,26 @@ retry copy; format it with the existing date/time helpers or a localized date fo
 - Error: `AppErrorView` with retry.
 - Empty: `AppEmptyView`.
 - Do not replace existing content with a full-screen spinner during submit.
+
+### 8.11 Leaving an in-progress attempt
+
+- While `running`, block the route with `PopScope(canPop: false)` and route the top-bar
+  back through the same handler (`AppSectionScaffold.onBack`); intro and result states
+  pop normally.
+- Show `QuizLeaveDialog` (`presentation/widgets/quiz_leave_dialog.dart`) with
+  `quiz_leave_confirm_title`, `quiz_leave_confirm_message`, and
+  `quiz_leave_confirm_action`, warning that leaving submits the current answers and
+  uses one attempt.
+- On confirm, call `submitAndLeave()`, which submits only the answers given so far and
+  returns `true` only on success, then pop back to the lesson screen. The server
+  decrements `attempts_left` on submit, so the count drops without any local faking.
+- On failure (network, `422`, `5xx`), stay `running`, keep the answers, surface the
+  mapped error, and leave the attempt open so it can be resumed or submitted again.
+- Do not decrement the count locally: the next overview fetch would overwrite it and
+  the open attempt would still be resumable.
+- iOS swipe-back is disabled while `running`; the confirmation flow is reached through
+  the top-bar back button.
+
 
 ---
 

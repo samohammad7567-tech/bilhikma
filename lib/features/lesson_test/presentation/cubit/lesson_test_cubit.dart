@@ -316,16 +316,16 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _moveTo(state.currentIndex - 1);
   }
 
-  Future<void> submit({bool timedOut = false}) async {
+  Future<bool> submit({bool timedOut = false}) async {
     if (_submitRequested ||
         state.isSubmitting ||
         state.status == LessonTestStatus.submitting ||
         state.status == LessonTestStatus.result) {
-      return;
+      return false;
     }
 
     final QuizAttemptModel? attempt = state.attempt;
-    if (attempt == null) return;
+    if (attempt == null) return false;
 
     _submitRequested = true;
     _stopTicker();
@@ -360,19 +360,19 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         },
         restartTicker: true,
       );
-      return;
+      return false;
     } on FormatException {
       _emitSubmitFailure(
         const AppException(LangKeys.quizAnswersInvalid),
         restartTicker: true,
       );
-      return;
+      return false;
     } catch (_) {
       _emitSubmitFailure(
         const AppException(LangKeys.quizAnswersInvalid),
         restartTicker: true,
       );
-      return;
+      return false;
     }
 
     try {
@@ -380,12 +380,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         attempt.id,
         payload,
       );
-      if (isClosed) return;
+      if (isClosed) return false;
 
       _submitRequested = true;
       _emitResult(result, timedOut: timedOut);
+      return true;
     } catch (error) {
-      if (isClosed) return;
+      if (isClosed) return false;
 
       final AppException exception = QuizErrorMapper.translate(
         ErrorMapper.toException(error),
@@ -401,12 +402,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
             isSubmitting: false,
           ),
         );
-        return;
+        return false;
       }
 
       if (_isAlreadySubmitted(exception)) {
         final bool recovered = await _recoverSubmittedAttempt();
-        if (recovered || isClosed) return;
+        if (recovered) return true;
+        if (isClosed) return false;
       }
 
       final bool restartTicker = exception.statusCode != 401;
@@ -418,7 +420,14 @@ class LessonTestCubit extends Cubit<LessonTestState> {
             : const <String, List<String>>{},
         restartTicker: restartTicker,
       );
+      return false;
     }
+  }
+
+  Future<bool> submitAndLeave() async {
+    if (!state.isRunning || state.isSubmitting) return false;
+
+    return submit();
   }
 
   void reportMessage(String messageKey) =>

@@ -18,6 +18,7 @@ class TestTypedBlanksQuestion extends StatefulWidget {
     required this.onTyped,
     super.key,
     this.selectedBlankId,
+    this.questionRemaining,
   });
 
   final TestQuestionModel question;
@@ -27,6 +28,7 @@ class TestTypedBlanksQuestion extends StatefulWidget {
   final void Function({required String blankId, required String value}) onTyped;
 
   final String? selectedBlankId;
+  final Duration? questionRemaining;
 
   @override
   State<TestTypedBlanksQuestion> createState() =>
@@ -53,7 +55,10 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TestQuestionPrompt(prompt: widget.question.prompt),
+        TestQuestionPrompt(
+          prompt: widget.question.prompt,
+          remaining: widget.questionRemaining,
+        ),
 
         SizedBox(height: 20.h),
 

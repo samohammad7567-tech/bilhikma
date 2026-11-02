@@ -298,6 +298,55 @@ void main() {
       expect(cubit.state.isRunning, isTrue);
       expect(repo.submitCalls, 1);
     });
+
+    test('submits the answers given so far when the student leaves', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[
+            _singleChoiceQuestion(),
+            _multiChoiceQuestion(),
+          ],
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+      final bool left = await cubit.submitAndLeave();
+      await _waitFor(() => cubit.state.isResult);
+
+      expect(left, isTrue);
+      expect(repo.submittedAnswers, <String, Map<String, dynamic>>{
+        'q1': <String, dynamic>{'option_id': 'o2'},
+      });
+    });
+
+    test('stays running when the leave submission fails', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_singleChoiceQuestion()],
+        ),
+        submitError: const AppException('network_error'),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+      final bool left = await cubit.submitAndLeave();
+      await _waitFor(() => cubit.state.errorKey != null);
+
+      expect(left, isFalse);
+      expect(cubit.state.isRunning, isTrue);
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+    });
   });
 }
 

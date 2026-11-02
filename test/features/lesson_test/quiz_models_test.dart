@@ -178,6 +178,41 @@ void main() {
       expect(attempt.hasExpired, isFalse);
     });
 
+    test('treats empty options and null default time as no question timer', () {
+      final TestQuestionModel emptyOptions = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 36,
+          'question_text': 'True?',
+          'question_type': 'true_false',
+          'score': 2,
+          'options': <dynamic>[],
+        },
+      );
+
+      expect(emptyOptions.type, TestQuestionType.trueFalse);
+      expect(emptyOptions.timeLimit, isNull);
+
+      final TestQuestionModel nullTime = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 32,
+          'question_text': 'Pick one',
+          'question_type': 'mcq_single',
+          'score': 2,
+          'options': <String, dynamic>{
+            'default_time_seconds': null,
+            'details': <String, dynamic>{
+              'options': <Map<String, dynamic>>[
+                <String, dynamic>{'id': 'o_1', 'text': 'One'},
+              ],
+            },
+          },
+        },
+      );
+
+      expect(nullTime.timeLimit, isNull);
+      expect(nullTime.options.single.label, 'One');
+    });
+
     test('parses reusable words, one-to-many matching, and duration', () {
       final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
         <String, dynamic>{
