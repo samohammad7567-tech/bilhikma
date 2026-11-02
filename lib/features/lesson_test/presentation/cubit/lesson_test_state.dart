@@ -29,11 +29,9 @@ final class LessonTestState {
     this.errorKey,
     this.messageKey,
     this.validationErrors = const <String, List<String>>{},
-    this.nextLessonId,
-    this.nextLessonTitle,
-    this.nextLessonLocked = false,
     this.isStarting = false,
     this.isSubmitting = false,
+    this.didTimeOut = false,
     this.result,
   });
 
@@ -56,12 +54,9 @@ final class LessonTestState {
   final String? messageKey;
   final Map<String, List<String>> validationErrors;
 
-  final int? nextLessonId;
-  final String? nextLessonTitle;
-  final bool nextLessonLocked;
-
   final bool isStarting;
   final bool isSubmitting;
+  final bool didTimeOut;
   final QuizAttemptModel? result;
 
   bool get isLoading =>
@@ -134,18 +129,6 @@ final class LessonTestState {
   List<String> rightOrderOf(String questionId) =>
       rightOrder[questionId] ?? const <String>[];
 
-  bool get isPassed => result?.isPassed ?? quiz?.hasPassed ?? false;
-
-  bool get canGoToNextLesson {
-    final QuizAttemptModel? result = this.result;
-    if (result == null) return false;
-
-    if (result.isPendingReview) return false;
-    if (result.isPassed == true) return true;
-
-    return !(quiz?.isBlocking ?? false);
-  }
-
   @Deprecated('Legacy UI alias; use quiz.')
   LessonTestModel? get test => quiz;
 
@@ -185,12 +168,9 @@ final class LessonTestState {
     String? messageKey,
     bool clearMessage = false,
     Map<String, List<String>>? validationErrors,
-    int? nextLessonId,
-    String? nextLessonTitle,
-    bool? nextLessonLocked,
-    bool clearNextLesson = false,
     bool? isStarting,
     bool? isSubmitting,
+    bool? didTimeOut,
     QuizAttemptModel? result,
   }) => LessonTestState(
     status: status ?? this.status,
@@ -213,17 +193,9 @@ final class LessonTestState {
     validationErrors: clearError
         ? const <String, List<String>>{}
         : validationErrors ?? this.validationErrors,
-    nextLessonId: clearError || clearNextLesson
-        ? null
-        : nextLessonId ?? this.nextLessonId,
-    nextLessonTitle: clearError || clearNextLesson
-        ? null
-        : nextLessonTitle ?? this.nextLessonTitle,
-    nextLessonLocked: clearError || clearNextLesson
-        ? false
-        : nextLessonLocked ?? this.nextLessonLocked,
     isStarting: isStarting ?? this.isStarting,
     isSubmitting: isSubmitting ?? this.isSubmitting,
+    didTimeOut: didTimeOut ?? this.didTimeOut,
     result: result ?? this.result,
   );
 }

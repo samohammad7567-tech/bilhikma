@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
+import '../../../../core/utils/lesson_detail_formats.dart';
 import '../../data/models/quiz_attempt_model.dart';
 
 class TestResultScoreCard extends StatelessWidget {
@@ -24,41 +25,58 @@ class TestResultScoreCard extends StatelessWidget {
             : colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(10.r),
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                LangKeys.quizScoreValue.tr(
-                  namedArgs: <String, String>{
-                    'score': _number(result.score),
-                    'max': _number(result.maxScore),
-                  },
+      child: Column(
+        children: <Widget>[
+          IntrinsicHeight(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    LangKeys.quizScoreValue.tr(
+                      namedArgs: <String, String>{
+                        'score': _number(result.score),
+                        'max': _number(result.maxScore),
+                      },
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: AppTheme.styles(context).statusTitle,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                style: AppTheme.styles(context).statusTitle,
-              ),
-            ),
 
-            VerticalDivider(
-              width: 1.w,
-              thickness: 1,
-              color: colors.onSurface.withValues(alpha: 0.2),
-            ),
-
-            Expanded(
-              child: Text(
-                '${result.scorePercent ?? 0} %',
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                style: AppTheme.styles(context).statusTitle.copyWith(
-                  color: passed ? colors.onSurfaceVariant : colors.error,
+                VerticalDivider(
+                  width: 1.w,
+                  thickness: 1,
+                  color: colors.onSurface.withValues(alpha: 0.2),
                 ),
-              ),
+
+                Expanded(
+                  child: Text(
+                    result.scorePercent == null
+                        ? '-'
+                        : '${result.scorePercent} %',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: AppTheme.styles(context).statusTitle.copyWith(
+                      color: passed ? colors.onSurfaceVariant : colors.error,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          if (result.duration != null) ...[
+            SizedBox(height: 10.h),
+            Text(
+              '${LangKeys.quizTimeSpent.tr()}: '
+              '${LessonDetailFormats.clock(result.duration!)}',
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: AppTheme.styles(context).labelSmall,
             ),
           ],
-        ),
+        ],
       ),
     );
   }

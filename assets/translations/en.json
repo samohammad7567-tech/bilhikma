@@ -275,7 +275,6 @@
   "test_failed": "You did not pass the test",
   "test_failed_note": "Try again to reach the pass mark, you can retake the test after {days} days",
   "retry_after_days": "You can try again after {days} days",
-  "next_lesson": "Next lesson",
   "test_time_up": "The test time is over",
   "no_test_questions": "This test has no questions",
   "session_expired": "Your session has expired, please log in again",
@@ -358,10 +357,15 @@
   "quiz_best_answer": "Choose the best answer",
   "quiz_max_selections": "You can select up to {count} answers",
   "quiz_max_selections_reached": "You have reached the maximum number of selections.",
-  "next_lesson_locked": "Pass the quiz to unlock the next lesson.",
   "quiz_unsupported_question": "This question type is not supported yet.",
   "quiz_failed_note": "You did not reach the pass mark. You can try again.",
   "pass_threshold": "Pass score",
   "quiz_true": "True",
-  "quiz_false": "False"
+  "quiz_false": "False",
+  "quiz_review_title": "Answer review",
+  "quiz_answer_correct": "Correct answer",
+  "quiz_answer_incorrect": "Incorrect answer",
+  "quiz_correct_answer": "Correct answer",
+  "quiz_explanation": "Explanation",
+  "quiz_time_spent": "Time taken"
 }

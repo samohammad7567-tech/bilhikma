@@ -5,11 +5,7 @@ import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../models/lesson_test_model.dart';
 import '../models/quiz_attempt_model.dart';
-import '../models/test_answer_model.dart';
-import '../models/test_result_model.dart';
 import '../quiz_error_mapper.dart';
-import 'lesson_test_mock.dart';
-import 'test_answer_grader.dart';
 
 class LessonTestDataSource {
   const LessonTestDataSource({
@@ -76,37 +72,6 @@ class LessonTestDataSource {
       throw const AppException('quiz_unavailable');
     } on AppException catch (error) {
       throw QuizErrorMapper.translate(error);
-    }
-  }
-
-  @Deprecated('Legacy screen only; remove with the mock in Phase 7.')
-  Future<LessonTestModel> fetchTest({required String lessonId}) async {
-    try {
-      return LessonTestModel.fromJson(LessonTestMock.test(lessonId));
-    } catch (error) {
-      throw AppException(ErrorMapper.map(error));
-    }
-  }
-
-  @Deprecated('Legacy screen only; remove with the client grader in Phase 7.')
-  Future<TestResultModel> submitLegacyAttempt({
-    required LessonTestModel test,
-    required Map<String, TestAnswerModel> answers,
-  }) async {
-    try {
-      final TestResultCounts counts = TestAnswerGrader.count(
-        test: test,
-        answers: answers,
-      );
-
-      return TestResultModel(
-        correctCount: counts.correct,
-        totalCount: counts.total,
-        passPercent: test.passPercent,
-        retryAfterDays: test.retryAfterDays,
-      );
-    } catch (error) {
-      throw AppException(ErrorMapper.map(error));
     }
   }
 }

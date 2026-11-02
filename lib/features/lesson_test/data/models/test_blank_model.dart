@@ -9,8 +9,6 @@ class TestBlankModel {
     this.maxLength,
     this.scoreWeight,
     this.choices = const <TestOptionModel>[],
-    this.correctOptionId,
-    this.acceptedAnswers = const <String>[],
   });
 
   final String id;
@@ -19,9 +17,6 @@ class TestBlankModel {
   final int? maxLength;
   final double? scoreWeight;
   final List<TestOptionModel> choices;
-
-  final String? correctOptionId;
-  final List<String> acceptedAnswers;
 
   factory TestBlankModel.fromJson(Map<String, dynamic> json) => TestBlankModel(
     id: Json.asString(json['id']),
@@ -34,12 +29,6 @@ class TestBlankModel {
     choices: Json.asMapList(
       json['choices'],
     ).map(TestOptionModel.fromJson).toList(growable: false),
-    correctOptionId: Json.asOptionalString(
-      json['correct_option_id'] ?? json['option_id'],
-    ),
-    acceptedAnswers: Json.asStringList(
-      json['accepted_answers'] ?? json['answers'],
-    ),
   );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -51,7 +40,5 @@ class TestBlankModel {
     'choices': choices
         .map((TestOptionModel choice) => choice.toJson())
         .toList(growable: false),
-    'correct_option_id': correctOptionId,
-    'accepted_answers': acceptedAnswers,
   };
 }

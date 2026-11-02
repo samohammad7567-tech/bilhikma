@@ -2,37 +2,40 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../refactor/lesson_test_args.dart';
 import '../refactor/lesson_test_body.dart';
 
-class LessonTestScreen extends StatelessWidget {
-  const LessonTestScreen({required this.args, super.key, this.onNextLesson});
+class LessonTestScreen extends StatefulWidget {
+  const LessonTestScreen({required this.args, super.key});
 
   final LessonTestArgs args;
 
-  final ValueChanged<int>? onNextLesson;
+  @override
+  State<LessonTestScreen> createState() => _LessonTestScreenState();
+}
+
+class _LessonTestScreenState extends State<LessonTestScreen> {
+  bool _timeUpHandled = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LessonTestCubit>(
-      create: (_) => LessonTestCubit(
-        lessonId: args.lessonId,
-        categorySubjectId: args.categorySubjectId,
-      ),
+      create: (_) => LessonTestCubit(lessonId: widget.args.lessonId),
       child: BlocListener<LessonTestCubit, LessonTestState>(
         listenWhen: (LessonTestState previous, LessonTestState current) =>
-            current.messageKey != null &&
-            current.messageKey != previous.messageKey,
-        listener: _showMessage,
+            (current.didTimeOut && !previous.didTimeOut) ||
+            (current.messageKey != null &&
+                current.messageKey != previous.messageKey),
+        listener: _handleState,
         child: BlocBuilder<LessonTestCubit, LessonTestState>(
           builder: (BuildContext context, LessonTestState state) =>
               AppSectionScaffold(
                 title: _title(state),
                 child: LessonTestBody(
-                  onNextLesson: onNextLesson,
                   onBackToLessons: () => Navigator.of(context).pop(),
                 ),
               ),
@@ -47,10 +50,17 @@ class LessonTestScreen extends StatelessWidget {
     return 'test_start'.tr();
   }
 
-  void _showMessage(BuildContext context, LessonTestState state) {
-    final String? key = state.messageKey;
-    if (key == null) return;
+  void _handleState(BuildContext context, LessonTestState state) {
+    if (_timeUpHandled) return;
 
-    AppToast.show(context, key.tr());
+    if (state.didTimeOut) {
+      _timeUpHandled = true;
+      AppToast.show(context, LangKeys.quizTimeUp.tr());
+      Navigator.of(context).maybePop();
+      return;
+    }
+
+    final String? key = state.messageKey;
+    if (key != null) AppToast.show(context, key.tr());
   }
 }

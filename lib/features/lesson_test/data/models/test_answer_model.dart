@@ -17,10 +17,9 @@ class TestAnswerModel {
     this.optionIds = const <String>[],
     this.boolean,
     this.blanks = const <String, String>{},
-    Map<String, String> matches = const <String, String>{},
+    this.matches = const <String, String>{},
     this.order = const <String>[],
-    Map<String, String>? pairs,
-  }) : matches = pairs ?? matches;
+  });
 
   final List<String> optionIds;
   final bool? boolean;
@@ -31,15 +30,9 @@ class TestAnswerModel {
 
   final List<String> order;
 
-  @Deprecated('Legacy alias; use matches.')
-  Map<String, String> get pairs => matches;
-
   String? blankValue(String blankId) => blanks[blankId];
 
   String? leftForRight(String rightId) => matches[rightId];
-
-  @Deprecated('Legacy alias; use leftForRight.')
-  String? matchOf(String rightId) => leftForRight(rightId);
 
   bool usesOption(String optionId) =>
       optionIds.contains(optionId) || blanks.containsValue(optionId);
@@ -50,13 +43,12 @@ class TestAnswerModel {
     bool clearBoolean = false,
     Map<String, String>? blanks,
     Map<String, String>? matches,
-    Map<String, String>? pairs,
     List<String>? order,
   }) => TestAnswerModel(
     optionIds: optionIds ?? this.optionIds,
     boolean: clearBoolean ? null : boolean ?? this.boolean,
     blanks: blanks ?? this.blanks,
-    matches: matches ?? pairs ?? this.matches,
+    matches: matches ?? this.matches,
     order: order ?? this.order,
   );
 
@@ -185,7 +177,8 @@ class TestAnswerModel {
     if (matches.values.any((String id) => !leftIds.contains(id))) {
       throw const AnswerValidationException('unknown_left_item_id');
     }
-    if (matches.values.toSet().length != matches.values.length) {
+    if (!question.allowsOneToManyMatching &&
+        matches.values.toSet().length != matches.values.length) {
       throw const AnswerValidationException('duplicate_left_item_id');
     }
   }
@@ -211,7 +204,6 @@ class TestAnswerModel {
     'boolean': boolean,
     'blanks': blanks,
     'matches': matches,
-    'pairs': matches,
     'order': order,
   };
 }

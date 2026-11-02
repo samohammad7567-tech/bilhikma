@@ -21,11 +21,16 @@ class LangKeys {
   static const String quizBestAnswer = 'quiz_best_answer';
   static const String quizMaxSelections = 'quiz_max_selections';
   static const String quizMaxSelectionsReached = 'quiz_max_selections_reached';
-  static const String nextLessonLocked = 'next_lesson_locked';
   static const String quizUnsupportedQuestion = 'quiz_unsupported_question';
   static const String quizFailedNote = 'quiz_failed_note';
   static const String passThreshold = 'pass_threshold';
   static const String quizTrue = 'quiz_true';
   static const String quizFalse = 'quiz_false';
   static const String quizTimeUp = 'test_time_up';
+  static const String quizReviewTitle = 'quiz_review_title';
+  static const String quizAnswerCorrect = 'quiz_answer_correct';
+  static const String quizAnswerIncorrect = 'quiz_answer_incorrect';
+  static const String quizCorrectAnswer = 'quiz_correct_answer';
+  static const String quizExplanation = 'quiz_explanation';
+  static const String quizTimeSpent = 'quiz_time_spent';
 }

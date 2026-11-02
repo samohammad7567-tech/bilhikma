@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/quiz_attempt_model.dart';
@@ -11,13 +12,8 @@ import 'lesson_test_question_body.dart';
 import 'lesson_test_result_body.dart';
 
 class LessonTestBody extends StatelessWidget {
-  const LessonTestBody({
-    required this.onNextLesson,
-    required this.onBackToLessons,
-    super.key,
-  });
+  const LessonTestBody({required this.onBackToLessons, super.key});
 
-  final void Function(int lessonId)? onNextLesson;
   final VoidCallback onBackToLessons;
 
   @override
@@ -46,6 +42,8 @@ class LessonTestBody extends StatelessWidget {
   }
 
   Widget _body(LessonTestCubit cubit, LessonTestState state) {
+    if (state.didTimeOut) return _timeUp;
+
     switch (state.status) {
       case LessonTestStatus.initial:
       case LessonTestStatus.loading:
@@ -82,9 +80,8 @@ class LessonTestBody extends StatelessWidget {
 
         return SingleChildScrollView(
           child: LessonTestResultBody(
-            state: state,
             result: result,
-            onNextLesson: onNextLesson,
+            showReview: state.quiz?.showCorrectAnswers ?? false,
             onBackToLessons: onBackToLessons,
           ),
         );
@@ -95,6 +92,13 @@ class LessonTestBody extends StatelessWidget {
     child: AppEmptyView(
       icon: Icons.quiz_outlined,
       messageKey: 'no_test_questions',
+    ),
+  );
+
+  Widget get _timeUp => const Center(
+    child: AppEmptyView(
+      icon: Icons.timer_off_outlined,
+      messageKey: LangKeys.quizTimeUp,
     ),
   );
 }

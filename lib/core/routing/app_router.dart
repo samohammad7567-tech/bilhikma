@@ -181,23 +181,15 @@ class AppRouter {
             args: detailArgs,
             onGoToTest: (LessonDetailModel detail) => _push(
               AppRoutes.lessonTest,
-              LessonTestArgs(
-                lessonId: detail.id,
-                lessonTitle: detail.title,
-                categorySubjectId: detail.categorySubjectId,
-              ),
+              LessonTestArgs(lessonId: detail.id),
             ),
           ),
         );
 
       case AppRoutes.lessonTest:
         return MaterialPageRoute(
-          builder: (_) => LessonTestScreen(
-            args: LessonTestArgs.fromRoute(args),
-            onNextLesson: (int lessonId) => unawaited(
-              _push(AppRoutes.lessonDetail, LessonDetailArgs(id: lessonId)),
-            ),
-          ),
+          builder: (_) =>
+              LessonTestScreen(args: LessonTestArgs.fromRoute(args)),
         );
 
       case AppRoutes.subjectContent:

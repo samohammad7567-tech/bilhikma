@@ -178,6 +178,61 @@ void main() {
       expect(attempt.hasExpired, isFalse);
     });
 
+    test('parses reusable words, one-to-many matching, and duration', () {
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{
+          'id': 5,
+          'quiz_id': 2,
+          'student_id': 9,
+          'attempt_no': 1,
+          'max_score': 14,
+          'duration_seconds': 95,
+          'review_status': 'none',
+          'answers': <Map<String, dynamic>>[
+            _attempt(
+              id: '4',
+              type: 'fill_blank_choice',
+              text: 'Choose {{1}} and {{2}}',
+              details: <String, dynamic>{
+                'blank_input_mode': 'word_bank',
+                'word_bank': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'w1',
+                    'text': 'word',
+                    'is_reusable': true,
+                  },
+                ],
+                'blanks': <Map<String, dynamic>>[
+                  <String, dynamic>{'id': 'b_1', 'blank_index': 1},
+                  <String, dynamic>{'id': 'b_2', 'blank_index': 2},
+                ],
+              },
+            ),
+            _attempt(
+              id: '6',
+              type: 'matching',
+              text: 'Match',
+              details: <String, dynamic>{
+                'allow_one_to_many_matching': true,
+                'pairs': <String, dynamic>{
+                  'left': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'l1', 'text': 'Left'},
+                  ],
+                  'right': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'r1', 'text': 'Right'},
+                  ],
+                },
+              },
+            ),
+          ],
+        },
+      );
+
+      expect(attempt.duration, const Duration(seconds: 95));
+      expect(attempt.questions[0].options.single.isReusable, isTrue);
+      expect(attempt.questions[1].allowsOneToManyMatching, isTrue);
+    });
+
     test('marks a submitted attempt from score even without submitted_at', () {
       final QuizAttemptModel attempt =
           QuizAttemptModel.fromJson(<String, dynamic>{
@@ -278,6 +333,31 @@ void main() {
         ).toSubmissionJson(ordering),
         <String, dynamic>{
           'order': <String>['i2', 'i1'],
+        },
+      );
+    });
+
+    test('allows one-to-many matches only when the question permits it', () {
+      const TestQuestionModel oneToMany = TestQuestionModel(
+        id: '6',
+        type: TestQuestionType.matchPairs,
+        prompt: 'Match',
+        allowsOneToManyMatching: true,
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'l1', text: 'Left'),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'r1', text: 'Right one'),
+          TestMatchItemModel(id: 'r2', text: 'Right two'),
+        ],
+      );
+
+      expect(
+        const TestAnswerModel(
+          matches: <String, String>{'r1': 'l1', 'r2': 'l1'},
+        ).toSubmissionJson(oneToMany),
+        <String, dynamic>{
+          'matches': <String, String>{'r1': 'l1', 'r2': 'l1'},
         },
       );
     });

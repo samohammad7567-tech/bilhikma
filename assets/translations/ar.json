@@ -275,7 +275,6 @@
   "test_failed": "لم تجتز الاختبار",
   "test_failed_note": "حاول مرة أخرى لتحقيق نسبة النجاح، يمكنك إعادة الامتحان بعد {days} أيام",
   "retry_after_days": "يمكنك إعادة المحاولة بعد {days} أيام",
-  "next_lesson": "الدرس التالي",
   "test_time_up": "انتهى وقت الاختبار",
   "no_test_questions": "لا توجد أسئلة في هذا الاختبار",
   "session_expired": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى",
@@ -358,10 +357,15 @@
   "quiz_best_answer": "اختر الإجابة الأفضل",
   "quiz_max_selections": "يمكنك اختيار حتى {count} إجابات",
   "quiz_max_selections_reached": "لقد وصلت إلى الحد الأقصى لعدد الاختيارات.",
-  "next_lesson_locked": "انجح في الاختبار لفتح الدرس التالي.",
   "quiz_unsupported_question": "نوع هذا السؤال غير مدعوم بعد.",
   "quiz_failed_note": "لم تصل إلى درجة النجاح. يمكنك المحاولة مرة أخرى.",
   "pass_threshold": "درجة النجاح",
   "quiz_true": "صحيح",
-  "quiz_false": "خطأ"
+  "quiz_false": "خطأ",
+  "quiz_review_title": "مراجعة الإجابات",
+  "quiz_answer_correct": "إجابة صحيحة",
+  "quiz_answer_incorrect": "إجابة غير صحيحة",
+  "quiz_correct_answer": "الإجابة الصحيحة",
+  "quiz_explanation": "التوضيح",
+  "quiz_time_spent": "الوقت المستغرق"
 }

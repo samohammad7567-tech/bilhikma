@@ -20,6 +20,7 @@ class QuizAttemptModel {
     this.startedAt,
     this.expiresAt,
     this.submittedAt,
+    this.durationSeconds,
     this.serverHasExpired = false,
     this.serverIsSubmitted = false,
     this.policy = const QuizPolicyModel(),
@@ -45,6 +46,7 @@ class QuizAttemptModel {
   final DateTime? startedAt;
   final DateTime? expiresAt;
   final DateTime? submittedAt;
+  final int? durationSeconds;
 
   final bool serverHasExpired;
   final bool serverIsSubmitted;
@@ -61,6 +63,9 @@ class QuizAttemptModel {
       serverHasExpired || (expiresAt?.isBefore(DateTime.now()) ?? false);
 
   Duration? get remaining => expiresAt?.difference(DateTime.now());
+
+  Duration? get duration =>
+      durationSeconds == null ? null : Duration(seconds: durationSeconds!);
 
   factory QuizAttemptModel.fromJson(Map<String, dynamic> json) {
     final String reviewStatus =
@@ -102,6 +107,7 @@ class QuizAttemptModel {
       startedAt: Json.asDateTime(json['started_at']),
       expiresAt: Json.asDateTime(json['expires_at']),
       submittedAt: submittedAt,
+      durationSeconds: Json.asOptionalInt(json['duration_seconds']),
       serverHasExpired: Json.asBool(json['has_expired']),
       serverIsSubmitted:
           submittedAt != null ||
@@ -132,6 +138,7 @@ class QuizAttemptModel {
     'started_at': startedAt?.toIso8601String(),
     'expires_at': expiresAt?.toIso8601String(),
     'submitted_at': submittedAt?.toIso8601String(),
+    'duration_seconds': durationSeconds,
     'has_expired': serverHasExpired,
     'policy_snapshot': policy.toJson(),
     'answers': questions

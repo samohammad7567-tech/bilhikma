@@ -4,10 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/localization/lang_keys.dart';
-import '../../../../core/models/lesson_model.dart';
-import '../../../../core/models/lessons_filter.dart';
 import '../../../../core/utils/error_mapper.dart';
-import '../../../lessons/data/repos/lessons_repo.dart';
 import '../../data/models/lesson_test_model.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../../data/models/test_answer_model.dart';
@@ -18,19 +15,13 @@ import '../../data/repos/lesson_test_repo.dart';
 part 'lesson_test_state.dart';
 
 class LessonTestCubit extends Cubit<LessonTestState> {
-  LessonTestCubit({
-    required this.lessonId,
-    this.categorySubjectId,
-    this.repo = const LessonTestRepo(),
-    this.lessonsRepo = const LessonsRepo(),
-  }) : super(const LessonTestState()) {
+  LessonTestCubit({required this.lessonId, this.repo = const LessonTestRepo()})
+    : super(const LessonTestState()) {
     loadQuiz();
   }
 
   final int lessonId;
-  final int? categorySubjectId;
   final LessonTestRepo repo;
-  final LessonsRepo lessonsRepo;
 
   Timer? _ticker;
   bool _startRequested = false;
@@ -117,11 +108,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           questionStartedAt: DateTime.now(),
           questionTick: 0,
           isStarting: false,
+          didTimeOut: false,
           clearSelectedBlank: true,
           clearSelectedPrompt: true,
           clearError: true,
           clearMessage: true,
-          clearNextLesson: true,
         ),
       );
 
@@ -198,11 +189,14 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     if (target == null) return;
 
     final Map<String, String> blanks = Map<String, String>.of(current.blanks)
-      ..[target] = optionId
-      ..removeWhere(
+      ..[target] = optionId;
+
+    if (!(question.optionById(optionId)?.isReusable ?? false)) {
+      blanks.removeWhere(
         (String blankId, String value) =>
             value == optionId && blankId != target,
       );
+    }
 
     _emitAnswer(current.copyWith(blanks: blanks), clearSelectedBlank: true);
   }
@@ -213,10 +207,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     final TestAnswerModel current = state.currentAnswer;
 
     final Map<String, String> blanks = Map<String, String>.of(current.blanks)
-      ..[blankId] = optionId
-      ..removeWhere(
+      ..[blankId] = optionId;
+
+    if (!(state.currentQuestion?.optionById(optionId)?.isReusable ?? false)) {
+      blanks.removeWhere(
         (String id, String value) => value == optionId && id != blankId,
       );
+    }
 
     _emitAnswer(current.copyWith(blanks: blanks), clearSelectedBlank: true);
   }
@@ -257,12 +254,23 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     if (leftItemId == null) return;
 
     final TestAnswerModel current = state.currentAnswer;
+    final bool allowMany =
+        state.currentQuestion?.allowsOneToManyMatching ?? false;
 
-    final Map<String, String> matches = Map<String, String>.of(current.matches)
-      ..removeWhere((String rightId, String leftId) => leftId == leftItemId)
-      ..[rightItemId] = leftItemId;
+    final Map<String, String> matches = Map<String, String>.of(current.matches);
 
-    _emitAnswer(current.copyWith(matches: matches), clearSelectedPrompt: true);
+    if (!allowMany) {
+      matches.removeWhere(
+        (String rightId, String leftId) => leftId == leftItemId,
+      );
+    }
+
+    matches[rightItemId] = leftItemId;
+
+    _emitAnswer(
+      current.copyWith(matches: matches),
+      clearSelectedPrompt: !allowMany,
+    );
   }
 
   void clearPair(String rightItemId) {
@@ -376,7 +384,6 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
       _submitRequested = true;
       _emitResult(result, timedOut: timedOut);
-      unawaited(resolveNextLesson());
     } catch (error) {
       if (isClosed) return;
 
@@ -414,47 +421,6 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     }
   }
 
-  Future<void> resolveNextLesson() async {
-    final int? subjectId = categorySubjectId;
-    if (subjectId == null) {
-      emit(state.copyWith(clearNextLesson: true));
-      return;
-    }
-
-    try {
-      final List<LessonModel> lessons = await lessonsRepo.fetchAllLessons(
-        LessonsFilter(categorySubjectId: subjectId),
-      );
-      if (isClosed) return;
-
-      lessons.sort(
-        (LessonModel a, LessonModel b) => a.order.compareTo(b.order),
-      );
-
-      final int index = lessons.indexWhere(
-        (LessonModel lesson) => lesson.id == lessonId,
-      );
-
-      if (index < 0 || index + 1 >= lessons.length) {
-        emit(state.copyWith(clearNextLesson: true));
-        return;
-      }
-
-      final LessonModel next = lessons[index + 1];
-
-      emit(
-        state.copyWith(
-          nextLessonId: next.id,
-          nextLessonTitle: next.title,
-          nextLessonLocked: next.isLocked,
-        ),
-      );
-    } catch (_) {
-      if (isClosed) return;
-      emit(state.copyWith(clearNextLesson: true));
-    }
-  }
-
   void reportMessage(String messageKey) =>
       emit(state.copyWith(messageKey: messageKey));
 
@@ -465,7 +431,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   }
 
   void _tick() {
-    if (state.status != LessonTestStatus.running) return;
+    if (state.status != LessonTestStatus.running || state.didTimeOut) return;
 
     final DateTime? expiresAt = state.attempt?.expiresAt;
     final bool hasQuestionTimer = state.currentQuestion?.timeLimit != null;
@@ -476,7 +442,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       final Duration remaining = expiresAt.difference(DateTime.now());
 
       if (remaining <= Duration.zero) {
-        emit(state.copyWith(remaining: Duration.zero));
+        emit(state.copyWith(remaining: Duration.zero, didTimeOut: true));
         unawaited(submit(timedOut: true));
         return;
       }
@@ -561,7 +527,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       ),
     );
 
-    if (restartTicker) _startTicker();
+    if (restartTicker && !state.didTimeOut) _startTicker();
   }
 
   Future<bool> _recoverSubmittedAttempt() async {
@@ -579,7 +545,6 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         if (attempt.id == attemptId && attempt.isSubmitted) {
           _submitRequested = true;
           _emitResult(attempt);
-          unawaited(resolveNextLesson());
           return true;
         }
       }

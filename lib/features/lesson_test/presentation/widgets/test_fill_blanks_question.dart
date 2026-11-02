@@ -47,7 +47,9 @@ class TestFillBlanksQuestion extends StatelessWidget {
 
         TestWordBank(
           options: question.options,
-          isUsed: answer.usesOption,
+          isUsed: (String optionId) =>
+              answer.usesOption(optionId) &&
+              !(question.optionById(optionId)?.isReusable ?? false),
           onSelect: onWordTap,
         ),
       ],

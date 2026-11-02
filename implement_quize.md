@@ -1366,9 +1366,15 @@ Question-level timer:
 
 On timeout submit:
 
-- call `submit(timedOut: true)`
+- call `submit(timedOut: true)` exactly once and set `didTimeOut` on the state; the
+  ticker must return early while `didTimeOut` is true so it cannot re-trigger
 - guard against duplicate submissions with `_submitRequested`
-- if submission fails, show the error and allow retry while the result is not loaded
+- do not show the result screen for a timed-out attempt: notify the UI through
+  `didTimeOut`, show `test_time_up`, and pop back to the lesson screen once
+- the submission itself consumes the attempt, so `attempts_left` decreases on the
+  server even though the result is not displayed
+- if submission fails, do not restart the ticker (the attempt has already expired);
+  surface the error and let the attempt be submitted the next time it is opened
 
 ### 7.6 Submission
 
@@ -1427,7 +1433,8 @@ return the result and show it.
 
 ### 7.7 Result and next lesson
 
-After a successful submit:
+After a successful submit (except a timed-out attempt, which pops back to the lesson
+screen with `test_time_up`):
 
 - `result.isPassed` is the only pass/fail source.
 - `result.scorePercent`, `score`, `maxScore` are server values.

@@ -1,15 +1,7 @@
 class LessonTestArgs {
-  const LessonTestArgs({
-    required this.lessonId,
-    this.lessonTitle,
-    this.categorySubjectId,
-    this.lessonOrder,
-  });
+  const LessonTestArgs({required this.lessonId});
 
   final int lessonId;
-  final String? lessonTitle;
-  final int? categorySubjectId;
-  final int? lessonOrder;
 
   factory LessonTestArgs.fromRoute(Object? arguments) {
     if (arguments is LessonTestArgs) return arguments;

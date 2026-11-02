@@ -4,7 +4,6 @@ import '../../../../core/network/json_reader.dart';
 import 'test_blank_model.dart';
 import 'test_match_item_model.dart';
 import 'test_option_model.dart';
-import 'test_pair_model.dart';
 import 'test_sentence_model.dart';
 
 class TestQuestionModel {
@@ -17,13 +16,13 @@ class TestQuestionModel {
     this.timeLimit,
     this.isBestAnswer = false,
     this.maxSelections,
+    this.allowsOneToManyMatching = false,
     this.blankInputMode,
     this.options = const <TestOptionModel>[],
     this.blanks = const <TestBlankModel>[],
     this.wordBank = const <TestOptionModel>[],
     this.leftItems = const <TestMatchItemModel>[],
     this.rightItems = const <TestMatchItemModel>[],
-    this.pairs = const <TestPairModel>[],
     this.sentences = const <TestSentenceModel>[],
   });
 
@@ -37,6 +36,7 @@ class TestQuestionModel {
   final Duration? timeLimit;
   final bool isBestAnswer;
   final int? maxSelections;
+  final bool allowsOneToManyMatching;
   final BlankInputMode? blankInputMode;
 
   final List<TestOptionModel> options;
@@ -44,36 +44,10 @@ class TestQuestionModel {
   final List<TestOptionModel> wordBank;
   final List<TestMatchItemModel> leftItems;
   final List<TestMatchItemModel> rightItems;
-
-  @Deprecated('Legacy mock only; use leftItems/rightItems.')
-  final List<TestPairModel> pairs;
-
   final List<TestSentenceModel> sentences;
 
   int get effectiveMaxSelections =>
       maxSelections ?? (options.isEmpty ? 1 : options.length);
-
-  List<String> get correctOptionIds => options
-      .where((TestOptionModel option) => option.isCorrect)
-      .map((TestOptionModel option) => option.id)
-      .toList(growable: false);
-
-  String? get mostCorrectOptionId {
-    for (final TestOptionModel option in options) {
-      if (option.isMostCorrect) return option.id;
-    }
-    return null;
-  }
-
-  List<TestSentenceModel> get orderedSentences =>
-      List<TestSentenceModel>.of(sentences)..sort(
-        (TestSentenceModel a, TestSentenceModel b) =>
-            a.position.compareTo(b.position),
-      );
-
-  List<String> get correctSentenceIds => orderedSentences
-      .map((TestSentenceModel sentence) => sentence.id)
-      .toList(growable: false);
 
   TestOptionModel? optionById(String id) {
     for (final TestOptionModel option in options) {
@@ -104,15 +78,6 @@ class TestQuestionModel {
   }
 
   factory TestQuestionModel.fromJson(Map<String, dynamic> json) {
-    final bool attemptShape =
-        json.containsKey('question_id') || json.containsKey('question_type');
-
-    return attemptShape
-        ? TestQuestionModel._fromAttempt(json)
-        : TestQuestionModel._fromLegacy(json);
-  }
-
-  factory TestQuestionModel._fromAttempt(Map<String, dynamic> json) {
     final Map<String, dynamic> options = Json.asMap(json['options']);
     final Map<String, dynamic> details = Json.asMap(options['details']);
 
@@ -159,6 +124,9 @@ class TestQuestionModel {
       isBestAnswer:
           Json.asOptionalString(details['choice_variant']) == 'best_answer',
       maxSelections: Json.asOptionalInt(details['max_selections']),
+      allowsOneToManyMatching: Json.asBool(
+        details['allow_one_to_many_matching'],
+      ),
       blankInputMode: details['blank_input_mode'] == null
           ? null
           : BlankInputMode.fromJson(details['blank_input_mode']),
@@ -169,47 +137,6 @@ class TestQuestionModel {
       rightItems: rightItems,
       sentences: Json.asMapList(
         details['items'],
-      ).map(TestSentenceModel.fromJson).toList(growable: false),
-    );
-  }
-
-  factory TestQuestionModel._fromLegacy(Map<String, dynamic> json) {
-    final TestQuestionType type = TestQuestionType.fromJson(
-      json['type'] ?? json['question_type'],
-    );
-
-    final List<TestOptionModel> options = Json.asMapList(
-      json['options'],
-    ).map(TestOptionModel.fromJson).toList(growable: false);
-
-    final List<TestBlankModel> blanks = Json.asMapList(
-      json['blanks'],
-    ).map(TestBlankModel.fromJson).toList(growable: false);
-
-    final String prompt = Json.asString(json['prompt'] ?? json['title']);
-
-    return TestQuestionModel(
-      id: Json.asString(json['id']),
-      type: type,
-      prompt: prompt,
-      body: Json.asOptionalString(json['body'] ?? json['template']),
-      timeLimit: Json.asDuration(json['time_limit'] ?? json['duration']),
-      isBestAnswer: options.any(
-        (TestOptionModel option) => option.isMostCorrect,
-      ),
-      maxSelections: type == TestQuestionType.multiChoice
-          ? options.length
-          : null,
-      options: options,
-      blanks: blanks,
-      wordBank: type == TestQuestionType.fillBlanks
-          ? options
-          : const <TestOptionModel>[],
-      pairs: Json.asMapList(
-        json['pairs'],
-      ).map(TestPairModel.fromJson).toList(growable: false),
-      sentences: Json.asMapList(
-        json['sentences'],
       ).map(TestSentenceModel.fromJson).toList(growable: false),
     );
   }
@@ -250,6 +177,7 @@ class TestQuestionModel {
     'time_limit': timeLimit?.inSeconds,
     'is_best_answer': isBestAnswer,
     'max_selections': maxSelections,
+    'allow_one_to_many_matching': allowsOneToManyMatching,
     'blank_input_mode': blankInputMode?.key,
     'options': options
         .map((TestOptionModel option) => option.toJson())
@@ -265,9 +193,6 @@ class TestQuestionModel {
         .toList(growable: false),
     'right_items': rightItems
         .map((TestMatchItemModel item) => item.toJson())
-        .toList(growable: false),
-    'pairs': pairs
-        .map((TestPairModel pair) => pair.toJson())
         .toList(growable: false),
     'sentences': sentences
         .map((TestSentenceModel sentence) => sentence.toJson())

@@ -5,35 +5,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_circle_avatar.dart';
-import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_outline_button.dart';
 import '../../data/models/quiz_attempt_model.dart';
-import '../cubit/lesson_test_cubit.dart';
 import '../widgets/test_result_headline.dart';
+import '../widgets/test_result_review.dart';
 import '../widgets/test_result_score_card.dart';
 import '../widgets/test_retry_note.dart';
 
 class LessonTestResultBody extends StatelessWidget {
   const LessonTestResultBody({
-    required this.state,
     required this.result,
-    required this.onNextLesson,
     required this.onBackToLessons,
+    this.showReview = false,
     super.key,
   });
 
-  final LessonTestState state;
   final QuizAttemptModel result;
-  final void Function(int lessonId)? onNextLesson;
   final VoidCallback onBackToLessons;
+  final bool showReview;
 
   @override
   Widget build(BuildContext context) {
     final bool pending = result.isPendingReview;
-    final bool canGoNext =
-        state.canGoToNextLesson &&
-        state.nextLessonId != null &&
-        onNextLesson != null;
 
     return Column(
       children: <Widget>[
@@ -59,15 +52,7 @@ class LessonTestResultBody extends StatelessWidget {
           ),
         ],
 
-        if (state.nextLessonLocked && !pending) ...[
-          SizedBox(height: 14.h),
-          TestRetryNote(
-            messageKey: LangKeys.nextLessonLocked,
-            nextAttemptAt: null,
-          ),
-        ],
-
-        if (!canGoNext && !pending) ...[
+        if (!pending && result.isPassed != true) ...[
           SizedBox(height: 14.h),
           TestRetryNote(
             nextAttemptAt: result.nextAttemptAt,
@@ -75,40 +60,23 @@ class LessonTestResultBody extends StatelessWidget {
           ),
         ],
 
+        if (showReview && result.questionResults.isNotEmpty) ...[
+          SizedBox(height: 24.h),
+          TestResultReview(result: result),
+        ],
+
         SizedBox(height: 24.h),
-        ..._actions(context, canGoNext: canGoNext),
+        CustomOutlineButton(
+          onPressed: onBackToLessons,
+          text: 'back_to_lessons'.tr(),
+          width: double.infinity,
+          height: 46.h,
+          threeRadius: 8.r,
+          lastRadius: 8.r,
+          borderColor: Theme.of(context).colorScheme.secondary,
+          textColor: Theme.of(context).colorScheme.secondary,
+        ),
       ],
     );
-  }
-
-  List<Widget> _actions(BuildContext context, {required bool canGoNext}) {
-    final Widget back = CustomOutlineButton(
-      onPressed: onBackToLessons,
-      text: 'back_to_lessons'.tr(),
-      width: double.infinity,
-      height: 46.h,
-      threeRadius: 8.r,
-      lastRadius: 8.r,
-      borderColor: Theme.of(context).colorScheme.secondary,
-      textColor: Theme.of(context).colorScheme.secondary,
-    );
-
-    if (!canGoNext) return <Widget>[back];
-
-    return <Widget>[
-      CustomButton(
-        onPressed: () => onNextLesson!(state.nextLessonId!),
-        text: 'next_lesson'.tr(),
-        width: double.infinity,
-        height: 46.h,
-        threeRadius: 8.r,
-        lastRadius: 8.r,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        textColor: Theme.of(context).colorScheme.onSecondary,
-        elevation: 0,
-      ),
-      SizedBox(height: 10.h),
-      back,
-    ];
   }
 }
