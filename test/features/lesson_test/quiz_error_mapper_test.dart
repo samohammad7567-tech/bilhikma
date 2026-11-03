@@ -200,6 +200,30 @@ void main() {
       },
     );
 
+    test('loads a submitted attempt by id for the result review', () async {
+      final _FakeClient client = _FakeClient(
+        _envelope(<String, dynamic>{
+          'id': 77,
+          'quiz_id': 4,
+          'student_id': 9,
+          'attempt_no': 1,
+          'score': 1,
+          'max_score': 1,
+          'is_passed': true,
+          'submitted_at': '2026-01-01T10:00:00+00:00',
+          'answers': <Map<String, dynamic>>[],
+        }),
+      );
+
+      final QuizAttemptModel attempt = await LessonTestDataSource(
+        client: client,
+      ).fetchAttempt(77);
+
+      expect(client.lastPath, '/user/quiz-attempts/77');
+      expect(attempt.id, 77);
+      expect(attempt.isSubmitted, isTrue);
+    });
+
     test('reads the subject id from the content detail', () async {
       final _FakeClient client = _FakeClient(
         _envelope(<String, dynamic>{'id': 9, 'category_subject_id': 3}),

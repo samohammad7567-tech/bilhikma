@@ -57,6 +57,19 @@ class LessonTestDataSource {
     }
   }
 
+  Future<QuizAttemptModel> fetchAttempt(int attemptId) async {
+    try {
+      return await client.getObject<QuizAttemptModel>(
+        ApiEndpoints.quizAttempt(attemptId),
+        QuizAttemptModel.fromJson,
+      );
+    } on FormatException {
+      throw const AppException('quiz_unavailable');
+    } on AppException catch (error) {
+      throw QuizErrorMapper.translate(error);
+    }
+  }
+
   Future<List<QuizAttemptModel>> fetchMyAttempts(int quizId) async {
     try {
       final ApiEnvelope envelope = await client.get(

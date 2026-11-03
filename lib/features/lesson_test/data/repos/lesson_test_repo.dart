@@ -18,6 +18,9 @@ class LessonTestRepo {
     Map<String, Map<String, dynamic>> answers,
   ) => dataSource.submitAttempt(attemptId, answers);
 
+  Future<QuizAttemptModel> fetchAttempt(int attemptId) =>
+      dataSource.fetchAttempt(attemptId);
+
   Future<List<QuizAttemptModel>> fetchMyAttempts(int quizId) =>
       dataSource.fetchMyAttempts(quizId);
 

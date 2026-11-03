@@ -32,7 +32,11 @@ class LessonTestBody extends StatelessWidget {
           );
         }
 
-        if (state.isLoading) return const _IntroSkeleton();
+        if (state.isLoading) {
+          return state.resultOnly
+              ? const Center(child: CircularProgressIndicator())
+              : const _IntroSkeleton();
+        }
 
         final LessonTestState viewState = state;
 
@@ -54,7 +58,9 @@ class LessonTestBody extends StatelessWidget {
     switch (state.status) {
       case LessonTestStatus.initial:
       case LessonTestStatus.loading:
-        return const _IntroSkeleton();
+        return state.resultOnly
+            ? const Center(child: CircularProgressIndicator())
+            : const _IntroSkeleton();
 
       case LessonTestStatus.failure:
         return AppErrorView(

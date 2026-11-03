@@ -106,57 +106,84 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     }
     if (isClosed) return;
 
-    final int? resolvedQuizId = quizId ?? quiz?.id;
-    if (resolvedQuizId == null) {
-      _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
-      return;
+    QuizAttemptModel? target;
+    final int? requestedAttemptId = attemptId ?? initialAttemptId;
+
+    if (requestedAttemptId != null && requestedAttemptId > 0) {
+      target = await _fetchSubmittedAttempt(requestedAttemptId);
+      if (isClosed) return;
     }
 
-    try {
-      final List<QuizAttemptModel> attempts = await repo.fetchMyAttempts(
-        resolvedQuizId,
-      );
-      if (isClosed) return;
-
-      final List<QuizAttemptModel> submitted =
-          attempts
-              .where((QuizAttemptModel attempt) => attempt.isSubmitted)
-              .toList()
-            ..sort(_latestAttemptFirst);
-
-      QuizAttemptModel? target;
-      if (attemptId != null) {
-        for (final QuizAttemptModel attempt in submitted) {
-          if (attempt.id == attemptId) {
-            target = attempt;
-            break;
-          }
-        }
-      }
-      target ??= submitted.isEmpty ? null : submitted.first;
-
-      if (target == null) {
+    if (target == null) {
+      final int? resolvedQuizId = quizId ?? quiz?.id;
+      if (resolvedQuizId == null) {
         _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
         return;
       }
 
-      emit(
-        LessonTestState(
-          status: LessonTestStatus.result,
-          quiz: quiz,
-          attempt: target,
-          result: target,
-          remaining: Duration.zero,
-          resultOnly: true,
-        ),
-      );
-    } catch (error) {
-      if (isClosed) return;
+      try {
+        final List<QuizAttemptModel> attempts = await repo.fetchMyAttempts(
+          resolvedQuizId,
+        );
+        if (isClosed) return;
 
-      final AppException exception = QuizErrorMapper.translate(
-        ErrorMapper.toException(error),
-      );
-      _emitResultFailure(exception);
+        final List<QuizAttemptModel> submitted =
+            attempts
+                .where((QuizAttemptModel attempt) => attempt.isSubmitted)
+                .toList()
+              ..sort(_latestAttemptFirst);
+
+        QuizAttemptModel? selected;
+        if (requestedAttemptId != null) {
+          for (final QuizAttemptModel attempt in submitted) {
+            if (attempt.id == requestedAttemptId) {
+              selected = attempt;
+              break;
+            }
+          }
+        }
+        selected ??= submitted.isEmpty ? null : submitted.first;
+
+        if (selected != null) {
+          target = await _fetchSubmittedAttempt(selected.id) ?? selected;
+          if (isClosed) return;
+        }
+      } catch (error) {
+        if (isClosed) return;
+
+        final AppException exception = QuizErrorMapper.translate(
+          ErrorMapper.toException(error),
+        );
+        _emitResultFailure(exception);
+        return;
+      }
+    }
+
+    if (target == null) {
+      _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
+      return;
+    }
+
+    emit(
+      LessonTestState(
+        status: LessonTestStatus.result,
+        quiz: quiz,
+        attempt: target,
+        result: target,
+        remaining: Duration.zero,
+        resultOnly: true,
+      ),
+    );
+  }
+
+  /// Loads the full attempt after submission so the result can show the
+  /// questions and the released solutions without starting a new attempt.
+  Future<QuizAttemptModel?> _fetchSubmittedAttempt(int attemptId) async {
+    try {
+      final QuizAttemptModel attempt = await repo.fetchAttempt(attemptId);
+      return attempt.isSubmitted ? attempt : null;
+    } catch (_) {
+      return null;
     }
   }
 

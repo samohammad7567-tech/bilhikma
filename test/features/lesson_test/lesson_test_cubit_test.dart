@@ -6,6 +6,7 @@ import 'package:bilhikma/core/localization/lang_keys.dart';
 import 'package:bilhikma/core/utils/error_mapper.dart';
 import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/quiz_question_result_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_blank_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
@@ -426,6 +427,61 @@ void main() {
       expect(cubit.state.resultOnly, isTrue);
     });
 
+    test(
+      'loads the full attempt detail for review without starting an attempt',
+      () async {
+        final _FakeRepo repo = _FakeRepo(
+          fetchedAttempt: _result(
+            id: 77,
+            questionResults: <QuizQuestionResultModel>[
+              const QuizQuestionResultModel(
+                questionId: 'q1',
+                questionType: TestQuestionType.singleChoice,
+                isCorrect: true,
+                givenAnswer: <String, dynamic>{'option_id': 'o2'},
+                solution: <String, dynamic>{'correct_option_id': 'o2'},
+              ),
+            ],
+          ),
+        );
+        final LessonTestCubit cubit = LessonTestCubit(
+          lessonId: 4,
+          repo: repo,
+          resultOnly: true,
+          initialQuizId: 10,
+          initialAttemptId: 77,
+        );
+        addTearDown(cubit.close);
+
+        await _waitFor(() => cubit.state.isResult);
+
+        expect(cubit.state.result?.id, 77);
+        expect(cubit.state.result?.questionResults, hasLength(1));
+        expect(repo.startCalls, 0);
+        expect(repo.fetchAttemptCalls, 1);
+      },
+    );
+
+    test('falls back to the attempts list when the detail fails', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempts: <QuizAttemptModel>[_result(id: 2)],
+        fetchAttemptError: const AppException('quiz_unavailable'),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(
+        lessonId: 4,
+        repo: repo,
+        resultOnly: true,
+        initialQuizId: 10,
+        initialAttemptId: 2,
+      );
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isResult);
+
+      expect(cubit.state.result?.id, 2);
+      expect(repo.startCalls, 0);
+    });
+
     test('reports the local save state after an answer changes', () async {
       final _FakeRepo repo = _FakeRepo(
         attempt: _attempt(
@@ -483,18 +539,23 @@ Future<void> _waitFor(bool Function() predicate) async {
 class _FakeRepo extends LessonTestRepo {
   _FakeRepo({
     this.attempt,
+    this.fetchedAttempt,
     this.submitError,
     this.startError,
+    this.fetchAttemptError,
     List<QuizAttemptModel>? attempts,
   }) : attempts = attempts ?? const <QuizAttemptModel>[];
 
   QuizAttemptModel? attempt;
+  QuizAttemptModel? fetchedAttempt;
   Object? submitError;
   Object? startError;
+  Object? fetchAttemptError;
   List<QuizAttemptModel> attempts;
 
   int startCalls = 0;
   int submitCalls = 0;
+  int fetchAttemptCalls = 0;
   Map<String, Map<String, dynamic>>? submittedAnswers;
 
   @override
@@ -532,6 +593,16 @@ class _FakeRepo extends LessonTestRepo {
 
   @override
   Future<List<QuizAttemptModel>> fetchMyAttempts(int quizId) async => attempts;
+
+  @override
+  Future<QuizAttemptModel> fetchAttempt(int attemptId) async {
+    fetchAttemptCalls++;
+
+    final Object? error = fetchAttemptError;
+    if (error != null) throw error;
+
+    return fetchedAttempt ?? _result(id: attemptId);
+  }
 }
 
 QuizAttemptModel _attempt({
@@ -549,19 +620,24 @@ QuizAttemptModel _attempt({
   savedAnswers: savedAnswers,
 );
 
-QuizAttemptModel _result({int id = 100, DateTime? submittedAt}) =>
-    QuizAttemptModel(
-      id: id,
-      quizId: 10,
-      studentId: 1,
-      attemptNo: 1,
-      score: 1,
-      maxScore: 1,
-      scorePercent: 100,
-      isPassed: true,
-      submittedAt: submittedAt ?? DateTime.now(),
-      questions: <TestQuestionModel>[_singleChoiceQuestion()],
-    );
+QuizAttemptModel _result({
+  int id = 100,
+  DateTime? submittedAt,
+  List<QuizQuestionResultModel> questionResults =
+      const <QuizQuestionResultModel>[],
+}) => QuizAttemptModel(
+  id: id,
+  quizId: 10,
+  studentId: 1,
+  attemptNo: 1,
+  score: 1,
+  maxScore: 1,
+  scorePercent: 100,
+  isPassed: true,
+  submittedAt: submittedAt ?? DateTime.now(),
+  questions: <TestQuestionModel>[_singleChoiceQuestion()],
+  questionResults: questionResults,
+);
 
 TestQuestionModel _singleChoiceQuestion() => const TestQuestionModel(
   id: 'q1',

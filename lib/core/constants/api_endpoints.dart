@@ -42,6 +42,8 @@ class ApiEndpoints {
 
   static String quizAttempts(int quizId) => '/user/quizzes/$quizId/attempts';
 
+  static String quizAttempt(int attemptId) => '/user/quiz-attempts/$attemptId';
+
   static String quizAttemptSubmit(int attemptId) =>
       '/user/quiz-attempts/$attemptId/submit';
 
