@@ -86,7 +86,10 @@ class TestProgressHeader extends StatelessWidget {
 
         SizedBox(height: 4.h),
 
-        SizedBox(height: 16.h, child: _saveStatus(context)),
+        ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 16.h),
+          child: _saveStatus(context),
+        ),
       ],
     );
   }
@@ -110,14 +113,12 @@ class TestProgressHeader extends StatelessWidget {
 
     if (key == null || color == null) return const SizedBox.shrink();
 
-    return Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: Text(
-        key.tr(),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: AppTheme.styles(context).labelSmall.copyWith(color: color),
-      ),
+    return Text(
+      key.tr(),
+      textAlign: TextAlign.end,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppTheme.styles(context).labelSmall.copyWith(color: color),
     );
   }
 }

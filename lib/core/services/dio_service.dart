@@ -14,7 +14,7 @@ class DioService {
 
   static String _storedToken() {
     final Object? token = CacheUtil.get(key: 'token');
-    print(token);
+    print("token $token ");
     return token is String ? token : '';
   }
 
