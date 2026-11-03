@@ -341,11 +341,17 @@
   "quiz_unavailable": "This quiz is not available right now.",
   "quiz_locked": "This quiz is locked.",
   "quiz_video_incomplete": "Watch the video to the end before starting the quiz.",
+  "quiz_article_not_read": "Read the article before starting the quiz.",
   "quiz_attempts_exhausted": "You have used all attempts for this quiz.",
   "quiz_cooldown": "You can try again later.",
   "quiz_already_submitted": "This attempt has already been submitted.",
   "quiz_answers_invalid": "Check your answers and try again.",
   "quiz_pending_review": "Your result is preliminary and awaiting teacher review.",
+  "quiz_not_answered": "Not answered",
+  "quiz_result_unavailable": "Your result is not available yet.",
+  "quiz_saving": "Saving answers...",
+  "quiz_saved": "Answers saved",
+  "quiz_save_failed": "Could not save answers",
   "quiz_passed": "You have passed this quiz.",
   "quiz_attempts_left": "Attempts left",
   "quiz_attempts_unlimited": "Unlimited",
@@ -372,5 +378,7 @@
   "quiz_answer_incorrect": "Incorrect answer",
   "quiz_correct_answer": "Correct answer",
   "quiz_explanation": "Explanation",
-  "quiz_time_spent": "Time taken"
+  "quiz_time_spent": "Time taken",
+  "view_result_and_review": "View result and review",
+  "back_to_lesson": "Back to lesson"
 }

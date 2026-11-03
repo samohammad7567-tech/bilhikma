@@ -14,13 +14,26 @@ class TestQuestionPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Duration? timeLeft = remaining;
+
+    if (prompt.trim().isEmpty) {
+      if (timeLeft == null) return const SizedBox.shrink();
+
+      return Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: TestTimerChip(
+          icon: Icons.access_time,
+          label: LessonDetailFormats.clock(timeLeft),
+        ),
+      );
+    }
+
     final Widget text = Text(
       prompt,
       textAlign: TextAlign.start,
       style: AppTheme.styles(context).labelStrong,
     );
 
-    final Duration? timeLeft = remaining;
     if (timeLeft == null) return text;
 
     return Row(

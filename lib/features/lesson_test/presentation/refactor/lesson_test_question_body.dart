@@ -28,6 +28,7 @@ class LessonTestQuestionBody extends StatelessWidget {
           questionNumber: state.currentIndex + 1,
           questionCount: state.questionCount,
           progress: state.progress,
+          saveStatus: state.saveStatus,
           showTotalTimer: state.hasTimeLimit,
         ),
 

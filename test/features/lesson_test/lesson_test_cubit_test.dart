@@ -347,6 +347,128 @@ void main() {
       expect(cubit.state.isRunning, isTrue);
       expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
     });
+    test('does not submit an untouched ordering answer', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(questions: <TestQuestionModel>[_orderingQuestion()]),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      await cubit.submit();
+      await _waitFor(() => cubit.state.isResult);
+
+      expect(repo.submittedAnswers, isEmpty);
+    });
+
+    test('restores server-saved answers when an attempt is resumed', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_singleChoiceQuestion()],
+          savedAnswers: <String, Map<String, dynamic>>{
+            'q1': <String, dynamic>{'option_id': 'o2'},
+          },
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+    });
+
+    test('ignores a saved ordering answer with unknown items', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_orderingQuestion()],
+          savedAnswers: <String, Map<String, dynamic>>{
+            'order': <String, dynamic>{
+              'order': <String>['s1', 'unknown', 's3'],
+            },
+          },
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      expect(cubit.state.answerOf('order').order, <String>['s2', 's1', 's3']);
+      expect(cubit.state.answerOf('order').isTouched, isFalse);
+    });
+
+    test('loads the latest submitted attempt in result-only mode', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempts: <QuizAttemptModel>[
+          _result(id: 1, submittedAt: DateTime(2026, 1, 1)),
+          _result(id: 2, submittedAt: DateTime(2026, 1, 2)),
+        ],
+      );
+      final LessonTestCubit cubit = LessonTestCubit(
+        lessonId: 4,
+        repo: repo,
+        resultOnly: true,
+        initialQuizId: 10,
+      );
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isResult);
+
+      expect(cubit.state.result?.id, 2);
+      expect(cubit.state.resultOnly, isTrue);
+    });
+
+    test('reports the local save state after an answer changes', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_singleChoiceQuestion()],
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+
+      expect(cubit.state.saveStatus, LessonTestSaveStatus.saving);
+
+      await _waitFor(
+        () => cubit.state.saveStatus == LessonTestSaveStatus.saved,
+      );
+    });
+
+    test('keeps the server reason when the quiz is refused', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_singleChoiceQuestion()],
+        ),
+        startError: const AppException(
+          'forbidden',
+          statusCode: 403,
+          message: 'article must be read before starting the quiz',
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.errorKey != null);
+
+      expect(cubit.state.errorKey, LangKeys.quizArticleNotRead);
+      expect(cubit.state.errorMessage, contains('article'));
+    });
   });
 }
 
@@ -415,6 +537,8 @@ class _FakeRepo extends LessonTestRepo {
 QuizAttemptModel _attempt({
   List<TestQuestionModel>? questions,
   DateTime? expiresAt,
+  Map<String, Map<String, dynamic>> savedAnswers =
+      const <String, Map<String, dynamic>>{},
 }) => QuizAttemptModel(
   id: 100,
   quizId: 10,
@@ -422,20 +546,22 @@ QuizAttemptModel _attempt({
   attemptNo: 1,
   expiresAt: expiresAt ?? DateTime.now().add(const Duration(minutes: 10)),
   questions: questions ?? <TestQuestionModel>[_singleChoiceQuestion()],
+  savedAnswers: savedAnswers,
 );
 
-QuizAttemptModel _result() => QuizAttemptModel(
-  id: 100,
-  quizId: 10,
-  studentId: 1,
-  attemptNo: 1,
-  score: 1,
-  maxScore: 1,
-  scorePercent: 100,
-  isPassed: true,
-  submittedAt: DateTime.now(),
-  questions: <TestQuestionModel>[_singleChoiceQuestion()],
-);
+QuizAttemptModel _result({int id = 100, DateTime? submittedAt}) =>
+    QuizAttemptModel(
+      id: id,
+      quizId: 10,
+      studentId: 1,
+      attemptNo: 1,
+      score: 1,
+      maxScore: 1,
+      scorePercent: 100,
+      isPassed: true,
+      submittedAt: submittedAt ?? DateTime.now(),
+      questions: <TestQuestionModel>[_singleChoiceQuestion()],
+    );
 
 TestQuestionModel _singleChoiceQuestion() => const TestQuestionModel(
   id: 'q1',

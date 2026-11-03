@@ -75,7 +75,7 @@ class SubjectContentBody extends StatelessWidget {
                     onDownloadBook: onDownloadBook,
                     onCancelBookDownload: onCancelBookDownload,
                     onPreviewBook: onPreviewBook,
-            onOpenBook: onOpenBook,
+                    onOpenBook: onOpenBook,
                     onAlbumTap: onAlbumTap,
                   ),
             ),

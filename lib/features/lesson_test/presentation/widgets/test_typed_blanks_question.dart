@@ -56,7 +56,9 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TestQuestionPrompt(
-          prompt: widget.question.prompt,
+          prompt: widget.question.shouldShowPrompt
+              ? widget.question.displayPrompt
+              : '',
           remaining: widget.questionRemaining,
         ),
 

@@ -33,8 +33,7 @@ class BookDownloadsDataSource {
 
   /// Whether a stop has already been asked for and the download is only
   /// winding down.
-  static bool isCancelling(int bookId) =>
-      _tokens[bookId]?.isCancelled ?? false;
+  static bool isCancelling(int bookId) => _tokens[bookId]?.isCancelled ?? false;
 
   static Map<int, DownloadProgress> get snapshot => active.value;
   static String? takeMissedFailure(int bookId) =>

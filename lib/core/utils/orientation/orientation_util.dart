@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 void setPreferredOrientationByDevice(BuildContext context) {
   setPreferredOrientationByDeviceType(isMobile: ScreenSize.isMobile(context));
-} 
+}
 
 void setPreferredOrientationByDeviceType({required bool isMobile}) {
   if (isMobile) {

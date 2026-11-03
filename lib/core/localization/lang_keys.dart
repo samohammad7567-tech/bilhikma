@@ -5,11 +5,17 @@ class LangKeys {
   static const String quizUnavailable = 'quiz_unavailable';
   static const String quizLocked = 'quiz_locked';
   static const String quizVideoIncomplete = 'quiz_video_incomplete';
+  static const String quizArticleNotRead = 'quiz_article_not_read';
   static const String quizAttemptsExhausted = 'quiz_attempts_exhausted';
   static const String quizCooldown = 'quiz_cooldown';
   static const String quizAlreadySubmitted = 'quiz_already_submitted';
   static const String quizAnswersInvalid = 'quiz_answers_invalid';
   static const String quizPendingReview = 'quiz_pending_review';
+  static const String quizNotAnswered = 'quiz_not_answered';
+  static const String quizResultUnavailable = 'quiz_result_unavailable';
+  static const String quizSaving = 'quiz_saving';
+  static const String quizSaved = 'quiz_saved';
+  static const String quizSaveFailed = 'quiz_save_failed';
   static const String quizPassed = 'quiz_passed';
   static const String quizAttemptsLeft = 'quiz_attempts_left';
   static const String quizAttemptsUnlimited = 'quiz_attempts_unlimited';
@@ -39,4 +45,7 @@ class LangKeys {
   static const String quizCorrectAnswer = 'quiz_correct_answer';
   static const String quizExplanation = 'quiz_explanation';
   static const String quizTimeSpent = 'quiz_time_spent';
+  static const String goToTest = 'go_to_test';
+  static const String viewResultAndReview = 'view_result_and_review';
+  static const String backToLesson = 'back_to_lesson';
 }

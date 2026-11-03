@@ -34,8 +34,9 @@ class PathwayInfoRow extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).rowValue
-                    .copyWith(color: colors.onSurface.withValues(alpha: 0.55)),
+                style: AppTheme.styles(context).rowValue.copyWith(
+                  color: colors.onSurface.withValues(alpha: 0.55),
+                ),
               ),
               for (final String value in values)
                 Padding(
@@ -44,8 +45,9 @@ class PathwayInfoRow extends StatelessWidget {
                     value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTheme.styles(context).rowTitle
-                        .copyWith(color: colors.onSurfaceVariant),
+                    style: AppTheme.styles(
+                      context,
+                    ).rowTitle.copyWith(color: colors.onSurfaceVariant),
                   ),
                 ),
             ],

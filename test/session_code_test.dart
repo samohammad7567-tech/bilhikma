@@ -51,8 +51,11 @@ void main() {
       ];
 
       for (final Map<String, dynamic> body in bodies) {
-        expect(ErrorMapper.sessionIsOver(_refusal(403, body)), isTrue,
-            reason: '$body');
+        expect(
+          ErrorMapper.sessionIsOver(_refusal(403, body)),
+          isTrue,
+          reason: '$body',
+        );
       }
     });
 
@@ -81,9 +84,7 @@ void main() {
       };
 
       for (final MapEntry<int, String> entry in others.entries) {
-        final AppException error = ErrorMapper.toException(
-          _refusal(entry.key),
-        );
+        final AppException error = ErrorMapper.toException(_refusal(entry.key));
 
         expect(error.endsSession, isFalse, reason: '${entry.key}');
         expect(error.key, entry.value, reason: '${entry.key}');

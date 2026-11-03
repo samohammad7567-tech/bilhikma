@@ -66,6 +66,30 @@ void main() {
       expect(translated.endsSession, isFalse);
     });
 
+    test('maps an article-read 403 before the generic fallback', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'forbidden',
+          statusCode: 403,
+          message: 'يجب قراءة المقال قبل بدء الاختبار',
+        ),
+      );
+
+      expect(translated.key, 'quiz_article_not_read');
+    });
+
+    test('keeps the generic 403 fallback for an unrelated reason', () {
+      final AppException translated = QuizErrorMapper.translate(
+        const AppException(
+          'forbidden',
+          statusCode: 403,
+          message: 'not allowed for your current enrollment',
+        ),
+      );
+
+      expect(translated.key, 'quiz_unavailable');
+    });
+
     test('maps validation reasons without hiding the original errors', () {
       final AppException translated = QuizErrorMapper.translate(
         const AppException(

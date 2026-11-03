@@ -181,7 +181,12 @@ class AppRouter {
             args: detailArgs,
             onGoToTest: (LessonDetailModel detail) => _push(
               AppRoutes.lessonTest,
-              LessonTestArgs(lessonId: detail.id),
+              LessonTestArgs(
+                lessonId: detail.id,
+                quizId: detail.quiz?.id,
+                attemptId: detail.quiz?.latestAttemptId,
+                openResult: detail.hasPassedQuiz,
+              ),
             ),
           ),
         );

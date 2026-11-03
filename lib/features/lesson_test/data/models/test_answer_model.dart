@@ -1,4 +1,5 @@
 import '../../../../core/enums/test_question_type_enum.dart';
+import '../../../../core/network/json_reader.dart';
 import 'test_blank_model.dart';
 import 'test_match_item_model.dart';
 import 'test_question_model.dart';
@@ -19,6 +20,7 @@ class TestAnswerModel {
     this.blanks = const <String, String>{},
     this.matches = const <String, String>{},
     this.order = const <String>[],
+    this.isTouched = false,
   });
 
   final List<String> optionIds;
@@ -29,6 +31,13 @@ class TestAnswerModel {
   final Map<String, String> matches;
 
   final List<String> order;
+
+  /// True once the student has actually changed this answer.
+  ///
+  /// Ordering questions start with the server display order so the UI has
+  /// something to render, but that default must never be submitted as an
+  /// answer.
+  final bool isTouched;
 
   String? blankValue(String blankId) => blanks[blankId];
 
@@ -44,13 +53,50 @@ class TestAnswerModel {
     Map<String, String>? blanks,
     Map<String, String>? matches,
     List<String>? order,
+    bool? isTouched,
   }) => TestAnswerModel(
     optionIds: optionIds ?? this.optionIds,
     boolean: clearBoolean ? null : boolean ?? this.boolean,
     blanks: blanks ?? this.blanks,
     matches: matches ?? this.matches,
     order: order ?? this.order,
+    isTouched: isTouched ?? this.isTouched,
   );
+
+  factory TestAnswerModel.fromJson(Map<String, dynamic> json) =>
+      TestAnswerModel(
+        optionIds: Json.asStringList(json['option_ids']),
+        boolean: Json.asOptionalBool(json['boolean']),
+        blanks: _stringMap(json['blanks']),
+        matches: _stringMap(json['matches']),
+        order: Json.asStringList(json['order']),
+        isTouched: Json.asBool(json['is_touched']),
+      );
+
+  factory TestAnswerModel.fromSavedJson(Map<String, dynamic> json) {
+    final List<String> optionIds = <String>{
+      ...Json.asStringList(json['option_ids']),
+      if (json['option_id'] is String) Json.asString(json['option_id']),
+    }.toList(growable: false);
+
+    return TestAnswerModel(
+      optionIds: optionIds,
+      boolean: Json.asOptionalBool(json['boolean']),
+      blanks: _stringMap(json['blanks']),
+      matches: _stringMap(json['matches']),
+      order: Json.asStringList(json['order']),
+      isTouched: true,
+    );
+  }
+
+  static Map<String, String> _stringMap(Object? value) {
+    if (value is! Map) return const <String, String>{};
+
+    return <String, String>{
+      for (final MapEntry<Object?, Object?> entry in value.entries)
+        '${entry.key}': '${entry.value}',
+    };
+  }
 
   bool isAnswered(TestQuestionType type) => switch (type) {
     TestQuestionType.singleChoice => optionIds.length == 1,
@@ -205,5 +251,6 @@ class TestAnswerModel {
     'blanks': blanks,
     'matches': matches,
     'order': order,
+    'is_touched': isTouched,
   };
 }

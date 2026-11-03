@@ -75,8 +75,9 @@ class CustomButton extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: textColor == null
                     ? AppTheme.styles(context).buttonLabel
-                    : AppTheme.styles(context).buttonLabel
-                          .copyWith(color: textColor),
+                    : AppTheme.styles(
+                        context,
+                      ).buttonLabel.copyWith(color: textColor),
               ),
       ),
     );

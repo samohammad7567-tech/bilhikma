@@ -57,10 +57,7 @@ void main() {
   setUp(() {
     ended = <int>[];
     playback = _FakePlayback();
-    reporter = LessonPlaybackReporter(
-      onTick: (_, _) {},
-      onEnded: ended.add,
-    );
+    reporter = LessonPlaybackReporter(onTick: (_, _) {}, onEnded: ended.add);
     reporter.attach(playback);
   });
 

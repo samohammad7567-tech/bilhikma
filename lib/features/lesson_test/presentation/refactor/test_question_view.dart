@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
@@ -51,7 +51,7 @@ class TestQuestionView extends StatelessWidget {
         if (question.blankInputMode?.key == 'dropdown') {
           return TestDropdownBlanksQuestion(
             question: question,
-          questionRemaining: questionRemaining,
+            questionRemaining: questionRemaining,
             answer: answer,
             selectedBlankId: state.selectedBlankId,
             onBlankTap: (String blankId) => answer.blankValue(blankId) == null

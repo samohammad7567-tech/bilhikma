@@ -30,17 +30,20 @@ void main() {
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
 
-  test('holds the screen while an owner is playing and releases after', () async {
-    final Object player = Object();
+  test(
+    'holds the screen while an owner is playing and releases after',
+    () async {
+      final Object player = Object();
 
-    ScreenWakeService.request(player, keepAwake: true);
-    await settle();
-    expect(fake.state, isTrue);
+      ScreenWakeService.request(player, keepAwake: true);
+      await settle();
+      expect(fake.state, isTrue);
 
-    ScreenWakeService.request(player, keepAwake: false);
-    await settle();
-    expect(fake.state, isFalse);
-  });
+      ScreenWakeService.request(player, keepAwake: false);
+      await settle();
+      expect(fake.state, isFalse);
+    },
+  );
 
   test('repeated identical ticks never reach the platform twice', () async {
     final Object player = Object();

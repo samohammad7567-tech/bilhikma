@@ -45,8 +45,9 @@ class LessonMediaTab extends StatelessWidget {
                   mediaType.filterLabel.tr(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).labelMedium
-                      .copyWith(color: foreground),
+                  style: AppTheme.styles(
+                    context,
+                  ).labelMedium.copyWith(color: foreground),
                 ),
               ),
             ],

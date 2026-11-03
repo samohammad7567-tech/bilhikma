@@ -13,6 +13,8 @@ enum LessonTestStatus {
 
 enum LessonTestPhase { intro, running, result }
 
+enum LessonTestSaveStatus { idle, saving, saved, failed }
+
 final class LessonTestState {
   const LessonTestState({
     this.status = LessonTestStatus.initial,
@@ -27,12 +29,15 @@ final class LessonTestState {
     this.selectedBlankId,
     this.selectedPromptId,
     this.errorKey,
+    this.errorMessage,
     this.messageKey,
     this.validationErrors = const <String, List<String>>{},
     this.isStarting = false,
     this.isSubmitting = false,
     this.didTimeOut = false,
+    this.saveStatus = LessonTestSaveStatus.idle,
     this.result,
+    this.resultOnly = false,
   });
 
   final LessonTestStatus status;
@@ -51,13 +56,16 @@ final class LessonTestState {
   final String? selectedPromptId;
 
   final String? errorKey;
+  final String? errorMessage;
   final String? messageKey;
   final Map<String, List<String>> validationErrors;
 
   final bool isStarting;
   final bool isSubmitting;
   final bool didTimeOut;
+  final LessonTestSaveStatus saveStatus;
   final QuizAttemptModel? result;
+  final bool resultOnly;
 
   bool get isLoading =>
       status == LessonTestStatus.loading || status == LessonTestStatus.initial;
@@ -164,6 +172,7 @@ final class LessonTestState {
     bool clearSelectedBlank = false,
     bool clearSelectedPrompt = false,
     String? errorKey,
+    String? errorMessage,
     bool clearError = false,
     String? messageKey,
     bool clearMessage = false,
@@ -171,7 +180,9 @@ final class LessonTestState {
     bool? isStarting,
     bool? isSubmitting,
     bool? didTimeOut,
+    LessonTestSaveStatus? saveStatus,
     QuizAttemptModel? result,
+    bool? resultOnly,
   }) => LessonTestState(
     status: status ?? this.status,
     quiz: quiz ?? this.quiz,
@@ -189,6 +200,7 @@ final class LessonTestState {
         ? null
         : selectedPromptId ?? this.selectedPromptId,
     errorKey: clearError ? null : errorKey ?? this.errorKey,
+    errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     messageKey: clearMessage ? null : messageKey ?? this.messageKey,
     validationErrors: clearError
         ? const <String, List<String>>{}
@@ -196,6 +208,8 @@ final class LessonTestState {
     isStarting: isStarting ?? this.isStarting,
     isSubmitting: isSubmitting ?? this.isSubmitting,
     didTimeOut: didTimeOut ?? this.didTimeOut,
+    saveStatus: saveStatus ?? this.saveStatus,
     result: result ?? this.result,
+    resultOnly: resultOnly ?? this.resultOnly,
   );
 }

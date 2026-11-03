@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/ornamented_card.dart';
+import '../../../../core/enums/lesson_status_enum.dart';
 import '../../../../core/enums/media_source_enum.dart';
 import '../../../../core/widgets/lesson_source_badge.dart';
 import '../../../../core/widgets/lesson_status_badge.dart';
@@ -16,11 +17,13 @@ class LessonSummaryCard extends StatelessWidget {
   const LessonSummaryCard({
     required this.detail,
     required this.progressView,
+    required this.status,
     super.key,
     this.source,
   });
 
   final LessonDetailModel detail;
+  final LessonStatus status;
 
   final LessonProgressView progressView;
   final MediaSource? source;
@@ -59,7 +62,7 @@ class LessonSummaryCard extends StatelessWidget {
                       LessonSourceBadge(source: source!),
                       SizedBox(width: 6.w),
                     ],
-                    LessonStatusBadge(status: detail.status),
+                    LessonStatusBadge(status: status),
                   ],
                 ),
               ),

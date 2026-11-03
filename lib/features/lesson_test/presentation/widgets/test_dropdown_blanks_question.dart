@@ -39,7 +39,7 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TestQuestionPrompt(
-          prompt: question.prompt,
+          prompt: question.shouldShowPrompt ? question.displayPrompt : '',
           remaining: questionRemaining,
         ),
 

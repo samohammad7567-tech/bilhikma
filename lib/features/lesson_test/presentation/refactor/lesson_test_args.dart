@@ -1,7 +1,21 @@
+import '../../../../core/enums/content_type_enum.dart';
+
 class LessonTestArgs {
-  const LessonTestArgs({required this.lessonId});
+  const LessonTestArgs({
+    required this.lessonId,
+    this.quizId,
+    this.attemptId,
+    this.openResult = false,
+    this.contentType = ContentType.video,
+    this.openLessonOnBack = false,
+  });
 
   final int lessonId;
+  final int? quizId;
+  final int? attemptId;
+  final bool openResult;
+  final ContentType contentType;
+  final bool openLessonOnBack;
 
   factory LessonTestArgs.fromRoute(Object? arguments) {
     if (arguments is LessonTestArgs) return arguments;

@@ -12,11 +12,7 @@ class NotificationCardSkeleton extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const SkeletonBox(
-            height: 40,
-            width: 40,
-            isCircular: true,
-          ),
+          const SkeletonBox(height: 40, width: 40, isCircular: true),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(

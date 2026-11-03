@@ -26,8 +26,9 @@ class LessonMediaTag extends StatelessWidget {
       child: Text(
         mediaType.label.tr(),
         maxLines: 1,
-        style: AppTheme.styles(context).labelSmall
-            .copyWith(color: colors.onSecondary),
+        style: AppTheme.styles(
+          context,
+        ).labelSmall.copyWith(color: colors.onSecondary),
       ),
     );
   }

@@ -53,10 +53,8 @@ class _AppSkeletonBoxState extends State<AppSkeletonBox>
 
     return AnimatedBuilder(
       animation: _controller,
-      builder: (BuildContext context, Widget? child) => Opacity(
-        opacity: 0.06 + (_controller.value * 0.06),
-        child: child,
-      ),
+      builder: (BuildContext context, Widget? child) =>
+          Opacity(opacity: 0.06 + (_controller.value * 0.06), child: child),
       child: Container(
         width: widget.width,
         height: widget.height,

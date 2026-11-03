@@ -26,6 +26,7 @@ class QuizAttemptModel {
     this.policy = const QuizPolicyModel(),
     this.questions = const <TestQuestionModel>[],
     this.questionResults = const <QuizQuestionResultModel>[],
+    this.savedAnswers = const <String, Map<String, dynamic>>{},
   });
 
   final int id;
@@ -54,6 +55,7 @@ class QuizAttemptModel {
   final QuizPolicyModel policy;
   final List<TestQuestionModel> questions;
   final List<QuizQuestionResultModel> questionResults;
+  final Map<String, Map<String, dynamic>> savedAnswers;
 
   bool get isSubmitted => serverIsSubmitted || submittedAt != null;
 
@@ -119,7 +121,19 @@ class QuizAttemptModel {
           .map(TestQuestionModel.fromJson)
           .toList(growable: false),
       questionResults: results,
+      savedAnswers: _savedAnswers(json['saved_answers']),
     );
+  }
+
+  static Map<String, Map<String, dynamic>> _savedAnswers(Object? value) {
+    final Map<String, dynamic> raw = Json.asMap(value);
+    if (raw.isEmpty) return const <String, Map<String, dynamic>>{};
+
+    return <String, Map<String, dynamic>>{
+      for (final MapEntry<String, dynamic> entry in raw.entries)
+        if (entry.value is Map)
+          entry.key: Map<String, dynamic>.from(entry.value as Map),
+    };
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -144,5 +158,6 @@ class QuizAttemptModel {
     'answers': questions
         .map((TestQuestionModel question) => question.toJson())
         .toList(growable: false),
+    'saved_answers': savedAnswers,
   };
 }

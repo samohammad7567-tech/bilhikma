@@ -341,11 +341,17 @@
   "quiz_unavailable": "هذا الاختبار غير متاح الآن.",
   "quiz_locked": "هذا الاختبار مقفل.",
   "quiz_video_incomplete": "شاهد الفيديو حتى النهاية قبل بدء الاختبار.",
+  "quiz_article_not_read": "اقرأ المقال قبل البدء في الاختبار.",
   "quiz_attempts_exhausted": "لقد استنفدت جميع محاولات هذا الاختبار.",
   "quiz_cooldown": "يمكنك المحاولة مرة أخرى لاحقًا.",
   "quiz_already_submitted": "تم تسليم هذه المحاولة بالفعل.",
   "quiz_answers_invalid": "تحقق من إجاباتك وحاول مرة أخرى.",
   "quiz_pending_review": "نتيجتك مبدئية وتنتظر مراجعة المعلم.",
+  "quiz_not_answered": "لم تتم الإجابة",
+  "quiz_result_unavailable": "نتيجتك غير متاحة بعد.",
+  "quiz_saving": "جارٍ حفظ الإجابات...",
+  "quiz_saved": "تم حفظ الإجابات",
+  "quiz_save_failed": "تعذر حفظ الإجابات",
   "quiz_passed": "لقد نجحت في هذا الاختبار.",
   "quiz_attempts_left": "المحاولات المتبقية",
   "quiz_attempts_unlimited": "غير محدودة",
@@ -372,5 +378,7 @@
   "quiz_answer_incorrect": "إجابة غير صحيحة",
   "quiz_correct_answer": "الإجابة الصحيحة",
   "quiz_explanation": "التوضيح",
-  "quiz_time_spent": "الوقت المستغرق"
+  "quiz_time_spent": "الوقت المستغرق",
+  "view_result_and_review": "عرض النتيجة والمراجعة",
+  "back_to_lesson": "العودة إلى الدرس"
 }

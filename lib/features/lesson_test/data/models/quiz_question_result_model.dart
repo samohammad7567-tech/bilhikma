@@ -26,6 +26,11 @@ class QuizQuestionResultModel {
   final Map<String, dynamic>? solution;
   final String? explanation;
 
+  bool get hasGivenAnswer =>
+      givenAnswer.isNotEmpty ||
+      blankResults.isNotEmpty ||
+      componentResults.isNotEmpty;
+
   factory QuizQuestionResultModel.fromJson(Map<String, dynamic> json) =>
       QuizQuestionResultModel(
         questionId: Json.asString(json['question_id']),

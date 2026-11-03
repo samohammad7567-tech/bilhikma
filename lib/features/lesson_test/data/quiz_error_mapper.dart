@@ -6,6 +6,7 @@ class QuizErrorMapper {
   static const Set<String> _stableKeys = <String>{
     'quiz_locked',
     'quiz_video_incomplete',
+    'quiz_article_not_read',
     'quiz_unavailable',
     'quiz_not_found',
     'quiz_cooldown',
@@ -41,6 +42,9 @@ class QuizErrorMapper {
   static String _forbiddenKey(AppException error) {
     final String? reason = _serverReason(error);
     if (reason != null) {
+      if (_isArticleReason(reason)) {
+        return 'quiz_article_not_read';
+      }
       if (reason.contains('video') ||
           reason.contains('watch') ||
           reason.contains('100')) {
@@ -56,6 +60,9 @@ class QuizErrorMapper {
         '${error.errors.values.expand((List<String> e) => e).join(' ')}';
     final String lower = text.toLowerCase();
 
+    if (_isArticleReason(lower)) {
+      return 'quiz_article_not_read';
+    }
     if (lower.contains('video') ||
         lower.contains('watch') ||
         lower.contains('100')) {
@@ -66,6 +73,16 @@ class QuizErrorMapper {
     }
     return 'quiz_unavailable';
   }
+
+  static bool _isArticleReason(String text) =>
+      text.contains('article') ||
+      text.contains('not_read') ||
+      text.contains('read_the') ||
+      text.contains('read_content') ||
+      text.contains('reading') ||
+      text.contains('قراءة') ||
+      text.contains('قراء') ||
+      text.contains('مقال');
 
   static String _validationKey(AppException error) {
     final String? reason = _serverReason(error);

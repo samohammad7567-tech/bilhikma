@@ -2,6 +2,7 @@ import 'package:bilhikma/core/enums/content_type_enum.dart';
 import 'package:bilhikma/core/enums/notification_kind_enum.dart';
 import 'package:bilhikma/core/routing/app_routes.dart';
 import 'package:bilhikma/core/routing/lesson_detail_args.dart';
+import 'package:bilhikma/features/lesson_test/presentation/refactor/lesson_test_args.dart';
 import 'package:bilhikma/core/routing/notification_destination.dart';
 import 'package:bilhikma/core/routing/subject_content_args.dart';
 import 'package:bilhikma/features/notifications/data/models/notification_model.dart';
@@ -12,6 +13,59 @@ int? lessonId(NotificationDestination? target) =>
     (target?.arguments as LessonDetailArgs?)?.id;
 
 void main() {
+  group('quiz result', () {
+    test('opens the submitted attempt from a push payload', () {
+      final NotificationDestination? target =
+          NotificationDestination.fromPushData(<String, dynamic>{
+            'type': 'quiz_result',
+            'quiz_id': 10,
+            'attempt_id': '77',
+            'content_id': 4,
+            'action': 'open_quiz_result',
+          });
+
+      expect(target?.route, AppRoutes.lessonTest);
+
+      final LessonTestArgs? args = target?.arguments as LessonTestArgs?;
+      expect(args?.quizId, 10);
+      expect(args?.attemptId, 77);
+      expect(args?.openResult, isTrue);
+      expect(args?.openLessonOnBack, isTrue);
+    });
+
+    test('keeps the lesson type for back-to-lesson navigation', () {
+      final NotificationDestination? target =
+          NotificationDestination.fromPushData(<String, dynamic>{
+            'type': 'quiz_result',
+            'quiz_id': 10,
+            'attempt_id': 77,
+            'content_id': 4,
+            'content_type': 'article',
+            'action': 'open_quiz_result',
+          });
+
+      final LessonTestArgs? args = target?.arguments as LessonTestArgs?;
+      expect(args?.lessonId, 4);
+      expect(args?.contentType, ContentType.article);
+    });
+
+    test('opens the attempt from a notification payload', () {
+      final NotificationDestination? target = NotificationDestination.resolve(
+        kind: NotificationKind.custom,
+        payload: const NotificationPayload(
+          contentId: 4,
+          quizId: 10,
+          attemptId: 77,
+          action: 'quiz_result',
+        ),
+      );
+
+      expect(target?.route, AppRoutes.lessonTest);
+      expect((target?.arguments as LessonTestArgs?)?.attemptId, 77);
+      expect((target?.arguments as LessonTestArgs?)?.openLessonOnBack, isTrue);
+    });
+  });
+
   group('new content', () {
     test('opens the lesson named by the deep link', () {
       final NotificationDestination? target = NotificationDestination.resolve(

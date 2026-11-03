@@ -49,8 +49,9 @@ class PasswordRequirementRow extends StatelessWidget {
                 textAlign: TextAlign.start,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).labelSmall
-                    .copyWith(color: tone),
+                style: AppTheme.styles(
+                  context,
+                ).labelSmall.copyWith(color: tone),
               ),
             ),
           ],

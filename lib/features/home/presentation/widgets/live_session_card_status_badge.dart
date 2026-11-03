@@ -30,8 +30,9 @@ class LiveSessionCardStatusBadge extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).pillLabel
-                .copyWith(color: colors.onPrimaryContainer),
+            style: AppTheme.styles(
+              context,
+            ).pillLabel.copyWith(color: colors.onPrimaryContainer),
           ),
         ],
       ),

@@ -45,8 +45,9 @@ class ArchiveFilterSegment extends StatelessWidget {
                   filter.label.tr(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).labelStrong
-                      .copyWith(color: foreground),
+                  style: AppTheme.styles(
+                    context,
+                  ).labelStrong.copyWith(color: foreground),
                 ),
               ),
             ],

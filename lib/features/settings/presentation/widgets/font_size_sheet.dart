@@ -45,8 +45,9 @@ class FontSizeSheet extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).sectionTitle
-                      .copyWith(color: colors.secondaryContainer),
+                  style: AppTheme.styles(
+                    context,
+                  ).sectionTitle.copyWith(color: colors.secondaryContainer),
                 ),
 
                 SizedBox(height: 14.h),

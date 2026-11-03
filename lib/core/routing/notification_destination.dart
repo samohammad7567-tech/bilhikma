@@ -1,3 +1,4 @@
+import '../../features/lesson_test/presentation/refactor/lesson_test_args.dart';
 import '../../features/notifications/data/models/notification_payload.dart';
 import '../enums/content_type_enum.dart';
 import '../enums/notification_kind_enum.dart';
@@ -25,6 +26,9 @@ class NotificationDestination {
   }
 
   static NotificationDestination? fromPayload(NotificationPayload payload) {
+    final NotificationDestination? quizResult = _quizResult(payload);
+    if (quizResult != null) return quizResult;
+
     if (payload.hasContent) {
       return NotificationDestination(
         AppRoutes.lessonDetail,
@@ -58,6 +62,13 @@ class NotificationDestination {
   }
 
   static NotificationDestination? fromPushData(Map<String, dynamic> data) {
+    final NotificationPayload payload = NotificationPayload.fromJson(data);
+    final NotificationDestination? quizResult = _quizResultFromData(
+      data,
+      payload,
+    );
+    if (quizResult != null) return quizResult;
+
     final NotificationDestination? linked = fromDeepLink(
       _firstString(data, const <String>[
         'deep_link',
@@ -100,6 +111,69 @@ class NotificationDestination {
 
     return _fromKind(NotificationKind.fromJson(data['type'] ?? data['kind']));
   }
+
+  static NotificationDestination? _quizResult(NotificationPayload payload) {
+    if (!payload.hasQuizResult) return null;
+
+    return _quizResultDestination(
+      contentId: payload.contentId,
+      contentType: payload.contentType,
+      quizId: payload.quizId,
+      attemptId: payload.attemptId,
+    );
+  }
+
+  static NotificationDestination? _quizResultFromData(
+    Map<String, dynamic> data,
+    NotificationPayload payload,
+  ) {
+    final NotificationDestination? resolved = _quizResult(payload);
+    if (resolved != null) return resolved;
+
+    final int attemptId = _firstId(<String?>[
+      _firstString(data, const <String>['attempt_id', 'quiz_attempt_id']),
+    ]);
+    final int quizId = _firstId(<String?>[
+      _firstString(data, const <String>['quiz_id']),
+    ]);
+    final int contentId = _firstId(<String?>[
+      _firstString(data, const <String>['content_id', 'lesson_id']),
+    ]);
+    final String action =
+        (_firstString(data, const <String>['action', 'type', 'kind']) ?? '')
+            .toLowerCase()
+            .replaceAll('-', '_');
+
+    final bool isResult =
+        action.contains('quiz_result') ||
+        (action.contains('quiz') && action.contains('attempt'));
+
+    if (!isResult || (contentId <= 0 && quizId <= 0)) return null;
+
+    return _quizResultDestination(
+      contentId: contentId,
+      contentType: ContentType.fromJson(data['content_type']),
+      quizId: quizId,
+      attemptId: attemptId,
+    );
+  }
+
+  static NotificationDestination _quizResultDestination({
+    required int contentId,
+    required ContentType contentType,
+    required int quizId,
+    required int attemptId,
+  }) => NotificationDestination(
+    AppRoutes.lessonTest,
+    arguments: LessonTestArgs(
+      lessonId: contentId,
+      quizId: quizId > 0 ? quizId : null,
+      attemptId: attemptId > 0 ? attemptId : null,
+      contentType: contentType,
+      openResult: true,
+      openLessonOnBack: true,
+    ),
+  );
 
   static NotificationDestination? _forTarget(_DeepLink link) {
     switch (link.target) {

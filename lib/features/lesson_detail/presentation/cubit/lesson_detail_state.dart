@@ -11,6 +11,7 @@ final class LessonDetailState {
     this.playbackUrl,
     this.playbackSource,
     this.isPreparingPlayback = false,
+    this.isSavingRead = false,
     this.isPlaying = false,
     this.isVideoFullscreen = false,
     this.playbackSpeed = PlaybackSpeed.normal,
@@ -40,6 +41,7 @@ final class LessonDetailState {
   final MediaSource? playbackSource;
 
   final bool isPreparingPlayback;
+  final bool isSavingRead;
   final bool isPlaying;
 
   final bool isVideoFullscreen;
@@ -81,6 +83,16 @@ final class LessonDetailState {
   bool get canPlay => playbackUrl != null;
 
   bool get isArticleRead => progress.isCompleted;
+
+  bool get canStartQuiz {
+    final LessonDetailModel? lesson = detail;
+    if (lesson == null || !lesson.hasQuiz || isLocked || lesson.isLocked) {
+      return false;
+    }
+    if (lesson.isArticle && !isArticleRead) return false;
+    return true;
+  }
+
   PlaybackSpeed get effectivePlaybackSpeed => playbackSpeed.cappedFor(
     isLessonCompleted: progress.isCompleted,
     isLowEndDevice: DeviceInfoService.isLowEndDevice,
@@ -142,6 +154,7 @@ final class LessonDetailState {
     String? playbackUrl,
     MediaSource? playbackSource,
     bool? isPreparingPlayback,
+    bool? isSavingRead,
     bool? isPlaying,
     bool? isVideoFullscreen,
     PlaybackSpeed? playbackSpeed,
@@ -169,6 +182,7 @@ final class LessonDetailState {
     playbackUrl: playbackUrl ?? this.playbackUrl,
     playbackSource: playbackSource ?? this.playbackSource,
     isPreparingPlayback: isPreparingPlayback ?? this.isPreparingPlayback,
+    isSavingRead: isSavingRead ?? this.isSavingRead,
     isPlaying: isPlaying ?? this.isPlaying,
     isVideoFullscreen: isVideoFullscreen ?? this.isVideoFullscreen,
     playbackSpeed: playbackSpeed ?? this.playbackSpeed,

@@ -10,9 +10,11 @@ class ArticleReadButton extends StatelessWidget {
     required this.isRead,
     required this.onMarkRead,
     super.key,
+    this.isSaving = false,
   });
 
   final bool isRead;
+  final bool isSaving;
   final VoidCallback onMarkRead;
 
   @override
@@ -52,6 +54,7 @@ class ArticleReadButton extends StatelessWidget {
       backgroundColor: colors.secondary,
       textColor: colors.onSecondary,
       elevation: 0,
+      isLoading: isSaving,
     );
   }
 }

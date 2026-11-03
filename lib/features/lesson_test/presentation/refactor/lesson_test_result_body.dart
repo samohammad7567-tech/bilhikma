@@ -15,13 +15,13 @@ import '../widgets/test_retry_note.dart';
 class LessonTestResultBody extends StatelessWidget {
   const LessonTestResultBody({
     required this.result,
-    required this.onBackToLessons,
+    required this.onBackToLesson,
     this.showReview = false,
     super.key,
   });
 
   final QuizAttemptModel result;
-  final VoidCallback onBackToLessons;
+  final VoidCallback onBackToLesson;
   final bool showReview;
 
   @override
@@ -67,8 +67,8 @@ class LessonTestResultBody extends StatelessWidget {
 
         SizedBox(height: 24.h),
         CustomOutlineButton(
-          onPressed: onBackToLessons,
-          text: 'back_to_lessons'.tr(),
+          onPressed: onBackToLesson,
+          text: LangKeys.backToLesson.tr(),
           width: double.infinity,
           height: 46.h,
           threeRadius: 8.r,

@@ -29,8 +29,9 @@ class SplashBrandTexts extends StatelessWidget {
               'platform_name'.tr(),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).splashTitle
-                  .copyWith(color: brandColor),
+              style: AppTheme.styles(
+                context,
+              ).splashTitle.copyWith(color: brandColor),
             ),
           ),
           SizedBox(height: 12.h),
@@ -41,8 +42,9 @@ class SplashBrandTexts extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).bodyLarge
-                  .copyWith(color: brandColor),
+              style: AppTheme.styles(
+                context,
+              ).bodyLarge.copyWith(color: brandColor),
             ),
           ),
         ],

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/utils/error_mapper.dart';
+import '../../data/data_source/lesson_test_local_data_source.dart';
 import '../../data/models/lesson_test_model.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../../data/models/test_answer_model.dart';
@@ -15,20 +16,41 @@ import '../../data/repos/lesson_test_repo.dart';
 part 'lesson_test_state.dart';
 
 class LessonTestCubit extends Cubit<LessonTestState> {
-  LessonTestCubit({required this.lessonId, this.repo = const LessonTestRepo()})
-    : super(const LessonTestState()) {
-    loadQuiz();
+  LessonTestCubit({
+    required this.lessonId,
+    this.repo = const LessonTestRepo(),
+    this.localStore = const LessonTestLocalDataSource(),
+    this.resultOnly = false,
+    this.initialQuizId,
+    this.initialAttemptId,
+  }) : super(LessonTestState(resultOnly: resultOnly)) {
+    if (resultOnly) {
+      unawaited(loadResult(quizId: initialQuizId, attemptId: initialAttemptId));
+    } else {
+      loadQuiz();
+    }
   }
 
   final int lessonId;
   final LessonTestRepo repo;
+  final LessonTestLocalDataSource localStore;
+  final bool resultOnly;
+  final int? initialQuizId;
+  final int? initialAttemptId;
 
   Timer? _ticker;
+  Timer? _cacheTimer;
   bool _startRequested = false;
   bool _submitRequested = false;
+  int _saveRevision = 0;
+
+  Future<void> retry() => state.resultOnly || resultOnly
+      ? loadResult(quizId: initialQuizId, attemptId: initialAttemptId)
+      : loadQuiz();
 
   Future<void> loadQuiz() async {
     _stopTicker();
+    _cacheTimer?.cancel();
     _startRequested = false;
     _submitRequested = false;
 
@@ -50,9 +72,102 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         state.copyWith(
           status: LessonTestStatus.failure,
           errorKey: exception.key,
+          errorMessage: exception.message,
         ),
       );
     }
+  }
+
+  Future<void> loadResult({int? quizId, int? attemptId}) async {
+    _stopTicker();
+    _cacheTimer?.cancel();
+    _startRequested = false;
+    _submitRequested = false;
+
+    emit(
+      const LessonTestState(status: LessonTestStatus.loading, resultOnly: true),
+    );
+
+    LessonTestModel? quiz;
+    try {
+      quiz = await repo.fetchQuiz(lessonId);
+    } catch (_) {
+      quiz = null;
+    }
+    if (isClosed) return;
+
+    final int? resolvedQuizId = quizId ?? quiz?.id;
+    if (resolvedQuizId == null) {
+      _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
+      return;
+    }
+
+    try {
+      final List<QuizAttemptModel> attempts = await repo.fetchMyAttempts(
+        resolvedQuizId,
+      );
+      if (isClosed) return;
+
+      final List<QuizAttemptModel> submitted =
+          attempts
+              .where((QuizAttemptModel attempt) => attempt.isSubmitted)
+              .toList()
+            ..sort(_latestAttemptFirst);
+
+      QuizAttemptModel? target;
+      if (attemptId != null) {
+        for (final QuizAttemptModel attempt in submitted) {
+          if (attempt.id == attemptId) {
+            target = attempt;
+            break;
+          }
+        }
+      }
+      target ??= submitted.isEmpty ? null : submitted.first;
+
+      if (target == null) {
+        _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
+        return;
+      }
+
+      emit(
+        LessonTestState(
+          status: LessonTestStatus.result,
+          quiz: quiz,
+          attempt: target,
+          result: target,
+          remaining: Duration.zero,
+          resultOnly: true,
+        ),
+      );
+    } catch (error) {
+      if (isClosed) return;
+
+      final AppException exception = QuizErrorMapper.translate(
+        ErrorMapper.toException(error),
+      );
+      _emitResultFailure(exception);
+    }
+  }
+
+  int _latestAttemptFirst(QuizAttemptModel a, QuizAttemptModel b) {
+    final DateTime? aDate = a.submittedAt;
+    final DateTime? bDate = b.submittedAt;
+    if (aDate != null && bDate != null) return bDate.compareTo(aDate);
+    if (aDate != null) return -1;
+    if (bDate != null) return 1;
+    return b.id.compareTo(a.id);
+  }
+
+  void _emitResultFailure(AppException exception) {
+    emit(
+      LessonTestState(
+        status: LessonTestStatus.failure,
+        errorKey: exception.key,
+        errorMessage: exception.message,
+        resultOnly: true,
+      ),
+    );
   }
 
   Future<void> startAttempt() async {
@@ -101,7 +216,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         state.copyWith(
           status: LessonTestStatus.running,
           attempt: attempt,
-          answers: _initialAnswers(attempt),
+          answers: _restoredAnswers(attempt),
           rightOrder: _initialRightOrder(attempt),
           currentIndex: 0,
           remaining: _remainingOf(attempt),
@@ -128,6 +243,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         state.copyWith(
           status: LessonTestStatus.ready,
           errorKey: exception.key,
+          errorMessage: exception.message,
           messageKey: exception.key,
           isStarting: false,
         ),
@@ -346,7 +462,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       for (final TestQuestionModel question in attempt.questions) {
         final TestAnswerModel answer = state.answerOf(question.id);
 
-        if (!answer.isAnswered(question.type) && !question.type.isOrdering) {
+        if (question.type.isOrdering && !answer.isTouched) {
+          continue;
+        }
+
+        if (!answer.isAnswered(question.type)) {
           continue;
         }
 
@@ -433,8 +553,17 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   void reportMessage(String messageKey) =>
       emit(state.copyWith(messageKey: messageKey));
 
+  Future<void> flushAnswers() async {
+    _cacheTimer?.cancel();
+    _cacheTimer = null;
+    await _persistAnswers();
+  }
+
   @override
-  Future<void> close() {
+  Future<void> close() async {
+    _cacheTimer?.cancel();
+    _cacheTimer = null;
+    await _persistAnswers(report: false);
     _stopTicker();
     return super.close();
   }
@@ -490,18 +619,26 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     final TestQuestionModel? question = state.currentQuestion;
     if (question == null) return;
 
+    _saveRevision++;
+
     emit(
       state.copyWith(
         answers: Map<String, TestAnswerModel>.of(state.answers)
-          ..[question.id] = answer,
+          ..[question.id] = answer.copyWith(isTouched: true),
+        saveStatus: LessonTestSaveStatus.saving,
         clearSelectedBlank: clearSelectedBlank,
         clearSelectedPrompt: clearSelectedPrompt,
       ),
     );
+
+    _schedulePersist();
   }
 
   void _emitResult(QuizAttemptModel result, {bool timedOut = false}) {
     _stopTicker();
+    _cacheTimer?.cancel();
+    _cacheTimer = null;
+    localStore.clear(result.id);
 
     emit(
       state.copyWith(
@@ -510,6 +647,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         remaining: Duration.zero,
         isStarting: false,
         isSubmitting: false,
+        saveStatus: LessonTestSaveStatus.idle,
         messageKey: timedOut ? LangKeys.quizTimeUp : null,
         clearError: true,
         validationErrors: const <String, List<String>>{},
@@ -576,6 +714,44 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _ticker = null;
   }
 
+  void _schedulePersist() {
+    _cacheTimer?.cancel();
+    _cacheTimer = Timer(
+      const Duration(milliseconds: 350),
+      () => unawaited(_persistAnswers()),
+    );
+  }
+
+  Future<void> _persistAnswers({bool report = true}) async {
+    final QuizAttemptModel? attempt = state.attempt;
+    if (attempt == null || state.isResult || state.resultOnly) return;
+
+    final int revision = _saveRevision;
+
+    try {
+      await localStore.write(
+        LessonTestSavedAnswersModel(
+          attemptId: attempt.id,
+          quizId: attempt.quizId,
+          updatedAt: DateTime.now(),
+          answers: state.answers,
+        ),
+      );
+      _reportSave(LessonTestSaveStatus.saved, revision, report: report);
+    } catch (_) {
+      _reportSave(LessonTestSaveStatus.failed, revision, report: report);
+    }
+  }
+
+  void _reportSave(
+    LessonTestSaveStatus status,
+    int revision, {
+    required bool report,
+  }) {
+    if (!report || isClosed || revision != _saveRevision) return;
+    emit(state.copyWith(saveStatus: status));
+  }
+
   Duration _remainingOf(QuizAttemptModel attempt) {
     final DateTime? expiresAt = attempt.expiresAt;
     if (expiresAt == null) return Duration.zero;
@@ -598,6 +774,57 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     }
 
     return answers;
+  }
+
+  Map<String, TestAnswerModel> _restoredAnswers(QuizAttemptModel attempt) {
+    final Map<String, TestAnswerModel> answers = _initialAnswers(attempt);
+    final Map<String, TestQuestionModel> questions =
+        <String, TestQuestionModel>{
+          for (final TestQuestionModel question in attempt.questions)
+            question.id: question,
+        };
+
+    for (final MapEntry<String, Map<String, dynamic>> entry
+        in attempt.savedAnswers.entries) {
+      final TestQuestionModel? question = questions[entry.key];
+      if (question == null) continue;
+
+      final TestAnswerModel answer = TestAnswerModel.fromSavedJson(entry.value);
+      if (!_isValidRestoredOrder(question, answer)) continue;
+
+      answers[entry.key] = answer;
+    }
+
+    // The server payload is applied first; the local cache only overlays the
+    // same attempt so an edit made between autosaves is not lost.
+    final LessonTestSavedAnswersModel? cached = localStore.read(attempt.id);
+    if (cached != null && cached.quizId == attempt.quizId) {
+      for (final MapEntry<String, TestAnswerModel> entry
+          in cached.answers.entries) {
+        final TestQuestionModel? question = questions[entry.key];
+        if (question == null) continue;
+        if (!_isValidRestoredOrder(question, entry.value)) continue;
+
+        answers[entry.key] = entry.value;
+      }
+    }
+
+    return answers;
+  }
+
+  bool _isValidRestoredOrder(
+    TestQuestionModel question,
+    TestAnswerModel answer,
+  ) {
+    if (question.type != TestQuestionType.orderSentences) return true;
+    if (answer.order.length != question.sentences.length) return false;
+
+    final Set<String> ids = question.sentences
+        .map((sentence) => sentence.id)
+        .toSet();
+
+    return answer.order.every(ids.contains) &&
+        answer.order.toSet().length == answer.order.length;
   }
 
   Map<String, List<String>> _initialRightOrder(QuizAttemptModel attempt) {

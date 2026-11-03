@@ -4,11 +4,13 @@ import 'package:bilhikma/core/network/session_policy.dart';
 import 'package:bilhikma/core/utils/error_mapper.dart';
 import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/quiz_question_result_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_answer_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_question_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_sentence_model.dart';
+import 'package:bilhikma/features/lesson_test/presentation/refactor/test_solution_answers.dart';
 import 'package:bilhikma/features/lesson_detail/data/models/lesson_detail_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -179,15 +181,14 @@ void main() {
     });
 
     test('treats empty options and null default time as no question timer', () {
-      final TestQuestionModel emptyOptions = TestQuestionModel.fromJson(
-        <String, dynamic>{
-          'question_id': 36,
-          'question_text': 'True?',
-          'question_type': 'true_false',
-          'score': 2,
-          'options': <dynamic>[],
-        },
-      );
+      final TestQuestionModel emptyOptions =
+          TestQuestionModel.fromJson(<String, dynamic>{
+            'question_id': 36,
+            'question_text': 'True?',
+            'question_type': 'true_false',
+            'score': 2,
+            'options': <dynamic>[],
+          });
 
       expect(emptyOptions.type, TestQuestionType.trueFalse);
       expect(emptyOptions.timeLimit, isNull);
@@ -448,6 +449,92 @@ void main() {
       expect(withQuiz.quiz?.id, 8);
       expect(withQuiz.isQuizBlocking, isTrue);
       expect(withQuiz.hasPassedQuiz, isTrue);
+    });
+  });
+
+  group('review helpers', () {
+    test('hides a prompt that only repeats the blank sentence', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'fill',
+        type: TestQuestionType.fillBlanks,
+        prompt: 'Complete {{1}} and {{2}}',
+        body: 'Complete {{b_1}} and {{b_2}}',
+      );
+
+      expect(question.displayPrompt, 'Complete and');
+      expect(question.shouldShowPrompt, isFalse);
+    });
+
+    test('keeps a prompt that adds instructions to the blank sentence', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'fill',
+        type: TestQuestionType.fillBlanks,
+        prompt: 'Choose the right word: {{1}}',
+        body: 'The cat {{b_1}}',
+      );
+
+      expect(question.shouldShowPrompt, isTrue);
+    });
+
+    test('restores a saved answer as touched', () {
+      final TestAnswerModel answer = TestAnswerModel.fromSavedJson({
+        'option_ids': <String>['o2'],
+      });
+
+      expect(answer.optionIds, <String>['o2']);
+      expect(answer.isTouched, isTrue);
+    });
+
+    test('hasGivenAnswer ignores an empty result payload', () {
+      const QuizQuestionResultModel empty = QuizQuestionResultModel(
+        questionId: 'q1',
+        questionType: TestQuestionType.singleChoice,
+      );
+      const QuizQuestionResultModel answered = QuizQuestionResultModel(
+        questionId: 'q1',
+        questionType: TestQuestionType.singleChoice,
+        givenAnswer: <String, dynamic>{'option_id': 'o2'},
+      );
+
+      expect(empty.hasGivenAnswer, isFalse);
+      expect(answered.hasGivenAnswer, isTrue);
+
+      const QuizQuestionResultModel answeredFalse = QuizQuestionResultModel(
+        questionId: 'q2',
+        questionType: TestQuestionType.trueFalse,
+        givenAnswer: <String, dynamic>{'boolean': false},
+      );
+
+      expect(answeredFalse.hasGivenAnswer, isTrue);
+    });
+
+    test('renders matching solution pairs', () {
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        solution: <String, dynamic>{
+          'pairs': <Map<String, dynamic>>[
+            <String, dynamic>{'left_text': 'A', 'right_text': '1'},
+          ],
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result), <String>['A → 1']);
+    });
+
+    test('reads a solution without a details wrapper', () {
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'order',
+        questionType: TestQuestionType.orderSentences,
+        solution: <String, dynamic>{
+          'items': <Map<String, dynamic>>[
+            <String, dynamic>{'text': 'First'},
+            <String, dynamic>{'text': 'Second'},
+          ],
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result), <String>['First', 'Second']);
     });
   });
 

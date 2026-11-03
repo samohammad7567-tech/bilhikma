@@ -84,7 +84,9 @@ class LessonTestIntroBody extends StatelessWidget {
           SizedBox(height: 12.h),
           _Note(
             icon: Icons.error_outline,
-            text: state.errorKey!.tr(),
+            text: state.errorMessage?.trim().isNotEmpty == true
+                ? state.errorMessage!
+                : state.errorKey!.tr(),
             color: colors.error,
           ),
         ],

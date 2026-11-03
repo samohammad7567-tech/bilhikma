@@ -47,8 +47,9 @@ class LessonCategoryChip extends StatelessWidget {
                 category.label.tr(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).labelMedium
-                    .copyWith(color: foreground),
+                style: AppTheme.styles(
+                  context,
+                ).labelMedium.copyWith(color: foreground),
               ),
             ],
           ),

@@ -234,8 +234,9 @@ class _CountrySelectorTile extends StatelessWidget {
                 country.displayDialCode,
                 textDirection: TextDirection.ltr,
                 maxLines: 1,
-                style: AppTheme.styles(context).labelMedium
-                    .copyWith(color: colors.onSurfaceVariant),
+                style: AppTheme.styles(
+                  context,
+                ).labelMedium.copyWith(color: colors.onSurfaceVariant),
               ),
 
               Icon(

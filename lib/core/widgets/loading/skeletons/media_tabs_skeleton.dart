@@ -13,9 +13,13 @@ class MediaTabsSkeleton extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Expanded(child: SkeletonBox(height: 36.h, radius: 8.r)),
+              Expanded(
+                child: SkeletonBox(height: 36.h, radius: 8.r),
+              ),
               SizedBox(width: 8.w),
-              Expanded(child: SkeletonBox(height: 36.h, radius: 8.r)),
+              Expanded(
+                child: SkeletonBox(height: 36.h, radius: 8.r),
+              ),
             ],
           ),
           SizedBox(height: 16.h),

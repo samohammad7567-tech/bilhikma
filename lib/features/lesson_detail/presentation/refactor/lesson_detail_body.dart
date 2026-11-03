@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/enums/lesson_status_enum.dart';
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/book_preview_args.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
@@ -62,6 +64,12 @@ class LessonDetailBody extends StatelessWidget {
         }
 
         final String? description = detail.description;
+        final LessonStatus status = LessonStatus.resolve(
+          isCompleted: state.progress.isCompleted,
+          isStarted: state.progress.isStarted,
+          isLocked: state.isLocked || detail.isLocked,
+        );
+        final bool canStartQuiz = state.canStartQuiz;
 
         return ListView(
           padding: EdgeInsets.only(bottom: 24.h),
@@ -74,6 +82,7 @@ class LessonDetailBody extends StatelessWidget {
               child: LessonSummaryCard(
                 detail: detail,
                 progressView: LessonProgressView.of(state),
+                status: status,
                 source: state.playbackSource,
               ),
             ),
@@ -134,6 +143,7 @@ class LessonDetailBody extends StatelessWidget {
               LessonDetailInset(
                 child: ArticleReadButton(
                   isRead: state.isArticleRead,
+                  isSaving: state.isSavingRead,
                   onMarkRead: cubit.markArticleRead,
                 ),
               ),
@@ -164,22 +174,39 @@ class LessonDetailBody extends StatelessWidget {
                       ),
                       SizedBox(height: 10.h),
                     ],
+                    if (detail.isArticle && !state.isArticleRead) ...<Widget>[
+                      Text(
+                        LangKeys.quizArticleNotRead.tr(),
+                        style: AppTheme.styles(context).cardCaption.copyWith(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                    ],
                     CustomButton(
-                      onPressed: detail.isLocked
-                          ? () {}
-                          : () => onGoToTest == null
+                      onPressed: canStartQuiz
+                          ? () => onGoToTest == null
                                 ? ComingSoonSheet.show(
                                     context,
                                     messageKey: 'coming_soon_test',
                                   )
-                                : onGoToTest!(detail),
-                      text: 'go_to_test'.tr(),
+                                : onGoToTest!(detail)
+                          : () {},
+                      text: detail.hasPassedQuiz
+                          ? LangKeys.viewResultAndReview.tr()
+                          : LangKeys.goToTest.tr(),
                       width: double.infinity,
                       height: 46,
                       threeRadius: 8.r,
                       lastRadius: 8.r,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      backgroundColor: canStartQuiz
+                          ? Theme.of(context).colorScheme.secondary
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                      textColor: canStartQuiz
+                          ? Theme.of(context).colorScheme.onSecondary
+                          : Theme.of(context).colorScheme.outline,
                       elevation: 0,
                     ),
                   ],

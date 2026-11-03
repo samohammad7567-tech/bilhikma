@@ -7,5 +7,10 @@ class SkeletonBox extends AppSkeletonBox {
     double? width,
     double? radius,
     bool isCircular = false,
-  }) : super(height: height, width: width, radius: radius, isCircular: isCircular);
+  }) : super(
+         height: height,
+         width: width,
+         radius: radius,
+         isCircular: isCircular,
+       );
 }

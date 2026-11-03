@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,9 +13,9 @@ import 'lesson_test_question_body.dart';
 import 'lesson_test_result_body.dart';
 
 class LessonTestBody extends StatelessWidget {
-  const LessonTestBody({required this.onBackToLessons, super.key});
+  const LessonTestBody({required this.onBackToLesson, super.key});
 
-  final VoidCallback onBackToLessons;
+  final VoidCallback onBackToLesson;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,8 @@ class LessonTestBody extends StatelessWidget {
         if (state.hasFailed) {
           return AppErrorView(
             errorKey: state.errorKey,
-            onRetry: cubit.loadQuiz,
+            message: state.errorMessage,
+            onRetry: cubit.retry,
           );
         }
 
@@ -35,22 +37,28 @@ class LessonTestBody extends StatelessWidget {
 
         return Padding(
           padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
-          child: _body(cubit, viewState),
+          child: _body(context, cubit, viewState),
         );
       },
     );
   }
 
-  Widget _body(LessonTestCubit cubit, LessonTestState state) {
-    if (state.didTimeOut) return _timeUp;
-
+  Widget _body(
+    BuildContext context,
+    LessonTestCubit cubit,
+    LessonTestState state,
+  ) {
     switch (state.status) {
       case LessonTestStatus.initial:
       case LessonTestStatus.loading:
         return const _IntroSkeleton();
 
       case LessonTestStatus.failure:
-        return AppErrorView(errorKey: state.errorKey, onRetry: cubit.loadQuiz);
+        return AppErrorView(
+          errorKey: state.errorKey,
+          message: state.errorMessage,
+          onRetry: cubit.retry,
+        );
 
       case LessonTestStatus.ready:
       case LessonTestStatus.starting:
@@ -66,6 +74,7 @@ class LessonTestBody extends StatelessWidget {
 
       case LessonTestStatus.running:
       case LessonTestStatus.submitting:
+        if (state.didTimeOut) return _timeUp(context, cubit, state);
         if (!state.hasQuestions) return _empty;
 
         return LessonTestQuestionBody(
@@ -82,7 +91,7 @@ class LessonTestBody extends StatelessWidget {
           child: LessonTestResultBody(
             result: result,
             showReview: state.quiz?.showCorrectAnswers ?? false,
-            onBackToLessons: onBackToLessons,
+            onBackToLesson: onBackToLesson,
           ),
         );
     }
@@ -95,12 +104,48 @@ class LessonTestBody extends StatelessWidget {
     ),
   );
 
-  Widget get _timeUp => const Center(
-    child: AppEmptyView(
-      icon: Icons.timer_off_outlined,
-      messageKey: LangKeys.quizTimeUp,
-    ),
-  );
+  Widget _timeUp(
+    BuildContext context,
+    LessonTestCubit cubit,
+    LessonTestState state,
+  ) {
+    if (state.errorKey != null) {
+      return AppErrorView(
+        errorKey: state.errorKey,
+        message: state.errorMessage,
+        onRetry: () => cubit.submit(timedOut: true),
+      );
+    }
+
+    if (state.isSubmitting) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.timer_off_outlined,
+                size: 46.w,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              SizedBox(height: 16.h),
+              Text(LangKeys.quizTimeUp.tr(), textAlign: TextAlign.center),
+              SizedBox(height: 18.h),
+              const LinearProgressIndicator(),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Center(
+      child: AppEmptyView(
+        icon: Icons.timer_off_outlined,
+        messageKey: LangKeys.quizTimeUp,
+      ),
+    );
+  }
 }
 
 class _IntroSkeleton extends StatelessWidget {

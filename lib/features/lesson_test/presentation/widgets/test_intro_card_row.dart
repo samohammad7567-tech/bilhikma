@@ -43,12 +43,7 @@ class TestIntroCardRow extends StatelessWidget {
 
                 SizedBox(height: 2.h),
 
-                Text(
-                  row.value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).labelStrong,
-                ),
+                Text(row.value, style: AppTheme.styles(context).labelStrong),
               ],
             ),
           ),

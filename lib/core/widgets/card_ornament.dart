@@ -23,8 +23,9 @@ class CardOrnament extends StatelessWidget {
           fit: BoxFit.contain,
           alignment: alignment,
           padding: EdgeInsets.zero,
-          color: Theme.of(context).colorScheme.onSurface
-              .withValues(alpha: 0.08),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.08),
         ),
       ),
     );

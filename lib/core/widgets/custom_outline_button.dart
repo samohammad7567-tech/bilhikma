@@ -75,8 +75,9 @@ class CustomOutlineButton extends StatelessWidget {
                 textAlign: textAlign,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.styles(context).buttonLabel
-                    .copyWith(color: foreground),
+                style: AppTheme.styles(
+                  context,
+                ).buttonLabel.copyWith(color: foreground),
               ),
       ),
     );

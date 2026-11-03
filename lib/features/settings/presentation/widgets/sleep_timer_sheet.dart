@@ -46,8 +46,9 @@ class SleepTimerSheet extends StatelessWidget {
                     textAlign: TextAlign.start,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTheme.styles(context).sectionTitle
-                        .copyWith(color: colors.secondaryContainer),
+                    style: AppTheme.styles(
+                      context,
+                    ).sectionTitle.copyWith(color: colors.secondaryContainer),
                   ),
                 ),
 

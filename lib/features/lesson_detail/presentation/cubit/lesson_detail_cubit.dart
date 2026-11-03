@@ -342,6 +342,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
     if (state.isArticleRead || _isReporting) return;
 
     _isReporting = true;
+    emit(state.copyWith(isSavingRead: true, clearMessage: true));
 
     try {
       final ProgressResult result = await repo.reportProgress(
@@ -361,6 +362,7 @@ class LessonDetailCubit extends Cubit<LessonDetailState> {
       emit(state.copyWith(messageKey: error.key, message: error.message));
     } finally {
       _isReporting = false;
+      if (!isClosed) emit(state.copyWith(isSavingRead: false));
     }
   }
 

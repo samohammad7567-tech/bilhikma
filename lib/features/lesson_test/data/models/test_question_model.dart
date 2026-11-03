@@ -49,6 +49,32 @@ class TestQuestionModel {
   int get effectiveMaxSelections =>
       maxSelections ?? (options.isEmpty ? 1 : options.length);
 
+  static final RegExp _numberedBlankToken = RegExp(r'\{\{\s*\d+\s*\}\}');
+  static final RegExp _anyBlankToken = RegExp(r'\{\{[^}]+\}\}');
+  static final RegExp _extraSpaces = RegExp(r'\s+');
+
+  bool get isBlankQuestion =>
+      type == TestQuestionType.fillBlanks ||
+      type == TestQuestionType.typedBlanks;
+
+  String get displayPrompt => prompt
+      .replaceAll(_numberedBlankToken, ' ')
+      .replaceAll(_extraSpaces, ' ')
+      .trim();
+
+  bool get shouldShowPrompt {
+    final String text = displayPrompt;
+    if (text.isEmpty) return false;
+    if (!isBlankQuestion) return true;
+
+    final String sentence = (body ?? '')
+        .replaceAll(_anyBlankToken, ' ')
+        .replaceAll(_extraSpaces, ' ')
+        .trim();
+
+    return text != sentence;
+  }
+
   TestOptionModel? optionById(String id) {
     for (final TestOptionModel option in options) {
       if (option.id == id) return option;

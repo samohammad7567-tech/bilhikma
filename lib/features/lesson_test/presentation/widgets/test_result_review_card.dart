@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../data/models/quiz_question_result_model.dart';
+import '../../data/models/test_question_model.dart';
 import '../refactor/test_solution_answers.dart';
 
 class TestResultReviewCard extends StatelessWidget {
@@ -12,16 +13,21 @@ class TestResultReviewCard extends StatelessWidget {
     required this.result,
     required this.prompt,
     super.key,
+    this.question,
   });
 
   final QuizQuestionResultModel result;
+  final TestQuestionModel? question;
   final String prompt;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final _Status status = _statusOf(colors);
-    final List<String> correctAnswers = TestSolutionAnswers.of(result);
+    final List<String> correctAnswers = TestSolutionAnswers.of(
+      result,
+      question: question,
+    );
     final String? explanation = _explanation;
 
     return Container(
@@ -74,7 +80,7 @@ class TestResultReviewCard extends StatelessWidget {
             SizedBox(height: 8.h),
             Text(
               '${LangKeys.quizCorrectAnswer.tr()}: '
-              '${correctAnswers.join(' • ')}',
+              '${correctAnswers.join(' | ')}',
               style: AppTheme.styles(context).labelSmall,
             ),
           ],
@@ -105,6 +111,14 @@ class TestResultReviewCard extends StatelessWidget {
         icon: Icons.check_circle,
         label: LangKeys.quizAnswerCorrect.tr(),
         color: colors.primary,
+      );
+    }
+
+    if (!result.hasGivenAnswer) {
+      return _Status(
+        icon: Icons.remove_circle_outline,
+        label: LangKeys.quizNotAnswered.tr(),
+        color: colors.outline,
       );
     }
 

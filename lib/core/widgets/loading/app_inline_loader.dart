@@ -15,9 +15,7 @@ class AppInlineLoader extends StatelessWidget {
     return SizedBox(
       width: loaderSize,
       height: loaderSize,
-      child: CircularProgressIndicator(
-        strokeWidth: loaderStroke,
-      ),
+      child: CircularProgressIndicator(strokeWidth: loaderStroke),
     );
   }
 }

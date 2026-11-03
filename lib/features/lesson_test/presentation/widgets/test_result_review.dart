@@ -16,10 +16,11 @@ class TestResultReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> prompts = <String, String>{
-      for (final TestQuestionModel question in result.questions)
-        question.id: question.prompt,
-    };
+    final Map<String, TestQuestionModel> questions =
+        <String, TestQuestionModel>{
+          for (final TestQuestionModel question in result.questions)
+            question.id: question,
+        };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,9 +33,17 @@ class TestResultReview extends StatelessWidget {
         for (final QuizQuestionResultModel item in result.questionResults)
           TestResultReviewCard(
             result: item,
-            prompt: prompts[item.questionId] ?? '',
+            question: questions[item.questionId],
+            prompt: _promptOf(questions[item.questionId]),
           ),
       ],
     );
+  }
+
+  String _promptOf(TestQuestionModel? question) {
+    if (question == null) return '';
+    if (question.isBlankQuestion && !question.shouldShowPrompt) return '';
+
+    return question.displayPrompt;
   }
 }

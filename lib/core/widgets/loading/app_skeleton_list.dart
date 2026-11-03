@@ -19,15 +19,14 @@ class AppSkeletonList extends StatefulWidget {
 }
 
 class _ControllerScope extends InheritedWidget {
-  const _ControllerScope({
-    required this.controller,
-    required super.child,
-  });
+  const _ControllerScope({required this.controller, required super.child});
 
   final AnimationController controller;
 
   static AnimationController of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_ControllerScope>()!.controller;
+    return context
+        .dependOnInheritedWidgetOfExactType<_ControllerScope>()!
+        .controller;
   }
 
   @override
@@ -111,10 +110,7 @@ class _AppSkeletonListState extends State<AppSkeletonList>
             itemBuilder: _buildItem,
           );
 
-    return _ControllerScope(
-      controller: _controller,
-      child: listChild,
-    );
+    return _ControllerScope(controller: _controller, child: listChild);
   }
 }
 
