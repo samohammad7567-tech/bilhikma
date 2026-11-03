@@ -20,4 +20,7 @@ class LessonTestRepo {
 
   Future<List<QuizAttemptModel>> fetchMyAttempts(int quizId) =>
       dataSource.fetchMyAttempts(quizId);
+
+  Future<int> fetchCategorySubjectId(int contentId) =>
+      dataSource.fetchCategorySubjectId(contentId);
 }

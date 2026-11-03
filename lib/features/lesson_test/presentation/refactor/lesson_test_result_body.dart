@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_circle_avatar.dart';
-import '../../../../core/widgets/custom_outline_button.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../widgets/test_result_headline.dart';
 import '../widgets/test_result_review.dart';
@@ -15,13 +14,11 @@ import '../widgets/test_retry_note.dart';
 class LessonTestResultBody extends StatelessWidget {
   const LessonTestResultBody({
     required this.result,
-    required this.onBackToLesson,
     this.showReview = false,
     super.key,
   });
 
   final QuizAttemptModel result;
-  final VoidCallback onBackToLesson;
   final bool showReview;
 
   @override
@@ -66,16 +63,6 @@ class LessonTestResultBody extends StatelessWidget {
         ],
 
         SizedBox(height: 24.h),
-        CustomOutlineButton(
-          onPressed: onBackToLesson,
-          text: LangKeys.backToLesson.tr(),
-          width: double.infinity,
-          height: 46.h,
-          threeRadius: 8.r,
-          lastRadius: 8.r,
-          borderColor: Theme.of(context).colorScheme.secondary,
-          textColor: Theme.of(context).colorScheme.secondary,
-        ),
       ],
     );
   }

@@ -118,6 +118,7 @@ class NotificationDestination {
     return _quizResultDestination(
       contentId: payload.contentId,
       contentType: payload.contentType,
+      categorySubjectId: payload.categorySubjectId,
       quizId: payload.quizId,
       attemptId: payload.attemptId,
     );
@@ -153,6 +154,9 @@ class NotificationDestination {
     return _quizResultDestination(
       contentId: contentId,
       contentType: ContentType.fromJson(data['content_type']),
+      categorySubjectId: _firstId(<String?>[
+        _firstString(data, const <String>['category_subject_id', 'subject_id']),
+      ]),
       quizId: quizId,
       attemptId: attemptId,
     );
@@ -161,6 +165,7 @@ class NotificationDestination {
   static NotificationDestination _quizResultDestination({
     required int contentId,
     required ContentType contentType,
+    required int categorySubjectId,
     required int quizId,
     required int attemptId,
   }) => NotificationDestination(
@@ -170,6 +175,7 @@ class NotificationDestination {
       quizId: quizId > 0 ? quizId : null,
       attemptId: attemptId > 0 ? attemptId : null,
       contentType: contentType,
+      categorySubjectId: categorySubjectId,
       openResult: true,
       openLessonOnBack: true,
     ),

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/lesson_detail_args.dart';
+import '../../../../core/routing/subject_content_args.dart';
 import '../../../../core/widgets/app_section_scaffold.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../cubit/lesson_test_cubit.dart';
@@ -27,6 +28,7 @@ class _LessonTestScreenState extends State<LessonTestScreen>
     with WidgetsBindingObserver {
   bool _timeUpHandled = false;
   bool _leaveRequested = false;
+  bool _leavingResult = false;
 
   @override
   void initState() {
@@ -69,9 +71,13 @@ class _LessonTestScreenState extends State<LessonTestScreen>
             final LessonTestCubit cubit = context.read<LessonTestCubit>();
 
             return PopScope(
-              canPop: !state.isRunning,
+              canPop: !state.isRunning && !state.isResult,
               onPopInvokedWithResult: (bool didPop, Object? _) {
                 if (didPop) return;
+                if (state.isResult) {
+                  unawaited(_goToSubjectContent());
+                  return;
+                }
                 unawaited(_confirmLeave(cubit));
               },
               child: AppSectionScaffold(
@@ -109,12 +115,53 @@ class _LessonTestScreenState extends State<LessonTestScreen>
   }
 
   void _handleBack(LessonTestCubit cubit, LessonTestState state) {
+    if (state.isResult) {
+      unawaited(_goToSubjectContent());
+      return;
+    }
+
     if (!state.isRunning) {
       Navigator.of(context).pop();
       return;
     }
 
     unawaited(_confirmLeave(cubit));
+  }
+
+  Future<void> _goToSubjectContent() async {
+    if (_leavingResult) return;
+    _leavingResult = true;
+
+    int categorySubjectId = widget.args.categorySubjectId;
+    if (categorySubjectId <= 0 && widget.args.lessonId > 0) {
+      categorySubjectId = await context
+          .read<LessonTestCubit>()
+          .resolveCategorySubjectId();
+    }
+
+    if (!mounted) return;
+
+    if (categorySubjectId > 0) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.subjectContent,
+        (Route<dynamic> route) => route.isFirst,
+        arguments: SubjectContentArgs(categorySubjectId: categorySubjectId),
+      );
+      return;
+    }
+
+    if (widget.args.lessonId > 0) {
+      Navigator.of(context).pushReplacementNamed(
+        AppRoutes.lessonDetail,
+        arguments: LessonDetailArgs(
+          id: widget.args.lessonId,
+          type: widget.args.contentType,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).pop();
   }
 
   Future<void> _confirmLeave(LessonTestCubit cubit) async {

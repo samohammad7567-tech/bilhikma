@@ -8,6 +8,7 @@ class LessonTestArgs {
     this.openResult = false,
     this.contentType = ContentType.video,
     this.openLessonOnBack = false,
+    this.categorySubjectId = 0,
   });
 
   final int lessonId;
@@ -16,6 +17,7 @@ class LessonTestArgs {
   final bool openResult;
   final ContentType contentType;
   final bool openLessonOnBack;
+  final int categorySubjectId;
 
   factory LessonTestArgs.fromRoute(Object? arguments) {
     if (arguments is LessonTestArgs) return arguments;

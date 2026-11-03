@@ -21,6 +21,7 @@ void main() {
             'quiz_id': 10,
             'attempt_id': '77',
             'content_id': 4,
+            'category_subject_id': 3,
             'action': 'open_quiz_result',
           });
 
@@ -29,6 +30,7 @@ void main() {
       final LessonTestArgs? args = target?.arguments as LessonTestArgs?;
       expect(args?.quizId, 10);
       expect(args?.attemptId, 77);
+      expect(args?.categorySubjectId, 3);
       expect(args?.openResult, isTrue);
       expect(args?.openLessonOnBack, isTrue);
     });

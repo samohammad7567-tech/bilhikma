@@ -74,4 +74,22 @@ class LessonTestDataSource {
       throw QuizErrorMapper.translate(error);
     }
   }
+
+  Future<int> fetchCategorySubjectId(int contentId) async {
+    if (contentId <= 0) return 0;
+
+    try {
+      final ApiEnvelope envelope = await client.get(
+        ApiEndpoints.contentDetail(contentId),
+      );
+      final Map<String, dynamic> data = envelope.dataMap;
+
+      final int direct = Json.asInt(data['category_subject_id']);
+      if (direct > 0) return direct;
+
+      return Json.asInt(Json.asMap(data['content'])['category_subject_id']);
+    } catch (_) {
+      return 0;
+    }
+  }
 }

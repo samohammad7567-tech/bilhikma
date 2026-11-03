@@ -48,6 +48,16 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       ? loadResult(quizId: initialQuizId, attemptId: initialAttemptId)
       : loadQuiz();
 
+  Future<int> resolveCategorySubjectId() async {
+    if (lessonId <= 0) return 0;
+
+    try {
+      return await repo.fetchCategorySubjectId(lessonId);
+    } catch (_) {
+      return 0;
+    }
+  }
+
   Future<void> loadQuiz() async {
     _stopTicker();
     _cacheTimer?.cancel();

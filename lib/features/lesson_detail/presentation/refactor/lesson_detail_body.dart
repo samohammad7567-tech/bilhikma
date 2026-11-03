@@ -1,12 +1,9 @@
-import 'package:bilhikma/core/widgets/coming_soon_sheet.dart';
-import 'package:bilhikma/core/widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/lesson_status_enum.dart';
-import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/book_preview_args.dart';
 import '../../../textbooks/data/data_source/downloaded_pdfs_data_source.dart';
@@ -25,6 +22,7 @@ import '../../../../core/themes/app_theme.dart';
 import '../widgets/article_read_button.dart';
 import '../widgets/lesson_detail_inset.dart';
 import '../widgets/lesson_locked_view.dart';
+import '../widgets/lesson_quiz_action_bar.dart';
 
 class LessonDetailBody extends StatelessWidget {
   const LessonDetailBody({super.key, this.onGoToTest, this.videoStageKey});
@@ -71,7 +69,7 @@ class LessonDetailBody extends StatelessWidget {
         );
         final bool canStartQuiz = state.canStartQuiz;
 
-        return ListView(
+        final Widget content = ListView(
           padding: EdgeInsets.only(bottom: 24.h),
           children: <Widget>[
             ..._stage(context, cubit, state, detail),
@@ -148,71 +146,20 @@ class LessonDetailBody extends StatelessWidget {
                 ),
               ),
             ],
+          ],
+        );
 
-            if (detail.hasQuiz) ...<Widget>[
-              SizedBox(height: 20.h),
-              LessonDetailInset(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (detail.hasPassedQuiz) ...<Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.check_circle,
-                            size: 18.r,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          SizedBox(width: 6.w),
-                          Expanded(
-                            child: Text(
-                              'test_passed_note'.tr(),
-                              style: AppTheme.styles(context).cardCaption,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10.h),
-                    ],
-                    if (detail.isArticle && !state.isArticleRead) ...<Widget>[
-                      Text(
-                        LangKeys.quizArticleNotRead.tr(),
-                        style: AppTheme.styles(context).cardCaption.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                    ],
-                    CustomButton(
-                      onPressed: canStartQuiz
-                          ? () => onGoToTest == null
-                                ? ComingSoonSheet.show(
-                                    context,
-                                    messageKey: 'coming_soon_test',
-                                  )
-                                : onGoToTest!(detail)
-                          : () {},
-                      text: detail.hasPassedQuiz
-                          ? LangKeys.viewResultAndReview.tr()
-                          : LangKeys.goToTest.tr(),
-                      width: double.infinity,
-                      height: 46,
-                      threeRadius: 8.r,
-                      lastRadius: 8.r,
-                      backgroundColor: canStartQuiz
-                          ? Theme.of(context).colorScheme.secondary
-                          : Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                      textColor: canStartQuiz
-                          ? Theme.of(context).colorScheme.onSecondary
-                          : Theme.of(context).colorScheme.outline,
-                      elevation: 0,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        if (!detail.hasQuiz) return content;
+
+        return Column(
+          children: <Widget>[
+            Expanded(child: content),
+            LessonQuizActionBar(
+              detail: detail,
+              isArticleRead: state.isArticleRead,
+              canStartQuiz: canStartQuiz,
+              onGoToTest: onGoToTest,
+            ),
           ],
         );
       },

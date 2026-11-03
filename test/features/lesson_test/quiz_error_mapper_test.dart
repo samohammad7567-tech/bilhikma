@@ -199,5 +199,29 @@ void main() {
         expect(listClient.lastPath, '/user/quizzes/4/my-attempts');
       },
     );
+
+    test('reads the subject id from the content detail', () async {
+      final _FakeClient client = _FakeClient(
+        _envelope(<String, dynamic>{'id': 9, 'category_subject_id': 3}),
+      );
+
+      final int id = await LessonTestDataSource(
+        client: client,
+      ).fetchCategorySubjectId(9);
+
+      expect(client.lastPath, '/user/content/9');
+      expect(id, 3);
+    });
+
+    test('returns 0 when the content detail has no subject id', () async {
+      final _FakeClient client = _FakeClient(
+        _envelope(<String, dynamic>{'id': 9}),
+      );
+
+      expect(
+        await LessonTestDataSource(client: client).fetchCategorySubjectId(9),
+        0,
+      );
+    });
   });
 }

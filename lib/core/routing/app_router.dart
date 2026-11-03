@@ -185,6 +185,8 @@ class AppRouter {
                 lessonId: detail.id,
                 quizId: detail.quiz?.id,
                 attemptId: detail.quiz?.latestAttemptId,
+                contentType: detail.type,
+                categorySubjectId: detail.categorySubjectId,
                 openResult: detail.hasPassedQuiz,
               ),
             ),

@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../cubit/lesson_test_cubit.dart';
+import '../widgets/test_result_action_bar.dart';
 import 'lesson_test_intro_body.dart';
 import 'lesson_test_question_body.dart';
 import 'lesson_test_result_body.dart';
@@ -36,7 +37,9 @@ class LessonTestBody extends StatelessWidget {
         final LessonTestState viewState = state;
 
         return Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+          padding: state.isResult
+              ? EdgeInsets.zero
+              : EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
           child: _body(context, cubit, viewState),
         );
       },
@@ -87,12 +90,19 @@ class LessonTestBody extends StatelessWidget {
         final QuizAttemptModel? result = state.result;
         if (result == null) return _empty;
 
-        return SingleChildScrollView(
-          child: LessonTestResultBody(
-            result: result,
-            showReview: state.quiz?.showCorrectAnswers ?? false,
-            onBackToLesson: onBackToLesson,
-          ),
+        return Column(
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+                child: LessonTestResultBody(
+                  result: result,
+                  showReview: state.quiz?.showCorrectAnswers ?? false,
+                ),
+              ),
+            ),
+            TestResultActionBar(onBackToLesson: onBackToLesson),
+          ],
         );
     }
   }
