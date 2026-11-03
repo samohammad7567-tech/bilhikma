@@ -178,6 +178,7 @@ class NotificationDestination {
       categorySubjectId: categorySubjectId,
       openResult: true,
       openLessonOnBack: true,
+      popOnResultBack: true,
     ),
   );
 

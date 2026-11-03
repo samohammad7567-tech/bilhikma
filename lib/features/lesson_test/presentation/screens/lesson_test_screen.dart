@@ -75,6 +75,10 @@ class _LessonTestScreenState extends State<LessonTestScreen>
               onPopInvokedWithResult: (bool didPop, Object? _) {
                 if (didPop) return;
                 if (state.isResult) {
+                  if (widget.args.popOnResultBack) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
                   unawaited(_goToSubjectContent());
                   return;
                 }
@@ -116,6 +120,10 @@ class _LessonTestScreenState extends State<LessonTestScreen>
 
   void _handleBack(LessonTestCubit cubit, LessonTestState state) {
     if (state.isResult) {
+      if (widget.args.popOnResultBack) {
+        Navigator.of(context).pop();
+        return;
+      }
       unawaited(_goToSubjectContent());
       return;
     }

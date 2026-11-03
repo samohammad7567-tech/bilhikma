@@ -33,6 +33,7 @@ void main() {
       expect(args?.categorySubjectId, 3);
       expect(args?.openResult, isTrue);
       expect(args?.openLessonOnBack, isTrue);
+      expect(args?.popOnResultBack, isTrue);
     });
 
     test('keeps the lesson type for back-to-lesson navigation', () {
@@ -65,6 +66,7 @@ void main() {
       expect(target?.route, AppRoutes.lessonTest);
       expect((target?.arguments as LessonTestArgs?)?.attemptId, 77);
       expect((target?.arguments as LessonTestArgs?)?.openLessonOnBack, isTrue);
+      expect((target?.arguments as LessonTestArgs?)?.popOnResultBack, isTrue);
     });
   });
 
