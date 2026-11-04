@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
+import 'test_html_text.dart';
 import 'test_question_media.dart';
 import 'test_timer_chip.dart';
 
@@ -54,9 +55,8 @@ class TestQuestionPrompt extends StatelessWidget {
   }
 
   Widget _textRow(BuildContext context, Duration? timeLeft) {
-    final Widget text = Text(
+    final Widget text = TestHtmlText(
       prompt,
-      textAlign: TextAlign.start,
       style: AppTheme.styles(context).labelStrong,
     );
 

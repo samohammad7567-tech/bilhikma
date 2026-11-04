@@ -45,6 +45,7 @@ dependencies:
   cached_network_image: ^3.4.1
   photo_view: ^0.15.0
   url_launcher: ^6.3.1
+  flutter_widget_from_html_core: ^0.17.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

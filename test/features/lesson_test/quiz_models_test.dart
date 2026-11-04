@@ -349,6 +349,82 @@ void main() {
       expect(question.options[1].label, 'Blue');
     });
 
+    test('parses media on ordering and matching items', () {
+      final TestQuestionModel ordering = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 49,
+          'question_text': 'Order the cards',
+          'question_type': 'ordering',
+          'score': 4,
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'items': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'red',
+                  'text': '',
+                  'image_path': 'qa-quiz-fields/card-a.png',
+                  'audio_path': 'qa-quiz-fields/card-a.wav',
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      expect(ordering.sentences.single.text, isEmpty);
+      expect(
+        ordering.sentences.single.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      );
+      expect(
+        ordering.sentences.single.audioUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.wav',
+      );
+
+      final TestQuestionModel matching = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 50,
+          'question_text': 'Match the cards',
+          'question_type': 'matching',
+          'score': 4,
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'pairs': <String, dynamic>{
+                'left': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'red',
+                    'text': '',
+                    'image_path': 'qa-quiz-fields/card-a.png',
+                  },
+                ],
+                'right': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 'blue',
+                    'text': '',
+                    'image_path': 'qa-quiz-fields/card-b.png',
+                    'audio_path': 'qa-quiz-fields/card-b.wav',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      );
+
+      expect(
+        matching.leftItems.single.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      );
+      expect(
+        matching.rightItems.single.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-b.png',
+      );
+      expect(
+        matching.rightItems.single.audioUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-b.wav',
+      );
+    });
+
     test('marks a submitted attempt from score even without submitted_at', () {
       final QuizAttemptModel attempt =
           QuizAttemptModel.fromJson(<String, dynamic>{

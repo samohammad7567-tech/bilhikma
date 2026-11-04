@@ -1,30 +1,35 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/localization/lang_keys.dart';
+import '../../../../core/services/audioplayerservice/audioplayerservice.dart';
 
 class TestAudioButton extends StatefulWidget {
-  const TestAudioButton({required this.url, super.key});
+  const TestAudioButton({required this.url, super.key, this.dense = false});
 
   final String url;
+  final bool dense;
 
   @override
   State<TestAudioButton> createState() => _TestAudioButtonState();
 }
 
 class _TestAudioButtonState extends State<TestAudioButton> {
-  final AudioPlayer _player = AudioPlayer();
+  late final AudioPlayerHandler _handler = getIt<AudioPlayerHandler>();
 
-  StreamSubscription<PlayerState>? _subscription;
+  StreamSubscription<PlaybackState>? _subscription;
   bool _isPlaying = false;
+
+  bool get _isCurrentTrack => _handler.mediaItem.value?.id == widget.url;
 
   @override
   void initState() {
     super.initState();
-    _subscription = _player.playerStateStream.listen(_onPlayerState);
+    _subscription = _handler.playbackState.listen(_syncState);
   }
 
   @override
@@ -32,20 +37,26 @@ class _TestAudioButtonState extends State<TestAudioButton> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url == widget.url) return;
 
-    unawaited(_player.stop());
+    if (oldWidget.url == _handler.mediaItem.value?.id) {
+      unawaited(_handler.stop());
+    }
     _isPlaying = false;
   }
 
   @override
   void dispose() {
     _subscription?.cancel();
-    unawaited(_player.dispose());
+    if (_isCurrentTrack && _handler.isPlaying) {
+      unawaited(_handler.stop());
+    }
     super.dispose();
   }
 
-  void _onPlayerState(PlayerState state) {
+  void _syncState(PlaybackState state) {
     final bool playing =
-        state.playing && state.processingState != ProcessingState.completed;
+        _isCurrentTrack &&
+        state.playing &&
+        state.processingState != AudioProcessingState.completed;
     if (playing == _isPlaying || !mounted) return;
 
     setState(() => _isPlaying = playing);
@@ -54,18 +65,27 @@ class _TestAudioButtonState extends State<TestAudioButton> {
   Future<void> _toggle() async {
     try {
       if (_isPlaying) {
-        await _player.pause();
+        await _handler.pause();
         return;
       }
 
-      if (_player.processingState == ProcessingState.completed) {
-        await _player.seek(Duration.zero);
-      }
-      if (_player.duration == null) {
-        await _player.setUrl(widget.url);
+      if (_isCurrentTrack) {
+        if (_handler.playbackState.value.processingState ==
+            AudioProcessingState.completed) {
+          await _handler.seek(Duration.zero);
+        }
+        await _handler.play();
+        return;
       }
 
-      await _player.play();
+      await _handler.playTrack(
+        AudioTrack(
+          id: widget.url,
+          title: widget.url,
+          artist: '',
+          source: widget.url,
+        ),
+      );
     } catch (_) {
       if (!mounted) return;
       setState(() => _isPlaying = false);
@@ -74,11 +94,28 @@ class _TestAudioButtonState extends State<TestAudioButton> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget icon = Icon(
+      _isPlaying ? Icons.stop_rounded : Icons.volume_up_rounded,
+    );
+    final String tooltip =
+        (_isPlaying ? LangKeys.quizStopAudio : LangKeys.quizPlayAudio).tr();
+
+    if (widget.dense) {
+      return IconButton.filledTonal(
+        onPressed: _toggle,
+        tooltip: tooltip,
+        icon: icon,
+        iconSize: 18,
+        padding: EdgeInsets.zero,
+        constraints: BoxConstraints.tightFor(width: 34, height: 34),
+        visualDensity: VisualDensity.compact,
+      );
+    }
+
     return IconButton.filledTonal(
       onPressed: _toggle,
-      tooltip: (_isPlaying ? LangKeys.quizStopAudio : LangKeys.quizPlayAudio)
-          .tr(),
-      icon: Icon(_isPlaying ? Icons.stop_rounded : Icons.volume_up_rounded),
+      tooltip: tooltip,
+      icon: icon,
     );
   }
 }

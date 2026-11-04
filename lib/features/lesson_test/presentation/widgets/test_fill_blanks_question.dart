@@ -3,8 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
-import '../refactor/test_blank_segments.dart';
-import 'test_blank_text.dart';
+import 'test_blank_body_text.dart';
 import 'test_question_prompt.dart';
 import 'test_word_bank.dart';
 
@@ -43,8 +42,8 @@ class TestFillBlanksQuestion extends StatelessWidget {
 
         SizedBox(height: 20.h),
 
-        TestBlankText(
-          segments: TestBlankSegments.parse(question.body),
+        TestBlankBodyText(
+          body: question.body,
           valueOf: _labelOf,
           onBlankTap: onBlankTap,
           selectedBlankId: selectedBlankId,

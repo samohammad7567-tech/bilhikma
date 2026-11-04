@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_image_viewer.dart';
-import '../../../../core/widgets/app_network_image.dart';
 import 'test_audio_button.dart';
+import 'test_media_image.dart';
 
 class TestQuestionMedia extends StatelessWidget {
   const TestQuestionMedia({super.key, this.imageUrl, this.audioUrl});
@@ -34,26 +34,13 @@ class TestQuestionMedia extends StatelessWidget {
   }
 
   Widget _image(BuildContext context, String url) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: () => AppImageViewer.open(context, url: url),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r),
-        child: Container(
-          color: colors.tertiaryContainer,
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: AppNetworkImage(
-              url: url,
-              fit: BoxFit.contain,
-              errorWidget: Icon(
-                Icons.broken_image_outlined,
-                size: 32.r,
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-          ),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      child: GestureDetector(
+        onTap: () => AppImageViewer.open(context, url: url),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: TestMediaImage(url: url, padding: EdgeInsets.all(8.w)),
         ),
       ),
     );

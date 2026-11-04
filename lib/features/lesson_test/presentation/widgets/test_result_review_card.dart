@@ -7,6 +7,7 @@ import '../../../../core/themes/app_theme.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../refactor/test_solution_answers.dart';
+import 'test_html_text.dart';
 
 class TestResultReviewCard extends StatelessWidget {
   const TestResultReviewCard({
@@ -41,12 +42,7 @@ class TestResultReviewCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (prompt.trim().isNotEmpty)
-            Text(
-              prompt,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).labelStrong,
-            ),
+            TestHtmlText(prompt, style: AppTheme.styles(context).labelStrong),
 
           if (prompt.trim().isNotEmpty) SizedBox(height: 8.h),
 
@@ -78,7 +74,7 @@ class TestResultReviewCard extends StatelessWidget {
 
           if (correctAnswers.isNotEmpty) ...<Widget>[
             SizedBox(height: 8.h),
-            Text(
+            TestHtmlText(
               '${LangKeys.quizCorrectAnswer.tr()}: '
               '${correctAnswers.join(' | ')}',
               style: AppTheme.styles(context).labelSmall,
@@ -87,7 +83,7 @@ class TestResultReviewCard extends StatelessWidget {
 
           if (explanation != null) ...<Widget>[
             SizedBox(height: 8.h),
-            Text(
+            TestHtmlText(
               '${LangKeys.quizExplanation.tr()}: $explanation',
               style: AppTheme.styles(context).labelSmall,
             ),

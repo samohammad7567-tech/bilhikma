@@ -56,7 +56,12 @@ class TestOrderSentencesQuestion extends StatelessWidget {
             return Padding(
               key: ValueKey<String>(sentence.id),
               padding: EdgeInsets.only(bottom: 10.h),
-              child: TestSentenceTile(text: sentence.text, index: index),
+              child: TestSentenceTile(
+                text: sentence.text,
+                index: index,
+                imageUrl: sentence.imageUrl,
+                audioUrl: sentence.audioUrl,
+              ),
             );
           },
         ),

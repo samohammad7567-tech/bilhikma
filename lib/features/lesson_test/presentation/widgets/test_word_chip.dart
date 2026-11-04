@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'test_html_text.dart';
 
 class TestWordChip extends StatelessWidget {
   const TestWordChip({
@@ -29,10 +30,9 @@ class TestWordChip extends StatelessWidget {
           onTap: isUsed ? null : onTap,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-            child: Text(
+            child: TestHtmlText(
               label,
               maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: AppTheme.styles(context).labelStrong,
             ),
           ),

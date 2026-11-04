@@ -72,12 +72,14 @@ import '../../features/sidebar/data/repos/sidebar_repo.dart';
 import '../../features/sidebar/presentation/cubit/sidebar_cubit.dart';
 import '../../features/splash/presentation/cubit/splash_cubit.dart';
 import '../app/cubit/app_preferences_cubit.dart';
+import '../services/audioplayerservice/audioplayerservice.dart';
 import '../services/dio_service.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
   await _initCore();
+  await _initAudio();
   await _initAppUpdate();
   await _initSplash();
   await _initAuth();
@@ -128,6 +130,11 @@ Future<void> _initCore() async {
     ..registerLazySingleton(AppPreferencesCubit.new)
     ..registerSingleton<Dio>(DioService.dio!)
     ..registerSingleton<GlobalKey<NavigatorState>>(navigatorKey);
+}
+
+Future<void> _initAudio() async {
+  if (getIt.isRegistered<AudioPlayerHandler>()) return;
+  getIt.registerLazySingleton<AudioPlayerHandler>(AudioPlayerHandler.new);
 }
 
 Future<void> _initAppUpdate() async {

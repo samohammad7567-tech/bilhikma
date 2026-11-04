@@ -7,6 +7,7 @@ import '../../../../core/themes/app_theme.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_question_model.dart';
+import '../refactor/test_review_prompt.dart';
 import 'test_result_review_card.dart';
 
 class TestResultReview extends StatelessWidget {
@@ -34,16 +35,12 @@ class TestResultReview extends StatelessWidget {
           TestResultReviewCard(
             result: item,
             question: questions[item.questionId],
-            prompt: _promptOf(questions[item.questionId]),
+            prompt: TestReviewPrompt.of(
+              result: item,
+              question: questions[item.questionId],
+            ),
           ),
       ],
     );
-  }
-
-  String _promptOf(TestQuestionModel? question) {
-    if (question == null) return '';
-    if (question.isBlankQuestion && !question.shouldShowPrompt) return '';
-
-    return question.displayPrompt;
   }
 }

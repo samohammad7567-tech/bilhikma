@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
-import '../../../../core/widgets/app_network_image.dart';
 import 'test_audio_button.dart';
+import 'test_html_text.dart';
+import 'test_media_image.dart';
 import 'test_option_indicator.dart';
 
 class TestOptionTile extends StatelessWidget {
@@ -57,12 +58,10 @@ class TestOptionTile extends StatelessWidget {
               SizedBox(width: 15.w),
               Expanded(
                 child: showImageFirst
-                    ? _imageFirst(image, colors)
-                    : Text(
+                    ? _imageFirst(image)
+                    : TestHtmlText(
                         label,
-                        textAlign: TextAlign.start,
                         maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
                         style: AppTheme.styles(context).optionLabel.copyWith(
                           color: foreground,
                           fontWeight: isSelected
@@ -73,7 +72,7 @@ class TestOptionTile extends StatelessWidget {
               ),
               if (image != null && !showImageFirst) ...<Widget>[
                 SizedBox(width: 10.w),
-                _thumbnail(image, colors),
+                _thumbnail(image),
               ],
               if (audio != null) ...<Widget>[
                 SizedBox(width: 6.w),
@@ -86,40 +85,27 @@ class TestOptionTile extends StatelessWidget {
     );
   }
 
-  Widget _imageFirst(String url, ColorScheme colors) => ClipRRect(
-    borderRadius: BorderRadius.circular(8.r),
+  Widget _imageFirst(String url) => Padding(
+    padding: EdgeInsets.symmetric(vertical: 6.h),
     child: SizedBox(
       width: double.infinity,
       height: 120.h,
-      child: ColoredBox(
-        color: colors.surface,
-        child: AppNetworkImage(
-          url: url,
-          fit: BoxFit.contain,
-          errorWidget: Icon(
-            Icons.broken_image_outlined,
-            size: 28.r,
-            color: colors.onSurfaceVariant,
-          ),
-        ),
+      child: TestMediaImage(
+        url: url,
+        radius: 14,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       ),
     ),
   );
 
-  Widget _thumbnail(String url, ColorScheme colors) => ClipRRect(
-    borderRadius: BorderRadius.circular(8.r),
-    child: SizedBox(
-      width: 56.w,
-      height: 56.w,
-      child: AppNetworkImage(
-        url: url,
-        fit: BoxFit.cover,
-        errorWidget: Icon(
-          Icons.broken_image_outlined,
-          size: 24.r,
-          color: colors.onSurfaceVariant,
-        ),
-      ),
+  Widget _thumbnail(String url) => SizedBox(
+    width: 56.w,
+    height: 56.w,
+    child: TestMediaImage(
+      url: url,
+      radius: 10,
+      padding: EdgeInsets.all(3.w),
+      elevated: false,
     ),
   );
 

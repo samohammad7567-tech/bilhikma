@@ -5,8 +5,7 @@ import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_blank_model.dart';
 import '../../data/models/test_option_model.dart';
 import '../../data/models/test_question_model.dart';
-import '../refactor/test_blank_segments.dart';
-import 'test_blank_text.dart';
+import 'test_blank_body_text.dart';
 import 'test_option_tile.dart';
 import 'test_question_prompt.dart';
 
@@ -47,8 +46,8 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
 
         SizedBox(height: 20.h),
 
-        TestBlankText(
-          segments: TestBlankSegments.parse(question.body),
+        TestBlankBodyText(
+          body: question.body,
           valueOf: _labelOf,
           onBlankTap: onBlankTap,
           selectedBlankId: selectedBlankId,

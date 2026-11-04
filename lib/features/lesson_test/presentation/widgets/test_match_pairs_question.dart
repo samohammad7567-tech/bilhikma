@@ -68,6 +68,8 @@ class TestMatchPairsQuestion extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 10.h),
             child: TestPairTile(
               text: item.text,
+              imageUrl: item.imageUrl,
+              audioUrl: item.audioUrl,
               isSelected: selectedPromptId == item.id,
               badge: _leftBadge(item.id),
               onTap: () => onPromptTap(item.id),
@@ -86,6 +88,8 @@ class TestMatchPairsQuestion extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 10.h),
             child: TestPairTile(
               text: item.text,
+              imageUrl: item.imageUrl,
+              audioUrl: item.audioUrl,
               isMuted: true,
               isSelected: false,
               badge: _rightBadge(item.id),

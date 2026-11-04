@@ -9,6 +9,7 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_test_model.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../widgets/quiz_start_dialog.dart';
+import '../widgets/test_html_text.dart';
 import '../widgets/test_intro_card.dart';
 
 class LessonTestIntroBody extends StatelessWidget {
@@ -36,11 +37,10 @@ class LessonTestIntroBody extends StatelessWidget {
         SizedBox(height: 40.h),
         AppCircleAvatar(size: 70.w),
         SizedBox(height: 20.h),
-        Text(
+        TestHtmlText(
           quiz.title,
           textAlign: TextAlign.center,
           maxLines: 2,
-          overflow: TextOverflow.ellipsis,
           style: AppTheme.styles(context).sectionTitle,
         ),
         SizedBox(height: 18.h),
@@ -181,7 +181,7 @@ class _Note extends StatelessWidget {
           Icon(icon, size: 18.w, color: color ?? colors.onSurfaceVariant),
           SizedBox(width: 8.w),
           Expanded(
-            child: Text(
+            child: TestHtmlText(
               text,
               style: AppTheme.styles(
                 context,

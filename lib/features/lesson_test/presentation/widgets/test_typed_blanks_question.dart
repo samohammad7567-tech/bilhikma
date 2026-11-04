@@ -6,8 +6,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_blank_model.dart';
 import '../../data/models/test_question_model.dart';
-import '../refactor/test_blank_segments.dart';
-import 'test_blank_text.dart';
+import 'test_blank_body_text.dart';
 import 'test_question_prompt.dart';
 
 class TestTypedBlanksQuestion extends StatefulWidget {
@@ -75,8 +74,8 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
 
         SizedBox(height: 20.h),
 
-        TestBlankText(
-          segments: TestBlankSegments.parse(widget.question.body),
+        TestBlankBodyText(
+          body: widget.question.body,
           valueOf: widget.answer.blankValue,
           onBlankTap: (String blankId) {
             widget.onBlankTap(blankId);
