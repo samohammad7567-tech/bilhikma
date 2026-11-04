@@ -50,18 +50,20 @@ class TestGivenAnswers {
 
       case TestQuestionType.fillBlanks:
       case TestQuestionType.typedBlanks:
-        return _blanks(given, question);
+        return _blanks(result, given, question);
 
       case TestQuestionType.orderSentences:
         return _order(
           _first(given, <String>['order', 'item_ids', 'ordered_ids']),
           question,
+          result,
         );
 
       case TestQuestionType.matchPairs:
         return _matches(
           _first(given, <String>['matches', 'pairs', 'map']),
           question,
+          result,
         );
     }
   }
@@ -94,29 +96,44 @@ class TestGivenAnswers {
   }
 
   static List<String> _blanks(
+    QuizQuestionResultModel result,
     Map<String, dynamic> given,
     TestQuestionModel? question,
   ) {
     final Object? raw = given['blanks'];
-    final Map<Object?, Object?> map = raw is Map
-        ? Map<Object?, Object?>.from(raw)
-        : <Object?, Object?>{};
+    final Map<Object?, Object?> map = <Object?, Object?>{
+      if (raw is Map) ...Map<Object?, Object?>.from(raw),
+    };
+
+    for (final MapEntry<String, dynamic> entry in given.entries) {
+      if (entry.key == 'blanks' || entry.value == null) continue;
+      if (question == null || question.blankById(entry.key) != null) {
+        map.putIfAbsent(entry.key, () => entry.value);
+      }
+    }
+
+    for (final MapEntry<String, dynamic> entry in result.blankResults.entries) {
+      map.putIfAbsent(entry.key, () => entry.value);
+    }
 
     final List<String> values = <String>[];
+    final Set<Object?> consumed = <Object?>{};
 
     if (question != null && question.blanks.isNotEmpty) {
       for (final blank in question.blanks) {
-        final String text = _blankLabel(
-          question,
-          blank.id,
-          map[blank.id] ?? given[blank.id],
-        );
+        final Object? value = map[blank.id] ?? given[blank.id];
+        if (value == null) continue;
+
+        consumed.add(blank.id);
+        final String text = _blankLabel(question, blank.id, value);
         if (text.isNotEmpty) values.add(text);
       }
       if (values.isNotEmpty) return values;
     }
 
     for (final MapEntry<Object?, Object?> entry in map.entries) {
+      if (consumed.contains(entry.key)) continue;
+
       final String text = _blankLabel(question, '${entry.key}', entry.value);
       if (text.isNotEmpty) values.add(text);
     }
@@ -136,6 +153,9 @@ class TestGivenAnswers {
           raw['text'] ??
           raw['answer_text'] ??
           raw['given_answer'] ??
+          raw['selected_choice_id'] ??
+          raw['choice_id'] ??
+          raw['correct_choice_id'] ??
           raw['id'];
     }
     if (raw == null) return '';
@@ -145,6 +165,12 @@ class TestGivenAnswers {
 
     if (question != null) {
       for (final choice in question.blankById(blankId)?.choices ?? const []) {
+        if (choice.id == text) return choice.label;
+      }
+      for (final choice in question.wordBank) {
+        if (choice.id == text) return choice.label;
+      }
+      for (final choice in question.options) {
         if (choice.id == text) return choice.label;
       }
     }
@@ -168,12 +194,20 @@ class TestGivenAnswers {
     return const <String>[];
   }
 
-  static List<String> _order(Object? value, TestQuestionModel? question) {
-    if (value is! List) return const <String>[];
+  static List<String> _order(
+    Object? value,
+    TestQuestionModel? question,
+    QuizQuestionResultModel result,
+  ) {
+    final Object? raw =
+        value ??
+        result.componentResults['order'] ??
+        _componentValues(result.componentResults);
+    if (raw is! List) return const <String>[];
 
     final List<String> texts = <String>[];
 
-    for (final Object? item in value) {
+    for (final Object? item in raw) {
       if (item is Map) {
         final String id = _idOf(item);
         final Object? text = item['text'] ?? item['label'];
@@ -192,44 +226,78 @@ class TestGivenAnswers {
     return texts;
   }
 
-  static List<String> _matches(Object? value, TestQuestionModel? question) {
-    if (value is Map) {
-      final List<String> pairs = <String>[];
+  static List<String> _matches(
+    Object? value,
+    TestQuestionModel? question,
+    QuizQuestionResultModel result,
+  ) {
+    final List<String> pairs = _matchPairs(value, question);
+    if (pairs.isNotEmpty) return pairs;
 
+    return _matchPairs(result.componentResults, question);
+  }
+
+  static List<String> _matchPairs(Object? value, TestQuestionModel? question) {
+    final List<String> pairs = <String>[];
+
+    void add(String left, String right) {
+      if (left.trim().isEmpty || right.trim().isEmpty) return;
+
+      final String entry = '$left → $right';
+      if (!pairs.contains(entry)) pairs.add(entry);
+    }
+
+    if (value is Map) {
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        final String left = _matchText(
-          _idOf(entry.value),
-          question,
-          left: true,
-        );
-        final String right = _matchText(
-          _idOf(entry.key),
-          question,
-          left: false,
-        );
-        if (left.isNotEmpty && right.isNotEmpty) {
-          pairs.add('$left → $right');
+        if (entry.value is Map && _hasPairKeys(entry.value as Map)) {
+          final Map pair = entry.value as Map;
+          add(
+            _pairText(pair, question, left: true),
+            _pairText(pair, question, left: false),
+          );
+          continue;
         }
+
+        add(
+          _matchText(_idOf(entry.value), question, left: true),
+          _matchText(_idOf(entry.key), question, left: false),
+        );
       }
 
       return pairs;
     }
 
     if (value is List) {
-      final List<String> pairs = <String>[];
-
       for (final Map pair in value.whereType<Map>()) {
-        final String left = _pairText(pair, question, left: true);
-        final String right = _pairText(pair, question, left: false);
-        if (left.isNotEmpty && right.isNotEmpty) {
-          pairs.add('$left → $right');
-        }
+        add(
+          _pairText(pair, question, left: true),
+          _pairText(pair, question, left: false),
+        );
       }
-
-      return pairs;
     }
 
-    return const <String>[];
+    return pairs;
+  }
+
+  static bool _hasPairKeys(Map pair) {
+    const List<String> keys = <String>[
+      'left_id',
+      'right_id',
+      'left',
+      'right',
+      'left_text',
+      'right_text',
+      'source',
+      'target',
+    ];
+
+    return keys.any(pair.containsKey);
+  }
+
+  static Object? _componentValues(Map<String, dynamic> components) {
+    if (components.isEmpty) return null;
+
+    return components.values.toList(growable: false);
   }
 
   static String _pairText(

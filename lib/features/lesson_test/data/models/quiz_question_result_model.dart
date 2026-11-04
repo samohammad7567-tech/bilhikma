@@ -42,9 +42,9 @@ class QuizQuestionResultModel {
   factory QuizQuestionResultModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> given = Json.asMap(json['given_answer']);
 
-    given['option_id'] ??= json['selected_option_id'];
-    given['boolean'] ??= json['selected_boolean'];
-    given['text'] ??= json['answer_text'];
+    _putIfAbsent(given, 'option_id', json['selected_option_id']);
+    _putIfAbsent(given, 'boolean', json['selected_boolean']);
+    _putIfAbsent(given, 'text', json['answer_text']);
 
     return QuizQuestionResultModel(
       questionId: Json.asString(json['question_id']),
@@ -56,12 +56,51 @@ class QuizQuestionResultModel {
           : Json.asDouble(json['awarded_score']),
       isCorrect: Json.asOptionalBool(json['is_correct']),
       givenAnswer: given,
-      blankResults: Json.asMap(json['blank_results']),
-      componentResults: Json.asMap(json['component_results']),
+      blankResults: _idMap(json['blank_results']),
+      componentResults: _idMap(json['component_results']),
       options: Json.asMap(json['options']),
       solution: Json.asOptionalMap(json['solution']),
       explanation: Json.asOptionalString(json['explanation']),
     );
+  }
+
+  static void _putIfAbsent(
+    Map<String, dynamic> target,
+    String key,
+    Object? value,
+  ) {
+    if (target[key] == null && value != null) target[key] = value;
+  }
+
+  static const List<String> _idKeys = <String>[
+    'blank_id',
+    'component_id',
+    'item_id',
+    'left_id',
+    'right_id',
+    'id',
+    'key',
+  ];
+
+  static Map<String, dynamic> _idMap(Object? value) {
+    if (value is Map) return Map<String, dynamic>.from(value);
+    if (value is! List) return <String, dynamic>{};
+
+    return <String, dynamic>{
+      for (int index = 0; index < value.length; index++)
+        _rowId(value[index], index): value[index],
+    };
+  }
+
+  static String _rowId(Object? row, int index) {
+    if (row is Map) {
+      for (final String key in _idKeys) {
+        final Object? id = row[key];
+        if (id != null && '$id'.trim().isNotEmpty) return '$id'.trim();
+      }
+    }
+
+    return '$index';
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{

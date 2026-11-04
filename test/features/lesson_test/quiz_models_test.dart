@@ -937,6 +937,108 @@ void main() {
       ]);
     });
 
+    test('reads blank given answers from blank results', () {
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'question_text': 'أول أركان الإسلام {{1}}',
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'blanks': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'b_1',
+                  'blank_index': 1,
+                  'choices': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'c_2', 'text': 'الصلاة'},
+                    <String, dynamic>{'id': 'c_1', 'text': 'الشهادتان'},
+                  ],
+                },
+              ],
+              'blank_input_mode': 'dropdown',
+            },
+          },
+        },
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'blank_results': <String, dynamic>{
+            'b_1': <String, dynamic>{'given_answer': 'c_2'},
+          },
+        },
+      );
+
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'الصلاة',
+      ]);
+      expect(result.hasGivenAnswer, isTrue);
+    });
+
+    test('normalizes list shaped blank results and resolves the answer', () {
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'question_text': 'أول أركان الإسلام {{1}}',
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'blanks': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'b_1',
+                  'blank_index': 1,
+                  'choices': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'c_2', 'text': 'الصلاة'},
+                  ],
+                },
+              ],
+              'blank_input_mode': 'dropdown',
+            },
+          },
+        },
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'blank_results': <Map<String, dynamic>>[
+            <String, dynamic>{'blank_id': 'b_1', 'given_answer': 'c_2'},
+          ],
+        },
+      );
+
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'الصلاة',
+      ]);
+    });
+
+    test('reads matching given answers from component results', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'l1', text: 'A'),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'r1', text: '1'),
+        ],
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 'match',
+          'question_type': 'matching',
+          'component_results': <String, dynamic>{'r1': 'l1'},
+        },
+      );
+
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'A → 1',
+      ]);
+      expect(result.hasGivenAnswer, isTrue);
+    });
+
     test('drops distractor pairs from the matching solution', () {
       final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
         <String, dynamic>{
@@ -962,6 +1064,20 @@ void main() {
       );
 
       expect(TestSolutionAnswers.of(result), <String>['الفجر → ركعتان']);
+    });
+
+    test('keeps an unanswered result empty', () {
+      final QuizQuestionResultModel result =
+          QuizQuestionResultModel.fromJson(<String, dynamic>{
+            'question_id': 25,
+            'question_type': 'true_false',
+            'selected_boolean': null,
+            'answer_text': null,
+            'is_correct': false,
+          });
+
+      expect(result.givenAnswer, isEmpty);
+      expect(result.hasGivenAnswer, isFalse);
     });
 
     test('exposes released solutions for the result review gate', () {
