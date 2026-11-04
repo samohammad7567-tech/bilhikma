@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import '../../../../core/widgets/app_network_image.dart';
+import 'test_audio_button.dart';
 import 'test_option_indicator.dart';
 
 class TestOptionTile extends StatelessWidget {
@@ -11,6 +13,8 @@ class TestOptionTile extends StatelessWidget {
     required this.isMultiSelect,
     required this.onTap,
     super.key,
+    this.imageUrl,
+    this.audioUrl,
   });
 
   final String label;
@@ -20,6 +24,9 @@ class TestOptionTile extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  final String? imageUrl;
+  final String? audioUrl;
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -27,6 +34,9 @@ class TestOptionTile extends StatelessWidget {
         ? colors.secondary
         : colors.tertiaryContainer;
     final Color foreground = isSelected ? colors.onSecondary : colors.onSurface;
+
+    final String? image = _present(imageUrl);
+    final String? audio = _present(audioUrl);
 
     return Material(
       color: background,
@@ -44,18 +54,52 @@ class TestOptionTile extends StatelessWidget {
                 color: foreground,
               ),
               SizedBox(width: 15.w),
-              Text(
-                label,
-                textAlign: TextAlign.start,
-                style: AppTheme.styles(context).optionLabel.copyWith(
-                  color: foreground,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+              Expanded(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.start,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTheme.styles(context).optionLabel.copyWith(
+                    color: foreground,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  ),
                 ),
               ),
+              if (image != null) ...<Widget>[
+                SizedBox(width: 10.w),
+                _thumbnail(image, colors),
+              ],
+              if (audio != null) ...<Widget>[
+                SizedBox(width: 6.w),
+                TestAudioButton(url: audio),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _thumbnail(String url, ColorScheme colors) => ClipRRect(
+    borderRadius: BorderRadius.circular(8.r),
+    child: SizedBox(
+      width: 56.w,
+      height: 56.w,
+      child: AppNetworkImage(
+        url: url,
+        fit: BoxFit.cover,
+        errorWidget: Icon(
+          Icons.broken_image_outlined,
+          size: 24.r,
+          color: colors.onSurfaceVariant,
+        ),
+      ),
+    ),
+  );
+
+  String? _present(String? value) {
+    final String text = value?.trim() ?? '';
+    return text.isEmpty ? null : text;
   }
 }

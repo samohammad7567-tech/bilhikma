@@ -269,6 +269,50 @@ void main() {
       expect(attempt.questions[1].allowsOneToManyMatching, isTrue);
     });
 
+    test('parses question and option media paths', () {
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 38,
+          'question_text': 'Pick the red card',
+          'question_type': 'mcq_single',
+          'score': 4,
+          'options': <String, dynamic>{
+            'default_time_seconds': 45,
+            'image_path':
+                'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+            'audio_path': 'qa-quiz-fields/tone.wav',
+            'details': <String, dynamic>{
+              'options': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'red',
+                  'text': 'Red',
+                  'image_path': 'qa-quiz-fields/card-a.png',
+                  'audio_path': 'qa-quiz-fields/red.wav',
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      expect(
+        question.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      );
+      expect(
+        question.audioUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/tone.wav',
+      );
+      expect(
+        question.options.single.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      );
+      expect(
+        question.options.single.audioUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/red.wav',
+      );
+    });
+
     test('marks a submitted attempt from score even without submitted_at', () {
       final QuizAttemptModel attempt =
           QuizAttemptModel.fromJson(<String, dynamic>{

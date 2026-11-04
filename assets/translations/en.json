@@ -365,6 +365,8 @@
   "quiz_leave_confirm_action": "Leave and submit",
   "quiz_total_score": "Total score",
   "quiz_score_value": "{score} / {max}",
+  "quiz_play_audio": "Play audio",
+  "quiz_stop_audio": "Stop audio",
   "quiz_best_answer": "Choose the best answer",
   "quiz_max_selections": "You can select up to {count} answers",
   "quiz_max_selections_reached": "You have reached the maximum number of selections.",

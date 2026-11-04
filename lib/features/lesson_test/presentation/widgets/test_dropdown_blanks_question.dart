@@ -41,6 +41,8 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
         TestQuestionPrompt(
           prompt: question.shouldShowPrompt ? question.displayPrompt : '',
           remaining: questionRemaining,
+          imageUrl: question.imageUrl,
+          audioUrl: question.audioUrl,
         ),
 
         SizedBox(height: 20.h),
@@ -60,6 +62,8 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 10.h),
               child: TestOptionTile(
                 label: choice.label,
+                imageUrl: choice.imageUrl,
+                audioUrl: choice.audioUrl,
                 isSelected: answer.blankValue(activeBlank.id) == choice.id,
                 isMultiSelect: false,
                 onTap: () => onChoiceSelected(activeBlank.id, choice.id),

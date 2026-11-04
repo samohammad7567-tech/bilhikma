@@ -39,6 +39,8 @@ class TestMatchPairsQuestion extends StatelessWidget {
         TestQuestionPrompt(
           prompt: question.prompt,
           remaining: questionRemaining,
+          imageUrl: question.imageUrl,
+          audioUrl: question.audioUrl,
         ),
 
         SizedBox(height: 18.h),

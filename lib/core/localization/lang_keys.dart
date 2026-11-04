@@ -38,6 +38,8 @@ class LangKeys {
   static const String passThreshold = 'pass_threshold';
   static const String quizTrue = 'quiz_true';
   static const String quizFalse = 'quiz_false';
+  static const String quizPlayAudio = 'quiz_play_audio';
+  static const String quizStopAudio = 'quiz_stop_audio';
   static const String quizTimeUp = 'test_time_up';
   static const String quizReviewTitle = 'quiz_review_title';
   static const String quizAnswerCorrect = 'quiz_answer_correct';

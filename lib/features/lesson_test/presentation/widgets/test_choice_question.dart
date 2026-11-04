@@ -36,6 +36,8 @@ class TestChoiceQuestion extends StatelessWidget {
         TestQuestionPrompt(
           prompt: question.prompt,
           remaining: questionRemaining,
+          imageUrl: question.imageUrl,
+          audioUrl: question.audioUrl,
         ),
 
         if (question.isBestAnswer) ...<Widget>[
@@ -53,6 +55,8 @@ class TestChoiceQuestion extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 12.h),
               child: TestOptionTile(
                 label: option.label,
+                imageUrl: option.imageUrl,
+                audioUrl: option.audioUrl,
                 isSelected: answer.optionIds.contains(option.id),
                 isMultiSelect: isMultiSelect,
                 onTap: () => onSelect(option.id),

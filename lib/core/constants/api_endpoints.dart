@@ -1,7 +1,9 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String baseUrl = 'https://bilhikma.tech/api';
+  static const String origin = 'https://bilhikma.tech';
+  static const String baseUrl = '$origin/api';
+  static const String storageBaseUrl = '$origin/storage';
 
   static const String publicEntities = '/public/entities';
   static const String appVersion = '/public/app-version';

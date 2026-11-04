@@ -365,6 +365,8 @@
   "quiz_leave_confirm_action": "الخروج والتسليم",
   "quiz_total_score": "الدرجة الكلية",
   "quiz_score_value": "{score} / {max}",
+  "quiz_play_audio": "تشغيل الصوت",
+  "quiz_stop_audio": "إيقاف الصوت",
   "quiz_best_answer": "اختر الإجابة الأفضل",
   "quiz_max_selections": "يمكنك اختيار حتى {count} إجابات",
   "quiz_max_selections_reached": "لقد وصلت إلى الحد الأقصى لعدد الاختيارات.",

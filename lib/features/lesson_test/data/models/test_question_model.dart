@@ -1,6 +1,7 @@
 import '../../../../core/enums/blank_input_mode_enum.dart';
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/network/json_reader.dart';
+import '../../../../core/utils/media_url.dart';
 import 'test_blank_model.dart';
 import 'test_match_item_model.dart';
 import 'test_option_model.dart';
@@ -18,6 +19,8 @@ class TestQuestionModel {
     this.maxSelections,
     this.allowsOneToManyMatching = false,
     this.blankInputMode,
+    this.imageUrl,
+    this.audioUrl,
     this.options = const <TestOptionModel>[],
     this.blanks = const <TestBlankModel>[],
     this.wordBank = const <TestOptionModel>[],
@@ -32,6 +35,9 @@ class TestQuestionModel {
   final String prompt;
   final String? body;
   final double score;
+
+  final String? imageUrl;
+  final String? audioUrl;
 
   final Duration? timeLimit;
   final bool isBestAnswer;
@@ -146,6 +152,22 @@ class TestQuestionModel {
       prompt: prompt,
       body: _bodyFor(type, prompt, blanks),
       score: Json.asDouble(json['score']),
+      imageUrl: MediaUrl.resolve(
+        Json.asOptionalString(
+          options['image_path'] ??
+              details['image_path'] ??
+              json['image_path'] ??
+              json['image_url'],
+        ),
+      ),
+      audioUrl: MediaUrl.resolve(
+        Json.asOptionalString(
+          options['audio_path'] ??
+              details['audio_path'] ??
+              json['audio_path'] ??
+              json['audio_url'],
+        ),
+      ),
       timeLimit: Json.asDuration(options['default_time_seconds']),
       isBestAnswer:
           Json.asOptionalString(details['choice_variant']) == 'best_answer',
@@ -200,6 +222,8 @@ class TestQuestionModel {
     'prompt': prompt,
     'body': body,
     'score': score,
+    'image_url': imageUrl,
+    'audio_url': audioUrl,
     'time_limit': timeLimit?.inSeconds,
     'is_best_answer': isBestAnswer,
     'max_selections': maxSelections,
