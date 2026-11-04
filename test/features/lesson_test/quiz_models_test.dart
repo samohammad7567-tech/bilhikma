@@ -313,6 +313,42 @@ void main() {
       );
     });
 
+    test('handles options that only carry an image', () {
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 39,
+          'question_text': 'Pick the red card',
+          'question_type': 'mcq_single',
+          'score': 4,
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'options': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'red',
+                  'text': '',
+                  'image_path': 'qa-quiz-fields/card-a.png',
+                },
+                <String, dynamic>{
+                  'id': 'blue',
+                  'text': '',
+                  'label': 'Blue',
+                  'image_path': 'qa-quiz-fields/card-b.png',
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      final TestOptionModel imageOnly = question.options[0];
+      expect(imageOnly.label, isEmpty);
+      expect(
+        imageOnly.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      );
+      expect(question.options[1].label, 'Blue');
+    });
+
     test('marks a submitted attempt from score even without submitted_at', () {
       final QuizAttemptModel attempt =
           QuizAttemptModel.fromJson(<String, dynamic>{

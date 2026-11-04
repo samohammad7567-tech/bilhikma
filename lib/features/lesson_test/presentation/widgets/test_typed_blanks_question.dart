@@ -38,13 +38,22 @@ class TestTypedBlanksQuestion extends StatefulWidget {
 class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
   final Map<String, TextEditingController> _controllers =
       <String, TextEditingController>{};
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void dispose() {
     for (final TextEditingController controller in _controllers.values) {
       controller.dispose();
     }
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  void _focusInput() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _focusNode.hasFocus) return;
+      _focusNode.requestFocus();
+    });
   }
 
   @override
@@ -69,7 +78,10 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
         TestBlankText(
           segments: TestBlankSegments.parse(widget.question.body),
           valueOf: widget.answer.blankValue,
-          onBlankTap: widget.onBlankTap,
+          onBlankTap: (String blankId) {
+            widget.onBlankTap(blankId);
+            _focusInput();
+          },
           selectedBlankId: activeBlankId,
         ),
 
@@ -78,6 +90,7 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
 
           CustomTextField(
             controller: _controllerFor(activeBlankId),
+            focusNode: _focusNode,
             filled: true,
             maxLines: 3,
             maxLength: _maxLengthOf(activeBlankId),

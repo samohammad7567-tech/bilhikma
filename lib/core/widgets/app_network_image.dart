@@ -31,9 +31,15 @@ class AppNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget? placeholder = this.placeholder;
+    final String imageUrl = url.trim();
+    final Uri? uri = Uri.tryParse(imageUrl);
+
+    if (uri == null || !(uri.isScheme('http') || uri.isScheme('https'))) {
+      return errorWidget;
+    }
 
     return CachedNetworkImage(
-      imageUrl: url,
+      imageUrl: imageUrl,
       cacheKey: cacheKey,
       fit: fit,
       width: width,

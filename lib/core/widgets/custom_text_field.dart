@@ -29,6 +29,8 @@ class CustomTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.textInputAction,
     this.textDirection,
+    this.focusNode,
+    this.autofocus = false,
   });
 
   final String? Function(String?)? validator;
@@ -52,6 +54,8 @@ class CustomTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final bool autofocus;
 
   /// Forces the typed value to read left-to-right while the app stays RTL.
   /// Used for Latin-only data (email, phone, password), where the bidi
@@ -68,6 +72,8 @@ class CustomTextField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
+      autofocus: autofocus,
       style: AppTheme.styles(context).fieldInput,
       textDirection: textDirection,
       textAlign: isLtr ? TextAlign.left : TextAlign.start,

@@ -19,7 +19,10 @@ class TestOptionModel {
   factory TestOptionModel.fromJson(Map<String, dynamic> json) =>
       TestOptionModel(
         id: Json.asString(json['id']),
-        label: Json.asString(json['text'] ?? json['label']),
+        label:
+            Json.asOptionalString(json['text']) ??
+            Json.asOptionalString(json['label']) ??
+            '',
         imageUrl: MediaUrl.resolve(
           Json.asOptionalString(json['image_path'] ?? json['image']),
         ),

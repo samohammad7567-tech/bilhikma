@@ -33,7 +33,11 @@ class AppImageViewer extends StatefulWidget {
     Object? heroTag,
     String? caption,
   }) {
-    if (url.isEmpty) return Future<void>.value();
+    final Uri? uri = Uri.tryParse(url.trim());
+
+    if (uri == null || !(uri.isScheme('http') || uri.isScheme('https'))) {
+      return Future<void>.value();
+    }
 
     return Navigator.of(context, rootNavigator: true).push<void>(
       PageRouteBuilder<void>(

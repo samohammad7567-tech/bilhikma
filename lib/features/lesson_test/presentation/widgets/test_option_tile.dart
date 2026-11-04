@@ -37,6 +37,7 @@ class TestOptionTile extends StatelessWidget {
 
     final String? image = _present(imageUrl);
     final String? audio = _present(audioUrl);
+    final bool showImageFirst = image != null && label.trim().isEmpty;
 
     return Material(
       color: background,
@@ -55,18 +56,22 @@ class TestOptionTile extends StatelessWidget {
               ),
               SizedBox(width: 15.w),
               Expanded(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.start,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.styles(context).optionLabel.copyWith(
-                    color: foreground,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                  ),
-                ),
+                child: showImageFirst
+                    ? _imageFirst(image, colors)
+                    : Text(
+                        label,
+                        textAlign: TextAlign.start,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTheme.styles(context).optionLabel.copyWith(
+                          color: foreground,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                        ),
+                      ),
               ),
-              if (image != null) ...<Widget>[
+              if (image != null && !showImageFirst) ...<Widget>[
                 SizedBox(width: 10.w),
                 _thumbnail(image, colors),
               ],
@@ -80,6 +85,26 @@ class TestOptionTile extends StatelessWidget {
       ),
     );
   }
+
+  Widget _imageFirst(String url, ColorScheme colors) => ClipRRect(
+    borderRadius: BorderRadius.circular(8.r),
+    child: SizedBox(
+      width: double.infinity,
+      height: 120.h,
+      child: ColoredBox(
+        color: colors.surface,
+        child: AppNetworkImage(
+          url: url,
+          fit: BoxFit.contain,
+          errorWidget: Icon(
+            Icons.broken_image_outlined,
+            size: 28.r,
+            color: colors.onSurfaceVariant,
+          ),
+        ),
+      ),
+    ),
+  );
 
   Widget _thumbnail(String url, ColorScheme colors) => ClipRRect(
     borderRadius: BorderRadius.circular(8.r),
