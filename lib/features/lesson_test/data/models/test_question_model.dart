@@ -2,6 +2,7 @@ import '../../../../core/enums/blank_input_mode_enum.dart';
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/media_url.dart';
+import 'question_timer_model.dart';
 import 'test_blank_model.dart';
 import 'test_match_item_model.dart';
 import 'test_option_model.dart';
@@ -15,6 +16,7 @@ class TestQuestionModel {
     this.body,
     this.score = 0,
     this.timeLimit,
+    this.initialTimer,
     this.isBestAnswer = false,
     this.maxSelections,
     this.allowsOneToManyMatching = false,
@@ -40,6 +42,7 @@ class TestQuestionModel {
   final String? audioUrl;
 
   final Duration? timeLimit;
+  final QuestionTimerModel? initialTimer;
   final bool isBestAnswer;
   final int? maxSelections;
   final bool allowsOneToManyMatching;
@@ -168,7 +171,12 @@ class TestQuestionModel {
               json['audio_url'],
         ),
       ),
-      timeLimit: Json.asDuration(options['default_time_seconds']),
+      timeLimit: Json.asDuration(
+        options['default_time_seconds'] ?? json['default_time_seconds'],
+      ),
+      initialTimer: json['timer'] == null
+          ? null
+          : QuestionTimerModel.fromJson(Json.asMap(json['timer'])),
       isBestAnswer:
           Json.asOptionalString(details['choice_variant']) == 'best_answer',
       maxSelections: Json.asOptionalInt(details['max_selections']),
@@ -225,6 +233,7 @@ class TestQuestionModel {
     'image_url': imageUrl,
     'audio_url': audioUrl,
     'time_limit': timeLimit?.inSeconds,
+    'timer': initialTimer?.toJson(),
     'is_best_answer': isBestAnswer,
     'max_selections': maxSelections,
     'allow_one_to_many_matching': allowsOneToManyMatching,

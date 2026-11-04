@@ -13,6 +13,9 @@ class QuizErrorMapper {
     'quiz_attempts_exhausted',
     'quiz_already_submitted',
     'quiz_answers_invalid',
+    'quiz_question_time_up',
+    'quiz_question_open_failed',
+    'quiz_question_not_opened',
   };
 
   static AppException translate(AppException error) {
@@ -87,13 +90,8 @@ class QuizErrorMapper {
   static String _validationKey(AppException error) {
     final String? reason = _serverReason(error);
     if (reason != null) {
-      if (reason.contains('attempt') &&
-          (reason.contains('exhaust') || reason.contains('limit'))) {
-        return 'quiz_attempts_exhausted';
-      }
-      if (reason.contains('submit')) {
-        return 'quiz_already_submitted';
-      }
+      final String? mapped = _reasonKey(reason);
+      if (mapped != null) return mapped;
     }
 
     final String text =
@@ -101,18 +99,39 @@ class QuizErrorMapper {
         '${error.errors.values.expand((List<String> e) => e).join(' ')}';
     final String lower = text.toLowerCase();
 
-    if (lower.contains('attempt') &&
-        (lower.contains('exhaust') || lower.contains('limit'))) {
+    return _reasonKey(lower) ?? 'quiz_answers_invalid';
+  }
+
+  static String? _reasonKey(String text) {
+    if (_isQuestionNotOpened(text)) return 'quiz_question_not_opened';
+    if (_isQuestionExpired(text)) return 'quiz_question_time_up';
+    if (_isAttemptExpired(text)) return 'test_time_up';
+    if (text.contains('attempt') &&
+        (text.contains('exhaust') || text.contains('limit'))) {
       return 'quiz_attempts_exhausted';
     }
-    if (lower.contains('already') && lower.contains('submit')) {
-      return 'quiz_already_submitted';
-    }
-    if (lower.contains('submit')) {
-      return 'quiz_already_submitted';
-    }
-    return 'quiz_answers_invalid';
+    if (text.contains('submit')) return 'quiz_already_submitted';
+    return null;
   }
+
+  static bool _isQuestionNotOpened(String text) =>
+      text.contains('فتح السؤال') ||
+      text.contains('فتح السوال') ||
+      (text.contains('open') && text.contains('question')) ||
+      text.contains('not_opened') ||
+      text.contains('not opened');
+
+  static bool _isQuestionExpired(String text) =>
+      text.contains('انتهى وقت هذا السؤال') ||
+      text.contains('انتهى وقت السؤال') ||
+      (text.contains('question') &&
+          (text.contains('time') || text.contains('expired')));
+
+  static bool _isAttemptExpired(String text) =>
+      text.contains('انتهى وقت هذه المحاولة') ||
+      text.contains('انتهى وقت المحاولة') ||
+      (text.contains('attempt') &&
+          (text.contains('time') || text.contains('expired')));
 
   static String? _serverReason(AppException error) {
     const List<String> keys = <String>['code', 'reason', 'error_code', 'error'];

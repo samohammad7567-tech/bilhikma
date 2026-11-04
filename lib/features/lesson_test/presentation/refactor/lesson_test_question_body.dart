@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/test_question_model.dart';
 import '../cubit/lesson_test_cubit.dart';
+import '../widgets/question_locked_banner.dart';
 import '../widgets/test_nav_buttons.dart';
 import '../widgets/test_progress_header.dart';
 import 'test_question_view.dart';
@@ -21,6 +22,9 @@ class LessonTestQuestionBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool locked = state.isCurrentQuestionLocked;
+    final bool opening = state.openingQuestionId == question.id;
+
     return Column(
       children: <Widget>[
         TestProgressHeader(
@@ -32,16 +36,33 @@ class LessonTestQuestionBody extends StatelessWidget {
           showTotalTimer: state.hasTimeLimit,
         ),
 
+        if (opening) LinearProgressIndicator(minHeight: 2.h),
+
         SizedBox(height: 22.h),
+
+        if (locked &&
+            !opening &&
+            (state.isCurrentQuestionExpired ||
+                state.openedQuestionIds.contains(question.id)))
+          Padding(
+            padding: EdgeInsets.only(bottom: 12.h),
+            child: const QuestionLockedBanner(),
+          ),
 
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.only(bottom: 16.h),
-            child: TestQuestionView(
-              cubit: cubit,
-              state: state,
-              question: question,
-              questionRemaining: state.questionRemaining,
+            child: IgnorePointer(
+              ignoring: locked,
+              child: Opacity(
+                opacity: locked ? 0.55 : 1,
+                child: TestQuestionView(
+                  cubit: cubit,
+                  state: state,
+                  question: question,
+                  questionRemaining: state.currentQuestionRemaining,
+                ),
+              ),
             ),
           ),
         ),

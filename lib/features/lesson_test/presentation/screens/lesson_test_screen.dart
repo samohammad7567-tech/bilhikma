@@ -44,10 +44,17 @@ class _LessonTestScreenState extends State<LessonTestScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final LessonTestCubit cubit = context.read<LessonTestCubit>();
+
+    if (state == AppLifecycleState.resumed) {
+      if (cubit.state.isRunning) unawaited(cubit.reopenCurrentQuestion());
+      return;
+    }
+
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
-      unawaited(context.read<LessonTestCubit>().flushAnswers());
+      unawaited(cubit.flushAnswers());
     }
   }
 
@@ -72,7 +79,7 @@ class _LessonTestScreenState extends State<LessonTestScreen>
 
             return PopScope(
               canPop: !state.isRunning && !state.isResult,
-              onPopInvokedWithResult: (bool didPop, Object? _) {
+              onPopInvokedWithResult: (bool didPop, Object? _) async {
                 if (didPop) return;
                 if (state.isResult) {
                   if (widget.args.popOnResultBack) {
@@ -82,7 +89,19 @@ class _LessonTestScreenState extends State<LessonTestScreen>
                   unawaited(_goToSubjectContent());
                   return;
                 }
-                unawaited(_confirmLeave(cubit));
+                if (!state.isRunning) {
+                  Navigator.of(context).pop();
+                  return;
+                }
+                if (_leaveRequested) return;
+                _leaveRequested = true;
+                try {
+                  await cubit.flushAnswers();
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                } finally {
+                  _leaveRequested = false;
+                }
               },
               child: AppSectionScaffold(
                 title: _title(state),
@@ -133,7 +152,7 @@ class _LessonTestScreenState extends State<LessonTestScreen>
       return;
     }
 
-    unawaited(_confirmLeave(cubit));
+    unawaited(_leaveWithoutSubmit(cubit));
   }
 
   Future<void> _goToSubjectContent() async {
@@ -172,6 +191,23 @@ class _LessonTestScreenState extends State<LessonTestScreen>
     Navigator.of(context).pop();
   }
 
+  Future<void> _leaveWithoutSubmit(LessonTestCubit cubit) async {
+    if (_leaveRequested) return;
+
+    final LessonTestState current = cubit.state;
+    if (!current.isRunning || current.isSubmitting) return;
+
+    _leaveRequested = true;
+
+    try {
+      await cubit.flushAnswers();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } finally {
+      _leaveRequested = false;
+    }
+  }
+
   Future<void> _confirmLeave(LessonTestCubit cubit) async {
     if (_leaveRequested) return;
 
@@ -184,7 +220,9 @@ class _LessonTestScreenState extends State<LessonTestScreen>
       final bool confirmed = await QuizLeaveDialog.show(context);
       if (!confirmed || !mounted) return;
 
-      await cubit.submitAndLeave();
+      await cubit.flushAndLeave();
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } finally {
       _leaveRequested = false;
     }

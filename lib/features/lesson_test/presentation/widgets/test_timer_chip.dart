@@ -8,25 +8,31 @@ class TestTimerChip extends StatelessWidget {
     required this.label,
     super.key,
     this.icon = Icons.timer_outlined,
+    this.color,
+    this.backgroundColor,
   });
 
   final String label;
   final IconData icon;
+  final Color? color;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final TextStyle style = AppTheme.styles(context).labelSmall;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: colors.primaryContainer.withValues(alpha: 0.22),
+        color:
+            backgroundColor ?? colors.primaryContainer.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 13.w, color: colors.onSurfaceVariant),
+          Icon(icon, size: 13.w, color: color ?? colors.onSurfaceVariant),
 
           SizedBox(width: 5.w),
 
@@ -34,7 +40,7 @@ class TestTimerChip extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTheme.styles(context).labelSmall,
+            style: color == null ? style : style.copyWith(color: color),
           ),
         ],
       ),

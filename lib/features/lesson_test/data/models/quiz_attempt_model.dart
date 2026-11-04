@@ -1,4 +1,5 @@
 import '../../../../core/network/json_reader.dart';
+import 'question_timer_model.dart';
 import 'quiz_policy_model.dart';
 import 'quiz_question_result_model.dart';
 import 'test_question_model.dart';
@@ -21,6 +22,8 @@ class QuizAttemptModel {
     this.expiresAt,
     this.submittedAt,
     this.durationSeconds,
+    this.serverNow,
+    this.questionTimingEnabled = true,
     this.serverHasExpired = false,
     this.serverIsSubmitted = false,
     this.policy = const QuizPolicyModel(),
@@ -48,6 +51,8 @@ class QuizAttemptModel {
   final DateTime? expiresAt;
   final DateTime? submittedAt;
   final int? durationSeconds;
+  final DateTime? serverNow;
+  final bool questionTimingEnabled;
 
   final bool serverHasExpired;
   final bool serverIsSubmitted;
@@ -65,9 +70,49 @@ class QuizAttemptModel {
       questionResults.any((QuizQuestionResultModel item) => item.hasSolution);
 
   bool get hasExpired =>
-      serverHasExpired || (expiresAt?.isBefore(DateTime.now()) ?? false);
+      serverHasExpired ||
+      (expiresAt?.isBefore(serverNow ?? DateTime.now()) ?? false);
 
-  Duration? get remaining => expiresAt?.difference(DateTime.now());
+  Duration? get remaining =>
+      expiresAt?.difference(serverNow ?? DateTime.now());
+
+  Map<String, QuestionTimerModel> get questionTimers =>
+      <String, QuestionTimerModel>{
+        for (final TestQuestionModel question in questions)
+          if (question.initialTimer != null)
+            question.id: question.initialTimer!,
+      };
+
+  QuizAttemptModel copyWith({
+    DateTime? expiresAt,
+    DateTime? serverNow,
+    bool? questionTimingEnabled,
+    bool? serverHasExpired,
+  }) => QuizAttemptModel(
+    id: id,
+    quizId: quizId,
+    studentId: studentId,
+    attemptNo: attemptNo,
+    score: score,
+    maxScore: maxScore,
+    scorePercent: scorePercent,
+    isPassed: isPassed,
+    reviewStatus: reviewStatus,
+    attemptsUsed: attemptsUsed,
+    attemptsLeft: attemptsLeft,
+    nextAttemptAt: nextAttemptAt,
+    startedAt: startedAt,
+    expiresAt: expiresAt ?? this.expiresAt,
+    submittedAt: submittedAt,
+    durationSeconds: durationSeconds,
+    serverNow: serverNow ?? this.serverNow,
+    questionTimingEnabled: questionTimingEnabled ?? this.questionTimingEnabled,
+    serverHasExpired: serverHasExpired ?? this.serverHasExpired,
+    policy: policy,
+    questions: questions,
+    questionResults: questionResults,
+    savedAnswers: savedAnswers,
+  );
 
   Duration? get duration =>
       durationSeconds == null ? null : Duration(seconds: durationSeconds!);
@@ -85,6 +130,8 @@ class QuizAttemptModel {
     final bool? hasPassed = Json.asOptionalBool(json['is_passed']);
 
     final DateTime? submittedAt = Json.asDateTime(json['submitted_at']);
+
+    final Object? timingEnabled = json['question_timing_enabled'];
 
     final List<QuizQuestionResultModel> results = answers
         .where(
@@ -113,6 +160,10 @@ class QuizAttemptModel {
       expiresAt: Json.asDateTime(json['expires_at']),
       submittedAt: submittedAt,
       durationSeconds: Json.asOptionalInt(json['duration_seconds']),
+      serverNow: Json.asDateTime(json['server_now']),
+      questionTimingEnabled: timingEnabled == null
+          ? true
+          : Json.asBool(timingEnabled),
       serverHasExpired: Json.asBool(json['has_expired']),
       serverIsSubmitted:
           submittedAt != null ||
@@ -156,6 +207,8 @@ class QuizAttemptModel {
     'expires_at': expiresAt?.toIso8601String(),
     'submitted_at': submittedAt?.toIso8601String(),
     'duration_seconds': durationSeconds,
+    'server_now': serverNow?.toIso8601String(),
+    'question_timing_enabled': questionTimingEnabled,
     'has_expired': serverHasExpired,
     'policy_snapshot': policy.toJson(),
     'answers': questions

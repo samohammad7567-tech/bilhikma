@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import 'test_html_text.dart';
@@ -45,7 +47,7 @@ class TestQuestionPrompt extends StatelessWidget {
         if (_hasText)
           _textRow(context, timeLeft)
         else if (timeLeft != null)
-          _timerOnly(timeLeft),
+          _timerOnly(context, timeLeft),
         if (_hasMedia) ...<Widget>[
           if (hasHeader) SizedBox(height: 14.h),
           TestQuestionMedia(imageUrl: imageUrl, audioUrl: audioUrl),
@@ -71,19 +73,35 @@ class TestQuestionPrompt extends StatelessWidget {
 
         Padding(
           padding: EdgeInsets.only(top: 2.h),
-          child: _timer(timeLeft),
+          child: _timer(context, timeLeft),
         ),
       ],
     );
   }
 
-  Widget _timerOnly(Duration timeLeft) =>
-      Align(alignment: AlignmentDirectional.centerEnd, child: _timer(timeLeft));
-
-  Widget _timer(Duration timeLeft) => TestTimerChip(
-    icon: Icons.access_time,
-    label: LessonDetailFormats.clock(timeLeft),
+  Widget _timerOnly(BuildContext context, Duration timeLeft) => Align(
+    alignment: AlignmentDirectional.centerEnd,
+    child: _timer(context, timeLeft),
   );
+
+  Widget _timer(BuildContext context, Duration timeLeft) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    final bool expired = timeLeft <= Duration.zero;
+    final bool urgent = !expired && timeLeft <= const Duration(seconds: 10);
+
+    return TestTimerChip(
+      icon: expired ? Icons.lock_clock_outlined : Icons.access_time,
+      label: expired
+          ? LangKeys.quizQuestionTimeUp.tr()
+          : LessonDetailFormats.clock(timeLeft),
+      color: expired || urgent ? colors.error : null,
+      backgroundColor: expired
+          ? colors.errorContainer.withValues(alpha: 0.45)
+          : urgent
+          ? colors.errorContainer.withValues(alpha: 0.3)
+          : null,
+    );
+  }
 
   String? _present(String? value) {
     final String text = value?.trim() ?? '';

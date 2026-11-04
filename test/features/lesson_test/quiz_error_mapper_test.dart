@@ -106,6 +106,52 @@ void main() {
       expect(translated.errors, contains('answers'));
     });
 
+    test('maps the per-question start and expiry 422 reasons', () {
+      expect(
+        QuizErrorMapper.translate(
+          const AppException(
+            'validation_error',
+            statusCode: 422,
+            message: 'يجب فتح السؤال أولاً',
+          ),
+        ).key,
+        'quiz_question_not_opened',
+      );
+
+      expect(
+        QuizErrorMapper.translate(
+          const AppException(
+            'validation_error',
+            statusCode: 422,
+            message: 'انتهى وقت هذا السؤال',
+          ),
+        ).key,
+        'quiz_question_time_up',
+      );
+
+      expect(
+        QuizErrorMapper.translate(
+          const AppException(
+            'validation_error',
+            statusCode: 422,
+            message: 'This question time is over',
+          ),
+        ).key,
+        'quiz_question_time_up',
+      );
+
+      expect(
+        QuizErrorMapper.translate(
+          const AppException(
+            'validation_error',
+            statusCode: 422,
+            message: 'انتهى وقت هذه المحاولة',
+          ),
+        ).key,
+        'test_time_up',
+      );
+    });
+
     test('keeps 401 on the normal session path', () {
       final AppException translated = QuizErrorMapper.translate(
         const AppException(

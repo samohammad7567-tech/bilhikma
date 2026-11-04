@@ -10,6 +10,11 @@ class LangKeys {
   static const String quizCooldown = 'quiz_cooldown';
   static const String quizAlreadySubmitted = 'quiz_already_submitted';
   static const String quizAnswersInvalid = 'quiz_answers_invalid';
+  static const String quizQuestionTimeUp = 'quiz_question_time_up';
+  static const String quizQuestionLockedHint = 'quiz_question_locked_hint';
+  static const String quizQuestionOpenFailed = 'quiz_question_open_failed';
+  static const String quizQuestionNotOpened = 'quiz_question_not_opened';
+  static const String quizQuestionLoading = 'quiz_question_loading';
   static const String quizPendingReview = 'quiz_pending_review';
   static const String quizNotAnswered = 'quiz_not_answered';
   static const String quizResultUnavailable = 'quiz_result_unavailable';

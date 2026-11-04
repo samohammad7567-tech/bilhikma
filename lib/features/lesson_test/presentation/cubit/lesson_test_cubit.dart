@@ -7,7 +7,10 @@ import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/utils/error_mapper.dart';
 import '../../data/data_source/lesson_test_local_data_source.dart';
 import '../../data/models/lesson_test_model.dart';
+import '../../data/models/question_start_model.dart';
+import '../../data/models/question_timer_model.dart';
 import '../../data/models/quiz_attempt_model.dart';
+import '../../data/models/quiz_save_result_model.dart';
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../../data/quiz_error_mapper.dart';
@@ -40,9 +43,15 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
   Timer? _ticker;
   Timer? _cacheTimer;
+  Timer? _remoteSaveTimer;
   bool _startRequested = false;
   bool _submitRequested = false;
   int _saveRevision = 0;
+  final Map<String, Map<String, dynamic>> _pendingRemoteSaves =
+      <String, Map<String, dynamic>>{};
+  final Set<String> _openingQuestions = <String>{};
+  final Set<String> _notifiedLocked = <String>{};
+  final Set<String> _saveRetryIds = <String>{};
 
   Future<void> retry() => state.resultOnly || resultOnly
       ? loadResult(quizId: initialQuizId, attemptId: initialAttemptId)
@@ -60,7 +69,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
   Future<void> loadQuiz() async {
     _stopTicker();
-    _cacheTimer?.cancel();
+    _resetRemoteState();
     _startRequested = false;
     _submitRequested = false;
 
@@ -90,7 +99,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
   Future<void> loadResult({int? quizId, int? attemptId}) async {
     _stopTicker();
-    _cacheTimer?.cancel();
+    _resetRemoteState();
     _startRequested = false;
     _submitRequested = false;
 
@@ -218,6 +227,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     }
 
     _startRequested = true;
+    _resetRemoteState();
 
     emit(
       state.copyWith(
@@ -249,6 +259,21 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         return;
       }
 
+      final Duration offset = attempt.serverNow == null
+          ? Duration.zero
+          : attempt.serverNow!.difference(DateTime.now());
+      final Map<String, QuestionTimerModel> timers = attempt.questionTimers;
+      final Set<String> opened = <String>{
+        for (final MapEntry<String, QuestionTimerModel> entry
+            in timers.entries)
+          if (entry.value.startedAt != null) entry.key,
+      };
+      final Set<String> locked = <String>{
+        for (final MapEntry<String, QuestionTimerModel> entry
+            in timers.entries)
+          if (entry.value.enabled && entry.value.hasExpired) entry.key,
+      };
+
       emit(
         state.copyWith(
           status: LessonTestStatus.running,
@@ -256,9 +281,12 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           answers: _restoredAnswers(attempt),
           rightOrder: _initialRightOrder(attempt),
           currentIndex: 0,
-          remaining: _remainingOf(attempt),
-          questionStartedAt: DateTime.now(),
+          remaining: _remainingOf(attempt, offset),
           questionTick: 0,
+          questionTimers: timers,
+          openedQuestionIds: opened,
+          lockedQuestionIds: locked,
+          clockOffset: offset,
           isStarting: false,
           didTimeOut: false,
           clearSelectedBlank: true,
@@ -269,6 +297,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       );
 
       _startTicker();
+      unawaited(openQuestion(0));
     } catch (error) {
       if (isClosed) return;
 
@@ -288,6 +317,190 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     } finally {
       _startRequested = false;
     }
+  }
+
+  Future<void> reopenCurrentQuestion() async {
+    if (!state.isRunning) return;
+    await openQuestion(state.currentIndex);
+  }
+
+  Future<void> openQuestion(int index) async {
+    if (!state.isRunning || state.isSubmitting) return;
+
+    final QuizAttemptModel? attempt = state.attempt;
+    final List<TestQuestionModel> questions =
+        attempt?.questions ?? const <TestQuestionModel>[];
+    if (attempt == null || index < 0 || index >= questions.length) return;
+
+    final TestQuestionModel question = questions[index];
+
+    if (!attempt.questionTimingEnabled) {
+      if (!state.openedQuestionIds.contains(question.id)) {
+        emit(
+          state.copyWith(
+            openedQuestionIds: <String>{
+              ...state.openedQuestionIds,
+              question.id,
+            },
+          ),
+        );
+      }
+      return;
+    }
+
+    if (_openingQuestions.contains(question.id)) return;
+
+    _openingQuestions.add(question.id);
+    emit(state.copyWith(openingQuestionId: question.id));
+
+    try {
+      final QuestionStartModel result = await repo.startQuestion(
+        attempt.id,
+        question.id,
+      );
+      if (isClosed) return;
+      _applyQuestionStart(question, result);
+    } on FormatException {
+      _handleOpenFailure(
+        question,
+        const AppException(LangKeys.quizQuestionOpenFailed),
+      );
+    } catch (error) {
+      if (isClosed) return;
+      _handleOpenFailure(
+        question,
+        QuizErrorMapper.translate(ErrorMapper.toException(error)),
+      );
+    } finally {
+      _openingQuestions.remove(question.id);
+      if (!isClosed && state.openingQuestionId == question.id) {
+        emit(state.copyWith(clearOpeningQuestion: true));
+      }
+    }
+  }
+
+  void _applyQuestionStart(
+    TestQuestionModel question,
+    QuestionStartModel result,
+  ) {
+    final Duration offset = result.serverNow.difference(DateTime.now());
+    final Map<String, QuestionTimerModel> timers =
+        Map<String, QuestionTimerModel>.of(state.questionTimers)
+          ..[question.id] = result.timer;
+
+    final Set<String> opened = <String>{
+      ...state.openedQuestionIds,
+      question.id,
+    };
+    final Set<String> locked = <String>{...state.lockedQuestionIds};
+
+    final bool expired =
+        result.timer.enabled &&
+        (result.timer.hasExpired ||
+            (!result.timer.canAnswer && result.timer.startedAt != null));
+    if (expired) {
+      locked.add(question.id);
+    } else if (!result.timer.enabled || result.timer.canAnswer) {
+      locked.remove(question.id);
+    }
+
+    QuizAttemptModel attempt = state.attempt!;
+    final DateTime? attemptExpires =
+        result.attemptExpiresAt ?? attempt.expiresAt;
+    if (attemptExpires != attempt.expiresAt) {
+      attempt = attempt.copyWith(expiresAt: attemptExpires);
+    }
+
+    Map<String, TestAnswerModel> answers = state.answers;
+    final Map<String, dynamic>? saved = result.savedAnswer;
+    if (saved != null) {
+      final TestAnswerModel remote = TestAnswerModel.fromSavedJson(saved);
+      if (_isValidRestoredOrder(question, remote)) {
+        final TestAnswerModel? local = state.answers[question.id];
+        final bool lockedNow = locked.contains(question.id);
+        if (local == null || !local.isTouched || lockedNow) {
+          answers = Map<String, TestAnswerModel>.of(state.answers)
+            ..[question.id] = remote;
+        } else {
+          _queueRemoteSaveIfDiffers(question, local, saved);
+        }
+      }
+    }
+
+    final bool lockedNow = locked.contains(question.id);
+    final String? lockMessage =
+        lockedNow && state.currentQuestion?.id == question.id
+        ? LangKeys.quizQuestionTimeUp
+        : null;
+
+    emit(
+      state.copyWith(
+        attempt: attempt,
+        answers: answers,
+        questionTimers: timers,
+        openedQuestionIds: opened,
+        lockedQuestionIds: locked,
+        clockOffset: offset,
+        remaining: _remainingOf(attempt, offset),
+        messageKey: lockMessage,
+      ),
+    );
+  }
+
+  void _handleOpenFailure(TestQuestionModel question, AppException exception) {
+    if (isClosed) return;
+
+    if (exception.statusCode == 401) {
+      emit(
+        state.copyWith(
+          errorKey: exception.key,
+          messageKey: exception.key,
+          clearOpeningQuestion: true,
+        ),
+      );
+      return;
+    }
+
+    if (_isAlreadySubmitted(exception)) {
+      unawaited(_recoverSubmittedAttempt());
+      return;
+    }
+
+    if (exception.key == LangKeys.quizQuestionTimeUp) {
+      final Map<String, QuestionTimerModel> timers =
+          Map<String, QuestionTimerModel>.of(state.questionTimers);
+      final QuestionTimerModel? timer = timers[question.id];
+      if (timer != null) {
+        timers[question.id] = timer.copyWith(
+          hasExpired: true,
+          canAnswer: false,
+        );
+      }
+      emit(
+        state.copyWith(
+          questionTimers: timers,
+          lockedQuestionIds: <String>{
+            ...state.lockedQuestionIds,
+            question.id,
+          },
+          messageKey: LangKeys.quizQuestionTimeUp,
+        ),
+      );
+      return;
+    }
+
+    if (exception.key == LangKeys.quizTimeUp) {
+      emit(state.copyWith(didTimeOut: true, remaining: Duration.zero));
+      unawaited(submit(timedOut: true));
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        errorKey: LangKeys.quizQuestionOpenFailed,
+        messageKey: LangKeys.quizQuestionOpenFailed,
+      ),
+    );
   }
 
   void selectOption(String optionId) {
@@ -327,9 +540,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _emitAnswer(state.currentAnswer.copyWith(boolean: value));
   }
 
-  void selectBlank(String blankId) => state.selectedBlankId == blankId
-      ? emit(state.copyWith(clearSelectedBlank: true))
-      : emit(state.copyWith(selectedBlankId: blankId));
+  void selectBlank(String blankId) {
+    if (state.isCurrentQuestionLocked) return;
+
+    state.selectedBlankId == blankId
+        ? emit(state.copyWith(clearSelectedBlank: true))
+        : emit(state.copyWith(selectedBlankId: blankId));
+  }
 
   void assignWord(String optionId) {
     if (!state.isRunning) return;
@@ -396,9 +613,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _emitAnswer(current.copyWith(blanks: blanks));
   }
 
-  void selectPrompt(String leftItemId) => state.selectedPromptId == leftItemId
-      ? emit(state.copyWith(clearSelectedPrompt: true))
-      : emit(state.copyWith(selectedPromptId: leftItemId));
+  void selectPrompt(String leftItemId) {
+    if (state.isCurrentQuestionLocked) return;
+
+    state.selectedPromptId == leftItemId
+        ? emit(state.copyWith(clearSelectedPrompt: true))
+        : emit(state.copyWith(selectedPromptId: leftItemId));
+  }
 
   void linkMatch(String rightItemId) {
     if (!state.isRunning) return;
@@ -481,6 +702,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     if (attempt == null) return false;
 
     _submitRequested = true;
+
+    if (_pendingRemoteSaves.isNotEmpty) {
+      await _flushRemoteSaves(report: false);
+      if (isClosed) return false;
+      if (state.isResult) return true;
+    }
+
     _stopTicker();
 
     emit(
@@ -584,7 +812,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   Future<bool> submitAndLeave() async {
     if (!state.isRunning || state.isSubmitting) return false;
 
-    return submit();
+    return flushAndLeave();
+  }
+
+  Future<bool> flushAndLeave() async {
+    if (!state.isRunning || state.isSubmitting) return false;
+    await flushAnswers();
+    return true;
   }
 
   void reportMessage(String messageKey) =>
@@ -594,13 +828,17 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _cacheTimer?.cancel();
     _cacheTimer = null;
     await _persistAnswers();
+    await _flushRemoteSaves(report: false);
   }
 
   @override
   Future<void> close() async {
     _cacheTimer?.cancel();
     _cacheTimer = null;
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = null;
     await _persistAnswers(report: false);
+    await _flushRemoteSaves(report: false);
     _stopTicker();
     return super.close();
   }
@@ -609,36 +847,79 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     if (state.status != LessonTestStatus.running || state.didTimeOut) return;
 
     final DateTime? expiresAt = state.attempt?.expiresAt;
-    final bool hasQuestionTimer = state.currentQuestion?.timeLimit != null;
+    final DateTime now = state.serverNow;
+    final String? currentQuestionId = state.currentQuestion?.id;
 
-    if (expiresAt == null && !hasQuestionTimer) return;
+    Map<String, QuestionTimerModel> timers = state.questionTimers;
+    Set<String> locked = state.lockedQuestionIds;
+    bool timersChanged = false;
+    String? lockMessage;
 
-    if (expiresAt != null) {
-      final Duration remaining = expiresAt.difference(DateTime.now());
+    if (timers.isNotEmpty) {
+      final Map<String, QuestionTimerModel> updated =
+          Map<String, QuestionTimerModel>.of(timers);
+      final Set<String> updatedLocked = <String>{...locked};
 
-      if (remaining <= Duration.zero) {
-        emit(state.copyWith(remaining: Duration.zero, didTimeOut: true));
-        unawaited(submit(timedOut: true));
-        return;
+      for (final MapEntry<String, QuestionTimerModel> entry
+          in timers.entries) {
+        final QuestionTimerModel timer = entry.value;
+        if (!timer.enabled || timer.hasExpired) continue;
+
+        final DateTime? questionExpiresAt = timer.expiresAt;
+        if (questionExpiresAt == null || questionExpiresAt.isAfter(now)) {
+          continue;
+        }
+
+        updated[entry.key] = timer.copyWith(
+          hasExpired: true,
+          canAnswer: false,
+        );
+        updatedLocked.add(entry.key);
+        timersChanged = true;
+
+        if (entry.key == currentQuestionId && _notifiedLocked.add(entry.key)) {
+          lockMessage = LangKeys.quizQuestionTimeUp;
+        }
       }
 
+      if (timersChanged) {
+        timers = updated;
+        locked = updatedLocked;
+      }
+    }
+
+    final Duration? remaining = expiresAt?.difference(now);
+
+    if (remaining != null && remaining <= Duration.zero) {
       emit(
         state.copyWith(
-          remaining: remaining,
-          questionTick: state.questionTick + 1,
+          remaining: Duration.zero,
+          didTimeOut: true,
+          questionTimers: timers,
+          lockedQuestionIds: locked,
         ),
       );
+      unawaited(submit(timedOut: true));
       return;
     }
 
-    emit(state.copyWith(questionTick: state.questionTick + 1));
+    if (remaining == null && !timersChanged && timers.isEmpty) return;
+
+    emit(
+      state.copyWith(
+        remaining: remaining ?? state.remaining,
+        questionTick: state.questionTick + 1,
+        questionTimers: timers,
+        lockedQuestionIds: locked,
+        messageKey: lockMessage,
+      ),
+    );
   }
 
   void _moveTo(int index) {
     emit(
       state.copyWith(
         currentIndex: index,
-        questionStartedAt: DateTime.now(),
         questionTick: 0,
         clearSelectedBlank: true,
         clearSelectedPrompt: true,
@@ -646,6 +927,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     );
 
     _startTicker();
+    unawaited(openQuestion(index));
   }
 
   void _emitAnswer(
@@ -655,13 +937,16 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   }) {
     final TestQuestionModel? question = state.currentQuestion;
     if (question == null) return;
+    if (state.isQuestionLocked(question.id)) return;
+
+    final TestAnswerModel touched = answer.copyWith(isTouched: true);
 
     _saveRevision++;
 
     emit(
       state.copyWith(
         answers: Map<String, TestAnswerModel>.of(state.answers)
-          ..[question.id] = answer.copyWith(isTouched: true),
+          ..[question.id] = touched,
         saveStatus: LessonTestSaveStatus.saving,
         clearSelectedBlank: clearSelectedBlank,
         clearSelectedPrompt: clearSelectedPrompt,
@@ -669,12 +954,18 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     );
 
     _schedulePersist();
+    _queueRemoteSave(question, touched);
   }
 
   void _emitResult(QuizAttemptModel result, {bool timedOut = false}) {
     _stopTicker();
     _cacheTimer?.cancel();
     _cacheTimer = null;
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = null;
+    _pendingRemoteSaves.clear();
+    _notifiedLocked.clear();
+    _saveRetryIds.clear();
     localStore.clear(result.id);
 
     emit(
@@ -759,6 +1050,255 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     );
   }
 
+  void _resetRemoteState() {
+    _cacheTimer?.cancel();
+    _cacheTimer = null;
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = null;
+    _pendingRemoteSaves.clear();
+    _openingQuestions.clear();
+    _notifiedLocked.clear();
+    _saveRetryIds.clear();
+  }
+
+  void _queueRemoteSaveIfDiffers(
+    TestQuestionModel question,
+    TestAnswerModel answer,
+    Map<String, dynamic> saved,
+  ) {
+    if (!state.isRunning || state.attempt == null) return;
+
+    Map<String, dynamic> local;
+    try {
+      local = answer.toSubmissionJson(question);
+    } on AnswerValidationException {
+      return;
+    } on FormatException {
+      return;
+    }
+
+    if (_sameJson(local, saved)) return;
+
+    _queueRemoteSave(question, answer);
+  }
+
+  bool _sameJson(Object? a, Object? b) {
+    if (a is Map && b is Map) {
+      if (a.length != b.length) return false;
+      for (final Object? key in a.keys) {
+        if (!b.containsKey(key) || !_sameJson(a[key], b[key])) return false;
+      }
+      return true;
+    }
+
+    if (a is List && b is List) {
+      if (a.length != b.length) return false;
+      for (int i = 0; i < a.length; i++) {
+        if (!_sameJson(a[i], b[i])) return false;
+      }
+      return true;
+    }
+
+    return a == b;
+  }
+
+  void _queueRemoteSave(TestQuestionModel question, TestAnswerModel answer) {
+    if (!state.isRunning || state.attempt == null) return;
+
+    try {
+      _pendingRemoteSaves[question.id] = answer.toSubmissionJson(question);
+    } on AnswerValidationException {
+      return;
+    } on FormatException {
+      return;
+    }
+
+    _scheduleRemoteSave();
+  }
+
+  void _scheduleRemoteSave() {
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = Timer(
+      const Duration(milliseconds: 1200),
+      () => unawaited(_flushRemoteSaves()),
+    );
+  }
+
+  Future<void> _flushRemoteSaves({bool report = true}) async {
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = null;
+
+    final QuizAttemptModel? attempt = state.attempt;
+    if (attempt == null || _pendingRemoteSaves.isEmpty) return;
+    if (state.isResult || state.resultOnly || !state.isRunning) return;
+
+    final Map<String, Map<String, dynamic>> payload =
+        Map<String, Map<String, dynamic>>.of(_pendingRemoteSaves);
+
+    if (report && !isClosed) {
+      emit(
+        state.copyWith(
+          isSavingRemote: true,
+          saveStatus: LessonTestSaveStatus.saving,
+        ),
+      );
+    }
+
+    try {
+      final QuizSaveResultModel result = await repo.saveAnswers(
+        attempt.id,
+        payload,
+      );
+      if (isClosed) return;
+
+      final Duration offset = result.serverNow.difference(DateTime.now());
+      final Map<String, QuestionTimerModel> timers =
+          Map<String, QuestionTimerModel>.of(state.questionTimers);
+      final Set<String> locked = <String>{...state.lockedQuestionIds};
+
+      for (final String id in result.ignoredQuestionIds) {
+        _pendingRemoteSaves.remove(id);
+        locked.add(id);
+        final QuestionTimerModel? timer = timers[id];
+        if (timer != null) {
+          timers[id] = timer.copyWith(canAnswer: false, hasExpired: true);
+        }
+      }
+
+      for (final MapEntry<String, Map<String, dynamic>> entry
+          in payload.entries) {
+        if (_pendingRemoteSaves[entry.key] == entry.value) {
+          _pendingRemoteSaves.remove(entry.key);
+        }
+        _saveRetryIds.remove(entry.key);
+      }
+
+      QuizAttemptModel updated = attempt.copyWith(serverNow: result.serverNow);
+      if (result.expiresAt != null) {
+        updated = updated.copyWith(expiresAt: result.expiresAt);
+      }
+
+      emit(
+        state.copyWith(
+          attempt: updated,
+          questionTimers: timers,
+          lockedQuestionIds: locked,
+          clockOffset: offset,
+          remaining: _remainingOf(updated, offset),
+          isSavingRemote: false,
+          saveStatus: LessonTestSaveStatus.saved,
+        ),
+      );
+
+      if (result.hasExpired || updated.hasExpired) {
+        emit(state.copyWith(didTimeOut: true, remaining: Duration.zero));
+        unawaited(submit(timedOut: true));
+      }
+    } catch (error) {
+      if (isClosed) return;
+
+      final AppException exception = QuizErrorMapper.translate(
+        ErrorMapper.toException(error),
+      );
+
+      if (exception.statusCode == 401) {
+        emit(
+          state.copyWith(
+            errorKey: exception.key,
+            messageKey: exception.key,
+            isSavingRemote: false,
+            saveStatus: LessonTestSaveStatus.failed,
+          ),
+        );
+        return;
+      }
+
+      if (_isAlreadySubmitted(exception)) {
+        _pendingRemoteSaves.clear();
+        unawaited(_recoverSubmittedAttempt());
+        return;
+      }
+
+      if (exception.key == LangKeys.quizQuestionTimeUp) {
+        final Map<String, QuestionTimerModel> timers =
+            Map<String, QuestionTimerModel>.of(state.questionTimers);
+        final Set<String> locked = <String>{...state.lockedQuestionIds};
+
+        for (final String id in payload.keys) {
+          _pendingRemoteSaves.remove(id);
+          locked.add(id);
+          final QuestionTimerModel? timer = timers[id];
+          if (timer != null) {
+            timers[id] = timer.copyWith(canAnswer: false, hasExpired: true);
+          }
+        }
+
+        emit(
+          state.copyWith(
+            questionTimers: timers,
+            lockedQuestionIds: locked,
+            isSavingRemote: false,
+            saveStatus: LessonTestSaveStatus.failed,
+            messageKey: LangKeys.quizQuestionTimeUp,
+          ),
+        );
+        return;
+      }
+
+      if (exception.key == LangKeys.quizQuestionNotOpened) {
+        for (final String id in payload.keys) {
+          if (_saveRetryIds.add(id)) {
+            unawaited(_openQuestionById(id));
+          } else {
+            _pendingRemoteSaves.remove(id);
+          }
+        }
+        emit(
+          state.copyWith(
+            isSavingRemote: false,
+            saveStatus: LessonTestSaveStatus.failed,
+          ),
+        );
+        return;
+      }
+
+      if (exception.key == LangKeys.quizTimeUp) {
+        _pendingRemoteSaves.clear();
+        emit(
+          state.copyWith(
+            isSavingRemote: false,
+            saveStatus: LessonTestSaveStatus.failed,
+            didTimeOut: true,
+            remaining: Duration.zero,
+          ),
+        );
+        unawaited(submit(timedOut: true));
+        return;
+      }
+
+      emit(
+        state.copyWith(
+          isSavingRemote: false,
+          saveStatus: LessonTestSaveStatus.failed,
+        ),
+      );
+    }
+  }
+
+  Future<void> _openQuestionById(String questionId) async {
+    final List<TestQuestionModel> questions =
+        state.attempt?.questions ?? const <TestQuestionModel>[];
+    for (int i = 0; i < questions.length; i++) {
+      if (questions[i].id == questionId) {
+        await openQuestion(i);
+        if (!isClosed && _pendingRemoteSaves.containsKey(questionId)) {
+          _scheduleRemoteSave();
+        }
+        return;
+      }
+    }
+  }
+
   Future<void> _persistAnswers({bool report = true}) async {
     final QuizAttemptModel? attempt = state.attempt;
     if (attempt == null || state.isResult || state.resultOnly) return;
@@ -789,11 +1329,13 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     emit(state.copyWith(saveStatus: status));
   }
 
-  Duration _remainingOf(QuizAttemptModel attempt) {
+  Duration _remainingOf(QuizAttemptModel attempt, Duration offset) {
     final DateTime? expiresAt = attempt.expiresAt;
     if (expiresAt == null) return Duration.zero;
 
-    final Duration remaining = expiresAt.difference(DateTime.now());
+    final Duration remaining = expiresAt.difference(
+      DateTime.now().add(offset),
+    );
     return remaining.isNegative ? Duration.zero : remaining;
   }
 

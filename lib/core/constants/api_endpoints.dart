@@ -49,6 +49,12 @@ class ApiEndpoints {
   static String quizAttemptSubmit(int attemptId) =>
       '/user/quiz-attempts/$attemptId/submit';
 
+  static String quizAttemptAnswers(int attemptId) =>
+      '/user/quiz-attempts/$attemptId/answers';
+
+  static String quizAttemptQuestionStart(int attemptId, String questionId) =>
+      '/user/quiz-attempts/$attemptId/questions/$questionId/start';
+
   static String quizMyAttempts(int quizId) =>
       '/user/quizzes/$quizId/my-attempts';
 

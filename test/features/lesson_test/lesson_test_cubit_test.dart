@@ -5,8 +5,11 @@ import 'package:bilhikma/core/enums/test_question_type_enum.dart';
 import 'package:bilhikma/core/localization/lang_keys.dart';
 import 'package:bilhikma/core/utils/error_mapper.dart';
 import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/question_start_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/question_timer_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_question_result_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/quiz_save_result_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_blank_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
@@ -504,6 +507,238 @@ void main() {
       );
     });
 
+    test('opens the first question on the server after starting', () async {
+      final _FakeRepo repo = _FakeRepo();
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => repo.startQuestionCalls == 1);
+
+      expect(repo.startQuestionCalls, 1);
+      expect(cubit.state.openedQuestionIds, contains('q1'));
+      expect(cubit.state.openingQuestionId, isNull);
+    });
+
+    test('opens on navigation without resetting earlier timers', () async {
+      final DateTime expiresAt = DateTime.now().add(
+        const Duration(seconds: 40),
+      );
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[
+            _singleChoiceQuestion(),
+            _multiChoiceQuestion(),
+          ],
+        ),
+        questionTimer: QuestionTimerModel(
+          enabled: true,
+          startedAt: DateTime.now(),
+          expiresAt: expiresAt,
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.openedQuestionIds.contains('q1'));
+
+      cubit.goNext();
+      await _waitFor(() => cubit.state.openedQuestionIds.contains('multi'));
+
+      expect(repo.startQuestionCalls, 2);
+      expect(cubit.state.questionTimers['q1']?.expiresAt, expiresAt);
+
+      cubit.goPrevious();
+      await _waitFor(() => repo.startQuestionCalls == 3);
+
+      expect(cubit.state.currentQuestion?.id, 'q1');
+      expect(cubit.state.questionTimers['q1']?.expiresAt, expiresAt);
+    });
+
+    test('derives the countdown from the server clock', () async {
+      final DateTime serverNow = DateTime.now().subtract(
+        const Duration(minutes: 5),
+      );
+      final _FakeRepo repo = _FakeRepo(
+        startServerNow: serverNow,
+        questionTimer: QuestionTimerModel(
+          enabled: true,
+          startedAt: serverNow,
+          expiresAt: serverNow.add(const Duration(seconds: 30)),
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.openedQuestionIds.contains('q1'));
+
+      final Duration? remaining = cubit.state.currentQuestionRemaining;
+
+      expect(remaining, isNotNull);
+      expect(remaining! <= const Duration(seconds: 30), isTrue);
+      expect(remaining > const Duration(seconds: 25), isTrue);
+    });
+
+    test('does not open questions for a legacy attempt', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[_singleChoiceQuestion()],
+          questionTimingEnabled: false,
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(repo.startQuestionCalls, 0);
+      expect(cubit.state.openedQuestionIds, contains('q1'));
+      expect(cubit.state.isCurrentQuestionLocked, isFalse);
+    });
+
+    test('locks the question when the start response is expired', () async {
+      final _FakeRepo repo = _FakeRepo(
+        questionTimer: QuestionTimerModel(
+          enabled: true,
+          startedAt: DateTime.now().subtract(const Duration(minutes: 2)),
+          expiresAt: DateTime.now().subtract(const Duration(minutes: 1)),
+          hasExpired: true,
+          canAnswer: false,
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isCurrentQuestionLocked);
+
+      expect(cubit.state.isRunning, isTrue);
+      expect(repo.submitCalls, 0);
+      expect(cubit.state.currentQuestionRemaining, Duration.zero);
+    });
+
+    test('sends an edited answer to the server after the debounce', () async {
+      final _FakeRepo repo = _FakeRepo();
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+      await _waitFor(() => repo.saveAnswersCalls == 1);
+
+      expect(repo.savedAnswersPayload?['q1'], <String, dynamic>{
+        'option_id': 'o2',
+      });
+    });
+
+    test('locks a question listed in ignored_question_ids', () async {
+      final _FakeRepo repo = _FakeRepo()..ignoredQuestionIds = <String>['q1'];
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+      await _waitFor(() => cubit.state.isCurrentQuestionLocked);
+
+      cubit.selectOption('o1');
+
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+    });
+
+    test('hydrates the saved answer returned by the start call', () async {
+      final _FakeRepo repo = _FakeRepo(
+        savedAnswer: <String, dynamic>{'option_id': 'o2'},
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.openedQuestionIds.contains('q1'));
+
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+    });
+
+    test('re-saves a touched answer when the server returns an older one', () async {
+      final _FakeRepo repo = _FakeRepo(
+        savedAnswer: <String, dynamic>{'option_id': 'o2'},
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o1');
+      await _waitFor(() => repo.saveAnswersCalls == 1);
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
+
+      await cubit.reopenCurrentQuestion();
+      await _waitFor(() => repo.saveAnswersCalls >= 2);
+
+      expect(repo.savedAnswersPayload?['q1'], <String, dynamic>{
+        'option_id': 'o1',
+      });
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
+    });
+
+    test('reports a question that could not be opened', () async {
+      final _FakeRepo repo = _FakeRepo(
+        startQuestionError: const AppException('network_error'),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(
+        () => cubit.state.messageKey == LangKeys.quizQuestionOpenFailed,
+      );
+
+      expect(cubit.state.openingQuestionId, isNull);
+      expect(cubit.state.isRunning, isTrue);
+    });
+
+    test('retries a failed remote save before submitting', () async {
+      final _FakeRepo repo = _FakeRepo()
+        ..saveAnswersError = const AppException('network_error');
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+
+      cubit.selectOption('o2');
+      await _waitFor(() => repo.saveAnswersCalls == 1);
+      expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+
+      repo.saveAnswersError = null;
+      await cubit.submit();
+      await _waitFor(() => cubit.state.isResult);
+
+      expect(repo.saveAnswersCalls, greaterThanOrEqualTo(2));
+      expect(repo.submittedAnswers?['q1'], <String, dynamic>{
+        'option_id': 'o2',
+      });
+    });
+
     test('keeps the server reason when the quiz is refused', () async {
       final _FakeRepo repo = _FakeRepo(
         attempt: _attempt(
@@ -543,6 +778,10 @@ class _FakeRepo extends LessonTestRepo {
     this.submitError,
     this.startError,
     this.fetchAttemptError,
+    this.startQuestionError,
+    this.questionTimer,
+    this.savedAnswer,
+    this.startServerNow,
     List<QuizAttemptModel>? attempts,
   }) : attempts = attempts ?? const <QuizAttemptModel>[];
 
@@ -551,12 +790,21 @@ class _FakeRepo extends LessonTestRepo {
   Object? submitError;
   Object? startError;
   Object? fetchAttemptError;
+  Object? startQuestionError;
+  Object? saveAnswersError;
+  QuestionTimerModel? questionTimer;
+  Map<String, dynamic>? savedAnswer;
+  DateTime? startServerNow;
+  List<String> ignoredQuestionIds = <String>[];
   List<QuizAttemptModel> attempts;
 
   int startCalls = 0;
   int submitCalls = 0;
   int fetchAttemptCalls = 0;
+  int startQuestionCalls = 0;
+  int saveAnswersCalls = 0;
   Map<String, Map<String, dynamic>>? submittedAnswers;
+  Map<String, Map<String, dynamic>>? savedAnswersPayload;
 
   @override
   Future<LessonTestModel> fetchQuiz(int contentId) async => LessonTestModel(
@@ -575,6 +823,46 @@ class _FakeRepo extends LessonTestRepo {
     if (error != null) throw error;
 
     return attempt ?? _attempt();
+  }
+
+  @override
+  Future<QuestionStartModel> startQuestion(
+    int attemptId,
+    String questionId,
+  ) async {
+    startQuestionCalls++;
+
+    final Object? error = startQuestionError;
+    if (error != null) throw error;
+
+    return QuestionStartModel(
+      attemptId: attemptId,
+      questionId: questionId,
+      serverNow: startServerNow ?? DateTime.now(),
+      timer:
+          questionTimer ??
+          const QuestionTimerModel(enabled: false, canAnswer: true),
+      savedAnswer: savedAnswer,
+    );
+  }
+
+  @override
+  Future<QuizSaveResultModel> saveAnswers(
+    int attemptId,
+    Map<String, Map<String, dynamic>> answers,
+  ) async {
+    saveAnswersCalls++;
+    savedAnswersPayload = answers;
+
+    final Object? error = saveAnswersError;
+    if (error != null) throw error;
+
+    return QuizSaveResultModel(
+      attemptId: attemptId,
+      saved: answers.length,
+      ignoredQuestionIds: ignoredQuestionIds,
+      serverNow: DateTime.now(),
+    );
   }
 
   @override
@@ -608,6 +896,7 @@ class _FakeRepo extends LessonTestRepo {
 QuizAttemptModel _attempt({
   List<TestQuestionModel>? questions,
   DateTime? expiresAt,
+  bool questionTimingEnabled = true,
   Map<String, Map<String, dynamic>> savedAnswers =
       const <String, Map<String, dynamic>>{},
 }) => QuizAttemptModel(
@@ -616,6 +905,7 @@ QuizAttemptModel _attempt({
   studentId: 1,
   attemptNo: 1,
   expiresAt: expiresAt ?? DateTime.now().add(const Duration(minutes: 10)),
+  questionTimingEnabled: questionTimingEnabled,
   questions: questions ?? <TestQuestionModel>[_singleChoiceQuestion()],
   savedAnswers: savedAnswers,
 );

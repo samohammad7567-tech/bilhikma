@@ -4,6 +4,7 @@ import 'package:bilhikma/core/localization/lang_keys.dart';
 import 'package:bilhikma/core/network/session_policy.dart';
 import 'package:bilhikma/core/utils/error_mapper.dart';
 import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
+import 'package:bilhikma/features/lesson_test/data/models/question_start_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_attempt_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/quiz_question_result_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_answer_model.dart';
@@ -181,6 +182,82 @@ void main() {
       expect(attempt.questions[6].sentences, hasLength(2));
       expect(attempt.isSubmitted, isFalse);
       expect(attempt.hasExpired, isFalse);
+    });
+
+    test('parses server clock and per-question timer state', () {
+      final Map<String, dynamic> questionJson = <String, dynamic>{
+        'question_id': 38,
+        'question_text': 'Pick the red card',
+        'question_type': 'mcq_single',
+        'score': 2,
+        'default_time_seconds': 45,
+        'options': <String, dynamic>{
+          'details': <String, dynamic>{
+            'options': <Map<String, dynamic>>[
+              <String, dynamic>{'id': 'red', 'text': 'Red'},
+            ],
+          },
+        },
+        'timer': <String, dynamic>{
+          'enabled': true,
+          'started_at': '2026-11-04T11:35:09+00:00',
+          'expires_at': '2026-11-04T11:35:54+00:00',
+          'seconds_left': 40,
+          'has_expired': false,
+          'can_answer': true,
+        },
+      };
+
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        questionJson,
+      );
+
+      expect(question.timeLimit, const Duration(seconds: 45));
+      expect(question.initialTimer?.isTimed, isTrue);
+      expect(question.initialTimer?.secondsLeft, 40);
+
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{
+          'id': 171,
+          'quiz_id': 2,
+          'student_id': 9,
+          'attempt_no': 1,
+          'server_now': '2026-11-04T11:35:14+00:00',
+          'question_timing_enabled': true,
+          'answers': <Map<String, dynamic>>[questionJson],
+        },
+      );
+
+      expect(
+        attempt.serverNow?.toUtc(),
+        DateTime.utc(2026, 11, 4, 11, 35, 14),
+      );
+      expect(attempt.questionTimingEnabled, isTrue);
+      expect(attempt.questionTimers['38']?.canAnswer, isTrue);
+    });
+
+    test('parses a question start response with the saved answer', () {
+      final QuestionStartModel start = QuestionStartModel.fromJson(
+        <String, dynamic>{
+          'attempt_id': 171,
+          'question_id': 38,
+          'server_now': '2026-11-04T11:35:14+00:00',
+          'attempt_expires_at': null,
+          'timer': <String, dynamic>{
+            'enabled': true,
+            'started_at': '2026-11-04T11:35:09+00:00',
+            'expires_at': '2026-11-04T11:35:54+00:00',
+            'seconds_left': 40,
+            'has_expired': false,
+            'can_answer': true,
+          },
+          'saved_answer': <String, dynamic>{'option_id': 'red'},
+        },
+      );
+
+      expect(start.timer.canAnswer, isTrue);
+      expect(start.savedAnswer?['option_id'], 'red');
+      expect(start.attemptExpiresAt, isNull);
     });
 
     test('treats empty options and null default time as no question timer', () {

@@ -24,8 +24,13 @@ final class LessonTestState {
     this.rightOrder = const <String, List<String>>{},
     this.currentIndex = 0,
     this.remaining = Duration.zero,
-    this.questionStartedAt,
     this.questionTick = 0,
+    this.questionTimers = const <String, QuestionTimerModel>{},
+    this.openedQuestionIds = const <String>{},
+    this.lockedQuestionIds = const <String>{},
+    this.openingQuestionId,
+    this.clockOffset = Duration.zero,
+    this.isSavingRemote = false,
     this.selectedBlankId,
     this.selectedPromptId,
     this.errorKey,
@@ -49,8 +54,14 @@ final class LessonTestState {
 
   final int currentIndex;
   final Duration remaining;
-  final DateTime? questionStartedAt;
   final int questionTick;
+
+  final Map<String, QuestionTimerModel> questionTimers;
+  final Set<String> openedQuestionIds;
+  final Set<String> lockedQuestionIds;
+  final String? openingQuestionId;
+  final Duration clockOffset;
+  final bool isSavingRemote;
 
   final String? selectedBlankId;
   final String? selectedPromptId;
@@ -108,16 +119,44 @@ final class LessonTestState {
   double get progress =>
       questionCount == 0 ? 0 : (currentIndex + 1) / questionCount;
 
-  Duration get questionElapsed => questionStartedAt == null
-      ? Duration.zero
-      : DateTime.now().difference(questionStartedAt!);
+  DateTime get serverNow => DateTime.now().add(clockOffset);
 
-  Duration? get questionRemaining {
-    final Duration? limit = currentQuestion?.timeLimit;
-    if (limit == null) return null;
+  QuestionTimerModel? get currentQuestionTimer =>
+      questionTimers[currentQuestion?.id];
 
-    final Duration left = limit - questionElapsed;
+  Duration? get currentQuestionRemaining {
+    final QuestionTimerModel? timer = currentQuestionTimer;
+    if (timer == null || !timer.enabled) return null;
+    if (timer.hasExpired) return Duration.zero;
+
+    final DateTime? expiresAt = timer.expiresAt;
+    if (expiresAt == null) return null;
+
+    final Duration left = expiresAt.difference(serverNow);
     return left.isNegative ? Duration.zero : left;
+  }
+
+  bool isQuestionLocked(String questionId) {
+    if (lockedQuestionIds.contains(questionId)) return true;
+
+    final QuestionTimerModel? timer = questionTimers[questionId];
+    if (timer == null || !timer.enabled) return false;
+    if (timer.hasExpired || !timer.canAnswer) return true;
+
+    return !openedQuestionIds.contains(questionId);
+  }
+
+  bool get isCurrentQuestionLocked {
+    final TestQuestionModel? question = currentQuestion;
+    return question != null && isQuestionLocked(question.id);
+  }
+
+  bool get isCurrentQuestionExpired {
+    final QuestionTimerModel? timer = currentQuestionTimer;
+    if (timer == null || !timer.enabled) return false;
+    if (timer.hasExpired) return true;
+    final Duration? remaining = currentQuestionRemaining;
+    return remaining != null && remaining <= Duration.zero;
   }
 
   TestQuestionModel? get currentQuestion {
@@ -165,8 +204,14 @@ final class LessonTestState {
     Map<String, List<String>>? rightOrder,
     int? currentIndex,
     Duration? remaining,
-    DateTime? questionStartedAt,
     int? questionTick,
+    Map<String, QuestionTimerModel>? questionTimers,
+    Set<String>? openedQuestionIds,
+    Set<String>? lockedQuestionIds,
+    String? openingQuestionId,
+    bool clearOpeningQuestion = false,
+    Duration? clockOffset,
+    bool? isSavingRemote,
     String? selectedBlankId,
     String? selectedPromptId,
     bool clearSelectedBlank = false,
@@ -191,8 +236,15 @@ final class LessonTestState {
     rightOrder: rightOrder ?? this.rightOrder,
     currentIndex: currentIndex ?? this.currentIndex,
     remaining: remaining ?? this.remaining,
-    questionStartedAt: questionStartedAt ?? this.questionStartedAt,
     questionTick: questionTick ?? this.questionTick,
+    questionTimers: questionTimers ?? this.questionTimers,
+    openedQuestionIds: openedQuestionIds ?? this.openedQuestionIds,
+    lockedQuestionIds: lockedQuestionIds ?? this.lockedQuestionIds,
+    openingQuestionId: clearOpeningQuestion
+        ? null
+        : openingQuestionId ?? this.openingQuestionId,
+    clockOffset: clockOffset ?? this.clockOffset,
+    isSavingRemote: isSavingRemote ?? this.isSavingRemote,
     selectedBlankId: clearSelectedBlank
         ? null
         : selectedBlankId ?? this.selectedBlankId,

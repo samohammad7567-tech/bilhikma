@@ -1,6 +1,8 @@
 import '../data_source/lesson_test_data_source.dart';
 import '../models/lesson_test_model.dart';
+import '../models/question_start_model.dart';
 import '../models/quiz_attempt_model.dart';
+import '../models/quiz_save_result_model.dart';
 
 class LessonTestRepo {
   const LessonTestRepo({this.dataSource = const LessonTestDataSource()});
@@ -12,6 +14,14 @@ class LessonTestRepo {
 
   Future<QuizAttemptModel> startAttempt(int quizId) =>
       dataSource.startAttempt(quizId);
+
+  Future<QuestionStartModel> startQuestion(int attemptId, String questionId) =>
+      dataSource.startQuestion(attemptId, questionId);
+
+  Future<QuizSaveResultModel> saveAnswers(
+    int attemptId,
+    Map<String, Map<String, dynamic>> answers,
+  ) => dataSource.saveAnswers(attemptId, answers);
 
   Future<QuizAttemptModel> submitAttempt(
     int attemptId,
