@@ -45,6 +45,7 @@ class LangKeys {
   static const String quizAnswerCorrect = 'quiz_answer_correct';
   static const String quizAnswerIncorrect = 'quiz_answer_incorrect';
   static const String quizCorrectAnswer = 'quiz_correct_answer';
+  static const String quizYourAnswer = 'quiz_your_answer';
   static const String quizExplanation = 'quiz_explanation';
   static const String quizTimeSpent = 'quiz_time_spent';
   static const String goToTest = 'go_to_test';

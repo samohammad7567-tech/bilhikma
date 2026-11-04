@@ -61,6 +61,9 @@ class QuizAttemptModel {
 
   bool get isPendingReview => reviewStatus == 'pending';
 
+  bool get hasSolutions =>
+      questionResults.any((QuizQuestionResultModel item) => item.hasSolution);
+
   bool get hasExpired =>
       serverHasExpired || (expiresAt?.isBefore(DateTime.now()) ?? false);
 

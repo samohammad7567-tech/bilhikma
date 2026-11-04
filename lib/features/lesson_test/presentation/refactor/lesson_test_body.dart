@@ -103,7 +103,9 @@ class LessonTestBody extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
                 child: LessonTestResultBody(
                   result: result,
-                  showReview: state.quiz?.showCorrectAnswers ?? false,
+                  showReview:
+                      (state.quiz?.showCorrectAnswers ?? false) ||
+                      result.hasSolutions,
                 ),
               ),
             ),

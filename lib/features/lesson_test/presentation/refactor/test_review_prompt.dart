@@ -14,7 +14,7 @@ class TestReviewPrompt {
     required QuizQuestionResultModel result,
     required TestQuestionModel? question,
   }) {
-    if (question == null) return '';
+    if (question == null) return result.questionText.trim();
 
     final String prompt = question.prompt.trim();
     if (!question.isBlankQuestion) return prompt;

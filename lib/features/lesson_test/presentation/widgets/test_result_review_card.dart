@@ -6,8 +6,10 @@ import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_question_model.dart';
+import '../refactor/test_given_answers.dart';
 import '../refactor/test_solution_answers.dart';
 import 'test_html_text.dart';
+import 'test_review_answers.dart';
 
 class TestResultReviewCard extends StatelessWidget {
   const TestResultReviewCard({
@@ -26,6 +28,10 @@ class TestResultReviewCard extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final _Status status = _statusOf(colors);
     final List<String> correctAnswers = TestSolutionAnswers.of(
+      result,
+      question: question,
+    );
+    final List<String> givenAnswers = TestGivenAnswers.of(
       result,
       question: question,
     );
@@ -72,20 +78,14 @@ class TestResultReviewCard extends StatelessWidget {
             ],
           ),
 
-          if (correctAnswers.isNotEmpty) ...<Widget>[
+          if (givenAnswers.isNotEmpty ||
+              correctAnswers.isNotEmpty ||
+              explanation != null) ...<Widget>[
             SizedBox(height: 8.h),
-            TestHtmlText(
-              '${LangKeys.quizCorrectAnswer.tr()}: '
-              '${correctAnswers.join(' | ')}',
-              style: AppTheme.styles(context).labelSmall,
-            ),
-          ],
-
-          if (explanation != null) ...<Widget>[
-            SizedBox(height: 8.h),
-            TestHtmlText(
-              '${LangKeys.quizExplanation.tr()}: $explanation',
-              style: AppTheme.styles(context).labelSmall,
+            TestReviewAnswers(
+              givenAnswers: givenAnswers,
+              correctAnswers: correctAnswers,
+              explanation: explanation,
             ),
           ],
         ],

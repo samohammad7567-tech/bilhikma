@@ -1,5 +1,6 @@
 import 'package:bilhikma/core/enums/blank_input_mode_enum.dart';
 import 'package:bilhikma/core/enums/test_question_type_enum.dart';
+import 'package:bilhikma/core/localization/lang_keys.dart';
 import 'package:bilhikma/core/network/session_policy.dart';
 import 'package:bilhikma/core/utils/error_mapper.dart';
 import 'package:bilhikma/features/lesson_test/data/models/lesson_test_model.dart';
@@ -10,8 +11,10 @@ import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.
 import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_question_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_sentence_model.dart';
+import 'package:bilhikma/features/lesson_test/presentation/refactor/test_given_answers.dart';
 import 'package:bilhikma/features/lesson_test/presentation/refactor/test_solution_answers.dart';
 import 'package:bilhikma/features/lesson_detail/data/models/lesson_detail_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, dynamic> _attempt({
@@ -691,6 +694,303 @@ void main() {
       );
 
       expect(TestSolutionAnswers.of(result), <String>['First', 'Second']);
+    });
+
+    test('shows every correct choice when a multi answer is wrong', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'multi',
+        type: TestQuestionType.multiChoice,
+        prompt: '',
+        options: <TestOptionModel>[
+          TestOptionModel(id: 'o1', label: 'Wrong'),
+          TestOptionModel(id: 'o2', label: 'Right'),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'multi',
+        questionType: TestQuestionType.multiChoice,
+        isCorrect: false,
+        givenAnswer: <String, dynamic>{
+          'option_ids': <String>['o1'],
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'options': <Map<String, dynamic>>[
+              <String, dynamic>{'id': 'o1', 'is_correct': false},
+              <String, dynamic>{'id': 'o2', 'is_correct': true},
+            ],
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'Right',
+      ]);
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'Wrong',
+      ]);
+    });
+
+    test('reads correct option ids without per-option flags', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'multi',
+        type: TestQuestionType.multiChoice,
+        prompt: '',
+        options: <TestOptionModel>[
+          TestOptionModel(id: 'o1', label: 'First'),
+          TestOptionModel(id: 'o2', label: 'Second'),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'multi',
+        questionType: TestQuestionType.multiChoice,
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'correct_option_ids': <String>['o1', 'o2'],
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'First',
+        'Second',
+      ]);
+    });
+
+    test('reads matching maps for solution and given answer', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'l1', text: 'A'),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'r1', text: '1'),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{'r1': 'l1'},
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'matches': <String, dynamic>{'r1': 'l1'},
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'A → 1',
+      ]);
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'A → 1',
+      ]);
+    });
+
+    test('resolves ordering ids for solution and given answer', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'order',
+        type: TestQuestionType.orderSentences,
+        prompt: '',
+        sentences: <TestSentenceModel>[
+          TestSentenceModel(id: 's1', text: 'First'),
+          TestSentenceModel(id: 's2', text: 'Second'),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'order',
+        questionType: TestQuestionType.orderSentences,
+        givenAnswer: <String, dynamic>{
+          'order': <String>['s1', 's2'],
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'correct_order': <String>['s2', 's1'],
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'Second',
+        'First',
+      ]);
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'First',
+        'Second',
+      ]);
+    });
+
+    test('reads typed blank answers stored as maps', () {
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'typed',
+        questionType: TestQuestionType.typedBlanks,
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'blanks': <String, dynamic>{
+              'b1': <String, dynamic>{
+                'accepted': <String>['cat'],
+              },
+            },
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result), <String>['cat']);
+    });
+
+    test('reads true or false given and correct answer from the result', () {
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 23,
+          'question_type': 'true_false',
+          'question_text': 'الغيبة من أركان الإسلام',
+          'options': <String, dynamic>{'correct_answer': false},
+          'selected_boolean': false,
+          'is_correct': true,
+        },
+      );
+
+      expect(TestGivenAnswers.of(result), <String>[LangKeys.quizFalse.tr()]);
+      expect(TestSolutionAnswers.of(result), <String>[LangKeys.quizFalse.tr()]);
+    });
+
+    test(
+      'infers the opposite true or false answer when the choice is wrong',
+      () {
+        final QuizQuestionResultModel result =
+            QuizQuestionResultModel.fromJson(<String, dynamic>{
+              'question_id': 24,
+              'question_type': 'true_false',
+              'selected_boolean': true,
+              'is_correct': false,
+            });
+
+        expect(TestGivenAnswers.of(result), <String>[LangKeys.quizTrue.tr()]);
+        expect(TestSolutionAnswers.of(result), <String>[
+          LangKeys.quizFalse.tr(),
+        ]);
+      },
+    );
+
+    test('reads dropdown blanks using choice ids from the real payload', () {
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'question_text': 'أول أركان الإسلام {{1}}',
+          'options': <String, dynamic>{
+            'details': <String, dynamic>{
+              'blanks': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'b_1',
+                  'blank_index': 1,
+                  'choices': <Map<String, dynamic>>[
+                    <String, dynamic>{'id': 'c_2', 'text': 'الصلاة'},
+                    <String, dynamic>{'id': 'c_1', 'text': 'الشهادتان'},
+                  ],
+                },
+              ],
+              'blank_input_mode': 'dropdown',
+            },
+          },
+        },
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 14,
+          'question_type': 'fill_blank_choice',
+          'given_answer': <String, dynamic>{
+            'blanks': <String, dynamic>{'b_1': 'c_2'},
+          },
+          'solution': <String, dynamic>{
+            'details': <String, dynamic>{
+              'blanks': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'b_1',
+                  'choices': <Map<String, dynamic>>[
+                    <String, dynamic>{
+                      'id': 'c_1',
+                      'text': 'الشهادتان',
+                      'is_correct': true,
+                    },
+                    <String, dynamic>{
+                      'id': 'c_2',
+                      'text': 'الصلاة',
+                      'is_correct': false,
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'الصلاة',
+      ]);
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'الشهادتان',
+      ]);
+    });
+
+    test('drops distractor pairs from the matching solution', () {
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 16,
+          'question_type': 'matching',
+          'solution': <String, dynamic>{
+            'details': <String, dynamic>{
+              'pairs': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'left_text': 'الفجر',
+                  'right_text': 'ركعتان',
+                  'is_distractor': false,
+                },
+                <String, dynamic>{
+                  'left_text': null,
+                  'right_text': 'خمس',
+                  'is_distractor': true,
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      expect(TestSolutionAnswers.of(result), <String>['الفجر → ركعتان']);
+    });
+
+    test('exposes released solutions for the result review gate', () {
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{
+          'id': 3,
+          'answers': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'question_id': 21,
+              'question_type': 'mcq_single',
+              'is_correct': false,
+              'given_answer': <String, dynamic>{'option_id': 'o_2'},
+              'solution': <String, dynamic>{
+                'details': <String, dynamic>{
+                  'options': <Map<String, dynamic>>[
+                    <String, dynamic>{
+                      'id': 'o_1',
+                      'text': 'الصلاة',
+                      'is_correct': true,
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      );
+
+      expect(attempt.hasSolutions, isTrue);
     });
   });
 
