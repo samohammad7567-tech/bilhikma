@@ -1,6 +1,7 @@
 import '../enums/content_type_enum.dart';
 import '../enums/lesson_status_enum.dart';
 import '../network/json_reader.dart';
+import '../../features/lesson_detail/data/models/quiz_summary_model.dart';
 import 'lesson_progress_model.dart';
 
 class LessonModel {
@@ -18,6 +19,7 @@ class LessonModel {
     this.isProtectedMedia = false,
     this.publishedAt,
     this.progress = const LessonProgressModel(),
+    this.quiz,
   });
 
   final int id;
@@ -39,6 +41,9 @@ class LessonModel {
   final bool isProtectedMedia;
   final DateTime? publishedAt;
   final LessonProgressModel progress;
+  final QuizSummaryModel? quiz;
+
+  bool get hasQuiz => quiz != null;
 
   Duration get duration => Duration(seconds: durationSeconds);
 
@@ -47,6 +52,11 @@ class LessonModel {
     isStarted: progress.isStarted,
     isLocked: isLocked,
   );
+
+  static QuizSummaryModel? _quizFromJson(Object? value) {
+    final Map<String, dynamic>? quiz = Json.asOptionalMap(value);
+    return quiz == null ? null : QuizSummaryModel.fromJson(quiz);
+  }
 
   factory LessonModel.fromJson(Map<String, dynamic> json) => LessonModel(
     id: Json.asInt(json['id']),
@@ -62,5 +72,6 @@ class LessonModel {
     isProtectedMedia: Json.asBool(json['is_protected_media']),
     publishedAt: Json.asDateTime(json['published_at']),
     progress: LessonProgressModel.fromJson(Json.asMap(json['progress'])),
+    quiz: _quizFromJson(json['quiz']),
   );
 }

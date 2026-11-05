@@ -13,11 +13,6 @@ class DioService {
   static const Duration _sendTimeout = Duration(seconds: 40);
 
   static String _storedToken() {
-    final Object? tokenset = CacheUtil.setString(
-      key: 'token',
-      value:
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JpbGhpa21hLnRlY2gvYXBpL2xvZ2luIiwiaWF0IjoxNzkzNzg0NDUzLCJleHAiOjE3OTM4NzA4NTMsIm5iZiI6MTc5Mzc4NDQ1MywianRpIjoiNmlYUHB4c2swaklubWZWSyIsInN1YiI6IjE0IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9._Y8KM_JaI5V-DcBOrRdwMdD6SNMYDjylvkYWWAkqZR8",
-    );
     final Object? token = CacheUtil.get(key: 'token');
     print("token $token ");
     return token is String ? token : '';

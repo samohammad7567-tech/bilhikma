@@ -388,5 +388,8 @@
   "quiz_explanation": "التوضيح",
   "quiz_time_spent": "الوقت المستغرق",
   "view_result_and_review": "عرض النتيجة والمراجعة",
-  "back_to_lesson": "العودة إلى الدرس"
+  "back_to_lesson": "العودة إلى الدرس",
+  "quiz_mandatory": "اختبار إلزامي",
+  "quiz_optional": "اختبار اختياري",
+  "quiz_passed": "تم اجتياز الاختبار"
 }

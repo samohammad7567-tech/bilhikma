@@ -21,7 +21,6 @@ class LangKeys {
   static const String quizSaving = 'quiz_saving';
   static const String quizSaved = 'quiz_saved';
   static const String quizSaveFailed = 'quiz_save_failed';
-  static const String quizPassed = 'quiz_passed';
   static const String quizAttemptsLeft = 'quiz_attempts_left';
   static const String quizAttemptsUnlimited = 'quiz_attempts_unlimited';
   static const String quizNoAttemptsLeft = 'quiz_no_attempts_left';
@@ -56,4 +55,7 @@ class LangKeys {
   static const String goToTest = 'go_to_test';
   static const String viewResultAndReview = 'view_result_and_review';
   static const String backToLesson = 'back_to_lesson';
+  static const String quizMandatory = 'quiz_mandatory';
+  static const String quizOptional = 'quiz_optional';
+  static const String quizPassed = 'quiz_passed';
 }

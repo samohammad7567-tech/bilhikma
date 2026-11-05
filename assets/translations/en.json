@@ -388,5 +388,8 @@
   "quiz_explanation": "Explanation",
   "quiz_time_spent": "Time taken",
   "view_result_and_review": "View result and review",
-  "back_to_lesson": "Back to lesson"
+  "back_to_lesson": "Back to lesson",
+  "quiz_mandatory": "Mandatory Quiz",
+  "quiz_optional": "Optional Quiz",
+  "quiz_passed": "Quiz Passed"
 }
