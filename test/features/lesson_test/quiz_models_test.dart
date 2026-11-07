@@ -12,6 +12,7 @@ import 'package:bilhikma/features/lesson_test/data/models/test_match_item_model.
 import 'package:bilhikma/features/lesson_test/data/models/test_option_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_question_model.dart';
 import 'package:bilhikma/features/lesson_test/data/models/test_sentence_model.dart';
+import 'package:bilhikma/features/lesson_test/presentation/refactor/quiz_review_answer.dart';
 import 'package:bilhikma/features/lesson_test/presentation/refactor/test_given_answers.dart';
 import 'package:bilhikma/features/lesson_test/presentation/refactor/test_solution_answers.dart';
 import 'package:bilhikma/features/lesson_detail/data/models/lesson_detail_model.dart';
@@ -69,6 +70,34 @@ void main() {
       expect(quiz.hasTimeLimit, isFalse);
       expect(quiz.questionCount, 7);
       expect(quiz.isBlocking, isTrue);
+    });
+
+    test('parses an open attempt so the quiz can be resumed', () {
+      final LessonTestModel quiz = LessonTestModel.fromJson(<String, dynamic>{
+        'id': 2,
+        'content_id': 11,
+        'title': 'Quiz',
+        'question_count': 5,
+        'attempts_used': 3,
+        'attempts_left': 0,
+        'has_open_attempt': true,
+        'open_attempt': <String, dynamic>{
+          'id': 81,
+          'attempt_no': 2,
+          'started_at': '2099-01-01T10:00:00Z',
+          'expires_at': '2099-01-01T10:30:00Z',
+          'answered_count': 2,
+          'total_questions': 5,
+          'remaining_seconds': 1200,
+        },
+      });
+
+      expect(quiz.hasOpenAttempt, isTrue);
+      expect(quiz.openAttempt?.id, 81);
+      expect(quiz.openAttempt?.attemptNo, 2);
+      expect(quiz.openAttempt?.answeredCount, 2);
+      expect(quiz.openAttempt?.remainingSeconds, 1200);
+      expect(quiz.openAttempt?.hasExpired, isFalse);
     });
   });
 
@@ -228,12 +257,30 @@ void main() {
         },
       );
 
-      expect(
-        attempt.serverNow?.toUtc(),
-        DateTime.utc(2026, 11, 4, 11, 35, 14),
-      );
+      expect(attempt.serverNow?.toUtc(), DateTime.utc(2026, 11, 4, 11, 35, 14));
       expect(attempt.questionTimingEnabled, isTrue);
       expect(attempt.questionTimers['38']?.canAnswer, isTrue);
+    });
+
+    test('detects rich prompts from the question format', () {
+      final TestQuestionModel topLevel =
+          TestQuestionModel.fromJson(<String, dynamic>{
+            'question_id': 41,
+            'question_text': '**Bold** prompt',
+            'question_type': 'mcq_single',
+            'question_format': 'markdown',
+          });
+      final TestQuestionModel nested = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 42,
+          'question_text': 'Plain prompt',
+          'question_type': 'mcq_single',
+          'options': <String, dynamic>{'question_format': 'rich_text'},
+        },
+      );
+
+      expect(topLevel.isRichPrompt, isTrue);
+      expect(nested.isRichPrompt, isTrue);
     });
 
     test('parses a question start response with the saved answer', () {
@@ -719,6 +766,52 @@ void main() {
 
       expect(answer.optionIds, <String>['o2']);
       expect(answer.isTouched, isTrue);
+    });
+
+    test('reads option images and feedback for review items', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'q1',
+        type: TestQuestionType.singleChoice,
+        prompt: '',
+        options: <TestOptionModel>[TestOptionModel(id: 'o1', label: 'One')],
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 'q1',
+          'question_type': 'mcq_single',
+          'given_answer': <String, dynamic>{'option_id': 'o1'},
+          'solution': <String, dynamic>{
+            'details': <String, dynamic>{
+              'options': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'o1',
+                  'text': 'One',
+                  'image_path': 'qa-quiz-fields/one.png',
+                  'feedback': 'Well done',
+                  'is_correct': true,
+                },
+              ],
+            },
+          },
+        },
+      );
+
+      final QuizReviewAnswer given = TestGivenAnswers.itemsOf(
+        result,
+        question: question,
+      ).single;
+      final QuizReviewAnswer solution = TestSolutionAnswers.itemsOf(
+        result,
+        question: question,
+      ).single;
+
+      expect(given.text, 'One');
+      expect(given.feedback, 'Well done');
+      expect(
+        given.imageUrl,
+        'https://bilhikma.tech/storage/qa-quiz-fields/one.png',
+      );
+      expect(solution.feedback, 'Well done');
     });
 
     test('hasGivenAnswer ignores an empty result payload', () {

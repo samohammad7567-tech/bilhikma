@@ -1,4 +1,5 @@
 import '../../../../core/network/json_reader.dart';
+import 'quiz_open_attempt_model.dart';
 
 class LessonTestModel {
   const LessonTestModel({
@@ -21,6 +22,8 @@ class LessonTestModel {
     this.attemptsLeft,
     this.hasPassed = false,
     this.nextAttemptAt,
+    this.hasOpenAttempt = false,
+    this.openAttempt,
   });
 
   final int id;
@@ -43,6 +46,8 @@ class LessonTestModel {
   final int? attemptsLeft;
   final bool hasPassed;
   final DateTime? nextAttemptAt;
+  final bool hasOpenAttempt;
+  final QuizOpenAttemptModel? openAttempt;
 
   bool get hasTimeLimit => timeLimitMinutes != null && timeLimitMinutes! > 0;
 
@@ -54,6 +59,11 @@ class LessonTestModel {
 
   factory LessonTestModel.fromJson(Map<String, dynamic> json) {
     final int? timeLimit = Json.asOptionalInt(json['time_limit_minutes']);
+    final QuizOpenAttemptModel? openAttempt = json['open_attempt'] is Map
+        ? QuizOpenAttemptModel.fromJson(
+            Map<String, dynamic>.from(json['open_attempt'] as Map),
+          )
+        : null;
 
     return LessonTestModel(
       id: Json.asInt(json['id']),
@@ -75,6 +85,9 @@ class LessonTestModel {
       attemptsLeft: Json.asOptionalInt(json['attempts_left']),
       hasPassed: Json.asBool(json['has_passed']),
       nextAttemptAt: Json.asDateTime(json['next_attempt_at']),
+      hasOpenAttempt:
+          Json.asBool(json['has_open_attempt']) || openAttempt != null,
+      openAttempt: openAttempt,
     );
   }
 
@@ -98,5 +111,7 @@ class LessonTestModel {
     'attempts_left': attemptsLeft,
     'has_passed': hasPassed,
     'next_attempt_at': nextAttemptAt?.toIso8601String(),
+    'has_open_attempt': hasOpenAttempt,
+    'open_attempt': openAttempt?.toJson(),
   };
 }

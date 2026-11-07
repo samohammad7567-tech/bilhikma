@@ -21,6 +21,7 @@ class TestQuestionModel {
     this.maxSelections,
     this.allowsOneToManyMatching = false,
     this.blankInputMode,
+    this.questionFormat = '',
     this.imageUrl,
     this.audioUrl,
     this.options = const <TestOptionModel>[],
@@ -47,6 +48,7 @@ class TestQuestionModel {
   final int? maxSelections;
   final bool allowsOneToManyMatching;
   final BlankInputMode? blankInputMode;
+  final String questionFormat;
 
   final List<TestOptionModel> options;
   final List<TestBlankModel> blanks;
@@ -65,6 +67,14 @@ class TestQuestionModel {
   bool get isBlankQuestion =>
       type == TestQuestionType.fillBlanks ||
       type == TestQuestionType.typedBlanks;
+
+  bool get isRichPrompt {
+    final String format = questionFormat.trim().toLowerCase();
+    return format == 'rich' ||
+        format == 'rich_text' ||
+        format == 'richtext' ||
+        format == 'markdown';
+  }
 
   String get displayPrompt => prompt
       .replaceAll(_numberedBlankToken, ' ')
@@ -119,6 +129,14 @@ class TestQuestionModel {
     final TestQuestionType type = TestQuestionType.fromJson(
       json['question_type'],
     );
+
+    final String questionFormat = Json.asString(
+      options['question_format'] ??
+          details['question_format'] ??
+          json['question_format'] ??
+          json['text_format'] ??
+          json['content_format'],
+    ).trim();
 
     final List<TestOptionModel> choiceOptions = Json.asMapList(
       details['options'],
@@ -186,6 +204,7 @@ class TestQuestionModel {
       blankInputMode: details['blank_input_mode'] == null
           ? null
           : BlankInputMode.fromJson(details['blank_input_mode']),
+      questionFormat: questionFormat,
       options: displayOptions,
       blanks: blanks,
       wordBank: wordBank,
@@ -238,6 +257,7 @@ class TestQuestionModel {
     'max_selections': maxSelections,
     'allow_one_to_many_matching': allowsOneToManyMatching,
     'blank_input_mode': blankInputMode?.key,
+    'question_format': questionFormat,
     'options': options
         .map((TestOptionModel option) => option.toJson())
         .toList(growable: false),

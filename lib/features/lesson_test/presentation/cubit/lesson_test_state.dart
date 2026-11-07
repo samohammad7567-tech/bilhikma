@@ -98,14 +98,17 @@ final class LessonTestState {
   bool get hasTimeLimit =>
       attempt?.expiresAt != null || (quiz?.hasTimeLimit ?? false);
 
+  bool get isResuming => quiz?.hasOpenAttempt ?? false;
+
   bool get canStart =>
       quiz != null &&
       status != LessonTestStatus.running &&
       status != LessonTestStatus.submitting &&
       status != LessonTestStatus.result &&
       !isStarting &&
-      (quiz?.hasAttemptsLeft ?? false) &&
-      !(quiz?.isInCooldown ?? true) &&
+      (isResuming ||
+          ((quiz?.hasAttemptsLeft ?? false) &&
+              !(quiz?.isInCooldown ?? true))) &&
       (quiz?.questionCount ?? 0) > 0;
 
   bool get isFirstQuestion => currentIndex == 0;

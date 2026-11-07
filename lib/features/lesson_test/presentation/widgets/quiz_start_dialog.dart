@@ -7,11 +7,16 @@ import '../../../../core/widgets/app_confirm_dialog.dart';
 class QuizStartDialog {
   QuizStartDialog._();
 
-  static Future<bool> show(BuildContext context) => AppConfirmDialog.show(
-    context,
-    titleKey: LangKeys.quizStartConfirmTitle,
-    messageKey: LangKeys.quizStartConfirmMessage,
-    confirmKey: LangKeys.startTest,
-    iconPath: AppAssets.assetsSleeperTimerIcon,
-  );
+  static Future<bool> show(BuildContext context, {bool resuming = false}) =>
+      AppConfirmDialog.show(
+        context,
+        titleKey: resuming
+            ? LangKeys.quizResumeConfirmTitle
+            : LangKeys.quizStartConfirmTitle,
+        messageKey: resuming
+            ? LangKeys.quizResumeConfirmMessage
+            : LangKeys.quizStartConfirmMessage,
+        confirmKey: resuming ? LangKeys.quizContinueTest : LangKeys.startTest,
+        iconPath: AppAssets.assetsSleeperTimerIcon,
+      );
 }

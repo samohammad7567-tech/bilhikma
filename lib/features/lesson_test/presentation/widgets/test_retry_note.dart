@@ -55,7 +55,10 @@ class TestRetryNote extends StatelessWidget {
     }
 
     final int? left = attemptsLeft;
-    if (left == null) return LangKeys.quizAttemptsUnlimited.tr();
+    if (left == null) {
+      return '${LangKeys.quizAttemptsLeft.tr()}: '
+          '${LangKeys.quizAttemptsUnlimited.tr()}';
+    }
     if (left <= 0) return LangKeys.quizNoAttemptsLeft.tr();
 
     return '${LangKeys.quizAttemptsLeft.tr()}: $left';

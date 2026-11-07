@@ -39,7 +39,7 @@ class TestHtmlText extends StatelessWidget {
         value,
         textAlign: textAlign,
         maxLines: maxLines,
-        overflow: overflow,
+        overflow: maxLines == null ? null : overflow,
         style: textStyle,
       );
     }

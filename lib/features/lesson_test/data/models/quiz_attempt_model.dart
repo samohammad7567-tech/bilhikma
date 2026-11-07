@@ -73,8 +73,7 @@ class QuizAttemptModel {
       serverHasExpired ||
       (expiresAt?.isBefore(serverNow ?? DateTime.now()) ?? false);
 
-  Duration? get remaining =>
-      expiresAt?.difference(serverNow ?? DateTime.now());
+  Duration? get remaining => expiresAt?.difference(serverNow ?? DateTime.now());
 
   Map<String, QuestionTimerModel> get questionTimers =>
       <String, QuestionTimerModel>{

@@ -6,9 +6,10 @@ import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_question_model.dart';
+import '../refactor/quiz_review_answer.dart';
 import '../refactor/test_given_answers.dart';
 import '../refactor/test_solution_answers.dart';
-import 'test_html_text.dart';
+import 'test_rich_prompt.dart';
 import 'test_review_answers.dart';
 
 class TestResultReviewCard extends StatelessWidget {
@@ -27,11 +28,11 @@ class TestResultReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final _Status status = _statusOf(colors);
-    final List<String> correctAnswers = TestSolutionAnswers.of(
+    final List<QuizReviewAnswer> correctAnswers = TestSolutionAnswers.itemsOf(
       result,
       question: question,
     );
-    final List<String> givenAnswers = TestGivenAnswers.of(
+    final List<QuizReviewAnswer> givenAnswers = TestGivenAnswers.itemsOf(
       result,
       question: question,
     );
@@ -48,7 +49,11 @@ class TestResultReviewCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (prompt.trim().isNotEmpty)
-            TestHtmlText(prompt, style: AppTheme.styles(context).labelStrong),
+            TestRichPrompt(
+              prompt,
+              rich: question?.isRichPrompt ?? false,
+              style: AppTheme.styles(context).labelStrong,
+            ),
 
           if (prompt.trim().isNotEmpty) SizedBox(height: 8.h),
 

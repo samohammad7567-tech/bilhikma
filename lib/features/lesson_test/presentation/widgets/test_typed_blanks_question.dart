@@ -70,6 +70,7 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
           remaining: widget.questionRemaining,
           imageUrl: widget.question.imageUrl,
           audioUrl: widget.question.audioUrl,
+          rich: widget.question.isRichPrompt,
         ),
 
         SizedBox(height: 20.h),

@@ -1,5 +1,6 @@
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/network/json_reader.dart';
+import 'test_option_model.dart';
 
 class QuizQuestionResultModel {
   const QuizQuestionResultModel({
@@ -38,6 +39,37 @@ class QuizQuestionResultModel {
   bool get hasSolution => solution != null && solution!.isNotEmpty;
 
   bool? get correctBoolean => Json.asOptionalBool(options['correct_answer']);
+
+  List<TestOptionModel> get solutionOptions {
+    final Map<String, dynamic>? data = solution;
+    if (data == null) return const <TestOptionModel>[];
+
+    final Map<String, dynamic> details = Json.asMap(data['details']);
+    final Object? raw =
+        details['options'] ??
+        data['options'] ??
+        details['correct_options'] ??
+        data['correct_options'];
+
+    return Json.asMapList(
+      raw,
+    ).map(TestOptionModel.fromJson).toList(growable: false);
+  }
+
+  TestOptionModel? solutionOptionFor(String optionId) {
+    if (optionId.trim().isEmpty) return null;
+
+    for (final TestOptionModel option in solutionOptions) {
+      if (option.id == optionId) return option;
+    }
+
+    return null;
+  }
+
+  String? feedbackFor(String optionId) {
+    final String? feedback = solutionOptionFor(optionId)?.feedback?.trim();
+    return feedback == null || feedback.isEmpty ? null : feedback;
+  }
 
   factory QuizQuestionResultModel.fromJson(Map<String, dynamic> json) {
     final Map<String, dynamic> given = Json.asMap(json['given_answer']);

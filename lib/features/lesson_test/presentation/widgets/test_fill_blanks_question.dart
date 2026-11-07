@@ -38,6 +38,7 @@ class TestFillBlanksQuestion extends StatelessWidget {
           remaining: questionRemaining,
           imageUrl: question.imageUrl,
           audioUrl: question.audioUrl,
+          rich: question.isRichPrompt,
         ),
 
         SizedBox(height: 20.h),

@@ -1,6 +1,7 @@
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_blank_body_text.dart';
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_blank_chip.dart';
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_html_text.dart';
+import 'package:bilhikma/features/lesson_test/presentation/widgets/test_rich_prompt.dart';
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_word_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -79,6 +80,54 @@ void main() {
     expect(_plainText(tester), contains('word'));
     expect(_plainText(tester), isNot(contains('<strong>')));
     expect(tester.getSize(find.byType(TestWordChip)).width, lessThan(300));
+  });
+
+  testWidgets('renders rich markers without showing them literally', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const TestRichPrompt(
+          'Read **this** then ﴿verse﴾',
+          rich: true,
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final String plainText = _plainText(tester);
+
+    expect(plainText, contains('Read'));
+    expect(plainText, contains('this'));
+    expect(plainText, contains('verse'));
+    expect(plainText, isNot(contains('**')));
+    expect(plainText, isNot(contains('﴿')));
+    expect(_hasBoldSpan(tester), isTrue);
+  });
+
+  testWidgets('renders markdown markers inside html prompts', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const TestRichPrompt(
+          '<p>Read <strong>this</strong></p><p>**and** ﴿verse﴾</p>',
+          rich: true,
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final String plainText = _plainText(tester);
+
+    expect(plainText, contains('Read'));
+    expect(plainText, contains('and'));
+    expect(plainText, contains('verse'));
+    expect(plainText, isNot(contains('**')));
+    expect(plainText, isNot(contains('﴿')));
+    expect(plainText, isNot(contains('<p>')));
   });
 }
 

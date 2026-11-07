@@ -2,10 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/localization/lang_keys.dart';
+import '../../../../core/utils/media_url.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_match_item_model.dart';
+import '../../data/models/test_option_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../../data/models/test_sentence_model.dart';
+import 'quiz_review_answer.dart';
 
 class TestGivenAnswers {
   TestGivenAnswers._();
@@ -66,6 +69,300 @@ class TestGivenAnswers {
           result,
         );
     }
+  }
+
+  static List<QuizReviewAnswer> itemsOf(
+    QuizQuestionResultModel result, {
+    TestQuestionModel? question,
+  }) {
+    final Map<String, dynamic> given = result.givenAnswer;
+
+    switch (result.questionType) {
+      case TestQuestionType.singleChoice:
+      case TestQuestionType.mostCorrect:
+        return _optionItems(
+          _first(given, <String>[
+            'option_id',
+            'option_ids',
+            'selected_option_id',
+          ]),
+          question,
+          result,
+        );
+
+      case TestQuestionType.multiChoice:
+        return _optionItems(
+          _first(given, <String>[
+            'option_ids',
+            'selected_option_ids',
+            'option_id',
+          ]),
+          question,
+          result,
+        );
+
+      case TestQuestionType.trueFalse:
+        return _textItems(
+          _trueFalse(
+            _first(given, <String>[
+              'boolean',
+              'selected_boolean',
+              'answer',
+              'value',
+            ]),
+          ),
+        );
+
+      case TestQuestionType.fillBlanks:
+      case TestQuestionType.typedBlanks:
+        return _textItems(_blanks(result, given, question));
+
+      case TestQuestionType.orderSentences:
+        return _orderItems(
+          _first(given, <String>['order', 'item_ids', 'ordered_ids']),
+          question,
+          result,
+        );
+
+      case TestQuestionType.matchPairs:
+        return _matchItems(
+          _first(given, <String>['matches', 'pairs', 'map']),
+          question,
+          result,
+        );
+    }
+  }
+
+  static List<QuizReviewAnswer> _textItems(Iterable<String> values) => values
+      .map((String text) => QuizReviewAnswer(text: text.trim()))
+      .where((QuizReviewAnswer answer) => !answer.isEmpty)
+      .toList(growable: false);
+
+  static List<QuizReviewAnswer> _optionItems(
+    Object? value,
+    TestQuestionModel? question,
+    QuizQuestionResultModel result,
+  ) {
+    final List<QuizReviewAnswer> items = <QuizReviewAnswer>[];
+
+    void add(Object? raw) {
+      if (raw == null) return;
+
+      final String id = _idOf(raw);
+      String? text;
+      String? image;
+      String? feedback;
+
+      if (raw is Map) {
+        text = _stringOf(
+          raw['text'] ?? raw['label'] ?? raw['option_text'] ?? raw['answer'],
+        );
+        image = MediaUrl.resolve(
+          _stringOf(
+            raw['image_path'] ?? raw['image'] ?? raw['option_image_path'],
+          ),
+        );
+        feedback = _stringOf(
+          raw['feedback'] ?? raw['option_feedback'] ?? raw['comment'],
+        );
+      }
+
+      final TestOptionModel? option = question?.optionById(id);
+      final TestOptionModel? solution = result.solutionOptionFor(id);
+      text ??= option?.label ?? solution?.label;
+      image ??= option?.imageUrl ?? solution?.imageUrl;
+      feedback ??= solution?.feedback ?? option?.feedback;
+
+      final String resolvedText = (text ?? id).trim();
+      final String? resolvedFeedback = _stringOf(feedback);
+
+      if (resolvedText.isEmpty && (image == null || image.trim().isEmpty)) {
+        return;
+      }
+
+      items.add(
+        QuizReviewAnswer(
+          text: resolvedText,
+          imageUrl: image,
+          feedback: resolvedFeedback,
+        ),
+      );
+    }
+
+    if (value is List) {
+      value.forEach(add);
+    } else if (value is Map) {
+      value.values.forEach(add);
+    } else {
+      add(value);
+    }
+
+    return items;
+  }
+
+  static List<QuizReviewAnswer> _orderItems(
+    Object? value,
+    TestQuestionModel? question,
+    QuizQuestionResultModel result,
+  ) {
+    final Object? raw =
+        value ??
+        result.componentResults['order'] ??
+        _componentValues(result.componentResults);
+    if (raw is! List) return const <QuizReviewAnswer>[];
+
+    final List<QuizReviewAnswer> items = <QuizReviewAnswer>[];
+
+    for (final Object? item in raw) {
+      final String id = _idOf(item);
+      String? text;
+      String? image;
+
+      if (item is Map) {
+        text = _stringOf(item['text'] ?? item['label']);
+        image = MediaUrl.resolve(
+          _stringOf(
+            item['image_path'] ?? item['image'] ?? item['sentence_image_path'],
+          ),
+        );
+      }
+
+      final TestSentenceModel? sentence = _sentence(question, id);
+      final String resolvedText = (text ?? sentence?.text ?? id).trim();
+      image ??= sentence?.imageUrl;
+      if (resolvedText.isEmpty && (image == null || image.trim().isEmpty)) {
+        continue;
+      }
+
+      items.add(QuizReviewAnswer(text: resolvedText, imageUrl: image));
+    }
+
+    return items;
+  }
+
+  static List<QuizReviewAnswer> _matchItems(
+    Object? value,
+    TestQuestionModel? question,
+    QuizQuestionResultModel result,
+  ) {
+    final List<QuizReviewAnswer> items = _matchItemList(value, question);
+    if (items.isNotEmpty) return items;
+
+    return _matchItemList(result.componentResults, question);
+  }
+
+  static List<QuizReviewAnswer> _matchItemList(
+    Object? value,
+    TestQuestionModel? question,
+  ) {
+    final List<QuizReviewAnswer> items = <QuizReviewAnswer>[];
+
+    void add(String left, String right, String? image) {
+      if (left.trim().isEmpty || right.trim().isEmpty) return;
+
+      final String text = '${left.trim()} → ${right.trim()}';
+      if (items.any((QuizReviewAnswer item) => item.text == text)) return;
+
+      items.add(
+        QuizReviewAnswer(
+          text: text,
+          imageUrl: image == null || image.trim().isEmpty ? null : image,
+        ),
+      );
+    }
+
+    if (value is Map) {
+      for (final MapEntry<Object?, Object?> entry in value.entries) {
+        if (entry.value is Map && _hasPairKeys(entry.value as Map)) {
+          final Map pair = entry.value as Map;
+          add(
+            _pairText(pair, question, left: true),
+            _pairText(pair, question, left: false),
+            _pairImage(pair, question),
+          );
+          continue;
+        }
+
+        final String leftId = _idOf(entry.value);
+        final String rightId = _idOf(entry.key);
+
+        add(
+          _matchText(leftId, question, left: true),
+          _matchText(rightId, question, left: false),
+          _match(question, rightId, left: false)?.imageUrl ??
+              _match(question, leftId, left: true)?.imageUrl,
+        );
+      }
+
+      return items;
+    }
+
+    if (value is List) {
+      for (final Map pair in value.whereType<Map>()) {
+        add(
+          _pairText(pair, question, left: true),
+          _pairText(pair, question, left: false),
+          _pairImage(pair, question),
+        );
+      }
+    }
+
+    return items;
+  }
+
+  static String? _pairImage(Map pair, TestQuestionModel? question) {
+    final String? inline = MediaUrl.resolve(
+      _stringOf(
+        pair['right_image_path'] ??
+            pair['right_image'] ??
+            pair['target_image_path'] ??
+            pair['target_image'] ??
+            pair['left_image_path'] ??
+            pair['left_image'] ??
+            pair['source_image_path'] ??
+            pair['source_image'],
+      ),
+    );
+    if (inline != null && inline.trim().isNotEmpty) return inline;
+
+    return _match(question, _idOf(pair['right_id']), left: false)?.imageUrl ??
+        _match(question, _idOf(pair['left_id']), left: true)?.imageUrl;
+  }
+
+  static TestMatchItemModel? _match(
+    TestQuestionModel? question,
+    String id, {
+    required bool left,
+  }) {
+    if (question == null || id.isEmpty) return null;
+
+    final List<TestMatchItemModel> items = left
+        ? question.leftItems
+        : question.rightItems;
+
+    for (final TestMatchItemModel item in items) {
+      if (item.id == id) return item;
+    }
+
+    return null;
+  }
+
+  static TestSentenceModel? _sentence(TestQuestionModel? question, String id) {
+    if (question == null || id.isEmpty) return null;
+
+    for (final TestSentenceModel sentence in question.sentences) {
+      if (sentence.id == id) return sentence;
+    }
+
+    return null;
+  }
+
+  static String? _stringOf(Object? value) {
+    if (value == null) return null;
+    if (value is Map || value is List) return null;
+
+    final String text = '$value'.trim();
+    return text.isEmpty ? null : text;
   }
 
   static Object? _first(Map<String, dynamic> given, List<String> keys) {

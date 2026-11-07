@@ -32,6 +32,10 @@ class LangKeys {
   static const String quizLeaveConfirmMessage = 'quiz_leave_confirm_message';
   static const String quizLeaveConfirmAction = 'quiz_leave_confirm_action';
   static const String startTest = 'start_test';
+  static const String quizContinueTest = 'quiz_continue_test';
+  static const String quizResumeConfirmTitle = 'quiz_resume_confirm_title';
+  static const String quizResumeConfirmMessage = 'quiz_resume_confirm_message';
+  static const String quizResumeNote = 'quiz_resume_note';
   static const String quizTotalScore = 'quiz_total_score';
   static const String quizScoreValue = 'quiz_score_value';
   static const String quizBestAnswer = 'quiz_best_answer';
@@ -51,6 +55,7 @@ class LangKeys {
   static const String quizCorrectAnswer = 'quiz_correct_answer';
   static const String quizYourAnswer = 'quiz_your_answer';
   static const String quizExplanation = 'quiz_explanation';
+  static const String quizOptionFeedback = 'quiz_option_feedback';
   static const String quizTimeSpent = 'quiz_time_spent';
   static const String goToTest = 'go_to_test';
   static const String viewResultAndReview = 'view_result_and_review';

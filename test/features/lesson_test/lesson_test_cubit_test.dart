@@ -387,6 +387,31 @@ void main() {
       expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
     });
 
+    test('resumes from the first unanswered question', () async {
+      final _FakeRepo repo = _FakeRepo(
+        attempt: _attempt(
+          questions: <TestQuestionModel>[
+            _singleChoiceQuestion(),
+            _singleChoiceQuestion(id: 'q2'),
+          ],
+          savedAnswers: <String, Map<String, dynamic>>{
+            'q1': <String, dynamic>{'option_id': 'o2'},
+          },
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+      await cubit.startAttempt();
+      await _waitFor(() => cubit.state.isRunning);
+      await _waitFor(() => cubit.state.openedQuestionIds.contains('q2'));
+
+      expect(cubit.state.currentIndex, 1);
+      expect(cubit.state.currentQuestion?.id, 'q2');
+      expect(cubit.state.openedQuestionIds, isNot(contains('q1')));
+    });
+
     test('ignores a saved ordering answer with unknown items', () async {
       final _FakeRepo repo = _FakeRepo(
         attempt: _attempt(
@@ -407,6 +432,7 @@ void main() {
 
       expect(cubit.state.answerOf('order').order, <String>['s2', 's1', 's3']);
       expect(cubit.state.answerOf('order').isTouched, isFalse);
+      expect(cubit.state.currentIndex, 0);
     });
 
     test('loads the latest submitted attempt in result-only mode', () async {
@@ -743,7 +769,7 @@ void main() {
     });
 
     test(
-      'hides the test when the save fails offline and resumes on retry',
+      'keeps running when the save fails offline and retries on reconnection',
       () async {
         final _FakeRepo repo = _FakeRepo()
           ..saveAnswersError = const AppException(ErrorMapper.noInternetKey);
@@ -755,17 +781,23 @@ void main() {
         await _waitFor(() => cubit.state.isRunning);
 
         cubit.selectOption('o2');
-        await _waitFor(() => cubit.state.hasFailed);
-
-        expect(cubit.state.errorKey, ErrorMapper.noInternetKey);
-        expect(cubit.state.isRunning, isFalse);
-        expect(cubit.state.attempt?.id, 100);
-
-        repo.saveAnswersError = null;
-        await cubit.retry();
-        await _waitFor(() => cubit.state.isRunning);
+        await _waitFor(
+          () => cubit.state.saveStatus == LessonTestSaveStatus.failed,
+        );
 
         expect(cubit.state.hasFailed, isFalse);
+        expect(cubit.state.isRunning, isTrue);
+        expect(cubit.state.attempt?.id, 100);
+        expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
+
+        repo.saveAnswersError = null;
+        await Future<void>.delayed(const Duration(milliseconds: 2300));
+        await _waitFor(
+          () => cubit.state.saveStatus == LessonTestSaveStatus.saved,
+        );
+
+        expect(repo.saveAnswersCalls, greaterThanOrEqualTo(2));
+        expect(cubit.state.isRunning, isTrue);
       },
     );
 
@@ -959,15 +991,16 @@ QuizAttemptModel _result({
   questionResults: questionResults,
 );
 
-TestQuestionModel _singleChoiceQuestion() => const TestQuestionModel(
-  id: 'q1',
-  type: TestQuestionType.singleChoice,
-  prompt: 'Pick one',
-  options: <TestOptionModel>[
-    TestOptionModel(id: 'o1', label: 'One'),
-    TestOptionModel(id: 'o2', label: 'Two'),
-  ],
-);
+TestQuestionModel _singleChoiceQuestion({String id = 'q1'}) =>
+    TestQuestionModel(
+      id: id,
+      type: TestQuestionType.singleChoice,
+      prompt: 'Pick one',
+      options: const <TestOptionModel>[
+        TestOptionModel(id: 'o1', label: 'One'),
+        TestOptionModel(id: 'o2', label: 'Two'),
+      ],
+    );
 
 TestQuestionModel _multiChoiceQuestion() => const TestQuestionModel(
   id: 'multi',

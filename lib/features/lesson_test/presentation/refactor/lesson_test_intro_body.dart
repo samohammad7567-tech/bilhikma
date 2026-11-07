@@ -30,6 +30,7 @@ class LessonTestIntroBody extends StatelessWidget {
     if (quiz == null) return const SizedBox.shrink();
 
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final bool resuming = quiz.hasOpenAttempt;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -56,12 +57,20 @@ class LessonTestIntroBody extends StatelessWidget {
           ),
         ],
 
+        if (resuming) ...[
+          SizedBox(height: 12.h),
+          _Note(
+            icon: Icons.play_circle_outline,
+            text: LangKeys.quizResumeNote.tr(),
+          ),
+        ],
+
         if (quiz.hasPassed) ...[
           SizedBox(height: 12.h),
           _Note(icon: Icons.verified_outlined, text: LangKeys.quizPassed.tr()),
         ],
 
-        if (!quiz.hasAttemptsLeft) ...[
+        if (!resuming && !quiz.hasAttemptsLeft) ...[
           SizedBox(height: 12.h),
           _Note(
             icon: Icons.block_outlined,
@@ -70,7 +79,7 @@ class LessonTestIntroBody extends StatelessWidget {
           ),
         ],
 
-        if (quiz.isInCooldown && quiz.nextAttemptAt != null) ...[
+        if (!resuming && quiz.isInCooldown && quiz.nextAttemptAt != null) ...[
           SizedBox(height: 12.h),
           _Note(
             icon: Icons.schedule,
@@ -93,8 +102,12 @@ class LessonTestIntroBody extends StatelessWidget {
 
         SizedBox(height: 30.h),
         CustomButton(
-          onPressed: state.canStart ? () => _confirmStart(context) : () {},
-          text: LangKeys.startTest.tr(),
+          onPressed: state.canStart
+              ? () => _confirmStart(context, resuming: resuming)
+              : () {},
+          text: resuming
+              ? LangKeys.quizContinueTest.tr()
+              : LangKeys.startTest.tr(),
           width: double.infinity,
           height: 48.h,
           threeRadius: 8.r,
@@ -110,8 +123,14 @@ class LessonTestIntroBody extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmStart(BuildContext context) async {
-    final bool isReady = await QuizStartDialog.show(context);
+  Future<void> _confirmStart(
+    BuildContext context, {
+    required bool resuming,
+  }) async {
+    final bool isReady = await QuizStartDialog.show(
+      context,
+      resuming: resuming,
+    );
     if (!isReady || !context.mounted) return;
 
     onStart();

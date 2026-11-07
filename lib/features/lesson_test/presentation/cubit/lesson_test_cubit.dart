@@ -44,6 +44,8 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   Timer? _ticker;
   Timer? _cacheTimer;
   Timer? _remoteSaveTimer;
+  Timer? _remoteSaveRetryTimer;
+  int _remoteSaveAttempts = 0;
   bool _startRequested = false;
   bool _submitRequested = false;
   int _saveRevision = 0;
@@ -52,6 +54,14 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   final Set<String> _openingQuestions = <String>{};
   final Set<String> _notifiedLocked = <String>{};
   final Set<String> _saveRetryIds = <String>{};
+
+  static const List<Duration> _remoteSaveBackoff = <Duration>[
+    Duration(seconds: 2),
+    Duration(seconds: 4),
+    Duration(seconds: 8),
+    Duration(seconds: 16),
+    Duration(seconds: 30),
+  ];
 
   Future<void> retry() async {
     if (state.hasFailed && state.attempt != null) {
@@ -84,6 +94,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _cacheTimer = null;
     _remoteSaveTimer?.cancel();
     _remoteSaveTimer = null;
+    _cancelRemoteSaveRetry();
     _startRequested = false;
     _submitRequested = false;
 
@@ -358,13 +369,16 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           if (entry.value.enabled && entry.value.hasExpired) entry.key,
       };
 
+      final Map<String, TestAnswerModel> restored = _restoredAnswers(attempt);
+      final int startIndex = _resumeIndex(attempt, restored);
+
       emit(
         state.copyWith(
           status: LessonTestStatus.running,
           attempt: attempt,
-          answers: _restoredAnswers(attempt),
+          answers: restored,
           rightOrder: _initialRightOrder(attempt),
-          currentIndex: 0,
+          currentIndex: startIndex,
           remaining: _remainingOf(attempt, offset),
           questionTick: 0,
           questionTimers: timers,
@@ -381,7 +395,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       );
 
       _startTicker();
-      unawaited(openQuestion(0));
+      unawaited(openQuestion(startIndex));
     } catch (error) {
       if (isClosed) return;
 
@@ -801,6 +815,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       if (state.hasFailed) return false;
     }
 
+    _cancelRemoteSaveRetry();
     _stopTicker();
 
     emit(
@@ -909,7 +924,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   Future<bool> submitAndLeave() async {
     if (!state.isRunning || state.isSubmitting) return false;
 
-    return flushAndLeave();
+    return submit();
   }
 
   Future<bool> flushAndLeave() async {
@@ -936,6 +951,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _remoteSaveTimer = null;
     await _persistAnswers(report: false);
     await _flushRemoteSaves(report: false);
+    _cancelRemoteSaveRetry();
     _stopTicker();
     return super.close();
   }
@@ -1034,6 +1050,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
     final TestAnswerModel touched = answer.copyWith(isTouched: true);
 
+    _cancelRemoteSaveRetry();
     _saveRevision++;
 
     emit(
@@ -1056,6 +1073,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _cacheTimer = null;
     _remoteSaveTimer?.cancel();
     _remoteSaveTimer = null;
+    _cancelRemoteSaveRetry();
     _pendingRemoteSaves.clear();
     _notifiedLocked.clear();
     _saveRetryIds.clear();
@@ -1148,6 +1166,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     _cacheTimer = null;
     _remoteSaveTimer?.cancel();
     _remoteSaveTimer = null;
+    _cancelRemoteSaveRetry();
     _pendingRemoteSaves.clear();
     _openingQuestions.clear();
     _notifiedLocked.clear();
@@ -1217,9 +1236,42 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     );
   }
 
+  void _cancelRemoteSaveRetry() {
+    _remoteSaveRetryTimer?.cancel();
+    _remoteSaveRetryTimer = null;
+    _remoteSaveAttempts = 0;
+  }
+
+  void _scheduleRemoteSaveRetry() {
+    if (isClosed || _remoteSaveRetryTimer != null) return;
+
+    final QuizAttemptModel? attempt = state.attempt;
+    if (attempt == null ||
+        _pendingRemoteSaves.isEmpty ||
+        state.isResult ||
+        state.resultOnly ||
+        !state.isRunning ||
+        attempt.hasExpired) {
+      return;
+    }
+
+    final int index = _remoteSaveAttempts < _remoteSaveBackoff.length
+        ? _remoteSaveAttempts
+        : _remoteSaveBackoff.length - 1;
+    final Duration delay = _remoteSaveBackoff[index];
+    _remoteSaveAttempts++;
+
+    _remoteSaveRetryTimer = Timer(delay, () {
+      _remoteSaveRetryTimer = null;
+      unawaited(_flushRemoteSaves());
+    });
+  }
+
   Future<void> _flushRemoteSaves({bool report = true}) async {
     _remoteSaveTimer?.cancel();
     _remoteSaveTimer = null;
+    _remoteSaveRetryTimer?.cancel();
+    _remoteSaveRetryTimer = null;
 
     final QuizAttemptModel? attempt = state.attempt;
     if (attempt == null || _pendingRemoteSaves.isEmpty) return;
@@ -1271,6 +1323,8 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         updated = updated.copyWith(expiresAt: result.expiresAt);
       }
 
+      _cancelRemoteSaveRetry();
+
       emit(
         state.copyWith(
           attempt: updated,
@@ -1295,7 +1349,15 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       );
 
       if (_isOffline(exception)) {
-        _failAndStop(exception);
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              isSavingRemote: false,
+              saveStatus: LessonTestSaveStatus.failed,
+            ),
+          );
+          _scheduleRemoteSaveRetry();
+        }
         return;
       }
 
@@ -1433,6 +1495,33 @@ class LessonTestCubit extends Cubit<LessonTestState> {
 
     final Duration remaining = expiresAt.difference(DateTime.now().add(offset));
     return remaining.isNegative ? Duration.zero : remaining;
+  }
+
+  int _resumeIndex(
+    QuizAttemptModel attempt,
+    Map<String, TestAnswerModel> answers,
+  ) {
+    final List<TestQuestionModel> questions = attempt.questions;
+    if (questions.isEmpty) return 0;
+
+    int lastAnswered = 0;
+
+    for (int index = 0; index < questions.length; index++) {
+      final TestQuestionModel question = questions[index];
+      final TestAnswerModel? answer = answers[question.id];
+      final bool untouchedOrdering =
+          question.type == TestQuestionType.orderSentences &&
+          !(answer?.isTouched ?? false);
+      final bool answered =
+          answer != null &&
+          answer.isAnswered(question.type) &&
+          !untouchedOrdering;
+
+      if (!answered) return index;
+      lastAnswered = index;
+    }
+
+    return lastAnswered;
   }
 
   Map<String, TestAnswerModel> _initialAnswers(QuizAttemptModel attempt) {

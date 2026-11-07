@@ -13,7 +13,6 @@ import '../../../../core/widgets/app_toast.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../refactor/lesson_test_args.dart';
 import '../refactor/lesson_test_body.dart';
-import '../widgets/quiz_leave_dialog.dart';
 
 class LessonTestScreen extends StatefulWidget {
   const LessonTestScreen({required this.args, super.key});
@@ -47,7 +46,10 @@ class _LessonTestScreenState extends State<LessonTestScreen>
     final LessonTestCubit cubit = context.read<LessonTestCubit>();
 
     if (state == AppLifecycleState.resumed) {
-      if (cubit.state.isRunning) unawaited(cubit.reopenCurrentQuestion());
+      if (cubit.state.isRunning) {
+        unawaited(cubit.reopenCurrentQuestion());
+        unawaited(cubit.flushAnswers());
+      }
       return;
     }
 
@@ -97,7 +99,7 @@ class _LessonTestScreenState extends State<LessonTestScreen>
                 _leaveRequested = true;
                 try {
                   await cubit.flushAnswers();
-                  if (!mounted) return;
+                  if (!context.mounted) return;
                   Navigator.of(context).pop();
                 } finally {
                   _leaveRequested = false;
@@ -203,26 +205,6 @@ class _LessonTestScreenState extends State<LessonTestScreen>
 
     try {
       await cubit.flushAnswers();
-      if (!mounted) return;
-      Navigator.of(context).pop();
-    } finally {
-      _leaveRequested = false;
-    }
-  }
-
-  Future<void> _confirmLeave(LessonTestCubit cubit) async {
-    if (_leaveRequested) return;
-
-    final LessonTestState current = cubit.state;
-    if (!current.isRunning || current.isSubmitting) return;
-
-    _leaveRequested = true;
-
-    try {
-      final bool confirmed = await QuizLeaveDialog.show(context);
-      if (!confirmed || !mounted) return;
-
-      await cubit.flushAndLeave();
       if (!mounted) return;
       Navigator.of(context).pop();
     } finally {

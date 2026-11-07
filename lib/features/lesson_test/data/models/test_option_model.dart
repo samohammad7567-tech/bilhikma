@@ -7,6 +7,7 @@ class TestOptionModel {
     required this.label,
     this.imageUrl,
     this.audioUrl,
+    this.feedback,
     this.isReusable = false,
   });
 
@@ -14,6 +15,7 @@ class TestOptionModel {
   final String label;
   final String? imageUrl;
   final String? audioUrl;
+  final String? feedback;
   final bool isReusable;
 
   factory TestOptionModel.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +31,9 @@ class TestOptionModel {
         audioUrl: MediaUrl.resolve(
           Json.asOptionalString(json['audio_path'] ?? json['audio']),
         ),
+        feedback: Json.asOptionalString(
+          json['feedback'] ?? json['option_feedback'] ?? json['comment'],
+        ),
         isReusable: Json.asBool(json['is_reusable']),
       );
 
@@ -37,6 +42,7 @@ class TestOptionModel {
     'text': label,
     'image_path': imageUrl,
     'audio_path': audioUrl,
+    'feedback': feedback,
     'is_reusable': isReusable,
   };
 }
