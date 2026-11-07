@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../cubit/lesson_test_cubit.dart';
+import '../widgets/assessment_unsupported_view.dart';
 import '../widgets/test_result_action_bar.dart';
 import 'lesson_test_intro_body.dart';
 import 'lesson_test_question_body.dart';
@@ -67,6 +68,9 @@ class LessonTestBody extends StatelessWidget {
 
       case LessonTestStatus.ready:
       case LessonTestStatus.starting:
+        if (state.isUnsupportedAssessment) {
+          return const AssessmentUnsupportedView();
+        }
         if ((state.quiz?.questionCount ?? 0) == 0) return _empty;
 
         return SingleChildScrollView(

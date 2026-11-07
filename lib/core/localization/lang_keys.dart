@@ -42,6 +42,10 @@ class LangKeys {
   static const String quizMaxSelections = 'quiz_max_selections';
   static const String quizMaxSelectionsReached = 'quiz_max_selections_reached';
   static const String quizUnsupportedQuestion = 'quiz_unsupported_question';
+  static const String assessmentUnsupportedTitle =
+      'assessment_unsupported_title';
+  static const String assessmentUnsupportedMessage =
+      'assessment_unsupported_message';
   static const String quizFailedNote = 'quiz_failed_note';
   static const String passThreshold = 'pass_threshold';
   static const String quizTrue = 'quiz_true';

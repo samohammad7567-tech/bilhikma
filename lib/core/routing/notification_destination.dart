@@ -135,7 +135,7 @@ class NotificationDestination {
       _firstString(data, const <String>['attempt_id', 'quiz_attempt_id']),
     ]);
     final int quizId = _firstId(<String?>[
-      _firstString(data, const <String>['quiz_id']),
+      _firstString(data, const <String>['assessment_id', 'quiz_id']),
     ]);
     final int contentId = _firstId(<String?>[
       _firstString(data, const <String>['content_id', 'lesson_id']),

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:bilhikma/core/enums/assessment_type_enum.dart';
 import 'package:bilhikma/core/enums/blank_input_mode_enum.dart';
 import 'package:bilhikma/core/enums/test_question_type_enum.dart';
 import 'package:bilhikma/core/localization/lang_keys.dart';
@@ -31,6 +32,30 @@ void main() {
       expect(cubit.state.quiz?.questionCount, 2);
       expect(cubit.state.canStart, isTrue);
       expect(repo.startCalls, 0);
+    });
+
+    test('blocks an unsupported assessment type from starting', () async {
+      final _FakeRepo repo = _FakeRepo(
+        quiz: const LessonTestModel(
+          id: 10,
+          title: 'Midterm',
+          type: AssessmentType.midterm,
+          questionCount: 2,
+          attemptsLeft: 3,
+        ),
+      );
+      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+      addTearDown(cubit.close);
+
+      await _waitFor(() => cubit.state.isReady);
+
+      expect(cubit.state.isUnsupportedAssessment, isTrue);
+      expect(cubit.state.canStart, isFalse);
+
+      await cubit.startAttempt();
+
+      expect(repo.startCalls, 0);
+      expect(cubit.state.messageKey, LangKeys.assessmentUnsupportedMessage);
     });
 
     test('starts in server order and preserves ordering order', () async {
@@ -835,6 +860,7 @@ Future<void> _waitFor(bool Function() predicate) async {
 
 class _FakeRepo extends LessonTestRepo {
   _FakeRepo({
+    this.quiz,
     this.attempt,
     this.fetchedAttempt,
     this.submitError,
@@ -847,6 +873,7 @@ class _FakeRepo extends LessonTestRepo {
     List<QuizAttemptModel>? attempts,
   }) : attempts = attempts ?? const <QuizAttemptModel>[];
 
+  LessonTestModel? quiz;
   QuizAttemptModel? attempt;
   QuizAttemptModel? fetchedAttempt;
   Object? submitError;
@@ -869,13 +896,15 @@ class _FakeRepo extends LessonTestRepo {
   Map<String, Map<String, dynamic>>? savedAnswersPayload;
 
   @override
-  Future<LessonTestModel> fetchQuiz(int contentId) async => LessonTestModel(
-    id: 10,
-    title: 'Quiz',
-    questionCount: 2,
-    attemptsLeft: 3,
-    timeLimitMinutes: 10,
-  );
+  Future<LessonTestModel> fetchQuiz(int contentId) async =>
+      quiz ??
+      LessonTestModel(
+        id: 10,
+        title: 'Quiz',
+        questionCount: 2,
+        attemptsLeft: 3,
+        timeLimitMinutes: 10,
+      );
 
   @override
   Future<QuizAttemptModel> startAttempt(int quizId) async {

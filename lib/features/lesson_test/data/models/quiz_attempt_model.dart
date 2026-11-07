@@ -144,7 +144,9 @@ class QuizAttemptModel {
 
     return QuizAttemptModel(
       id: Json.asInt(json['id']),
-      quizId: Json.asInt(json['quiz_id']),
+      quizId:
+          Json.asOptionalInt(json['assessment_id']) ??
+          Json.asInt(json['quiz_id']),
       studentId: Json.asInt(json['student_id']),
       attemptNo: Json.asInt(json['attempt_no']),
       score: score,
@@ -192,6 +194,7 @@ class QuizAttemptModel {
   Map<String, dynamic> toJson() => <String, dynamic>{
     'id': id,
     'quiz_id': quizId,
+    'assessment_id': quizId,
     'student_id': studentId,
     'attempt_no': attemptNo,
     'score': score,

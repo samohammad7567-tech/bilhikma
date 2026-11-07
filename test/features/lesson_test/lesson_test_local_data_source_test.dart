@@ -53,5 +53,46 @@ void main() {
 
       expect(store.read(8), isNull);
     });
+
+    test('keeps reading legacy cache entries that only have quiz_id', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      await CacheUtil.init();
+      await CacheUtil.setString(
+        key: 'lesson_test_answers_9',
+        value:
+            '{"attempt_id":9,"quiz_id":10,"updated_at":"2026-01-01T00:00:00.000","answers":{}}',
+      );
+
+      const LessonTestLocalDataSource store = LessonTestLocalDataSource();
+
+      expect(store.read(9)?.quizId, 10);
+    });
+
+    test('reads assessment_id and writes both aliases', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      await CacheUtil.init();
+      await CacheUtil.setString(
+        key: 'lesson_test_answers_10',
+        value:
+            '{"attempt_id":10,"assessment_id":11,"updated_at":"2026-01-01T00:00:00.000","answers":{}}',
+      );
+
+      const LessonTestLocalDataSource store = LessonTestLocalDataSource();
+
+      expect(store.read(10)?.quizId, 11);
+
+      await store.write(
+        LessonTestSavedAnswersModel(
+          attemptId: 10,
+          quizId: 11,
+          updatedAt: DateTime.now(),
+          answers: <String, TestAnswerModel>{},
+        ),
+      );
+
+      final Object? raw = CacheUtil.get(key: 'lesson_test_answers_10');
+      expect('$raw', contains('"assessment_id":11'));
+      expect('$raw', contains('"quiz_id":11'));
+    });
   });
 }

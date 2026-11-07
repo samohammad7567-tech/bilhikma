@@ -1,3 +1,4 @@
+import 'package:bilhikma/core/enums/assessment_type_enum.dart';
 import 'package:bilhikma/core/enums/blank_input_mode_enum.dart';
 import 'package:bilhikma/core/enums/test_question_type_enum.dart';
 import 'package:bilhikma/core/localization/lang_keys.dart';
@@ -98,6 +99,85 @@ void main() {
       expect(quiz.openAttempt?.answeredCount, 2);
       expect(quiz.openAttempt?.remainingSeconds, 1200);
       expect(quiz.openAttempt?.hasExpired, isFalse);
+    });
+  });
+
+  group('assessment type', () {
+    test('defaults to lesson_quiz when the type is absent', () {
+      final LessonTestModel quiz = LessonTestModel.fromJson(<String, dynamic>{
+        'id': 2,
+        'title': 'Quiz',
+      });
+
+      expect(quiz.type, AssessmentType.lessonQuiz);
+      expect(quiz.isSupported, isTrue);
+    });
+
+    test('keeps lesson_quiz supported', () {
+      final LessonTestModel quiz = LessonTestModel.fromJson(<String, dynamic>{
+        'id': 2,
+        'title': 'Quiz',
+        'type': 'lesson_quiz',
+      });
+
+      expect(quiz.type, AssessmentType.lessonQuiz);
+      expect(quiz.isSupported, isTrue);
+    });
+
+    test('parses midterm and final_exam as unsupported', () {
+      for (final String type in <String>['midterm', 'final_exam']) {
+        final LessonTestModel quiz = LessonTestModel.fromJson(
+          <String, dynamic>{'id': 2, 'title': 'Assessment', 'type': type},
+        );
+
+        expect(quiz.isSupported, isFalse);
+      }
+    });
+
+    test('treats an unknown explicit type as unsupported', () {
+      final LessonTestModel quiz = LessonTestModel.fromJson(<String, dynamic>{
+        'id': 2,
+        'title': 'Assessment',
+        'type': 'placement_test',
+      });
+
+      expect(quiz.type, AssessmentType.unknown);
+      expect(quiz.isSupported, isFalse);
+    });
+  });
+
+  group('attempt assessment alias', () {
+    test('reads assessment_id and falls back to quiz_id', () {
+      final QuizAttemptModel fromAssessment = QuizAttemptModel.fromJson(
+        <String, dynamic>{'id': 5, 'assessment_id': 12},
+      );
+      final QuizAttemptModel fromLegacy = QuizAttemptModel.fromJson(
+        <String, dynamic>{'id': 5, 'quiz_id': 12},
+      );
+
+      expect(fromAssessment.quizId, 12);
+      expect(fromLegacy.quizId, 12);
+    });
+
+    test('prefers assessment_id when both aliases are present', () {
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{'id': 5, 'assessment_id': 12, 'quiz_id': 99},
+      );
+
+      expect(attempt.quizId, 12);
+    });
+
+    test('ignores unknown response fields', () {
+      final QuizAttemptModel attempt = QuizAttemptModel.fromJson(
+        <String, dynamic>{
+          'id': 5,
+          'assessment_id': 12,
+          'unknown_future_field': <String, dynamic>{'a': 1},
+        },
+      );
+
+      expect(attempt.id, 5);
+      expect(attempt.quizId, 12);
     });
   });
 

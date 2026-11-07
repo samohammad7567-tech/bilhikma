@@ -19,7 +19,7 @@ class LessonTestDataSource {
   Future<LessonTestModel> fetchQuiz(int contentId) async {
     try {
       return await client.getObject<LessonTestModel>(
-        ApiEndpoints.contentQuiz(contentId),
+        ApiEndpoints.contentAssessment(contentId),
         LessonTestModel.fromJson,
       );
     } on FormatException {
@@ -32,7 +32,7 @@ class LessonTestDataSource {
   Future<QuizAttemptModel> startAttempt(int quizId) async {
     try {
       final ApiEnvelope envelope = await client.post(
-        ApiEndpoints.quizAttempts(quizId),
+        ApiEndpoints.assessmentAttempts(quizId),
       );
       return QuizAttemptModel.fromJson(envelope.dataMap);
     } on FormatException {
@@ -48,7 +48,7 @@ class LessonTestDataSource {
   ) async {
     try {
       final ApiEnvelope envelope = await client.post(
-        ApiEndpoints.quizAttemptQuestionStart(attemptId, questionId),
+        ApiEndpoints.assessmentAttemptQuestionStart(attemptId, questionId),
       );
       return QuestionStartModel.fromJson(envelope.dataMap);
     } on FormatException {
@@ -64,7 +64,7 @@ class LessonTestDataSource {
   ) async {
     try {
       final ApiEnvelope envelope = await client.put(
-        ApiEndpoints.quizAttemptAnswers(attemptId),
+        ApiEndpoints.assessmentAttemptAnswers(attemptId),
         data: <String, dynamic>{'answers': answers},
       );
       return QuizSaveResultModel.fromJson(envelope.dataMap);
@@ -81,7 +81,7 @@ class LessonTestDataSource {
   ) async {
     try {
       final ApiEnvelope envelope = await client.post(
-        ApiEndpoints.quizAttemptSubmit(attemptId),
+        ApiEndpoints.assessmentAttemptSubmit(attemptId),
         data: <String, dynamic>{'answers': answers},
       );
       return QuizAttemptModel.fromJson(envelope.dataMap);
@@ -95,7 +95,7 @@ class LessonTestDataSource {
   Future<QuizAttemptModel> fetchAttempt(int attemptId) async {
     try {
       return await client.getObject<QuizAttemptModel>(
-        ApiEndpoints.quizAttempt(attemptId),
+        ApiEndpoints.assessmentAttempt(attemptId),
         QuizAttemptModel.fromJson,
       );
     } on FormatException {
@@ -108,7 +108,7 @@ class LessonTestDataSource {
   Future<List<QuizAttemptModel>> fetchMyAttempts(int quizId) async {
     try {
       final ApiEnvelope envelope = await client.get(
-        ApiEndpoints.quizMyAttempts(quizId),
+        ApiEndpoints.assessmentMyAttempts(quizId),
       );
       final Object? data = envelope.data;
       final List<Map<String, dynamic>> items = data is List

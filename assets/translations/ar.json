@@ -380,6 +380,8 @@
   "quiz_max_selections": "يمكنك اختيار حتى {count} إجابات",
   "quiz_max_selections_reached": "لقد وصلت إلى الحد الأقصى لعدد الاختيارات.",
   "quiz_unsupported_question": "نوع هذا السؤال غير مدعوم بعد.",
+  "assessment_unsupported_title": "الاختبار غير متاح",
+  "assessment_unsupported_message": "نوع هذا الاختبار غير مدعوم في التطبيق حالياً.",
   "quiz_failed_note": "لم تصل إلى درجة النجاح. يمكنك المحاولة مرة أخرى.",
   "pass_threshold": "درجة النجاح",
   "quiz_true": "صحيح",

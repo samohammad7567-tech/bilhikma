@@ -65,7 +65,9 @@ class NotificationPayload {
       liveSessionId: Json.asInt(data['live_session_id']),
       categorySubjectId: Json.asInt(data['category_subject_id']),
       attemptId: attemptId,
-      quizId: Json.asInt(data['quiz_id']),
+      quizId:
+          Json.asOptionalInt(data['assessment_id']) ??
+          Json.asInt(data['quiz_id']),
       action: action ?? (isQuizResultType ? 'open_quiz_result' : null),
       autoSubmitted: Json.asBool(data['auto_submitted']),
       notificationId: Json.asInt(data['notification_id'] ?? data['id']),

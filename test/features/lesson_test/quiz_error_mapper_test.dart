@@ -29,6 +29,13 @@ class _FakeClient extends ApiClient {
     lastData = data;
     return response;
   }
+
+  @override
+  Future<ApiEnvelope> put(String path, {Object? data}) async {
+    lastPath = path;
+    lastData = data;
+    return response;
+  }
 }
 
 ApiEnvelope _envelope(Object? data) =>
@@ -181,7 +188,7 @@ void main() {
 
       final LessonTestModel quiz = await source.fetchQuiz(9);
 
-      expect(client.lastPath, '/user/content/9/quiz');
+      expect(client.lastPath, '/user/content/9/assessment');
       expect(quiz.id, 4);
       expect(quiz.questionCount, 3);
     });
@@ -204,7 +211,7 @@ void main() {
 
         final QuizAttemptModel attempt = await source.startAttempt(4);
 
-        expect(startClient.lastPath, '/user/quizzes/4/attempts');
+        expect(startClient.lastPath, '/user/assessments/4/attempts');
         expect(startClient.lastData, isNull);
         expect(attempt.id, 5);
 
@@ -223,7 +230,7 @@ void main() {
           'q1': <String, dynamic>{'option_id': 'o1'},
         });
 
-        expect(submitClient.lastPath, '/user/quiz-attempts/5/submit');
+        expect(submitClient.lastPath, '/user/assessment-attempts/5/submit');
         expect(submitClient.lastData, <String, dynamic>{
           'answers': <String, Map<String, dynamic>>{
             'q1': <String, dynamic>{'option_id': 'o1'},
@@ -242,7 +249,7 @@ void main() {
           await LessonTestDataSource(client: listClient).fetchMyAttempts(4),
           isEmpty,
         );
-        expect(listClient.lastPath, '/user/quizzes/4/my-attempts');
+        expect(listClient.lastPath, '/user/assessments/4/my-attempts');
       },
     );
 
@@ -265,9 +272,37 @@ void main() {
         client: client,
       ).fetchAttempt(77);
 
-      expect(client.lastPath, '/user/quiz-attempts/77');
+      expect(client.lastPath, '/user/assessment-attempts/77');
       expect(attempt.id, 77);
       expect(attempt.isSubmitted, isTrue);
+    });
+
+    test('uses assessment paths for answers and question start', () async {
+      final _FakeClient answersClient = _FakeClient(
+        _envelope(<String, dynamic>{
+          'attempt_id': 5,
+          'saved': 1,
+          'server_now': '2026-01-01T10:00:00+00:00',
+        }),
+      );
+      await LessonTestDataSource(client: answersClient).saveAnswers(5, {
+        'q1': <String, dynamic>{'option_id': 'o1'},
+      });
+      expect(answersClient.lastPath, '/user/assessment-attempts/5/answers');
+
+      final _FakeClient startClient = _FakeClient(
+        _envelope(<String, dynamic>{
+          'attempt_id': 5,
+          'question_id': 'q1',
+          'server_now': '2026-01-01T10:00:00+00:00',
+          'timer': <String, dynamic>{},
+        }),
+      );
+      await LessonTestDataSource(client: startClient).startQuestion(5, 'q1');
+      expect(
+        startClient.lastPath,
+        '/user/assessment-attempts/5/questions/q1/start',
+      );
     });
 
     test('reads the subject id from the content detail', () async {

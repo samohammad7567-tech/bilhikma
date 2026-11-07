@@ -316,12 +316,16 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   Future<void> startAttempt() async {
     final LessonTestModel? quiz = state.quiz;
 
-    if (_startRequested ||
-        state.isStarting ||
-        !state.canStart ||
-        quiz == null) {
+    if (_startRequested || state.isStarting || quiz == null) {
       return;
     }
+
+    if (!quiz.isSupported) {
+      reportMessage(LangKeys.assessmentUnsupportedMessage);
+      return;
+    }
+
+    if (!state.canStart) return;
 
     _startRequested = true;
     _resetRemoteState();

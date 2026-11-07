@@ -380,6 +380,8 @@
   "quiz_max_selections": "You can select up to {count} answers",
   "quiz_max_selections_reached": "You have reached the maximum number of selections.",
   "quiz_unsupported_question": "This question type is not supported yet.",
+  "assessment_unsupported_title": "Assessment not available",
+  "assessment_unsupported_message": "This assessment type is not supported in the app yet.",
   "quiz_failed_note": "You did not reach the pass mark. You can try again.",
   "pass_threshold": "Pass score",
   "quiz_true": "True",

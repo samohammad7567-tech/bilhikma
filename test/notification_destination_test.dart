@@ -36,6 +36,34 @@ void main() {
       expect(args?.popOnResultBack, isTrue);
     });
 
+    test('reads assessment_id as the attempt alias', () {
+      final NotificationDestination? target =
+          NotificationDestination.fromPushData(<String, dynamic>{
+            'type': 'quiz_result',
+            'assessment_id': 12,
+            'attempt_id': 77,
+            'content_id': 4,
+            'action': 'open_quiz_result',
+          });
+
+      expect(target?.route, AppRoutes.lessonTest);
+      expect((target?.arguments as LessonTestArgs?)?.quizId, 12);
+    });
+
+    test('prefers assessment_id over the legacy quiz_id', () {
+      final NotificationDestination? target =
+          NotificationDestination.fromPushData(<String, dynamic>{
+            'type': 'quiz_result',
+            'assessment_id': 12,
+            'quiz_id': 10,
+            'attempt_id': 77,
+            'content_id': 4,
+            'action': 'open_quiz_result',
+          });
+
+      expect((target?.arguments as LessonTestArgs?)?.quizId, 12);
+    });
+
     test('keeps the lesson type for back-to-lesson navigation', () {
       final NotificationDestination? target =
           NotificationDestination.fromPushData(<String, dynamic>{

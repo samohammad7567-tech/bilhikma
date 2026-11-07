@@ -1,3 +1,4 @@
+import '../../../../core/enums/assessment_type_enum.dart';
 import '../../../../core/network/json_reader.dart';
 import 'quiz_open_attempt_model.dart';
 
@@ -5,6 +6,7 @@ class LessonTestModel {
   const LessonTestModel({
     required this.id,
     required this.title,
+    this.type = AssessmentType.lessonQuiz,
     this.contentId,
     this.instructions,
     this.passScore = 50,
@@ -28,6 +30,7 @@ class LessonTestModel {
 
   final int id;
   final String title;
+  final AssessmentType type;
   final int? contentId;
   final String? instructions;
 
@@ -49,6 +52,8 @@ class LessonTestModel {
   final bool hasOpenAttempt;
   final QuizOpenAttemptModel? openAttempt;
 
+  bool get isSupported => type.isLessonQuiz;
+
   bool get hasTimeLimit => timeLimitMinutes != null && timeLimitMinutes! > 0;
 
   bool get hasUnlimitedAttempts => attemptsLeft == null;
@@ -68,6 +73,7 @@ class LessonTestModel {
     return LessonTestModel(
       id: Json.asInt(json['id']),
       title: Json.asString(json['title']),
+      type: AssessmentType.fromJson(json['type']),
       contentId: Json.asOptionalInt(json['content_id']),
       instructions: Json.asOptionalString(json['instructions']),
       passScore: Json.asOptionalInt(json['pass_score']) ?? 50,
@@ -95,6 +101,7 @@ class LessonTestModel {
     'id': id,
     'content_id': contentId,
     'title': title,
+    'type': type.key,
     'instructions': instructions,
     'pass_score': passScore,
     'max_attempts': maxAttempts,

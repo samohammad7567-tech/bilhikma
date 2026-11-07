@@ -32,7 +32,8 @@ class LessonTestSavedAnswersModel {
 
     return LessonTestSavedAnswersModel(
       attemptId: int.tryParse('${json['attempt_id']}') ?? 0,
-      quizId: int.tryParse('${json['quiz_id']}') ?? 0,
+      quizId:
+          int.tryParse('${json['assessment_id'] ?? json['quiz_id']}') ?? 0,
       updatedAt: DateTime.tryParse('${json['updated_at']}') ?? DateTime.now(),
       answers: answers,
     );
@@ -41,6 +42,7 @@ class LessonTestSavedAnswersModel {
   Map<String, dynamic> toJson() => <String, dynamic>{
     'attempt_id': attemptId,
     'quiz_id': quizId,
+    'assessment_id': quizId,
     'updated_at': updatedAt.toIso8601String(),
     'answers': <String, dynamic>{
       for (final MapEntry<String, TestAnswerModel> entry in answers.entries)

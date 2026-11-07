@@ -40,23 +40,29 @@ class ApiEndpoints {
 
   static String contentDetail(int contentId) => '/user/content/$contentId';
 
-  static String contentQuiz(int contentId) => '/user/content/$contentId/quiz';
+  static String contentAssessment(int contentId) =>
+      '/user/content/$contentId/assessment';
 
-  static String quizAttempts(int quizId) => '/user/quizzes/$quizId/attempts';
+  static String assessmentAttempts(int assessmentId) =>
+      '/user/assessments/$assessmentId/attempts';
 
-  static String quizAttempt(int attemptId) => '/user/quiz-attempts/$attemptId';
+  static String assessmentAttempt(int attemptId) =>
+      '/user/assessment-attempts/$attemptId';
 
-  static String quizAttemptSubmit(int attemptId) =>
-      '/user/quiz-attempts/$attemptId/submit';
+  static String assessmentAttemptSubmit(int attemptId) =>
+      '/user/assessment-attempts/$attemptId/submit';
 
-  static String quizAttemptAnswers(int attemptId) =>
-      '/user/quiz-attempts/$attemptId/answers';
+  static String assessmentAttemptAnswers(int attemptId) =>
+      '/user/assessment-attempts/$attemptId/answers';
 
-  static String quizAttemptQuestionStart(int attemptId, String questionId) =>
-      '/user/quiz-attempts/$attemptId/questions/$questionId/start';
+  static String assessmentAttemptQuestionStart(
+    int attemptId,
+    String questionId,
+  ) =>
+      '/user/assessment-attempts/$attemptId/questions/$questionId/start';
 
-  static String quizMyAttempts(int quizId) =>
-      '/user/quizzes/$quizId/my-attempts';
+  static String assessmentMyAttempts(int assessmentId) =>
+      '/user/assessments/$assessmentId/my-attempts';
 
   static String contentAccessToken(int contentId) =>
       '/user/content/$contentId/access-token';

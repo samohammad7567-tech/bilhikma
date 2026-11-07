@@ -100,8 +100,11 @@ final class LessonTestState {
 
   bool get isResuming => quiz?.hasOpenAttempt ?? false;
 
+  bool get isUnsupportedAssessment => quiz?.isSupported == false;
+
   bool get canStart =>
       quiz != null &&
+      (quiz?.isSupported ?? false) &&
       status != LessonTestStatus.running &&
       status != LessonTestStatus.submitting &&
       status != LessonTestStatus.result &&
