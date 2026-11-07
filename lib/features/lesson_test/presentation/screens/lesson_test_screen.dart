@@ -120,7 +120,9 @@ class _LessonTestScreenState extends State<LessonTestScreen>
   String _title(LessonTestState state) {
     if (widget.args.openResult) return 'test_result'.tr();
     if (state.isResult) return 'test_result'.tr();
-    if (state.isRunning) return 'lesson_test'.tr();
+    if (state.isRunning || (state.hasFailed && state.attempt != null)) {
+      return 'lesson_test'.tr();
+    }
     return 'test_start'.tr();
   }
 

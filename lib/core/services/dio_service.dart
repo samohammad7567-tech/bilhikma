@@ -1,3 +1,5 @@
+import 'package:bilhikma/core/interceptors/api_logging_interceptor.dart';
+
 import '../constants/api_endpoints.dart';
 import '../interceptors/auth_interceptor.dart';
 import '../interceptors/device_interceptor.dart';
@@ -18,25 +20,34 @@ class DioService {
     return token is String ? token : '';
   }
 
-  static void init() {
-    dio = Dio(
-      BaseOptions(
-        baseUrl: ApiEndpoints.baseUrl,
-        connectTimeout: _connectTimeout,
-        receiveTimeout: _receiveTimeout,
-        sendTimeout: _sendTimeout,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+ 
+static void init() {
+  dio = Dio(
+    BaseOptions(
+      baseUrl: ApiEndpoints.baseUrl,
+      connectTimeout: _connectTimeout,
+      receiveTimeout: _receiveTimeout,
+      sendTimeout: _sendTimeout,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${_storedToken()}',
+        ...DeviceService.headers,
+      },
+    ),
+  );
 
-          'Authorization': 'Bearer ${_storedToken()}',
-          ...DeviceService.headers,
-        },
-      ),
-    );
-    dio!.interceptors.add(const DeviceInterceptor());
-    dio!.interceptors.add(AuthInterceptor(dio: dio!));
-  }
+  dio!.interceptors.add(const DeviceInterceptor());
+
+  dio!.interceptors.add(
+    AuthInterceptor(dio: dio!),
+  );
+
+  // Must be last to log the final outgoing request.
+  dio!.interceptors.add(
+    ApiLoggingInterceptor(),
+  );
+}
 
   static Future<Response> get(
     String path, {

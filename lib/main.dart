@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:bilhikma/core/constants/cache_keys.dart';
@@ -19,49 +20,88 @@ import 'core/services/screen_capture_service.dart';
 import 'core/utils/cache_util.dart';
 
 void main() {
-  runZonedGuarded(_startApp, AppBootstrap.reportFatal);
+  runZonedGuarded(
+    _startApp,
+    AppBootstrap.reportFatal,
+  );
 }
 
 Future<void> _startApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   AppBootstrap.installErrorHandlers();
+
   Bloc.observer = const AppBlocObserver();
-  await AppBootstrap.runStep('preferences', CacheUtil.init);
+
+  // Phase 1: Core initialization.
+
+  await AppBootstrap.runStep(
+    'preferences',
+    CacheUtil.init,
+  );
+
   await AppBootstrap.runStep(
     'localization',
     EasyLocalization.ensureInitialized,
   );
+
   await AppBootstrap.runStep(
     'device_identity',
     DeviceService.ensureInitialized,
     timeout: const Duration(seconds: 25),
   );
-  await AppBootstrap.runStep('service_locator', setupServiceLocator);
-  AppBootstrap.tuneImageCache(isLowEndDevice: DeviceInfoService.isLowEndDevice);
+
+  await AppBootstrap.runStep(
+    'service_locator',
+    setupServiceLocator,
+  );
+
+  // Phase 2: Local configuration.
+
+  AppBootstrap.runSyncStep(
+    'image_cache',
+    () => AppBootstrap.tuneImageCache(
+      isLowEndDevice: DeviceInfoService.isLowEndDevice,
+    ),
+  );
 
   AppBootstrap.runSyncStep(
     'lifecycle',
     AppLifecycleService.instance.initialize,
   );
+
   AppBootstrap.runSyncStep(
     'account_status_watch',
     AccountStatusWatcher.initialize,
   );
-  AppBootstrap.runSyncStep('capture_watch', () {
-    ScreenCaptureService.instance.attach(getIt());
-    ScreenCapturePolicy.initialize();
-  });
-  await AppBootstrap.runStep('capture_policy', ScreenCapturePolicy.restore);
-  print(CacheUtil.get(key: CacheKeys.deviceUuidKey));
+
+  AppBootstrap.runSyncStep(
+    'screen_capture_attach',
+    () => ScreenCaptureService.instance.attach(getIt()),
+  );
+
+  await AppBootstrap.runStep(
+    'capture_policy',
+    ScreenCapturePolicy.restore,
+  );
+
+  // Phase 3: Start UI.
+
   runApp(
     EasyLocalization(
-      supportedLocales: const <Locale>[Locale('ar'), Locale('en')],
+      supportedLocales: const <Locale>[
+        Locale('ar'),
+        Locale('en'),
+      ],
       path: 'assets/translations',
       startLocale: const Locale('ar'),
       fallbackLocale: const Locale('ar'),
       child: const BilhikmaApp(),
     ),
   );
+
+  // Phase 4: Non-blocking services.
+
   unawaited(
     AppBootstrap.runStep(
       'push_notifications',

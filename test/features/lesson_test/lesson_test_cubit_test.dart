@@ -674,29 +674,32 @@ void main() {
       expect(cubit.state.answerOf('q1').optionIds, <String>['o2']);
     });
 
-    test('re-saves a touched answer when the server returns an older one', () async {
-      final _FakeRepo repo = _FakeRepo(
-        savedAnswer: <String, dynamic>{'option_id': 'o2'},
-      );
-      final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
-      addTearDown(cubit.close);
+    test(
+      're-saves a touched answer when the server returns an older one',
+      () async {
+        final _FakeRepo repo = _FakeRepo(
+          savedAnswer: <String, dynamic>{'option_id': 'o2'},
+        );
+        final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+        addTearDown(cubit.close);
 
-      await _waitFor(() => cubit.state.isReady);
-      await cubit.startAttempt();
-      await _waitFor(() => cubit.state.isRunning);
+        await _waitFor(() => cubit.state.isReady);
+        await cubit.startAttempt();
+        await _waitFor(() => cubit.state.isRunning);
 
-      cubit.selectOption('o1');
-      await _waitFor(() => repo.saveAnswersCalls == 1);
-      expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
+        cubit.selectOption('o1');
+        await _waitFor(() => repo.saveAnswersCalls == 1);
+        expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
 
-      await cubit.reopenCurrentQuestion();
-      await _waitFor(() => repo.saveAnswersCalls >= 2);
+        await cubit.reopenCurrentQuestion();
+        await _waitFor(() => repo.saveAnswersCalls >= 2);
 
-      expect(repo.savedAnswersPayload?['q1'], <String, dynamic>{
-        'option_id': 'o1',
-      });
-      expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
-    });
+        expect(repo.savedAnswersPayload?['q1'], <String, dynamic>{
+          'option_id': 'o1',
+        });
+        expect(cubit.state.answerOf('q1').optionIds, <String>['o1']);
+      },
+    );
 
     test('reports a question that could not be opened', () async {
       final _FakeRepo repo = _FakeRepo(
@@ -738,6 +741,33 @@ void main() {
         'option_id': 'o2',
       });
     });
+
+    test(
+      'hides the test when the save fails offline and resumes on retry',
+      () async {
+        final _FakeRepo repo = _FakeRepo()
+          ..saveAnswersError = const AppException(ErrorMapper.noInternetKey);
+        final LessonTestCubit cubit = LessonTestCubit(lessonId: 4, repo: repo);
+        addTearDown(cubit.close);
+
+        await _waitFor(() => cubit.state.isReady);
+        await cubit.startAttempt();
+        await _waitFor(() => cubit.state.isRunning);
+
+        cubit.selectOption('o2');
+        await _waitFor(() => cubit.state.hasFailed);
+
+        expect(cubit.state.errorKey, ErrorMapper.noInternetKey);
+        expect(cubit.state.isRunning, isFalse);
+        expect(cubit.state.attempt?.id, 100);
+
+        repo.saveAnswersError = null;
+        await cubit.retry();
+        await _waitFor(() => cubit.state.isRunning);
+
+        expect(cubit.state.hasFailed, isFalse);
+      },
+    );
 
     test('keeps the server reason when the quiz is refused', () async {
       final _FakeRepo repo = _FakeRepo(

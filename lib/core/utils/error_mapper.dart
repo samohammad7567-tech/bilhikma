@@ -52,6 +52,10 @@ class ErrorMapper {
   /// code above, so a new state on the dashboard needs no new wording here.
   static const String sessionEndedKey = 'session_expired';
 
+  /// The key a transport failure is reported with when the device cannot reach
+  /// the API at all.
+  static const String noInternetKey = 'no_internet_connection';
+
   /// Whether [statusCode] is one of the codes that ends the session.
   static bool endsSession(int? statusCode) =>
       statusCode != null && sessionEndedCodes.contains(statusCode);
@@ -131,7 +135,7 @@ class ErrorMapper {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.connectionError:
-        return 'no_internet_connection';
+        return noInternetKey;
       case DioExceptionType.badResponse:
         return _mapStatusCode(error.response?.statusCode);
       default:

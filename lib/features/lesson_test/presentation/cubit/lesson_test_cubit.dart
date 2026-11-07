@@ -53,9 +53,91 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   final Set<String> _notifiedLocked = <String>{};
   final Set<String> _saveRetryIds = <String>{};
 
-  Future<void> retry() => state.resultOnly || resultOnly
-      ? loadResult(quizId: initialQuizId, attemptId: initialAttemptId)
-      : loadQuiz();
+  Future<void> retry() async {
+    if (state.hasFailed && state.attempt != null) {
+      if (state.didTimeOut) {
+        await submit(timedOut: true);
+        return;
+      }
+
+      await _resumeAfterOffline();
+      return;
+    }
+
+    return state.resultOnly || resultOnly
+        ? loadResult(quizId: initialQuizId, attemptId: initialAttemptId)
+        : loadQuiz();
+  }
+
+  bool _isOffline(AppException exception) =>
+      exception.key == ErrorMapper.noInternetKey;
+
+  /// Takes the test off the screen when the API can no longer be reached.
+  ///
+  /// The attempt and its answers are kept, so [retry] can put the same test
+  /// back instead of starting over.
+  void _failAndStop(AppException exception) {
+    if (isClosed) return;
+
+    _stopTicker();
+    _cacheTimer?.cancel();
+    _cacheTimer = null;
+    _remoteSaveTimer?.cancel();
+    _remoteSaveTimer = null;
+    _startRequested = false;
+    _submitRequested = false;
+
+    emit(
+      state.copyWith(
+        status: LessonTestStatus.failure,
+        errorKey: exception.key,
+        errorMessage: exception.message,
+        isStarting: false,
+        isSubmitting: false,
+        isSavingRemote: false,
+        saveStatus: LessonTestSaveStatus.failed,
+        clearMessage: true,
+      ),
+    );
+  }
+
+  Future<void> _resumeAfterOffline() async {
+    if (state.attempt == null) return;
+
+    emit(
+      state.copyWith(
+        status: LessonTestStatus.loading,
+        saveStatus: LessonTestSaveStatus.idle,
+        clearError: true,
+        clearMessage: true,
+      ),
+    );
+
+    try {
+      final LessonTestModel quiz = await repo.fetchQuiz(lessonId);
+      if (isClosed) return;
+      emit(state.copyWith(quiz: quiz));
+    } catch (error) {
+      if (isClosed) return;
+      _failAndStop(QuizErrorMapper.translate(ErrorMapper.toException(error)));
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        status: LessonTestStatus.running,
+        saveStatus: LessonTestSaveStatus.idle,
+        clearError: true,
+        clearMessage: true,
+      ),
+    );
+
+    _startTicker();
+    await openQuestion(state.currentIndex);
+
+    if (isClosed || !state.isRunning || _pendingRemoteSaves.isEmpty) return;
+    unawaited(_flushRemoteSaves(report: false));
+  }
 
   Future<int> resolveCategorySubjectId() async {
     if (lessonId <= 0) return 0;
@@ -108,9 +190,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     );
 
     LessonTestModel? quiz;
+    AppException? quizFailure;
     try {
       quiz = await repo.fetchQuiz(lessonId);
-    } catch (_) {
+    } catch (error) {
+      quizFailure = QuizErrorMapper.translate(ErrorMapper.toException(error));
       quiz = null;
     }
     if (isClosed) return;
@@ -126,7 +210,9 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     if (target == null) {
       final int? resolvedQuizId = quizId ?? quiz?.id;
       if (resolvedQuizId == null) {
-        _emitResultFailure(const AppException(LangKeys.quizResultUnavailable));
+        _emitResultFailure(
+          quizFailure ?? const AppException(LangKeys.quizResultUnavailable),
+        );
         return;
       }
 
@@ -264,13 +350,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           : attempt.serverNow!.difference(DateTime.now());
       final Map<String, QuestionTimerModel> timers = attempt.questionTimers;
       final Set<String> opened = <String>{
-        for (final MapEntry<String, QuestionTimerModel> entry
-            in timers.entries)
+        for (final MapEntry<String, QuestionTimerModel> entry in timers.entries)
           if (entry.value.startedAt != null) entry.key,
       };
       final Set<String> locked = <String>{
-        for (final MapEntry<String, QuestionTimerModel> entry
-            in timers.entries)
+        for (final MapEntry<String, QuestionTimerModel> entry in timers.entries)
           if (entry.value.enabled && entry.value.hasExpired) entry.key,
       };
 
@@ -304,6 +388,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       final AppException exception = QuizErrorMapper.translate(
         ErrorMapper.toException(error),
       );
+
+      if (_isOffline(exception)) {
+        _failAndStop(exception);
+        return;
+      }
 
       emit(
         state.copyWith(
@@ -450,6 +539,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
   void _handleOpenFailure(TestQuestionModel question, AppException exception) {
     if (isClosed) return;
 
+    if (_isOffline(exception)) {
+      _failAndStop(exception);
+      return;
+    }
+
     if (exception.statusCode == 401) {
       emit(
         state.copyWith(
@@ -479,10 +573,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       emit(
         state.copyWith(
           questionTimers: timers,
-          lockedQuestionIds: <String>{
-            ...state.lockedQuestionIds,
-            question.id,
-          },
+          lockedQuestionIds: <String>{...state.lockedQuestionIds, question.id},
           messageKey: LangKeys.quizQuestionTimeUp,
         ),
       );
@@ -707,6 +798,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       await _flushRemoteSaves(report: false);
       if (isClosed) return false;
       if (state.isResult) return true;
+      if (state.hasFailed) return false;
     }
 
     _stopTicker();
@@ -776,6 +868,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
       final AppException exception = QuizErrorMapper.translate(
         ErrorMapper.toException(error),
       );
+
+      if (_isOffline(exception)) {
+        _failAndStop(exception);
+        return false;
+      }
 
       if (exception.statusCode == 401) {
         _submitRequested = false;
@@ -860,8 +957,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           Map<String, QuestionTimerModel>.of(timers);
       final Set<String> updatedLocked = <String>{...locked};
 
-      for (final MapEntry<String, QuestionTimerModel> entry
-          in timers.entries) {
+      for (final MapEntry<String, QuestionTimerModel> entry in timers.entries) {
         final QuestionTimerModel timer = entry.value;
         if (!timer.enabled || timer.hasExpired) continue;
 
@@ -870,10 +966,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
           continue;
         }
 
-        updated[entry.key] = timer.copyWith(
-          hasExpired: true,
-          canAnswer: false,
-        );
+        updated[entry.key] = timer.copyWith(hasExpired: true, canAnswer: false);
         updatedLocked.add(entry.key);
         timersChanged = true;
 
@@ -1201,6 +1294,11 @@ class LessonTestCubit extends Cubit<LessonTestState> {
         ErrorMapper.toException(error),
       );
 
+      if (_isOffline(exception)) {
+        _failAndStop(exception);
+        return;
+      }
+
       if (exception.statusCode == 401) {
         emit(
           state.copyWith(
@@ -1333,9 +1431,7 @@ class LessonTestCubit extends Cubit<LessonTestState> {
     final DateTime? expiresAt = attempt.expiresAt;
     if (expiresAt == null) return Duration.zero;
 
-    final Duration remaining = expiresAt.difference(
-      DateTime.now().add(offset),
-    );
+    final Duration remaining = expiresAt.difference(DateTime.now().add(offset));
     return remaining.isNegative ? Duration.zero : remaining;
   }
 

@@ -264,4 +264,27 @@ final class LessonTestState {
     result: result ?? this.result,
     resultOnly: resultOnly ?? this.resultOnly,
   );
+
+  @override
+  String toString() {
+    return 'LessonTestState(\n'
+        '  status: $status,\n'
+        '  quizId: ${quiz?.id},\n'
+        '  quizTitle: ${quiz?.title},\n'
+        '  attemptId: ${attempt?.id},\n'
+        '  questionCount: $questionCount,\n'
+        '  currentIndex: $currentIndex,\n'
+        '  progress: ${(progress * 100).toStringAsFixed(1)}%,\n'
+        '  remaining: ${remaining.inSeconds}s,\n'
+        '  answersCount: ${answers.length},\n'
+        '  isStarting: $isStarting,\n'
+        '  isSubmitting: $isSubmitting,\n'
+        '  isSavingRemote: $isSavingRemote,\n'
+        '  saveStatus: $saveStatus,\n'
+        '  didTimeOut: $didTimeOut,\n'
+        '  hasFailed: $hasFailed,\n'
+        '  errorKey: $errorKey,\n'
+        '  resultOnly: $resultOnly\n'
+        ')';
+  }
 }
