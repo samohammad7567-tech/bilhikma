@@ -4,15 +4,13 @@ import '../../../../core/enums/test_question_type_enum.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/utils/media_url.dart';
 import '../../data/models/quiz_question_result_model.dart';
-import '../../data/models/test_match_item_model.dart';
 import '../../data/models/test_option_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../../data/models/test_sentence_model.dart';
 import 'quiz_review_answer.dart';
+import 'test_match_review.dart';
 
 part 'test_given_answers_blanks.dart';
-part 'test_given_answers_match.dart';
-part 'test_given_answers_match_items.dart';
 part 'test_given_answers_options.dart';
 part 'test_given_answers_order.dart';
 
@@ -69,11 +67,10 @@ class TestGivenAnswers {
         );
 
       case TestQuestionType.matchPairs:
-        return _matches(
-          _first(given, <String>['matches', 'pairs', 'map']),
-          question,
-          result,
-        );
+        return TestMatchReview.givenItems(result, question: question)
+            .map((QuizReviewAnswer answer) => answer.text.trim())
+            .where((String text) => text.isNotEmpty)
+            .toList(growable: false);
     }
   }
 
@@ -131,11 +128,7 @@ class TestGivenAnswers {
         );
 
       case TestQuestionType.matchPairs:
-        return _matchItems(
-          _first(given, <String>['matches', 'pairs', 'map']),
-          question,
-          result,
-        );
+        return TestMatchReview.givenItems(result, question: question);
     }
   }
 }

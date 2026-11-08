@@ -16,7 +16,8 @@ class TestReviewAnswerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppTextStyles styles = AppTheme.styles(context);
-    final String? imageUrl = answer.imageUrl?.trim();
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    final List<String> images = answer.imageUrls;
     final String feedback = answer.normalizedFeedback;
 
     return Padding(
@@ -24,15 +25,8 @@ class TestReviewAnswerTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (imageUrl != null && imageUrl.isNotEmpty) ...<Widget>[
-            TestMediaImage(
-              url: imageUrl,
-              width: 52.w,
-              height: 52.h,
-              radius: 10,
-              elevated: false,
-              padding: EdgeInsets.all(3.w),
-            ),
+          if (images.isNotEmpty) ...<Widget>[
+            _images(images, colors),
             SizedBox(width: 8.w),
           ],
           Expanded(
@@ -48,7 +42,7 @@ class TestReviewAnswerTile extends StatelessWidget {
                       '${LangKeys.quizOptionFeedback.tr()}: $feedback',
                       style: styles.labelSmall.copyWith(
                         fontStyle: FontStyle.italic,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: colors.secondary,
                       ),
                     ),
                   ),
@@ -57,6 +51,32 @@ class TestReviewAnswerTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _images(List<String> images, ColorScheme colors) {
+    return Wrap(
+      spacing: 6.w,
+      runSpacing: 4.h,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        for (int index = 0; index < images.length; index++) ...<Widget>[
+          if (index > 0)
+            Icon(
+              Icons.compare_arrows,
+              size: 16.w,
+              color: colors.onSurfaceVariant,
+            ),
+          TestMediaImage(
+            url: images[index],
+            width: 52.w,
+            height: 52.h,
+            radius: 10,
+            elevated: false,
+            padding: EdgeInsets.all(3.w),
+          ),
+        ],
+      ],
     );
   }
 }

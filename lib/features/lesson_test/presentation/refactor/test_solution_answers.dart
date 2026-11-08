@@ -4,16 +4,13 @@ import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/utils/media_url.dart';
 import '../../data/models/quiz_question_result_model.dart';
 import '../../data/models/test_blank_model.dart';
-import '../../data/models/test_match_item_model.dart';
 import '../../data/models/test_option_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../../data/models/test_sentence_model.dart';
 import 'quiz_review_answer.dart';
+import 'test_match_review.dart';
 part 'test_solution_answers_blanks.dart';
 part 'test_solution_answers_labels.dart';
-part 'test_solution_answers_match.dart';
-part 'test_solution_answers_match_keys.dart';
-part 'test_solution_answers_match_pairs.dart';
 part 'test_solution_answers_options.dart';
 part 'test_solution_answers_order.dart';
 part 'test_solution_answers_support.dart';
@@ -78,7 +75,10 @@ class TestSolutionAnswers {
         );
 
       case TestQuestionType.matchPairs:
-        return _matchPairs(details, result, question);
+        return TestMatchReview.solutionItems(result, question: question)
+            .map((QuizReviewAnswer answer) => answer.text.trim())
+            .where((String text) => text.isNotEmpty)
+            .toList(growable: false);
     }
   }
 
@@ -143,7 +143,7 @@ class TestSolutionAnswers {
         );
 
       case TestQuestionType.matchPairs:
-        return _solutionMatchItems(details, result, question);
+        return TestMatchReview.solutionItems(result, question: question);
     }
   }
 }

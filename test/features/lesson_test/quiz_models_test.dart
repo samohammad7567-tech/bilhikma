@@ -1040,6 +1040,352 @@ void main() {
       ]);
     });
 
+    test('resolves matching images for the given answer without a question', () {
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: '50',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{
+            'right007': 'red',
+            'right008': 'blue',
+          },
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'pairs': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 'red',
+                'right_id': 'right007',
+                'left_image_path': 'qa-quiz-fields/card-a.png',
+                'right_image_path': 'qa-quiz-fields/card-a.png',
+              },
+              <String, dynamic>{
+                'id': 'blue',
+                'right_id': 'right008',
+                'left_image_path': 'qa-quiz-fields/card-b.png',
+                'right_image_path': 'qa-quiz-fields/card-b.png',
+              },
+            ],
+          },
+        },
+      );
+
+      final List<QuizReviewAnswer> given = TestGivenAnswers.itemsOf(result);
+
+      expect(given, hasLength(2));
+      expect(given[0].imageUrls, <String>[
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png',
+      ]);
+      expect(given[1].imageUrls, <String>[
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-b.png',
+        'https://bilhikma.tech/storage/qa-quiz-fields/card-b.png',
+      ]);
+    });
+
+    test('keeps every submitted matching pair with the same images', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'l1',
+            text: '',
+            imageUrl: 'https://cdn.test/left.png',
+          ),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'r1',
+            text: '',
+            imageUrl: 'https://cdn.test/right.png',
+          ),
+          TestMatchItemModel(
+            id: 'r2',
+            text: '',
+            imageUrl: 'https://cdn.test/right.png',
+          ),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{'r1': 'l1', 'r2': 'l1'},
+        },
+      );
+
+      final List<QuizReviewAnswer> given = TestGivenAnswers.itemsOf(
+        result,
+        question: question,
+      );
+
+      expect(given, hasLength(2));
+      expect(given[0].imageUrls, <String>[
+        'https://cdn.test/left.png',
+        'https://cdn.test/right.png',
+      ]);
+      expect(given[1].imageUrls, <String>[
+        'https://cdn.test/left.png',
+        'https://cdn.test/right.png',
+      ]);
+    });
+
+    test('reads a matching map stored left to right by item ids', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'red', text: 'Red'),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(id: 'right007', text: 'Card A'),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{'red': 'right007'},
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'matches': <String, dynamic>{'right007': 'red'},
+          },
+        },
+      );
+
+      expect(TestGivenAnswers.of(result, question: question), <String>[
+        'Red → Card A',
+      ]);
+      expect(TestSolutionAnswers.of(result, question: question), <String>[
+        'Red → Card A',
+      ]);
+    });
+
+    test('review items show both images of a matching solution pair', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'l1',
+            text: 'A',
+            imageUrl: 'https://cdn.test/left.png',
+          ),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'r1',
+            text: '1',
+            imageUrl: 'https://cdn.test/right.png',
+          ),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{'r1': 'l1'},
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'matches': <String, dynamic>{'r1': 'l1'},
+          },
+        },
+      );
+
+      final List<QuizReviewAnswer> solution = TestSolutionAnswers.itemsOf(
+        result,
+        question: question,
+      );
+      final List<QuizReviewAnswer> given = TestGivenAnswers.itemsOf(
+        result,
+        question: question,
+      );
+
+      expect(solution.single.text, 'A → 1');
+      expect(solution.single.imageUrl, 'https://cdn.test/left.png');
+      expect(solution.single.secondaryImageUrl, 'https://cdn.test/right.png');
+      expect(given.single.imageUrls, <String>[
+        'https://cdn.test/left.png',
+        'https://cdn.test/right.png',
+      ]);
+    });
+
+    test('review items keep image-only matching pairs', () {
+      const TestQuestionModel question = TestQuestionModel(
+        id: 'match',
+        type: TestQuestionType.matchPairs,
+        prompt: '',
+        leftItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'l1',
+            text: '',
+            imageUrl: 'https://cdn.test/left.png',
+          ),
+        ],
+        rightItems: <TestMatchItemModel>[
+          TestMatchItemModel(
+            id: 'r1',
+            text: '',
+            imageUrl: 'https://cdn.test/right.png',
+          ),
+        ],
+      );
+      const QuizQuestionResultModel result = QuizQuestionResultModel(
+        questionId: 'match',
+        questionType: TestQuestionType.matchPairs,
+        givenAnswer: <String, dynamic>{
+          'matches': <String, dynamic>{'r1': 'l1'},
+        },
+        solution: <String, dynamic>{
+          'details': <String, dynamic>{
+            'pairs': <Map<String, dynamic>>[
+              <String, dynamic>{'left_id': 'l1', 'right_id': 'r1'},
+            ],
+          },
+        },
+      );
+
+      final List<QuizReviewAnswer> solution = TestSolutionAnswers.itemsOf(
+        result,
+        question: question,
+      );
+      final List<QuizReviewAnswer> given = TestGivenAnswers.itemsOf(
+        result,
+        question: question,
+      );
+
+      expect(solution, hasLength(1));
+      expect(solution.single.text, isEmpty);
+      expect(solution.single.imageUrls, <String>[
+        'https://cdn.test/left.png',
+        'https://cdn.test/right.png',
+      ]);
+      expect(given.single.imageUrls, solution.single.imageUrls);
+    });
+
+    test('renders the real image matching payload on both sides', () {
+      final Map<String, dynamic> options = <String, dynamic>{
+        'schema_version': 1,
+        'details': <String, dynamic>{
+          'pairs': <String, dynamic>{
+            'left': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 'red',
+                'text': '',
+                'image_path': 'qa-quiz-fields/card-a.png',
+              },
+              <String, dynamic>{
+                'id': 'blue',
+                'text': '',
+                'image_path': 'qa-quiz-fields/card-b.png',
+              },
+            ],
+            'right': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 'right008',
+                'text': '',
+                'image_path': 'qa-quiz-fields/card-b.png',
+              },
+              <String, dynamic>{
+                'id': 'right007',
+                'text': '',
+                'image_path': 'qa-quiz-fields/card-a.png',
+              },
+            ],
+          },
+          'allow_one_to_many_matching': false,
+        },
+      };
+      final TestQuestionModel question = TestQuestionModel.fromJson(
+        <String, dynamic>{
+          'question_id': 50,
+          'question_type': 'matching',
+          'question_text': '13 - صل الصورة بصورتها',
+          'score': 4,
+          'options': options,
+        },
+      );
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 50,
+          'question_type': 'matching',
+          'options': options,
+          'is_correct': false,
+          'answer_status': 'partial',
+          'awarded_score': 2,
+          'given_answer': <String, dynamic>{
+            'matches': <String, dynamic>{
+              'right007': 'blue',
+              'right008': 'red',
+            },
+          },
+          'solution': <String, dynamic>{
+            'details': <String, dynamic>{
+              'pairs': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'red',
+                  'right_id': 'right007',
+                  'left_text': '',
+                  'right_text': '',
+                  'left_image_path': 'qa-quiz-fields/card-a.png',
+                  'right_image_path': 'qa-quiz-fields/card-a.png',
+                },
+                <String, dynamic>{
+                  'id': 'blue',
+                  'right_id': 'right008',
+                  'left_text': '',
+                  'right_text': '',
+                  'left_image_path': 'qa-quiz-fields/card-b.png',
+                  'right_image_path': 'qa-quiz-fields/card-b.png',
+                },
+                <String, dynamic>{
+                  'id': 'noise',
+                  'right_id': 'right008',
+                  'left_text': null,
+                  'right_text': null,
+                  'left_image_path': null,
+                  'right_image_path': 'qa-quiz-fields/card-c.png',
+                  'is_distractor': true,
+                },
+              ],
+              'allow_one_to_many_matching': false,
+              'schema_version': 1,
+            },
+            'explanation': 'شرح الإجابة الصحيحة: توصيل الصور',
+          },
+        },
+      );
+
+      final List<QuizReviewAnswer> solution = TestSolutionAnswers.itemsOf(
+        result,
+        question: question,
+      );
+      final List<QuizReviewAnswer> given = TestGivenAnswers.itemsOf(
+        result,
+        question: question,
+      );
+
+      const String cardA =
+          'https://bilhikma.tech/storage/qa-quiz-fields/card-a.png';
+      const String cardB =
+          'https://bilhikma.tech/storage/qa-quiz-fields/card-b.png';
+
+      expect(solution, hasLength(2));
+      expect(solution[0].imageUrls, <String>[cardA, cardA]);
+      expect(solution[1].imageUrls, <String>[cardB, cardB]);
+      expect(solution.every((QuizReviewAnswer item) => item.text.isEmpty), isTrue);
+
+      expect(given, hasLength(2));
+      expect(given[0].imageUrls, <String>[cardB, cardA]);
+      expect(given[1].imageUrls, <String>[cardA, cardB]);
+    });
+
     test('resolves ordering ids for solution and given answer', () {
       const TestQuestionModel question = TestQuestionModel(
         id: 'order',
