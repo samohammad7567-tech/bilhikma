@@ -19,7 +19,9 @@ class TestResultHeadline extends StatelessWidget {
     return Column(
       children: <Widget>[
         Text(
-          passed ? 'congratulations'.tr() : 'test_failed'.tr(),
+          passed
+              ? LangKeys.congratulations.tr()
+              : LangKeys.testFailed.tr(),
           textAlign: TextAlign.center,
           maxLines: 1,
           style: AppTheme.styles(context).statusTitle.copyWith(
@@ -30,7 +32,9 @@ class TestResultHeadline extends StatelessWidget {
         SizedBox(height: 6.h),
 
         Text(
-          passed ? 'test_passed_note'.tr() : LangKeys.quizFailedNote.tr(),
+          passed
+              ? LangKeys.testPassedNote.tr()
+              : LangKeys.quizFailedNote.tr(),
           textAlign: TextAlign.center,
           style: AppTheme.styles(context).labelStrong,
         ),

@@ -100,22 +100,16 @@ class _TestAudioButtonState extends State<TestAudioButton> {
     final String tooltip =
         (_isPlaying ? LangKeys.quizStopAudio : LangKeys.quizPlayAudio).tr();
 
-    if (widget.dense) {
-      return IconButton.filledTonal(
-        onPressed: _toggle,
-        tooltip: tooltip,
-        icon: icon,
-        iconSize: 18,
-        padding: EdgeInsets.zero,
-        constraints: BoxConstraints.tightFor(width: 34, height: 34),
-        visualDensity: VisualDensity.compact,
-      );
-    }
-
     return IconButton.filledTonal(
       onPressed: _toggle,
       tooltip: tooltip,
       icon: icon,
+      iconSize: widget.dense ? 18 : null,
+      padding: widget.dense ? EdgeInsets.zero : null,
+      constraints: widget.dense
+          ? BoxConstraints.tightFor(width: 34, height: 34)
+          : null,
+      visualDensity: widget.dense ? VisualDensity.compact : null,
     );
   }
 }

@@ -11,6 +11,8 @@ import '../cubit/lesson_test_cubit.dart';
 import '../widgets/quiz_start_dialog.dart';
 import '../widgets/test_html_text.dart';
 import '../widgets/test_intro_card.dart';
+import '../widgets/test_intro_note.dart';
+import 'test_intro_details.dart';
 
 class LessonTestIntroBody extends StatelessWidget {
   const LessonTestIntroBody({
@@ -45,12 +47,12 @@ class LessonTestIntroBody extends StatelessWidget {
           style: AppTheme.styles(context).sectionTitle,
         ),
         SizedBox(height: 18.h),
-        TestIntroCard(rows: _rows(quiz)),
+        TestIntroCard(rows: testIntroRows(quiz)),
 
         if (quiz.instructions != null &&
             quiz.instructions!.trim().isNotEmpty) ...[
           SizedBox(height: 16.h),
-          _Note(
+          TestIntroNote(
             icon: Icons.info_outline,
             text:
                 '${LangKeys.quizInstructions.tr()}: ${quiz.instructions!.trim()}',
@@ -59,7 +61,7 @@ class LessonTestIntroBody extends StatelessWidget {
 
         if (resuming) ...[
           SizedBox(height: 12.h),
-          _Note(
+          TestIntroNote(
             icon: Icons.play_circle_outline,
             text: LangKeys.quizResumeNote.tr(),
           ),
@@ -67,12 +69,15 @@ class LessonTestIntroBody extends StatelessWidget {
 
         if (quiz.hasPassed) ...[
           SizedBox(height: 12.h),
-          _Note(icon: Icons.verified_outlined, text: LangKeys.quizPassed.tr()),
+          TestIntroNote(
+            icon: Icons.verified_outlined,
+            text: LangKeys.quizPassed.tr(),
+          ),
         ],
 
         if (!resuming && !quiz.hasAttemptsLeft) ...[
           SizedBox(height: 12.h),
-          _Note(
+          TestIntroNote(
             icon: Icons.block_outlined,
             text: LangKeys.quizNoAttemptsLeft.tr(),
             color: colors.error,
@@ -81,17 +86,17 @@ class LessonTestIntroBody extends StatelessWidget {
 
         if (!resuming && quiz.isInCooldown && quiz.nextAttemptAt != null) ...[
           SizedBox(height: 12.h),
-          _Note(
+          TestIntroNote(
             icon: Icons.schedule,
             text:
                 '${LangKeys.quizNextAttemptAt.tr()}: '
-                '${_dateTime(context, quiz.nextAttemptAt!)}',
+                '${testIntroDateTime(context, quiz.nextAttemptAt!)}',
           ),
         ],
 
         if (state.errorKey != null) ...[
           SizedBox(height: 12.h),
-          _Note(
+          TestIntroNote(
             icon: Icons.error_outline,
             text: state.errorMessage?.trim().isNotEmpty == true
                 ? state.errorMessage!
@@ -134,81 +139,5 @@ class LessonTestIntroBody extends StatelessWidget {
     if (!isReady || !context.mounted) return;
 
     onStart();
-  }
-
-  List<TestIntroRow> _rows(LessonTestModel quiz) => <TestIntroRow>[
-    TestIntroRow(
-      icon: Icons.format_list_numbered,
-      label: 'questions_count'.tr(),
-      value: 'questions_value'.tr(
-        namedArgs: <String, String>{'count': '${quiz.questionCount}'},
-      ),
-    ),
-    if (quiz.hasTimeLimit)
-      TestIntroRow(
-        icon: Icons.timer_outlined,
-        label: 'test_duration'.tr(),
-        value: 'minute_count'.tr(
-          namedArgs: <String, String>{'count': '${quiz.timeLimitMinutes}'},
-        ),
-      ),
-    TestIntroRow(
-      icon: Icons.flag_outlined,
-      label: LangKeys.passThreshold.tr(),
-      value: 'pass_threshold_note'.tr(
-        namedArgs: <String, String>{'percent': '${quiz.passScore}'},
-      ),
-    ),
-    TestIntroRow(
-      icon: Icons.replay_outlined,
-      label: LangKeys.quizAttemptsLeft.tr(),
-      value: quiz.hasUnlimitedAttempts
-          ? LangKeys.quizAttemptsUnlimited.tr()
-          : '${quiz.attemptsLeft}',
-    ),
-  ];
-
-  String _dateTime(BuildContext context, DateTime value) {
-    final MaterialLocalizations localizations = MaterialLocalizations.of(
-      context,
-    );
-
-    return '${localizations.formatMediumDate(value)} '
-        '${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(value), alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context))}';
-  }
-}
-
-class _Note extends StatelessWidget {
-  const _Note({required this.icon, required this.text, this.color});
-
-  final IconData icon;
-  final String text;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: (color ?? colors.primary).withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: <Widget>[
-          Icon(icon, size: 18.w, color: color ?? colors.onSurfaceVariant),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: TestHtmlText(
-              text,
-              style: AppTheme.styles(
-                context,
-              ).labelMedium.copyWith(color: color ?? colors.onSurface),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

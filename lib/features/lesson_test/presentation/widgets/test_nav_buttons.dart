@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_outline_button.dart';
 
@@ -32,7 +33,9 @@ class TestNavButtons extends StatelessWidget {
         Expanded(
           child: CustomButton(
             onPressed: isSubmitting ? () {} : onNext,
-            text: isLastQuestion ? 'finish_test'.tr() : 'next_question'.tr(),
+            text: isLastQuestion
+                ? LangKeys.finishTest.tr()
+                : LangKeys.nextQuestion.tr(),
             width: double.infinity,
             height: height,
             threeRadius: 8.r,
@@ -51,7 +54,7 @@ class TestNavButtons extends StatelessWidget {
             opacity: isFirstQuestion || isSubmitting ? 0.5 : 1,
             child: CustomOutlineButton(
               onPressed: isFirstQuestion || isSubmitting ? () {} : onPrevious,
-              text: 'previous_question'.tr(),
+              text: LangKeys.previousQuestion.tr(),
               width: double.infinity,
               height: height,
               threeRadius: 8.r,

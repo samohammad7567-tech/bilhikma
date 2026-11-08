@@ -8,6 +8,7 @@ import 'test_timer_chip.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../cubit/lesson_test_cubit.dart';
+import 'test_save_status.dart';
 
 class TestProgressHeader extends StatelessWidget {
   const TestProgressHeader({
@@ -37,7 +38,7 @@ class TestProgressHeader extends StatelessWidget {
       children: <Widget>[
         if (showTotalTimer) ...<Widget>[
           Text(
-            'total_time'.tr(),
+            LangKeys.totalTime.tr(),
             textAlign: TextAlign.center,
             maxLines: 1,
             style: AppTheme.styles(context).labelSmall,
@@ -48,7 +49,7 @@ class TestProgressHeader extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: TestTimerChip(
-              label: 'minute_value'.tr(
+              label: LangKeys.minuteValue.tr(
                 namedArgs: <String, String>{
                   'time': LessonDetailFormats.clock(remaining),
                 },
@@ -63,7 +64,7 @@ class TestProgressHeader extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Text(
-                'question_number'.tr(
+                LangKeys.questionNumber.tr(
                   namedArgs: <String, String>{'index': '$questionNumber'},
                 ),
                 maxLines: 1,
@@ -88,37 +89,9 @@ class TestProgressHeader extends StatelessWidget {
 
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: 16.h),
-          child: _saveStatus(context),
+          child: TestSaveStatus(saveStatus: saveStatus),
         ),
       ],
-    );
-  }
-
-  Widget _saveStatus(BuildContext context) {
-    final (String? key, Color? color) = switch (saveStatus) {
-      LessonTestSaveStatus.saving => (
-        LangKeys.quizSaving,
-        Theme.of(context).colorScheme.outline,
-      ),
-      LessonTestSaveStatus.saved => (
-        LangKeys.quizSaved,
-        Theme.of(context).colorScheme.primary,
-      ),
-      LessonTestSaveStatus.failed => (
-        LangKeys.quizSaveFailed,
-        Theme.of(context).colorScheme.error,
-      ),
-      LessonTestSaveStatus.idle => (null, null),
-    };
-
-    if (key == null || color == null) return const SizedBox.shrink();
-
-    return Text(
-      key.tr(),
-      textAlign: TextAlign.end,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: AppTheme.styles(context).labelSmall.copyWith(color: color),
     );
   }
 }

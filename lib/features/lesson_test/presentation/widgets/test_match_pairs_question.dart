@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_match_item_model.dart';
 import '../../data/models/test_question_model.dart';
+import 'test_match_pairs_helpers.dart';
 import 'test_pair_tile.dart';
 import 'test_question_prompt.dart';
 
@@ -72,7 +73,7 @@ class TestMatchPairsQuestion extends StatelessWidget {
               imageUrl: item.imageUrl,
               audioUrl: item.audioUrl,
               isSelected: selectedPromptId == item.id,
-              badge: _leftBadge(item.id),
+              badge: leftBadge(question, answer, item.id),
               onTap: () => onPromptTap(item.id),
             ),
           ),
@@ -83,7 +84,7 @@ class TestMatchPairsQuestion extends StatelessWidget {
   Widget get _rightItems => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
-    children: _orderedRights
+    children: orderedRights(question, matchOrder)
         .map(
           (TestMatchItemModel item) => Padding(
             padding: EdgeInsets.only(bottom: 10.h),
@@ -93,50 +94,11 @@ class TestMatchPairsQuestion extends StatelessWidget {
               audioUrl: item.audioUrl,
               isMuted: true,
               isSelected: false,
-              badge: _rightBadge(item.id),
+              badge: rightBadge(question, answer, item.id),
               onTap: () => onMatchTap(item.id),
             ),
           ),
         )
         .toList(growable: false),
   );
-
-  List<TestMatchItemModel> get _orderedRights {
-    if (matchOrder.isEmpty) return question.rightItems;
-
-    final List<TestMatchItemModel> ordered = <TestMatchItemModel>[];
-
-    for (final String rightId in matchOrder) {
-      for (final TestMatchItemModel item in question.rightItems) {
-        if (item.id == rightId) ordered.add(item);
-      }
-    }
-
-    return ordered.length == question.rightItems.length
-        ? ordered
-        : question.rightItems;
-  }
-
-  int? _leftBadge(String leftId) {
-    final int index = question.leftItems.indexWhere(
-      (TestMatchItemModel item) => item.id == leftId,
-    );
-    if (index == -1) return null;
-
-    final bool isMatched = answer.matches.values.any(
-      (String value) => value == leftId,
-    );
-
-    return isMatched ? index + 1 : null;
-  }
-
-  int? _rightBadge(String rightId) {
-    final String? leftId = answer.leftForRight(rightId);
-    if (leftId == null) return null;
-
-    final int index = question.leftItems.indexWhere(
-      (TestMatchItemModel item) => item.id == leftId,
-    );
-    return index == -1 ? null : index + 1;
-  }
 }

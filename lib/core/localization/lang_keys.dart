@@ -67,4 +67,23 @@ class LangKeys {
   static const String quizMandatory = 'quiz_mandatory';
   static const String quizOptional = 'quiz_optional';
   static const String quizPassed = 'quiz_passed';
+  static const String questionsCount = 'questions_count';
+  static const String questionsValue = 'questions_value';
+  static const String testDuration = 'test_duration';
+  static const String minuteCount = 'minute_count';
+  static const String passThresholdNote = 'pass_threshold_note';
+  static const String finishTest = 'finish_test';
+  static const String nextQuestion = 'next_question';
+  static const String previousQuestion = 'previous_question';
+  static const String totalTime = 'total_time';
+  static const String minuteValue = 'minute_value';
+  static const String questionNumber = 'question_number';
+  static const String congratulations = 'congratulations';
+  static const String testFailed = 'test_failed';
+  static const String testPassedNote = 'test_passed_note';
+  static const String resultLabel = 'result_label';
+  static const String typeYourAnswer = 'type_your_answer';
+  static const String testResult = 'test_result';
+  static const String lessonTest = 'lesson_test';
+  static const String testStart = 'test_start';
 }

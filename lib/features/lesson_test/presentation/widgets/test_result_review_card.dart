@@ -11,6 +11,7 @@ import '../refactor/test_given_answers.dart';
 import '../refactor/test_solution_answers.dart';
 import 'test_rich_prompt.dart';
 import 'test_review_answers.dart';
+import 'test_review_status.dart';
 
 class TestResultReviewCard extends StatelessWidget {
   const TestResultReviewCard({
@@ -27,7 +28,7 @@ class TestResultReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final _Status status = _statusOf(colors);
+    final TestReviewStatus status = testReviewStatusOf(result, colors);
     final List<QuizReviewAnswer> correctAnswers = TestSolutionAnswers.itemsOf(
       result,
       question: question,
@@ -106,38 +107,6 @@ class TestResultReviewCard extends StatelessWidget {
     return value is String && value.trim().isNotEmpty ? value.trim() : null;
   }
 
-  _Status _statusOf(ColorScheme colors) {
-    if (result.isCorrect == true) {
-      return _Status(
-        icon: Icons.check_circle,
-        label: LangKeys.quizAnswerCorrect.tr(),
-        color: colors.primary,
-      );
-    }
-
-    if (!result.hasGivenAnswer) {
-      return _Status(
-        icon: Icons.remove_circle_outline,
-        label: LangKeys.quizNotAnswered.tr(),
-        color: colors.outline,
-      );
-    }
-
-    if (result.isCorrect == false) {
-      return _Status(
-        icon: Icons.cancel,
-        label: LangKeys.quizAnswerIncorrect.tr(),
-        color: colors.error,
-      );
-    }
-
-    return _Status(
-      icon: Icons.hourglass_empty,
-      label: LangKeys.quizPendingReview.tr(),
-      color: colors.outline,
-    );
-  }
-
   String _number(double? value) {
     if (value == null) return '-';
 
@@ -145,12 +114,4 @@ class TestResultReviewCard extends StatelessWidget {
         ? value.toInt().toString()
         : value.toStringAsFixed(1);
   }
-}
-
-class _Status {
-  const _Status({required this.icon, required this.label, required this.color});
-
-  final IconData icon;
-  final String label;
-  final Color color;
 }

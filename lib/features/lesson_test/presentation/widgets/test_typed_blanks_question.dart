@@ -2,12 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_blank_model.dart';
 import '../../data/models/test_question_model.dart';
 import 'test_blank_body_text.dart';
 import 'test_question_prompt.dart';
+import 'test_typed_blanks_helpers.dart';
 
 class TestTypedBlanksQuestion extends StatefulWidget {
   const TestTypedBlanksQuestion({
@@ -89,12 +91,16 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
           SizedBox(height: 28.h),
 
           CustomTextField(
-            controller: _controllerFor(activeBlankId),
+            controller: blankController(
+              _controllers,
+              widget.answer,
+              activeBlankId,
+            ),
             focusNode: _focusNode,
             filled: true,
             maxLines: 3,
-            maxLength: _maxLengthOf(activeBlankId),
-            hintText: 'type_your_answer'.tr(),
+            maxLength: blankMaxLength(widget.question, activeBlankId),
+            hintText: LangKeys.typeYourAnswer.tr(),
             onChanged: (String? value) {
               widget.onTyped(blankId: activeBlankId, value: value ?? '');
               return null;
@@ -111,30 +117,5 @@ class _TestTypedBlanksQuestionState extends State<TestTypedBlanksQuestion> {
 
     final List<TestBlankModel> blanks = widget.question.blanks;
     return blanks.isEmpty ? null : blanks.first.id;
-  }
-
-  int? _maxLengthOf(String blankId) {
-    for (final TestBlankModel blank in widget.question.blanks) {
-      if (blank.id == blankId) return blank.maxLength;
-    }
-    return null;
-  }
-
-  TextEditingController _controllerFor(String blankId) {
-    final String value = widget.answer.blankValue(blankId) ?? '';
-
-    final TextEditingController controller = _controllers.putIfAbsent(
-      blankId,
-      () => TextEditingController(text: value),
-    );
-
-    if (controller.text != value) {
-      controller.value = TextEditingValue(
-        text: value,
-        selection: TextSelection.collapsed(offset: value.length),
-      );
-    }
-
-    return controller;
   }
 }

@@ -1,15 +1,14 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../widgets/assessment_unsupported_view.dart';
 import '../widgets/test_result_action_bar.dart';
+import '../widgets/test_time_up_view.dart';
 import 'lesson_test_intro_body.dart';
 import 'lesson_test_question_body.dart';
 import 'lesson_test_result_body.dart';
@@ -83,7 +82,9 @@ class LessonTestBody extends StatelessWidget {
 
       case LessonTestStatus.running:
       case LessonTestStatus.submitting:
-        if (state.didTimeOut) return _timeUp(context, cubit, state);
+        if (state.didTimeOut) {
+          return TestTimeUpView(cubit: cubit, state: state);
+        }
         if (!state.hasQuestions) return _empty;
 
         return LessonTestQuestionBody(
@@ -121,47 +122,4 @@ class LessonTestBody extends StatelessWidget {
       messageKey: 'no_test_questions',
     ),
   );
-
-  Widget _timeUp(
-    BuildContext context,
-    LessonTestCubit cubit,
-    LessonTestState state,
-  ) {
-    if (state.errorKey != null) {
-      return AppErrorView(
-        errorKey: state.errorKey,
-        message: state.errorMessage,
-        onRetry: () => cubit.submit(timedOut: true),
-      );
-    }
-
-    if (state.isSubmitting) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(
-                Icons.timer_off_outlined,
-                size: 46.w,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              SizedBox(height: 16.h),
-              Text(LangKeys.quizTimeUp.tr(), textAlign: TextAlign.center),
-              SizedBox(height: 18.h),
-              const LinearProgressIndicator(),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Center(
-      child: AppEmptyView(
-        icon: Icons.timer_off_outlined,
-        messageKey: LangKeys.quizTimeUp,
-      ),
-    );
-  }
 }

@@ -33,7 +33,7 @@ class LessonTestResultBody extends StatelessWidget {
         TestResultHeadline(result: result),
         SizedBox(height: 10.h),
         Text(
-          'result_label'.tr(),
+          LangKeys.resultLabel.tr(),
           textAlign: TextAlign.center,
           maxLines: 1,
           style: AppTheme.styles(context).labelStrong,
