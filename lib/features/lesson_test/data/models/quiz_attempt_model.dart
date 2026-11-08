@@ -136,6 +136,7 @@ class QuizAttemptModel {
         .where(
           (Map<String, dynamic> answer) =>
               answer['is_correct'] != null ||
+              answer['answer_status'] != null ||
               answer['awarded_score'] != null ||
               answer['given_answer'] != null,
         )

@@ -1107,6 +1107,26 @@ void main() {
       expect(TestSolutionAnswers.of(result), <String>[LangKeys.quizFalse.tr()]);
     });
 
+    test('reads the answer status of a partially correct answer', () {
+      final QuizQuestionResultModel result = QuizQuestionResultModel.fromJson(
+        <String, dynamic>{
+          'question_id': 39,
+          'question_type': 'mcq_multiple',
+          'is_correct': false,
+          'answer_status': 'partial',
+          'awarded_score': 2,
+          'score': 4,
+          'given_answer': <String, dynamic>{
+            'option_ids': <String>['four'],
+          },
+        },
+      );
+
+      expect(result.isCorrect, isFalse);
+      expect(result.answerStatus, 'partial');
+      expect(result.awardedScore, 2);
+    });
+
     test(
       'infers the opposite true or false answer when the choice is wrong',
       () {

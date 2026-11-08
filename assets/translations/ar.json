@@ -388,6 +388,7 @@
   "quiz_false": "خطأ",
   "quiz_review_title": "مراجعة الإجابات",
   "quiz_answer_correct": "إجابة صحيحة",
+  "quiz_answer_partial": "إجابة جزئية",
   "quiz_answer_incorrect": "إجابة غير صحيحة",
   "quiz_correct_answer": "الإجابة الصحيحة",
   "quiz_your_answer": "إجابتك",

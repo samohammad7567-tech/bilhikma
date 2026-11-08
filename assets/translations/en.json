@@ -388,6 +388,7 @@
   "quiz_false": "False",
   "quiz_review_title": "Answer review",
   "quiz_answer_correct": "Correct answer",
+  "quiz_answer_partial": "Partially correct",
   "quiz_answer_incorrect": "Incorrect answer",
   "quiz_correct_answer": "Correct answer",
   "quiz_your_answer": "Your answer",

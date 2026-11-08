@@ -20,7 +20,9 @@ TestReviewStatus testReviewStatusOf(
   QuizQuestionResultModel result,
   ColorScheme colors,
 ) {
-  if (result.isCorrect == true) {
+  final String status = result.answerStatus?.trim().toLowerCase() ?? '';
+
+  if (result.isCorrect == true || status == 'correct') {
     return TestReviewStatus(
       icon: Icons.check_circle,
       label: LangKeys.quizAnswerCorrect.tr(),
@@ -36,7 +38,18 @@ TestReviewStatus testReviewStatusOf(
     );
   }
 
-  if (result.isCorrect == false) {
+  if (status == 'partial') {
+    return TestReviewStatus(
+      icon: Icons.adjust,
+      label: LangKeys.quizAnswerPartial.tr(),
+      color: colors.tertiary,
+    );
+  }
+
+  if (result.isCorrect == false ||
+      status == 'incorrect' ||
+      status == 'wrong' ||
+      status == 'false') {
     return TestReviewStatus(
       icon: Icons.cancel,
       label: LangKeys.quizAnswerIncorrect.tr(),

@@ -10,6 +10,7 @@ class QuizQuestionResultModel {
     this.score = 0,
     this.awardedScore,
     this.isCorrect,
+    this.answerStatus,
     this.givenAnswer = const <String, dynamic>{},
     this.blankResults = const <String, dynamic>{},
     this.componentResults = const <String, dynamic>{},
@@ -24,6 +25,7 @@ class QuizQuestionResultModel {
   final double score;
   final double? awardedScore;
   final bool? isCorrect;
+  final String? answerStatus;
   final Map<String, dynamic> givenAnswer;
   final Map<String, dynamic> blankResults;
   final Map<String, dynamic> componentResults;
@@ -87,6 +89,7 @@ class QuizQuestionResultModel {
           ? null
           : Json.asDouble(json['awarded_score']),
       isCorrect: Json.asOptionalBool(json['is_correct']),
+      answerStatus: Json.asOptionalString(json['answer_status']),
       givenAnswer: given,
       blankResults: _idMap(json['blank_results']),
       componentResults: _idMap(json['component_results']),
@@ -142,6 +145,7 @@ class QuizQuestionResultModel {
     'score': score,
     'awarded_score': awardedScore,
     'is_correct': isCorrect,
+    'answer_status': answerStatus,
     'given_answer': givenAnswer,
     'blank_results': blankResults,
     'component_results': componentResults,
