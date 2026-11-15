@@ -1,7 +1,7 @@
 # Release APK install failure — "لم يتم تثبيت التطبيق لأن الحزمة تبدو غير صالحة"
 
 **Device:** Redmi A7 Pro · Android 16 (HyperOS)
-**Build:** `flutter build apk --release` · Flutter 3.47.4 · `tech.bilhikma.app` v1.0.0+2
+**Build:** `flutter build apk --release` · Flutter 3.47.4 · `com.bilhikma.app` v1.0.0+2
 
 ---
 
@@ -37,7 +37,7 @@ Everything that normally causes a genuine "invalid package" was checked and pass
 | `targetSdkVersion` | ✅ 36 (meets the Android 14+ minimum target of 24) |
 | 16 KB page alignment (`zipalign -c -P 16`) | ✅ Verification successful — all 4 `.so` files OK |
 | Android 16 / `compileSdk` | ✅ 36 |
-| Manifest / `applicationId` | ✅ `tech.bilhikma.app` |
+| Manifest / `applicationId` | ✅ `com.bilhikma.app` |
 | `native-code` in arm64 APK | ✅ `arm64-v8a` only |
 
 So there is nothing wrong with the binary — the wrong one was transferred.

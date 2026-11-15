@@ -19,7 +19,7 @@ if (hasReleaseKeystore) {
 }
 
 android {
-    namespace = "tech.bilhikma.app"
+    namespace = "com.bilhikma.app"
 
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
@@ -31,9 +31,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "tech.bilhikma.app"
+        applicationId = "com.bilhikma.app"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
 
         versionCode = flutter.versionCode
         versionName = flutter.versionName

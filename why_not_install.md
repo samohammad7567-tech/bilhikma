@@ -8,7 +8,7 @@
   the build, so the file was not altered by renaming or upload.
 - ABIs present: `armeabi-v7a`, `arm64-v8a`, `x86_64` — it is a **universal** APK, so a wrong-ABI
   refusal is ruled out.
-- `package = tech.bilhikma.app`, `versionName 1.0.0`, `versionCode 10`, `minSdk 24`.
+- `package = com.bilhikma.app`, `versionName 1.0.0`, `versionCode 10`, `minSdk 24`.
 
 The installer dialog in the screenshot shows the app **icon and Arabic name (بالحكمة)** before
 failing. That only happens after Android has successfully parsed the package. So the package is
@@ -22,7 +22,7 @@ failing. That only happens after Android has successfully parsed the package. So
 | # | Cause | Status for this build | Underlying installer error |
 |---|---|---|---|
 | 1 | **Release APK is signed with the DEBUG key** | **CONFIRMED IN THE FILE** | `INSTALL_FAILED_UPDATE_INCOMPATIBLE` |
-| 2 | Signature conflict with an already-installed `tech.bilhikma.app` | **MOST LIKELY TRIGGER** | `INSTALL_FAILED_UPDATE_INCOMPATIBLE` |
+| 2 | Signature conflict with an already-installed `com.bilhikma.app` | **MOST LIKELY TRIGGER** | `INSTALL_FAILED_UPDATE_INCOMPATIBLE` |
 | 3 | No v1 (JAR) signature — v2/v3 only | Confirmed present, **harmless at minSdk 24** | `INSTALL_PARSE_FAILED_NO_CERTIFICATES` (only below API 24) |
 | 4 | versionCode downgrade (installed build has a higher code) | Possible — this build is only `10` | `INSTALL_FAILED_VERSION_DOWNGRADE` |
 | 5 | Play Protect blocking a debug-signed sideload | Possible | `INSTALL_FAILED_VERIFICATION_FAILURE` |
@@ -105,9 +105,9 @@ ERROR android/key.properties not found.
 
 ---
 
-## 2. MOST LIKELY TRIGGER — a copy of `tech.bilhikma.app` is already on the phone
+## 2. MOST LIKELY TRIGGER — a copy of `com.bilhikma.app` is already on the phone
 
-`applicationId = "tech.bilhikma.app"` is fixed — no `.dev` / `.staging` suffix, no flavors — so
+`applicationId = "com.bilhikma.app"` is fixed — no `.dev` / `.staging` suffix, no flavors — so
 **every** build (debug, profile, release, CI, Play) claims the same package slot on the device.
 Combined with §1, any previously installed copy signed by a different key blocks this one.
 
@@ -125,10 +125,10 @@ adb install -r -d "build/app/outputs/flutter-apk/BilHikma-v1.0.0+10-build-2026-1
 
 ### Fix
 
-- Uninstall the old copy first: `adb uninstall tech.bilhikma.app` (or Settings -> Apps ->
+- Uninstall the old copy first: `adb uninstall com.bilhikma.app` (or Settings -> Apps ->
   بالحكمة -> Uninstall), then install the new APK.
 - Check the "other user" case too — an app installed under a second user or work profile stays
-  on disk and still blocks: `adb shell pm uninstall -k --user 0 tech.bilhikma.app`.
+  on disk and still blocks: `adb shell pm uninstall -k --user 0 com.bilhikma.app`.
 - Long term, give debug builds their own id so they can co-exist with release builds:
   ```kotlin
   buildTypes { debug { applicationIdSuffix = ".debug"; versionNameSuffix = "-debug" } }
@@ -163,7 +163,7 @@ installer never does. If the tester has an older build numbered `+11`, `+12`, a 
 ### Check / fix
 
 ```bash
-adb shell dumpsys package tech.bilhikma.app | findstr versionCode
+adb shell dumpsys package com.bilhikma.app | findstr versionCode
 ```
 
 Keep `versionCode` strictly monotonic — never reuse or lower it, and never mix a timestamp scheme
@@ -211,7 +211,7 @@ installed" even though the app is not in the launcher.
 
 ```bash
 adb shell pm list packages --user all | findstr bilhikma
-adb shell pm uninstall --user 0 tech.bilhikma.app
+adb shell pm uninstall --user 0 com.bilhikma.app
 ```
 
 Reboot the phone and retry — a reboot also clears a stuck `PackageInstaller` session.

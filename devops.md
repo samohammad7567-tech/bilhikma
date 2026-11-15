@@ -13,7 +13,7 @@ run**, and **what to commit**.
 | Platforms | Android only (`android/`). No `ios/` folder | iOS is a later phase |
 | Flutter | 3.44.5 stable (`f94f4fc76b`), Dart SDK `^3.12.2` | Version not pinned anywhere machine-readable |
 | Android toolchain | AGP 8.11.1, Gradle 8.14, Kotlin 2.3.20, JDK 17 | Fine — CI must match exactly |
-| App id | `tech.bilhikma.app` (single id, no flavors) | No dev/staging/prod separation |
+| App id | `com.bilhikma.app` (single id, no flavors) | No dev/staging/prod separation |
 | Signing | `release { signingConfig = signingConfigs.getByName("debug") }` | **Release builds are debug-signed — cannot be published** |
 | Config | `ApiEndpoints.baseUrl = 'https://bilhikma.tech/api'` hardcoded | No per-environment base URL |
 | Firebase | `firebase_core` + `firebase_messaging`, `android/app/google-services.json` committed, gradle applies the plugin conditionally | Config file should be injected, not tracked |
@@ -452,7 +452,7 @@ tagged pipeline builds and (after manual approval) uploads.
 
 ---
 
-1. Create the app in Play Console with package `tech.bilhikma.app`.
+1. Create the app in Play Console with package `com.bilhikma.app`.
 2. Upload the first AAB **by hand** — the API cannot create the first release.
 3. Google Cloud → service account → grant it "Release manager" in Play Console →
    download the JSON key → store as `PLAY_SERVICE_ACCOUNT_JSON` in GitLab.
@@ -468,7 +468,7 @@ gem "fastlane"
 
 ```ruby
 json_key_file(ENV["PLAY_SERVICE_ACCOUNT_JSON"])
-package_name("tech.bilhikma.app")
+package_name("com.bilhikma.app")
 ```
 
 `android/fastlane/Fastfile`:
@@ -582,7 +582,7 @@ There is no `ios/` folder yet. When iOS starts:
    in `pubspec.yaml` (both are currently `false`, with comments explaining why),
    then re-run the generators.
 3. Xcode schemes `dev` / `staging` / `prod` matching the Android flavors, bundle
-   ids `tech.bilhikma.app`, `.dev`, `.staging`.
+   ids `com.bilhikma.app`, `.dev`, `.staging`.
 4. `fastlane match` (git-backed certificate repo) for signing — never manual
    provisioning profiles in CI.
 5. A macOS runner (GitLab SaaS macOS runners or a self-hosted Mac mini);

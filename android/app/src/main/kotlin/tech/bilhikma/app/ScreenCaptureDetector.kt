@@ -1,4 +1,4 @@
-package tech.bilhikma.app
+package com.bilhikma.app
 
 import android.content.Context
 import android.hardware.display.DisplayManager

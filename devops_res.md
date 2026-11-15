@@ -172,7 +172,7 @@ security model depends on. Two more `print` calls sit in
 Probed and absent: `.github/`, `.gitlab-ci.yml`, `fastlane/`, `Makefile`,
 `productFlavors` in `build.gradle.kts`.
 
-- One `applicationId` — `tech.bilhikma.app` — for every environment. A QA build
+- One `applicationId` — `com.bilhikma.app` — for every environment. A QA build
   cannot be installed next to production.
 - `ApiEndpoints.baseUrl` is a `const String` hardcoded to
   `https://bilhikma.tech/api` (`lib/core/constants/api_endpoints.dart:4`). No

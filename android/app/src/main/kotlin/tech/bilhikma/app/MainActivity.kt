@@ -1,4 +1,4 @@
-package tech.bilhikma.app
+package com.bilhikma.app
 
 import android.app.Activity
 import android.os.Build

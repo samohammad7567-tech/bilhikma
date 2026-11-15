@@ -79,7 +79,7 @@ Expected log lines:
 ```
 java.lang.UnsatisfiedLinkError: dlopen failed: library "libflutter.so" not found
 E/AndroidRuntime: FATAL EXCEPTION: main
-    Process: tech.bilhikma.app
+    Process: com.bilhikma.app
     java.lang.RuntimeException: Unable to instantiate application io.flutter.app.FlutterApplication
 ```
 
@@ -685,7 +685,7 @@ it contains no `<service>` and no `<receiver>` at all.
 
 ```
 android.content.ActivityNotFoundException: Unable to find explicit activity class
-  {tech.bilhikma.app/com.ryanheise.audioservice.AudioService}; have you declared this activity
+  {com.bilhikma.app/com.ryanheise.audioservice.AudioService}; have you declared this activity
   in your AndroidManifest.xml?
 
 java.lang.IllegalStateException: Not allowed to start service Intent ... app is in background
@@ -696,7 +696,7 @@ java.lang.SecurityException: Starting FGS with type mediaPlayback ... requires p
 ```
 
 Separately, `MainActivity` extends plain `FlutterActivity`
-(`android/app/src/main/kotlin/tech/bilhikma/app/MainActivity.kt:18`). Both `audio_service` and
+(`android/app/src/main/kotlin/com.bilhikma.app/MainActivity.kt:18`). Both `audio_service` and
 `just_audio_background` require it to extend **`AudioServiceActivity`**; without that, the activity
 cannot be re-attached from the media notification.
 
@@ -763,7 +763,7 @@ Expected log:
 E/dalvikvm-heap: Out of memory on a 41943056-byte allocation
 java.lang.OutOfMemoryError: Failed to allocate a 41943056 byte allocation with
   16777216 free bytes and 12MB until OOM
-I/ActivityManager: Low on memory: ... killing tech.bilhikma.app
+I/ActivityManager: Low on memory: ... killing com.bilhikma.app
 ```
 
 **Fix:**
@@ -806,7 +806,7 @@ buildTypes {
 The debug keystore is per-machine and expires. Consequences that look like "the app won't load":
 
 ```
-INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package tech.bilhikma.app signatures do not match
+INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package com.bilhikma.app signatures do not match
   previously installed version; ignoring!
 INSTALL_PARSE_FAILED_NO_CERTIFICATES
 ```

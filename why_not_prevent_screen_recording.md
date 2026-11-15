@@ -26,7 +26,7 @@ So the accurate statement of the current behaviour is:
 
 ## 1. What the code does
 
-`android/app/src/main/kotlin/tech/bilhikma/app/MainActivity.kt` states the root cause in its own
+`android/app/src/main/kotlin/com.bilhikma.app/MainActivity.kt` states the root cause in its own
 header:
 
 ```
