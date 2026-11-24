@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import 'live_session_card_dot.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LiveSessionCardStatusBadge extends StatelessWidget {
   const LiveSessionCardStatusBadge({required this.label, super.key});
@@ -14,17 +14,17 @@ class LiveSessionCardStatusBadge extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (9).h(context)),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular((8).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const LiveSessionCardDot(),
 
-          SizedBox(width: 6.w),
+          SizedBox(width: (6).w(context)),
 
           Text(
             label,

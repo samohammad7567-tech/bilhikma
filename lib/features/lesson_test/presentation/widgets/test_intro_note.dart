@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import 'test_html_text.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestIntroNote extends StatelessWidget {
   const TestIntroNote({
@@ -21,15 +21,15 @@ class TestIntroNote extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (12).h(context)),
       decoration: BoxDecoration(
         color: (color ?? colors.primary).withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular((8).r(context)),
       ),
       child: Row(
         children: <Widget>[
-          Icon(icon, size: 18.w, color: color ?? colors.onSurfaceVariant),
-          SizedBox(width: 8.w),
+          Icon(icon, size: (18).r(context), color: color ?? colors.onSurfaceVariant),
+          SizedBox(width: (8).w(context)),
           Expanded(
             child: TestHtmlText(
               text,

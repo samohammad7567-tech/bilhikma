@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_progress_bar.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
@@ -9,6 +8,7 @@ import '../../../../core/themes/app_theme.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../cubit/lesson_test_cubit.dart';
 import 'test_save_status.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestProgressHeader extends StatelessWidget {
   const TestProgressHeader({
@@ -44,7 +44,7 @@ class TestProgressHeader extends StatelessWidget {
             style: AppTheme.styles(context).labelSmall,
           ),
 
-          SizedBox(height: 4.h),
+          SizedBox(height: (4).h(context)),
 
           Align(
             alignment: Alignment.center,
@@ -57,7 +57,7 @@ class TestProgressHeader extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: (10).h(context)),
         ],
 
         Row(
@@ -81,14 +81,14 @@ class TestProgressHeader extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: (6).h(context)),
 
         AppProgressBar(progress: progress, showPercent: false),
 
-        SizedBox(height: 4.h),
+        SizedBox(height: (4).h(context)),
 
         ConstrainedBox(
-          constraints: BoxConstraints(minHeight: 16.h),
+          constraints: BoxConstraints(minHeight: 16),
           child: TestSaveStatus(saveStatus: saveStatus),
         ),
       ],

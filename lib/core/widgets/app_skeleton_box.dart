@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppSkeletonBox extends StatefulWidget {
   const AppSkeletonBox({
@@ -63,7 +62,7 @@ class _AppSkeletonBoxState extends State<AppSkeletonBox>
           shape: widget.isCircular ? BoxShape.circle : BoxShape.rectangle,
           borderRadius: widget.isCircular
               ? null
-              : BorderRadius.circular(widget.radius ?? 8.r),
+              : BorderRadius.circular(widget.radius ?? 8),
         ),
       ),
     );

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/models/download_progress.dart';
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/models/textbook_model.dart';
 import 'subject_book_card.dart';
@@ -45,7 +45,7 @@ class SubjectBooksSection extends StatelessWidget {
       children: <Widget>[
         for (final TextbookModel book in books)
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), 0.0.h(context), (16).w(context), (12).h(context)),
             child: SubjectBookCard(
               book: book,
               progress: progressFor(book.id),

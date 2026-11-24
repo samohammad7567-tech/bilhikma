@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'app_content_width.dart';
 import 'app_drawer_menu_button.dart';
 import 'app_top_bar.dart';
+import '../utils/screen_scale.dart';
 
 class AppSectionScaffold extends StatelessWidget {
   const AppSectionScaffold({
@@ -16,7 +17,7 @@ class AppSectionScaffold extends StatelessWidget {
     this.leading,
     this.trailing,
     this.drawer,
-    this.maxContentWidth = 900,
+    this.maxContentWidth,
   });
 
   final String title;
@@ -32,7 +33,7 @@ class AppSectionScaffold extends StatelessWidget {
 
   final Widget? drawer;
 
-  final double maxContentWidth;
+  final double? maxContentWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class AppSectionScaffold extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
                 child: Builder(
                   builder: (BuildContext barContext) => AppTopBar(
                     title: title,

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'settings_segment_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SettingsSegmentedControl<T> extends StatelessWidget {
   const SettingsSegmentedControl({
@@ -25,10 +25,10 @@ class SettingsSegmentedControl<T> extends StatelessWidget {
     final IconData? Function(T option)? iconOf = this.iconOf;
 
     return Container(
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.all((4).r(context)),
       decoration: BoxDecoration(
         color: colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular((12).r(context)),
       ),
       child: Row(
         children: <Widget>[

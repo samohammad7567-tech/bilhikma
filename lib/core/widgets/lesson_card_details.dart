@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../features/lesson_detail/data/models/quiz_summary_model.dart';
 import '../../features/lessons/presentation/refactor/lesson_formats.dart';
@@ -9,6 +8,7 @@ import '../themes/app_theme.dart';
 import 'app_progress_bar.dart';
 import 'lesson_meta_item.dart';
 import 'lesson_status_badge.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonCardDetails extends StatelessWidget {
   const LessonCardDetails({required this.lesson, super.key});
@@ -40,14 +40,14 @@ class LessonCardDetails extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.only(start: 8.w),
+              padding: EdgeInsetsDirectional.only(start: (8).w(context)),
               child: LessonStatusBadge(status: lesson.status),
             ),
           ],
         ),
 
         if ((lesson.description ?? '').isNotEmpty) ...<Widget>[
-          SizedBox(height: 4.h),
+          SizedBox(height: (4).h(context)),
           Text(
             lesson.description!,
             textAlign: TextAlign.start,
@@ -57,7 +57,7 @@ class LessonCardDetails extends StatelessWidget {
           ),
         ],
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         Row(
           children: <Widget>[
@@ -69,7 +69,7 @@ class LessonCardDetails extends StatelessWidget {
                 ),
               ),
 
-            if (publishedAt != null && hasDuration) SizedBox(width: 14.w),
+            if (publishedAt != null && hasDuration) SizedBox(width: (14).w(context)),
 
             if (hasDuration)
               Flexible(
@@ -82,7 +82,7 @@ class LessonCardDetails extends StatelessWidget {
         ),
 
         if (quiz != null) ...<Widget>[
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: _QuizBadge(quiz: quiz),
@@ -90,7 +90,7 @@ class LessonCardDetails extends StatelessWidget {
         ],
 
         if (lesson.status.showsProgress) ...<Widget>[
-          SizedBox(height: 10.h),
+          SizedBox(height: (10).h(context)),
           AppProgressBar(progress: lesson.progress.progress),
         ],
       ],
@@ -128,24 +128,24 @@ class _QuizBadge extends StatelessWidget {
     final IconData icon = passed ? Icons.check_circle_outline : Icons.quiz_outlined;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+      padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (3).h(context)),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular((999).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 12.sp, color: foreground),
-          SizedBox(width: 4.w),
+          Icon(icon, size: (12).r(context), color: foreground),
+          SizedBox(width: (4).w(context)),
           Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: styles.badgeLabel.copyWith(
               color: foreground,
-              fontSize: 9.sp,
-              height: 1.2,
+              fontSize: (9).sp(context),
+              height: 1.2.h(context),
             ),
           ),
         ],

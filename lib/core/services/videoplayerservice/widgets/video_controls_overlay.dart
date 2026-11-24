@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,7 @@ import 'video_seek_icon.dart';
 import 'video_speed_badge.dart';
 import 'video_speed_sheet.dart';
 import 'video_progress_bar.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoControlsOverlay extends StatefulWidget {
   const VideoControlsOverlay({
@@ -215,7 +216,7 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
           child: GestureDetector(
             onTap: _togglePlayPause,
             child: Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all((14).r(context)),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.4),
                 shape: BoxShape.circle,
@@ -225,7 +226,7 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
                     ? CupertinoIcons.pause_fill
                     : CupertinoIcons.play_fill,
                 color: Colors.white,
-                size: 32,
+                size: (32).r(context),
               ),
             ),
           ),
@@ -233,13 +234,13 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
 
       if (_controlsVisible) ...<Widget>[
         Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
+          top: (0).h(context),
+          left: (0).w(context),
+          right: (0).w(context),
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all((8).r(context)),
               child: Align(
                 alignment: AlignmentDirectional.topEnd,
                 child: Row(
@@ -252,7 +253,7 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
                       onTap: _toggleRotate,
                     ),
 
-                    const SizedBox(width: 10),
+                    SizedBox(width: (10).w(context)),
 
                     VideoCircleIconButton(
                       icon: CupertinoIcons.slider_horizontal_3,
@@ -266,9 +267,9 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
         ),
 
         Positioned(
-          left: 14,
-          right: 14,
-          bottom: 14,
+          left: (14).w(context),
+          right: (14).w(context),
+          bottom: (14).h(context),
           child: _playback.isLive
               ? Align(
                   alignment: AlignmentDirectional.centerStart,

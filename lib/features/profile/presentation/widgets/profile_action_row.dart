@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/enums/profile_action_enum.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ProfileActionRow extends StatelessWidget {
   const ProfileActionRow({
@@ -23,25 +23,25 @@ class ProfileActionRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (10).h(context)),
         child: Row(
           children: <Widget>[
             Container(
-              width: 38.w,
-              height: 38.w,
+              width: (38).w(context),
+              height: (38).h(context),
               decoration: BoxDecoration(
                 color: colors.primaryContainer,
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular((10).r(context)),
               ),
               child: AppIcon(
                 asset: action.imagePath,
-                size: 20.w,
+                size: (20).r(context),
                 color: colors.onPrimaryContainer,
-                padding: EdgeInsets.all(9.w),
+                padding: EdgeInsets.all((9).r(context)),
               ),
             ),
 
-            SizedBox(width: 12.w),
+            SizedBox(width: (12).w(context)),
 
             Expanded(
               child: Text(
@@ -55,7 +55,7 @@ class ProfileActionRow extends StatelessWidget {
 
             Icon(
               Icons.arrow_forward_ios,
-              size: 14.w,
+              size: (14).r(context),
               color: colors.onSurfaceVariant,
             ),
           ],

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SettingsGlyphTile extends StatelessWidget {
   const SettingsGlyphTile({
@@ -22,15 +22,15 @@ class SettingsGlyphTile extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      width: 38.w,
-      height: 38.w,
+      width: (38).w(context),
+      height: (38).h(context),
       decoration: BoxDecoration(
         color: backgroundColor ?? colors.primaryContainer,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(8.w),
-        child: AppIcon(asset: imagePath, size: 20.w, color: iconColor),
+        padding: EdgeInsets.all((8).r(context)),
+        child: AppIcon(asset: imagePath, size: (20).r(context), color: iconColor),
       ),
     );
   }

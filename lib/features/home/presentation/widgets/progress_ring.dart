@@ -1,7 +1,6 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../refactor/home_formats.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -20,8 +19,8 @@ class ProgressRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double diameter = size ?? 46.w;
-    final double thickness = stroke ?? 5.w;
+    final double diameter = size ?? 46;
+    final double thickness = stroke ?? 5;
 
     return SizedBox(
       width: diameter,

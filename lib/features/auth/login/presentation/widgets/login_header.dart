@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({super.key});
@@ -21,7 +21,7 @@ class LoginHeader extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: AppTheme.styles(context).authTitle,
         ),
-        SizedBox(height: 42.h),
+        SizedBox(height: (42).h(context)),
         SvgPicture.asset(AppAssets.assetsLogoText, fit: BoxFit.contain),
       ],
     );

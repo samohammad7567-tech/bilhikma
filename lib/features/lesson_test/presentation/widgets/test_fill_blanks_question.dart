@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
 import 'test_blank_body_text.dart';
 import 'test_question_prompt.dart';
 import 'test_word_bank.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestFillBlanksQuestion extends StatelessWidget {
   const TestFillBlanksQuestion({
@@ -41,7 +41,7 @@ class TestFillBlanksQuestion extends StatelessWidget {
           rich: question.isRichPrompt,
         ),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: (20).h(context)),
 
         TestBlankBodyText(
           body: question.body,
@@ -50,7 +50,7 @@ class TestFillBlanksQuestion extends StatelessWidget {
           selectedBlankId: selectedBlankId,
         ),
 
-        SizedBox(height: 40.h),
+        SizedBox(height: (40).h(context)),
 
         TestWordBank(
           options: question.options,

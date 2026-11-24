@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import 'test_audio_button.dart';
 import 'test_html_text.dart';
 import 'test_media_image.dart';
 import 'test_option_indicator.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestOptionTile extends StatelessWidget {
   const TestOptionTile({
@@ -20,21 +20,18 @@ class TestOptionTile extends StatelessWidget {
 
   final String label;
   final bool isSelected;
-
   final bool isMultiSelect;
-
   final VoidCallback onTap;
-
   final String? imageUrl;
   final String? audioUrl;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final Color background = isSelected
-        ? colors.secondary
-        : colors.tertiaryContainer;
-    final Color foreground = isSelected ? colors.onSecondary : colors.onSurface;
+    final Color background =
+        isSelected ? colors.secondary : colors.tertiaryContainer;
+    final Color foreground =
+        isSelected ? colors.onSecondary : colors.onSurface;
 
     final String? image = _present(imageUrl);
     final String? audio = _present(audioUrl);
@@ -42,12 +39,15 @@ class TestOptionTile extends StatelessWidget {
 
     return Material(
       color: background,
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular((10).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: (14).w(context),
+            vertical: (14).h(context),
+          ),
           child: Row(
             children: <Widget>[
               TestOptionIndicator(
@@ -55,27 +55,27 @@ class TestOptionTile extends StatelessWidget {
                 isMultiSelect: isMultiSelect,
                 color: foreground,
               ),
-              SizedBox(width: 15.w),
+              SizedBox(width: (15).w(context)),
               Expanded(
                 child: showImageFirst
-                    ? _imageFirst(image)
+                    ? _imageFirst(context, image)
                     : TestHtmlText(
                         label,
                         maxLines: 3,
                         style: AppTheme.styles(context).optionLabel.copyWith(
-                          color: foreground,
-                          fontWeight: isSelected
-                              ? FontWeight.w700
-                              : FontWeight.w600,
-                        ),
+                              color: foreground,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                            ),
                       ),
               ),
               if (image != null && !showImageFirst) ...<Widget>[
-                SizedBox(width: 10.w),
-                _thumbnail(image),
+                SizedBox(width: (10).w(context)),
+                _thumbnail(context, image),
               ],
               if (audio != null) ...<Widget>[
-                SizedBox(width: 6.w),
+                SizedBox(width: (6).w(context)),
                 TestAudioButton(url: audio),
               ],
             ],
@@ -85,29 +85,32 @@ class TestOptionTile extends StatelessWidget {
     );
   }
 
-  Widget _imageFirst(String url) => Padding(
-    padding: EdgeInsets.symmetric(vertical: 6.h),
-    child: SizedBox(
-      width: double.infinity,
-      height: 120.h,
-      child: TestMediaImage(
-        url: url,
-        radius: 14,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      ),
-    ),
-  );
+  Widget _imageFirst(BuildContext context, String url) => Padding(
+        padding: EdgeInsets.symmetric(vertical: (6).h(context)),
+        child: SizedBox(
+          width: double.infinity,
+          height: (120).h(context),
+          child: TestMediaImage(
+            url: url,
+            radius: 14,
+            padding: EdgeInsets.symmetric(
+              horizontal: (10).w(context),
+              vertical: (8).h(context),
+            ),
+          ),
+        ),
+      );
 
-  Widget _thumbnail(String url) => SizedBox(
-    width: 56.w,
-    height: 56.w,
-    child: TestMediaImage(
-      url: url,
-      radius: 10,
-      padding: EdgeInsets.all(3.w),
-      elevated: false,
-    ),
-  );
+  Widget _thumbnail(BuildContext context, String url) => SizedBox(
+        width: (56).w(context),
+        height: (56).h(context),
+        child: TestMediaImage(
+          url: url,
+          radius: 10,
+          padding: EdgeInsets.all((3).r(context)),
+          elevated: false,
+        ),
+      );
 
   String? _present(String? value) {
     final String text = value?.trim() ?? '';

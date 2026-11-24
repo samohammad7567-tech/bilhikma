@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LoginRememberMe extends StatelessWidget {
   const LoginRememberMe({
@@ -17,7 +17,7 @@ class LoginRememberMe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double boxSize = 18.w;
+    final double boxSize = 18;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -30,7 +30,7 @@ class LoginRememberMe extends StatelessWidget {
             height: boxSize,
             decoration: BoxDecoration(
               color: value ? colors.tertiary : Colors.transparent,
-              borderRadius: BorderRadius.circular(4.r),
+              borderRadius: BorderRadius.circular((4).r(context)),
               border: Border.all(
                 color: value
                     ? colors.tertiary
@@ -38,10 +38,10 @@ class LoginRememberMe extends StatelessWidget {
               ),
             ),
             child: value
-                ? Icon(Icons.check, size: 14.w, color: colors.onTertiary)
+                ? Icon(Icons.check, size: (14).r(context), color: colors.onTertiary)
                 : null,
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: (8).w(context)),
           Flexible(
             child: Text(
               'remember_me'.tr(),

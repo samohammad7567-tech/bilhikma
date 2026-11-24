@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../refactor/lesson_progress_view.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonSummaryPosition extends StatelessWidget {
   const LessonSummaryPosition({required this.view, super.key});
@@ -13,7 +13,7 @@ class LessonSummaryPosition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double barHeight = 6.h;
+    final double barHeight = 6;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,7 +43,7 @@ class LessonSummaryPosition extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: (6).h(context)),
 
         ClipRRect(
           borderRadius: BorderRadius.circular(barHeight),

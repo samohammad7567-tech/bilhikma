@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/app_regex.dart';
@@ -8,6 +7,7 @@ import '../../../../../core/widgets/app_icon.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/phone_number_field.dart';
 import '../../../../../core/enums/login_method_enum.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LoginIdentityField extends StatelessWidget {
   const LoginIdentityField({
@@ -33,7 +33,7 @@ class LoginIdentityField extends StatelessWidget {
         hintText: 'email'.tr(),
         textDirection: TextDirection.ltr,
         suffixIcon: AppIcon(
-          size: 20.w,
+          size: (20).r(context),
           padding: EdgeInsetsGeometry.all(12),
           asset: AppAssets.assetsEmailIcon,
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
@@ -48,7 +48,7 @@ class LoginIdentityField extends StatelessWidget {
       controller: phoneController,
       fillColour: colors.tertiary.withValues(alpha: 0.4),
       suffixIcon: AppIcon(
-        size: 20.w,
+        size: (20).r(context),
         padding: EdgeInsetsGeometry.all(12),
         asset: AppAssets.assetsPhoneIconFilled,
 

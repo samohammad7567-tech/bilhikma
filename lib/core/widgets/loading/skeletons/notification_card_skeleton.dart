@@ -1,6 +1,6 @@
-import 'package:bilhikma/core/widgets/loading/skeleton_box.dart';
+﻿import 'package:bilhikma/core/widgets/loading/skeleton_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationCardSkeleton extends StatelessWidget {
   const NotificationCardSkeleton({super.key});
@@ -8,21 +8,21 @@ class NotificationCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const SkeletonBox(height: 40, width: 40, isCircular: true),
-          SizedBox(width: 12.w),
+          SkeletonBox(height: (40).h(context), width: (40).w(context), isCircular: true),
+          SizedBox(width: (12).w(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SkeletonBox(height: 16.h, width: double.infinity),
-                SizedBox(height: 8.h),
-                SkeletonBox(height: 12.h, width: 200.w),
-                SizedBox(height: 6.h),
-                SkeletonBox(height: 10.h, width: 120.w),
+                SkeletonBox(height: (16).h(context), width: double.infinity),
+                SizedBox(height: (8).h(context)),
+                SkeletonBox(height: (12).h(context), width: (200).w(context)),
+                SizedBox(height: (6).h(context)),
+                SkeletonBox(height: (10).h(context), width: (120).w(context)),
               ],
             ),
           ),

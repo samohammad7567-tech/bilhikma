@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_question_model.dart';
 import '../cubit/lesson_test_cubit.dart';
@@ -7,6 +6,7 @@ import '../widgets/question_locked_banner.dart';
 import '../widgets/test_nav_buttons.dart';
 import '../widgets/test_progress_header.dart';
 import 'test_question_view.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonTestQuestionBody extends StatelessWidget {
   const LessonTestQuestionBody({
@@ -36,22 +36,22 @@ class LessonTestQuestionBody extends StatelessWidget {
           showTotalTimer: state.hasTimeLimit,
         ),
 
-        if (opening) LinearProgressIndicator(minHeight: 2.h),
+        if (opening) LinearProgressIndicator(minHeight: 2),
 
-        SizedBox(height: 22.h),
+        SizedBox(height: (22).h(context)),
 
         if (locked &&
             !opening &&
             (state.isCurrentQuestionExpired ||
                 state.openedQuestionIds.contains(question.id)))
           Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
+            padding: EdgeInsets.only(bottom: (12).h(context)),
             child: const QuestionLockedBanner(),
           ),
 
         Expanded(
           child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 16.h),
+            padding: EdgeInsets.only(bottom: (16).h(context)),
             child: IgnorePointer(
               ignoring: locked,
               child: Opacity(
@@ -67,7 +67,7 @@ class LessonTestQuestionBody extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 12.h),
+        SizedBox(height: (12).h(context)),
 
         TestNavButtons(
           isFirstQuestion: state.isFirstQuestion,

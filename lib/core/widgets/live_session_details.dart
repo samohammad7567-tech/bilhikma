@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../utils/live_formats.dart';
 import '../models/live_session_model.dart';
 import '../themes/app_theme.dart';
 import 'lesson_meta_item.dart';
 import 'live_session_action_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LiveSessionDetails extends StatelessWidget {
   const LiveSessionDetails({
@@ -33,7 +33,7 @@ class LiveSessionDetails extends StatelessWidget {
           style: AppTheme.styles(context).cardTitle,
         ),
 
-        SizedBox(height: 4.h),
+        SizedBox(height: (4).h(context)),
 
         if ((session.description ?? '').isNotEmpty) ...<Widget>[
           Text(
@@ -46,7 +46,7 @@ class LiveSessionDetails extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: (10).h(context)),
         ],
 
         if (session.scheduledAt != null) ...<Widget>[
@@ -59,7 +59,7 @@ class LiveSessionDetails extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 14.w),
+              SizedBox(width: (14).w(context)),
 
               Flexible(
                 child: LessonMetaItem(
@@ -70,7 +70,7 @@ class LiveSessionDetails extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
         ],
 
         Align(

@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/ornamented_card.dart';
@@ -12,6 +11,7 @@ import '../../../../core/widgets/lesson_meta_item.dart';
 import '../../data/models/lesson_detail_model.dart';
 import '../refactor/lesson_progress_view.dart';
 import 'lesson_summary_position.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonSummaryCard extends StatelessWidget {
   const LessonSummaryCard({
@@ -35,8 +35,8 @@ class LessonSummaryCard extends StatelessWidget {
     final DateTime? publishedAt = detail.publishedAt;
 
     return OrnamentedCard(
-      radius: 12.r,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      radius: 12,
+      padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (12).h(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -54,13 +54,13 @@ class LessonSummaryCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 8.w),
+                padding: EdgeInsetsDirectional.only(start: (8).w(context)),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     if (source != null) ...<Widget>[
                       LessonSourceBadge(source: source!),
-                      SizedBox(width: 6.w),
+                      SizedBox(width: (6).w(context)),
                     ],
                     LessonStatusBadge(status: status),
                   ],
@@ -70,7 +70,7 @@ class LessonSummaryCard extends StatelessWidget {
           ),
 
           if ((subjectName ?? '').isNotEmpty) ...<Widget>[
-            SizedBox(height: 4.h),
+            SizedBox(height: (4).h(context)),
             Text(
               subjectName!,
               textAlign: TextAlign.start,
@@ -81,7 +81,7 @@ class LessonSummaryCard extends StatelessWidget {
           ],
 
           if (publishedAt != null) ...<Widget>[
-            SizedBox(height: 6.h),
+            SizedBox(height: (6).h(context)),
             LessonMetaItem(
               icon: Icons.calendar_month_outlined,
               label: LessonFormats.date(publishedAt),
@@ -89,7 +89,7 @@ class LessonSummaryCard extends StatelessWidget {
           ],
 
           if (detail.durationSeconds > 0) ...<Widget>[
-            SizedBox(height: 10.h),
+            SizedBox(height: (10).h(context)),
             LessonSummaryPosition(view: progressView),
           ],
         ],

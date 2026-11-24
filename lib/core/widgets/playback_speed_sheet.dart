@@ -1,11 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/playback_speed_enum.dart';
+import '../localization/lang_keys.dart';
 import '../services/device_info_service.dart';
 import '../themes/app_theme.dart';
+import '../utils/my_screen_size.dart';
 import 'sheet_handle.dart';
+import '../utils/screen_scale.dart';
 
 class PlaybackSpeedSheet extends StatelessWidget {
   const PlaybackSpeedSheet({
@@ -31,7 +33,7 @@ class PlaybackSpeedSheet extends StatelessWidget {
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     constraints: BoxConstraints(
-      maxHeight: MediaQuery.sizeOf(context).height * _maxHeightFactor,
+      maxHeight: MyScreenSize.heightFraction(context, _maxHeightFactor),
     ),
     builder: (BuildContext sheetContext) => PlaybackSpeedSheet(
       current: current,
@@ -60,7 +62,7 @@ class PlaybackSpeedSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular((24).r(context))),
       ),
       child: SafeArea(
         top: false,
@@ -68,16 +70,16 @@ class PlaybackSpeedSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+              padding: EdgeInsets.fromLTRB((16).w(context), (12).h(context), (16).w(context), (8).h(context)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   const SheetHandle(),
 
-                  SizedBox(height: 16.h),
+                  SizedBox(height: (16).h(context)),
 
                   Text(
-                    'playback_speed'.tr(),
+                    LangKeys.playbackSpeed.tr(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: styles.panelTitle,
@@ -85,9 +87,12 @@ class PlaybackSpeedSheet extends StatelessWidget {
                 ],
               ),
             ),
-            Flexible(
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MyScreenSize.heightFraction(context, 0.85),
+              ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                padding: EdgeInsets.fromLTRB((16).w(context), (0).h(context), (16).w(context), (16).h(context)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -105,9 +110,9 @@ class PlaybackSpeedSheet extends StatelessWidget {
                       ),
 
                     if (noteKey != null) ...<Widget>[
-                      SizedBox(height: 8.h),
+                      SizedBox(height: (8).h(context)),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        padding: EdgeInsets.symmetric(horizontal: (8).w(context)),
                         child: Text(
                           noteKey.tr(),
                           textAlign: TextAlign.center,
@@ -152,10 +157,10 @@ class _Option extends StatelessWidget {
     return ListTile(
       onTap: isLocked ? null : onTap,
       dense: true,
-      contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+      contentPadding: EdgeInsets.symmetric(horizontal: (8).w(context)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((10).r(context))),
       title: Text(
-        speed.isNormal ? 'playback_speed_normal'.tr() : speed.label,
+        speed.isNormal ? LangKeys.playbackSpeedNormal.tr() : speed.label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: isLocked
@@ -165,12 +170,12 @@ class _Option extends StatelessWidget {
       trailing: switch ((isLocked, isSelected)) {
         (true, _) => Icon(
           Icons.lock_outline_rounded,
-          size: 18.w,
+          size: (18).r(context),
           color: colors.onSurfaceVariant.withValues(alpha: 0.5),
         ),
         (false, true) => Icon(
           Icons.check_rounded,
-          size: 20.w,
+          size: (20).r(context),
           color: colors.primary,
         ),
         (false, false) => null,

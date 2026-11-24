@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../refactor/quiz_review_answer.dart';
 import 'test_html_text.dart';
 import 'test_media_image.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestReviewAnswerTile extends StatelessWidget {
   const TestReviewAnswerTile({required this.answer, super.key});
@@ -21,13 +21,13 @@ class TestReviewAnswerTile extends StatelessWidget {
     final String feedback = answer.normalizedFeedback;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 4.h),
+      padding: EdgeInsets.only(bottom: (4).h(context)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           if (images.isNotEmpty) ...<Widget>[
-            _images(images, colors),
-            SizedBox(width: 8.w),
+            _images(context, images, colors),
+            SizedBox(width: (8).w(context)),
           ],
           Expanded(
             child: Column(
@@ -37,7 +37,7 @@ class TestReviewAnswerTile extends StatelessWidget {
                   TestHtmlText(answer.text.trim(), style: styles.labelSmall),
                 if (feedback.isNotEmpty)
                   Padding(
-                    padding: EdgeInsets.only(top: 3.h),
+                    padding: EdgeInsets.only(top: (3).h(context)),
                     child: TestHtmlText(
                       '${LangKeys.quizOptionFeedback.tr()}: $feedback',
                       style: styles.labelSmall.copyWith(
@@ -54,26 +54,27 @@ class TestReviewAnswerTile extends StatelessWidget {
     );
   }
 
-  Widget _images(List<String> images, ColorScheme colors) {
+  Widget _images(
+      BuildContext context, List<String> images, ColorScheme colors) {
     return Wrap(
-      spacing: 6.w,
-      runSpacing: 4.h,
+      spacing: 6,
+      runSpacing: 4,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
         for (int index = 0; index < images.length; index++) ...<Widget>[
           if (index > 0)
             Icon(
               Icons.compare_arrows,
-              size: 16.w,
+              size: (16).r(context),
               color: colors.onSurfaceVariant,
             ),
           TestMediaImage(
             url: images[index],
-            width: 52.w,
-            height: 52.h,
+            width: (52).w(context),
+            height: (52).h(context),
             radius: 10,
             elevated: false,
-            padding: EdgeInsets.all(3.w),
+            padding: EdgeInsets.all((3).r(context)),
           ),
         ],
       ],

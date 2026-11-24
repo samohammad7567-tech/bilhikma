@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/widgets/custom_button.dart';
 import '../cubit/forget_password_cubit.dart';
 import '../widgets/back_to_login_row.dart';
 import '../widgets/reset_identity_field.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ForgetPasswordForm extends StatelessWidget {
   const ForgetPasswordForm({super.key, this.onBackToLogin});
@@ -27,24 +27,24 @@ class ForgetPasswordForm extends StatelessWidget {
             children: <Widget>[
               ResetIdentityField(controller: cubit.emailController),
 
-              SizedBox(height: 34.h),
+              SizedBox(height: (34).h(context)),
 
               CustomButton(
                 onPressed: cubit.submit,
                 text: 'send_verification_code'.tr(),
                 width: double.infinity,
-                height: 46.h,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (46).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: colors.secondary,
                 textColor: colors.onSecondary,
-                elevation: 0,
+                elevation: (0).r(context),
                 isLoading: state.isLoading,
-                loadingWidth: 22.w,
-                loadingHeight: 22.w,
+                loadingWidth: 22,
+                loadingHeight: 22,
               ),
 
-              SizedBox(height: 16.h),
+              SizedBox(height: (16).h(context)),
 
               BackToLoginRow(onLogin: onBackToLogin),
             ],

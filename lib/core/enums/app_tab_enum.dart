@@ -1,7 +1,7 @@
 import '../constants/app_assets.dart';
 
 enum AppTab {
-  subjects(label: 'study_subjects_tab', icon: AppAssets.assetsSubjectsIcon),
+  subjects(label: 'study_subjects', icon: AppAssets.assetsSubjectsIcon),
   live(label: 'live_broadcast', icon: AppAssets.assetsLive),
   home(label: 'home', icon: AppAssets.assetsHomeIcon),
 

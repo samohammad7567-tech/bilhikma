@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -8,6 +7,7 @@ import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/widgets/capped_seek_bar.dart';
 import 'lesson_audio_controls_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAudioPlayer extends StatelessWidget {
   const LessonAudioPlayer({
@@ -51,10 +51,10 @@ class LessonAudioPlayer extends StatelessWidget {
     final ValueChanged<Duration>? onSeek = this.onSeek;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (14).h(context)),
       decoration: BoxDecoration(
         color: colors.tertiaryContainer,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular((12).r(context)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -70,7 +70,7 @@ class LessonAudioPlayer extends StatelessWidget {
             onForward: onSeek == null ? null : () => _rewind(onSeek),
           ),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
           Directionality(
             textDirection: TextDirection.ltr,
             child: Row(

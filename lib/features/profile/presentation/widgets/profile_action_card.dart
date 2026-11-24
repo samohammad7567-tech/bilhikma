@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/profile_action_enum.dart';
 import 'profile_action_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ProfileActionCard extends StatelessWidget {
   const ProfileActionCard({required this.onAction, super.key});
@@ -17,7 +17,7 @@ class ProfileActionCard extends StatelessWidget {
       color: Theme.of(
         context,
       ).colorScheme.tertiaryContainer.withValues(alpha: 0.8),
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: BorderRadius.circular((12).r(context)),
       clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -25,10 +25,10 @@ class ProfileActionCard extends StatelessWidget {
           for (int index = 0; index < actions.length; index++) ...<Widget>[
             if (index > 0)
               Divider(
-                height: 1.h,
-                thickness: 1.h,
-                indent: 12.w,
-                endIndent: 12.w,
+                height: (1).h(context),
+                thickness: 1,
+                indent: 12,
+                endIndent: 12,
                 color: Theme.of(
                   context,
                 ).colorScheme.outline.withValues(alpha: 0.15),

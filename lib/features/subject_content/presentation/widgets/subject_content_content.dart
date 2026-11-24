@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/models/lesson_model.dart';
@@ -12,6 +11,7 @@ import '../../../gallery/data/models/media_album_model.dart';
 import '../../../../core/models/live_session_model.dart';
 import '../cubit/subject_content_cubit.dart';
 import '../refactor/subject_content_sections.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SubjectContentContent extends StatelessWidget {
   const SubjectContentContent({
@@ -55,22 +55,22 @@ class SubjectContentContent extends StatelessWidget {
       onRefresh: context.read<SubjectContentCubit>().refresh,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.only(bottom: 24.h),
+        padding: EdgeInsets.only(bottom: (24).h(context)),
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
 
             child: LessonSubjectHeader(subject: subject),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           LessonCategoryChips(
             selected: state.selectedCategory,
             onSelected: context.read<SubjectContentCubit>().selectCategory,
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           SubjectContentSection(
             state: state,

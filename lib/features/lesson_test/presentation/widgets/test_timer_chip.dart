@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestTimerChip extends StatelessWidget {
   const TestTimerChip({
@@ -23,18 +23,18 @@ class TestTimerChip extends StatelessWidget {
     final TextStyle style = AppTheme.styles(context).labelSmall;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: (10).w(context), vertical: (4).h(context)),
       decoration: BoxDecoration(
         color:
             backgroundColor ?? colors.primaryContainer.withValues(alpha: 0.22),
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular((20).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 13.w, color: color ?? colors.onSurfaceVariant),
+          Icon(icon, size: (13).r(context), color: color ?? colors.onSurfaceVariant),
 
-          SizedBox(width: 5.w),
+          SizedBox(width: (5).w(context)),
 
           Text(
             label,

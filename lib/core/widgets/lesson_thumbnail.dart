@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../enums/content_type_enum.dart';
 import 'app_network_image.dart';
 import 'lesson_fallback_art.dart';
 import 'lesson_lock_scrim.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonThumbnail extends StatelessWidget {
   const LessonThumbnail({
@@ -26,9 +26,9 @@ class LessonThumbnail extends StatelessWidget {
     final String? imageUrl = this.imageUrl;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular((10).r(context)),
       child: Container(
-        width: width ?? 104.w,
+        width: width ?? 104,
         color: Theme.of(context).colorScheme.surfaceContainerLowest,
         child: Stack(
           fit: StackFit.expand,

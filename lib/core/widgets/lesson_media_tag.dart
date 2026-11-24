@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../utils/lesson_view_data.dart';
 import '../enums/content_type_enum.dart';
@@ -16,11 +15,11 @@ class LessonMediaTag extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      padding: EdgeInsetsDirectional.fromSTEB(16.w, 30.h, 28.w, 8.h),
+      padding: EdgeInsetsDirectional.fromSTEB(16, 30, 28, 8),
       decoration: BoxDecoration(
         color: colors.secondary,
         borderRadius: BorderRadiusDirectional.only(
-          topEnd: Radius.circular(64.r),
+          topEnd: Radius.circular(64),
         ),
       ),
       child: Text(

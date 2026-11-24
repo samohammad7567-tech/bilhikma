@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/widgets/lesson_card.dart';
@@ -29,7 +29,7 @@ class SubjectLessonsSection extends StatelessWidget {
       children: <Widget>[
         for (final LessonModel lesson in lessons)
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), 0.0.h(context), (16).w(context), (12).h(context)),
             child: LessonCard(lesson: lesson, onTap: () => onLessonTap(lesson)),
           ),
       ],

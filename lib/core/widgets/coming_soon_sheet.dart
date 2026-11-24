@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
 import 'custom_button.dart';
 import 'sheet_handle.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ComingSoonSheet extends StatelessWidget {
   const ComingSoonSheet({super.key, this.messageKey = 'coming_soon_message'});
@@ -29,22 +29,22 @@ class ComingSoonSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular((24).r(context))),
       ),
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 20.h),
+          padding: EdgeInsets.fromLTRB((24).w(context), (12).h(context), (24).w(context), (20).h(context)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const SheetHandle(),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
 
               Container(
-                width: 84.w,
-                height: 84.w,
+                width: (84).w(context),
+                height: (84).h(context),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: colors.tertiary.withValues(alpha: 0.25),
@@ -52,12 +52,12 @@ class ComingSoonSheet extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.rocket_launch_outlined,
-                  size: 40.w,
+                  size: (40).r(context),
                   color: colors.primary,
                 ),
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: (20).h(context)),
 
               Text(
                 'coming_soon'.tr(),
@@ -67,7 +67,7 @@ class ComingSoonSheet extends StatelessWidget {
                 style: styles.sectionTitle,
               ),
 
-              SizedBox(height: 10.h),
+              SizedBox(height: (10).h(context)),
 
               Text(
                 messageKey.tr(),
@@ -77,18 +77,18 @@ class ComingSoonSheet extends StatelessWidget {
                 style: styles.cardBlurb,
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
 
               CustomButton(
                 onPressed: () => Navigator.of(context).pop(),
                 text: 'close'.tr(),
                 width: double.infinity,
-                height: 46,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (46).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: colors.secondary,
                 textColor: colors.onSecondary,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
             ],
           ),

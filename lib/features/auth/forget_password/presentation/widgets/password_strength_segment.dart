@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PasswordStrengthSegment extends StatelessWidget {
   const PasswordStrengthSegment({
@@ -16,10 +16,10 @@ class PasswordStrengthSegment extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      height: 5.h,
+      height: (5).h(context),
       decoration: BoxDecoration(
         color: isFilled ? tone : colors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(4.r),
+        borderRadius: BorderRadius.circular((4).r(context)),
       ),
     );
   }

@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../themes/app_theme.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_outline_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LogoutConfirmDialog extends StatelessWidget {
   const LogoutConfirmDialog({super.key});
@@ -24,28 +24,28 @@ class LogoutConfirmDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: colors.surface,
-      elevation: 0,
-      insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      elevation: (0).r(context),
+      insetPadding: EdgeInsets.symmetric(horizontal: (28).w(context)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((20).r(context))),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: (18).w(context), vertical: (20).h(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const _LogoutHeader(),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             Text(
               'logout_confirm'.tr(),
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7),
+              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7.h(context)),
             ),
 
-            SizedBox(height: 22.h),
+            SizedBox(height: (22).h(context)),
 
             const _LogoutActions(),
           ],
@@ -65,20 +65,20 @@ class _LogoutHeader extends StatelessWidget {
     return Row(
       children: <Widget>[
         Container(
-          width: 38.w,
-          height: 38.w,
+          width: (38).w(context),
+          height: (38).h(context),
           decoration: BoxDecoration(
             color: colors.secondary,
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular((10).r(context)),
           ),
           child: Icon(
             Icons.logout_rounded,
-            size: 20.w,
+            size: (20).r(context),
             color: colors.onSecondary,
           ),
         ),
 
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
 
         Expanded(
           child: Text(
@@ -108,25 +108,25 @@ class _LogoutActions extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(true),
             text: 'logout'.tr(),
             width: double.infinity,
-            height: 44.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            height: (44).h(context),
+            threeRadius: 8,
+            lastRadius: 8,
             backgroundColor: colors.secondary,
             textColor: colors.onSecondary,
-            elevation: 0,
+            elevation: (0).r(context),
           ),
         ),
 
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
 
         Expanded(
           child: CustomOutlineButton(
             onPressed: () => Navigator.of(context).pop(false),
             text: 'cancel'.tr(),
             width: double.infinity,
-            height: 44.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            height: (44).h(context),
+            threeRadius: 8,
+            lastRadius: 8,
             borderColor: colors.secondary,
             textColor: colors.secondary,
           ),

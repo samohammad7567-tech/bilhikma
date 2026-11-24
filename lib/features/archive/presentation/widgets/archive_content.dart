@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../../../../core/widgets/lesson_card.dart';
 import '../cubit/archive_cubit.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class ArchiveContent extends StatelessWidget {
   const ArchiveContent({required this.state, this.onLessonTap, super.key});
@@ -44,14 +44,14 @@ class ArchiveContent extends StatelessWidget {
               16,
               12,
               16,
-              AppBottomNavBar.barHeight + 12.h,
+              MyScreenSize.bottomChromeHeight(context) + 12,
             ),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final lesson = state.visibleItems[index];
 
                 return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  padding: EdgeInsets.symmetric(vertical: (8).h(context)),
                   child: LessonCard(
                     lesson: lesson,
                     onTap: () => onLessonTap?.call(lesson),

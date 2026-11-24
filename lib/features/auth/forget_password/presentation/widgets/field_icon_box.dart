@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../../core/widgets/app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class FieldIconBox extends StatelessWidget {
   const FieldIconBox({required this.asset, super.key, this.onTap});
@@ -15,9 +15,9 @@ class FieldIconBox extends StatelessWidget {
 
     final Widget box = AppIcon(
       asset: asset,
-      size: 17.w,
+      size: (17).r(context),
       color: colors.secondary,
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all((12).r(context)),
     );
 
     if (onTap == null) return box;

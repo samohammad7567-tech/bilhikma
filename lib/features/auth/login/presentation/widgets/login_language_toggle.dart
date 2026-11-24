@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/enums/language_option_enum.dart';
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/widgets/app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LoginLanguageToggle extends StatelessWidget {
   const LoginLanguageToggle({super.key});
@@ -23,14 +23,14 @@ class LoginLanguageToggle extends StatelessWidget {
       tooltip: 'choose_language'.tr(),
       padding: EdgeInsets.zero,
       color: colors.surfaceContainerLowest,
-      elevation: 4,
-      offset: Offset(0, 40.h),
-      constraints: BoxConstraints(minWidth: 150.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+      elevation: (4).r(context),
+      offset: Offset(0, 40),
+      constraints: BoxConstraints(minWidth: 150),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((12).r(context))),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<LanguageOption>>[
         PopupMenuItem<LanguageOption>(
           enabled: false,
-          height: 34.h,
+          height: (34).h(context),
           child: Text(
             'choose_language'.tr(),
             maxLines: 1,
@@ -41,7 +41,7 @@ class LoginLanguageToggle extends StatelessWidget {
         for (final LanguageOption option in LanguageOption.values)
           PopupMenuItem<LanguageOption>(
             value: option,
-            height: 40.h,
+            height: (40).h(context),
             child: _LanguageMenuRow(
               option: option,
               isSelected: option == selected,
@@ -70,17 +70,17 @@ class _LanguagePill extends StatelessWidget {
     final AppTextStyles styles = AppTheme.styles(context);
 
     return Container(
-      padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 10.w, 4.h),
+      padding: EdgeInsetsDirectional.fromSTEB(4, 4, 10, 4),
       decoration: BoxDecoration(
         color: colors.tertiary.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular((24).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            width: 26.w,
-            height: 26.w,
+            width: (26).w(context),
+            height: (26).h(context),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: colors.primary,
@@ -88,11 +88,11 @@ class _LanguagePill extends StatelessWidget {
             ),
             child: AppIcon(
               asset: AppAssets.assetsLanguageIcon,
-              size: 15.w,
+              size: (15).r(context),
               color: colors.onPrimary,
             ),
           ),
-          SizedBox(width: 6.w),
+          SizedBox(width: (6).w(context)),
           Flexible(
             child: Text(
               label,
@@ -101,10 +101,10 @@ class _LanguagePill extends StatelessWidget {
               style: styles.labelMedium,
             ),
           ),
-          SizedBox(width: 2.w),
+          SizedBox(width: (2).w(context)),
           Icon(
             Icons.keyboard_arrow_down_rounded,
-            size: 18.w,
+            size: (18).r(context),
             color: colors.onSurfaceVariant,
           ),
         ],
@@ -135,7 +135,7 @@ class _LanguageMenuRow extends StatelessWidget {
           ),
         ),
         if (isSelected)
-          Icon(Icons.check_rounded, size: 18.w, color: colors.onSurfaceVariant),
+          Icon(Icons.check_rounded, size: (18).r(context), color: colors.onSurfaceVariant),
       ],
     );
   }

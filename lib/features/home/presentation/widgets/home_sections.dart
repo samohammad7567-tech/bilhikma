@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/subject_card.dart';
 import '../../../../core/models/live_session_model.dart';
@@ -13,7 +12,8 @@ import 'live_session_card.dart';
 import 'resume_lesson_card.dart';
 import 'section_header.dart';
 import '../refactor/home_formats.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class HomeSections extends StatelessWidget {
   const HomeSections({
@@ -40,14 +40,14 @@ class HomeSections extends StatelessWidget {
     return CustomScrollView(
       slivers: <Widget>[
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
           sliver: SliverList(
             delegate: SliverChildListDelegate(<Widget>[
               InstitutionCard(
                 institution: state.context?.entityName ?? '',
                 path: state.classPath,
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: (14).h(context)),
 
               HomeStatsRow(
                 overallProgress: state.overallProgress,
@@ -56,16 +56,14 @@ class HomeSections extends StatelessWidget {
               ),
 
               if (live != null) ...<Widget>[
-                SizedBox(height: 14.h),
+                SizedBox(height: (14).h(context)),
                 LiveSessionCard(
                   session: live,
-                  onTap: onLiveSessionTap == null
-                      ? null
-                      : () => onLiveSessionTap!(live),
+                  onTap: onLiveSessionTap == null ? null : () => onLiveSessionTap!(live),
                 ),
               ],
 
-              SizedBox(height: 20.h),
+              SizedBox(height: (20).h(context)),
 
               SectionHeader(
                 title: context.tr('study_subjects'),
@@ -73,7 +71,7 @@ class HomeSections extends StatelessWidget {
                 onViewAll: onViewAllSubjects,
               ),
 
-              SizedBox(height: 12.h),
+              SizedBox(height: (12).h(context)),
             ]),
           ),
         ),
@@ -84,15 +82,13 @@ class HomeSections extends StatelessWidget {
             final SubjectModel subject = state.subjects[index];
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
               child: SubjectCard(
                 title: subject.name,
                 subtitle: HomeFormats.lessons(subject.lessonsCount),
                 progress: subject.progress,
                 order: subject.position,
-                onTap: onSubjectTap == null
-                    ? null
-                    : () => onSubjectTap!(subject),
+                onTap: onSubjectTap == null ? null : () => onSubjectTap!(subject),
               ),
             );
           },
@@ -100,24 +96,20 @@ class HomeSections extends StatelessWidget {
 
         if (resume != null)
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (16).h(context)),
             sliver: SliverList(
               delegate: SliverChildListDelegate(<Widget>[
                 SectionHeader(title: context.tr('continue_where_you_left_off')),
-                SizedBox(height: 12.h),
+                SizedBox(height: (12).h(context)),
                 ResumeLessonCard(
                   lesson: resume,
-                  onTap: onResumeLessonTap == null
-                      ? null
-                      : () => onResumeLessonTap!(resume),
+                  onTap: onResumeLessonTap == null ? null : () => onResumeLessonTap!(resume),
                 ),
               ]),
             ),
           ),
 
-        SliverToBoxAdapter(
-          child: SizedBox(height: AppBottomNavBar.barHeight + 18.h),
-        ),
+        SliverToBoxAdapter(child: SizedBox(height: MyScreenSize.bottomChromeHeight(context) + 18)),
       ],
     );
   }

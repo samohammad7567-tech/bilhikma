@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bilhikma/core/themes/app_theme.dart';
@@ -11,15 +10,12 @@ import 'package:bilhikma/core/widgets/loading/skeletons/media_tabs_skeleton.dart
 import 'package:bilhikma/core/widgets/loading/skeletons/notification_card_skeleton.dart';
 
 Widget _host(Widget child, {ThemeData? theme, TextDirection? direction}) {
-  return ScreenUtilInit(
-    designSize: const Size(390, 844),
-    builder: (BuildContext context, Widget? _) => MaterialApp(
-      theme: theme ?? AppTheme.light(),
-      locale: const Locale('en'),
-      home: Directionality(
-        textDirection: direction ?? TextDirection.ltr,
-        child: Scaffold(body: child),
-      ),
+  return MaterialApp(
+    theme: theme ?? AppTheme.light(),
+    locale: const Locale('en'),
+    home: Directionality(
+      textDirection: direction ?? TextDirection.ltr,
+      child: Scaffold(body: child),
     ),
   );
 }
@@ -70,14 +66,11 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      ScreenUtilInit(
-        designSize: const Size(390, 844),
-        builder: (BuildContext context, Widget? _) => MaterialApp(
-          theme: AppTheme.light(),
-          home: MediaQuery(
-            data: const MediaQueryData(disableAnimations: true),
-            child: Scaffold(body: const MediaTabsSkeleton()),
-          ),
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: Scaffold(body: const MediaTabsSkeleton()),
         ),
       ),
     );

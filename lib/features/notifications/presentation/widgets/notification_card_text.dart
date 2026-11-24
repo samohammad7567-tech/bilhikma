@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/notification_model.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
 import '../refactor/notification_formats.dart';
 import 'notification_kind_chip.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationCardText extends StatelessWidget {
   const NotificationCardText({
@@ -39,13 +39,13 @@ class NotificationCardText extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 8.w),
+            SizedBox(width: (8).w(context)),
 
             NotificationKindChip(kind: notification.kind),
           ],
         ),
 
-        SizedBox(height: 4.h),
+        SizedBox(height: (4).h(context)),
 
         Text(
           notification.message,
@@ -55,7 +55,7 @@ class NotificationCardText extends StatelessWidget {
           style: styles.cardSubtitle.copyWith(color: tone.body),
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: (6).h(context)),
 
         Text(
           _stamp(),

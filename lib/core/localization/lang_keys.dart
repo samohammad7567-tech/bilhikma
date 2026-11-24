@@ -1,6 +1,7 @@
 class LangKeys {
   LangKeys._();
 
+  static const String liveNow = 'live_now';
   static const String quizNotFound = 'quiz_not_found';
   static const String quizUnavailable = 'quiz_unavailable';
   static const String quizLocked = 'quiz_locked';
@@ -87,4 +88,9 @@ class LangKeys {
   static const String testResult = 'test_result';
   static const String lessonTest = 'lesson_test';
   static const String testStart = 'test_start';
+  static const String watchNow = 'watch_now';
+  static const String remindMeLater = 'remind_me_later';
+  static const String playbackSpeed = 'playback_speed';
+  static const String playbackSpeedNormal = 'playback_speed_normal';
+  static const String viewImage = 'view_image';
 }

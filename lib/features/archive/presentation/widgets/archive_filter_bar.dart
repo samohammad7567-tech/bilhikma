@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/archive_filter_enum.dart';
 import 'archive_filter_segment.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ArchiveFilterBar extends StatelessWidget {
   const ArchiveFilterBar({
@@ -17,10 +17,10 @@ class ArchiveFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(6.w),
+      padding: EdgeInsets.all((6).r(context)),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular((14).r(context)),
       ),
       child: Row(
         children: <Widget>[

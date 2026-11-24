@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/file_download_state.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/app_progress_bar.dart';
 import 'lesson_attachment_download_status.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAttachmentDownloadBar extends StatelessWidget {
   const LessonAttachmentDownloadBar({
@@ -63,7 +63,7 @@ class LessonAttachmentDownloadBar extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 8.w),
+            SizedBox(width: (8).w(context)),
 
             Text(
               download.progress.readableRatio,
@@ -74,10 +74,10 @@ class LessonAttachmentDownloadBar extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 4.h),
+        SizedBox(height: (4).h(context)),
 
         if (fraction != null)
-          AppProgressBar(progress: fraction, height: 4.h, showPercent: false)
+          AppProgressBar(progress: fraction, height: (4).h(context), showPercent: false)
         else
           _indeterminate(context),
       ],
@@ -86,7 +86,7 @@ class LessonAttachmentDownloadBar extends StatelessWidget {
 
   Widget _indeterminate(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double height = 4.h;
+    final double height = 4;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(height),

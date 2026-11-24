@@ -4,15 +4,10 @@ import 'package:bilhikma/features/lesson_test/presentation/widgets/test_html_tex
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_rich_prompt.dart';
 import 'package:bilhikma/features/lesson_test/presentation/widgets/test_word_chip.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _host(Widget child) {
-  return ScreenUtilInit(
-    designSize: const Size(390, 844),
-    builder: (BuildContext context, Widget? _) =>
-        MaterialApp(home: Scaffold(body: child)),
-  );
+  return MaterialApp(home: Scaffold(body: child));
 }
 
 void main() {

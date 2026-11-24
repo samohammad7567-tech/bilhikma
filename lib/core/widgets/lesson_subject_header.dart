@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../models/subject_content_model.dart';
 import '../themes/app_theme.dart';
@@ -7,6 +6,7 @@ import 'app_progress_bar.dart';
 import 'brand_badge.dart';
 import 'index_strip.dart';
 import 'ornamented_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonSubjectHeader extends StatelessWidget {
   const LessonSubjectHeader({required this.subject, super.key, this.order});
@@ -20,7 +20,7 @@ class LessonSubjectHeader extends StatelessWidget {
 
     return Material(
       color: Theme.of(context).colorScheme.tertiaryContainer,
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: BorderRadius.circular((12).r(context)),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
         child: Row(
@@ -34,12 +34,12 @@ class LessonSubjectHeader extends StatelessWidget {
                   const Positioned.fill(child: OrnamentBackdrop()),
 
                   Padding(
-                    padding: EdgeInsets.all(14.w),
+                    padding: EdgeInsets.all((14).r(context)),
                     child: Row(
                       children: <Widget>[
-                        BrandBadge(size: 64.w),
+                        BrandBadge(size: (64).r(context)),
 
-                        SizedBox(width: 14.w),
+                        SizedBox(width: (14).w(context)),
 
                         Expanded(
                           child: Column(
@@ -54,7 +54,7 @@ class LessonSubjectHeader extends StatelessWidget {
                                 style: AppTheme.styles(context).panelTitle,
                               ),
 
-                              SizedBox(height: 14.h),
+                              SizedBox(height: (14).h(context)),
 
                               AppProgressBar(progress: subject.progress),
                             ],

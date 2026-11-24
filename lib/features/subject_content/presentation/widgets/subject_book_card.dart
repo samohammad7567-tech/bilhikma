@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/widgets/ornamented_card.dart';
@@ -8,6 +7,7 @@ import '../../../../core/widgets/lesson_thumbnail.dart';
 import '../../../../core/models/textbook_model.dart';
 import 'subject_book_actions.dart';
 import 'subject_book_details.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SubjectBookCard extends StatelessWidget {
   const SubjectBookCard({
@@ -41,8 +41,8 @@ class SubjectBookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrnamentedCard(
-      radius: 14.r,
-      padding: EdgeInsets.all(12.w),
+      radius: 14,
+      padding: EdgeInsets.all((12).r(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -53,14 +53,14 @@ class SubjectBookCard extends StatelessWidget {
               children: <Widget>[
                 const LessonThumbnail(mediaType: ContentType.article),
 
-                SizedBox(width: 12.w),
+                SizedBox(width: (12).w(context)),
 
                 Expanded(child: SubjectBookDetails(book: book)),
               ],
             ),
           ),
 
-          SizedBox(height: 14.h),
+          SizedBox(height: (14).h(context)),
 
           SubjectBookActions(
             progress: progress,

@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/educational_pathway_model.dart';
 import '../../data/models/pathway_level_model.dart';
@@ -28,7 +27,7 @@ class PathwayTree extends StatelessWidget {
         for (final PathwayStageModel stage in pathway.stages) ...<Widget>[
           PathwayNodeRow(
             label: stage.name,
-            indent: 40.w,
+            indent: 40,
             isExpanded: expandedNodeIds.contains(stage.id),
             onTap: () => onToggle(stage.id),
           ),

@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/password_requirement_enum.dart';
 import '../../../../core/utils/error_mapper.dart';
@@ -10,6 +9,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/password_requirements_checklist.dart';
 import '../../data/repos/profile_repo.dart';
 import '../../../../core/widgets/app_toast.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -78,7 +78,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: Form(
         key: _formKey,
         child: ListView(
-          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+          padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (24).h(context)),
           children: <Widget>[
             _Label(text: 'current_password'.tr()),
             CustomTextField(
@@ -94,14 +94,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 onPressed: () => setState(() => _obscure = !_obscure),
                 icon: Icon(
                   _obscure ? Icons.visibility_off : Icons.visibility,
-                  size: 18.w,
+                  size: (18).r(context),
                 ),
               ),
               validator: (String? value) =>
                   (value ?? '').isEmpty ? 'field_required'.tr() : null,
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             _Label(text: 'new_password'.tr()),
             CustomTextField(
@@ -131,11 +131,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               },
             ),
 
-            SizedBox(height: 10.h),
+            SizedBox(height: (10).h(context)),
 
             PasswordRequirementsChecklist(password: _newPassword),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             _Label(text: 'confirm_new_password'.tr()),
             CustomTextField(
@@ -151,16 +151,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   value != _next.text ? 'passwords_do_not_match'.tr() : null,
             ),
 
-            SizedBox(height: 28.h),
+            SizedBox(height: (28).h(context)),
 
             CustomButton(
               onPressed: _save,
               text: 'change_password'.tr(),
               width: double.infinity,
-              height: 46.h,
+              height: (46).h(context),
               isLoading: _isSaving,
-              threeRadius: 10.r,
-              lastRadius: 10.r,
+              threeRadius: 10,
+              lastRadius: 10,
             ),
           ],
         ),
@@ -177,7 +177,7 @@ class _Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 6.h),
+      padding: EdgeInsets.only(bottom: (6).h(context)),
       child: Text(
         text,
         textAlign: TextAlign.start,

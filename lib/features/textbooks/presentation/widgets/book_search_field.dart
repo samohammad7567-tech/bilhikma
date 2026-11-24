@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../cubit/book_preview_cubit.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class BookSearchField extends StatefulWidget {
   const BookSearchField({
@@ -45,7 +45,7 @@ class _BookSearchFieldState extends State<BookSearchField> {
         border: Border(bottom: BorderSide(color: colors.outlineVariant)),
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(12.w, 4.h, 4.w, 8.h),
+        padding: EdgeInsets.fromLTRB((12).w(context), (4).h(context), (4).w(context), (8).h(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -57,17 +57,17 @@ class _BookSearchFieldState extends State<BookSearchField> {
                     hintText: 'reader_search_hint'.tr(),
                     textInputAction: TextInputAction.search,
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 10.h,
+                      horizontal: (12).w(context),
+                      vertical: (10).h(context),
                     ),
-                    borderRadius: 10.r,
+                    borderRadius: 10,
                     onFieldSubmitted: widget.onSubmit,
                   ),
                 ),
 
                 IconButton(
                   onPressed: widget.onClose,
-                  icon: Icon(Icons.close, size: 22.w),
+                  icon: Icon(Icons.close, size: (22).r(context)),
                   color: colors.onSurface,
                 ),
               ],
@@ -85,7 +85,7 @@ class _BookSearchFieldState extends State<BookSearchField> {
     if (!state.hasQuery) return const SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.only(top: 4.h),
+      padding: EdgeInsets.only(top: (4).h(context)),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -129,7 +129,7 @@ class _BookSearchFieldState extends State<BookSearchField> {
       IconButton(
         onPressed: onPressed,
         visualDensity: VisualDensity.compact,
-        icon: Icon(icon, size: 22.w),
+        icon: Icon(icon, size: (22).r(context)),
         color: colors.onSurface,
       );
 }

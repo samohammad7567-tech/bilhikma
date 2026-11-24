@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../themes/app_theme.dart';
 import '../../../widgets/ornamented_card.dart';
 import 'drawer_profile_monogram.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class DrawerProfileCard extends StatelessWidget {
   const DrawerProfileCard({super.key, this.onTap});
@@ -18,18 +18,18 @@ class DrawerProfileCard extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.circular((14).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: OrnamentedCard(
-          radius: 14.r,
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          radius: 14,
+          padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (12).h(context)),
           child: Row(
             children: <Widget>[
               const DrawerProfileMonogram(avatarUrl: ''),
 
-              SizedBox(width: 12.w),
+              SizedBox(width: (12).w(context)),
 
               Expanded(
                 child: BlocBuilder<ProfileCubit, ProfileState>(

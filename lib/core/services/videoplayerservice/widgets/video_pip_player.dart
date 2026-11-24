@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -6,6 +6,7 @@ import '../floating_video_controller.dart';
 import '../video_playback.dart';
 import '../video_player_options.dart';
 import 'video_pip_controls.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoPipPlayer extends StatefulWidget {
   const VideoPipPlayer({
@@ -124,11 +125,11 @@ class _VideoPipPlayerState extends State<VideoPipPlayer> {
                   height: size.height,
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular((14).r(context)),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 14,
+                        blurRadius: (14).r(context),
                         offset: const Offset(0, 4),
                       ),
                     ],

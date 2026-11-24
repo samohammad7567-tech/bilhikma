@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestPairBadge extends StatelessWidget {
   const TestPairBadge({required this.value, super.key});
@@ -12,11 +12,11 @@ class TestPairBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    final double diameter = 20.w;
+    final double diameter = 20;
 
     return Container(
       constraints: BoxConstraints(minWidth: diameter, minHeight: diameter),
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+      padding: EdgeInsets.symmetric(horizontal: (5).w(context), vertical: (2).h(context)),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: colors.secondary,

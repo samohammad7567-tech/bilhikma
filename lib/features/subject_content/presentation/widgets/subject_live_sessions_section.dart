@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/models/live_session_model.dart';
 import '../../../../core/widgets/live_session_tile.dart';
@@ -30,7 +30,7 @@ class SubjectLiveSessionsSection extends StatelessWidget {
       children: <Widget>[
         for (final LiveSessionModel session in sessions)
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), 0.0.h(context), (16).w(context), (12).h(context)),
             child: LiveSessionTile(
               session: session,
               onWatch: () => onWatch(session),

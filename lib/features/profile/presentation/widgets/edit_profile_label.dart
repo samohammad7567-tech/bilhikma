@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class EditProfileLabel extends StatelessWidget {
   const EditProfileLabel({required this.text, super.key});
@@ -9,7 +9,7 @@ class EditProfileLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 6.h),
+      padding: EdgeInsets.only(bottom: (6).h(context)),
       child: Text(
         text,
         textAlign: TextAlign.start,

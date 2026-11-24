@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/lesson_attachment_model.dart';
 import '../../../../core/models/file_download_state.dart';
@@ -7,6 +6,7 @@ import '../../../../core/themes/app_theme.dart';
 import 'lesson_attachment_thumbnail.dart';
 import 'lesson_attachment_action.dart';
 import 'lesson_attachment_download_bar.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAttachmentRow extends StatelessWidget {
   const LessonAttachmentRow({
@@ -49,7 +49,7 @@ class LessonAttachmentRow extends StatelessWidget {
         _details(context),
 
         if (active != null) ...<Widget>[
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
 
           LessonAttachmentDownloadBar(
             download: active,
@@ -66,7 +66,7 @@ class LessonAttachmentRow extends StatelessWidget {
       children: <Widget>[
         const LessonAttachmentThumbnail(),
 
-        SizedBox(width: 10.w),
+        SizedBox(width: (10).w(context)),
 
         Expanded(
           child: Column(
@@ -92,14 +92,14 @@ class LessonAttachmentRow extends StatelessWidget {
           ),
         ),
 
-        SizedBox(width: 8.w),
+        SizedBox(width: (8).w(context)),
 
-        SizedBox(width: _actionsWidth.w, child: _actions()),
+        SizedBox(width: _actionsWidth, child: _actions(context)),
       ],
     );
   }
 
-  Widget _actions() {
+  Widget _actions(BuildContext context) {
     // A downloaded file is read from disk, so previewing it over the network
     // would only be slower: the single action becomes Open.
     if (isDownloaded) {
@@ -126,7 +126,7 @@ class LessonAttachmentRow extends StatelessWidget {
           ),
         ),
 
-        SizedBox(width: 6.w),
+        SizedBox(width: (6).w(context)),
 
         Expanded(
           child: LessonAttachmentAction(

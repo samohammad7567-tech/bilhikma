@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_match_item_model.dart';
@@ -7,6 +6,7 @@ import '../../data/models/test_question_model.dart';
 import 'test_match_pairs_helpers.dart';
 import 'test_pair_tile.dart';
 import 'test_question_prompt.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestMatchPairsQuestion extends StatelessWidget {
   const TestMatchPairsQuestion({
@@ -22,12 +22,9 @@ class TestMatchPairsQuestion extends StatelessWidget {
 
   final TestQuestionModel question;
   final TestAnswerModel answer;
-
   final List<String> matchOrder;
-
   final ValueChanged<String> onPromptTap;
   final ValueChanged<String> onMatchTap;
-
   final String? selectedPromptId;
   final Duration? questionRemaining;
 
@@ -45,60 +42,58 @@ class TestMatchPairsQuestion extends StatelessWidget {
           rich: question.isRichPrompt,
         ),
 
-        SizedBox(height: 18.h),
+        SizedBox(height: (18).h(context)),
 
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(child: _leftItems),
-
-            SizedBox(width: 10.w),
-
-            Expanded(child: _rightItems),
+            Expanded(child: _leftItems(context)),
+            SizedBox(width: (10).w(context)),
+            Expanded(child: _rightItems(context)),
           ],
         ),
       ],
     );
   }
 
-  Widget get _leftItems => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    mainAxisSize: MainAxisSize.min,
-    children: question.leftItems
-        .map(
-          (TestMatchItemModel item) => Padding(
-            padding: EdgeInsets.only(bottom: 10.h),
-            child: TestPairTile(
-              text: item.text,
-              imageUrl: item.imageUrl,
-              audioUrl: item.audioUrl,
-              isSelected: selectedPromptId == item.id,
-              badge: leftBadge(question, answer, item.id),
-              onTap: () => onPromptTap(item.id),
-            ),
-          ),
-        )
-        .toList(growable: false),
-  );
+  Widget _leftItems(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: question.leftItems
+            .map(
+              (TestMatchItemModel item) => Padding(
+                padding: EdgeInsets.only(bottom: (10).h(context)),
+                child: TestPairTile(
+                  text: item.text,
+                  imageUrl: item.imageUrl,
+                  audioUrl: item.audioUrl,
+                  isSelected: selectedPromptId == item.id,
+                  badge: leftBadge(question, answer, item.id),
+                  onTap: () => onPromptTap(item.id),
+                ),
+              ),
+            )
+            .toList(growable: false),
+      );
 
-  Widget get _rightItems => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    mainAxisSize: MainAxisSize.min,
-    children: orderedRights(question, matchOrder)
-        .map(
-          (TestMatchItemModel item) => Padding(
-            padding: EdgeInsets.only(bottom: 10.h),
-            child: TestPairTile(
-              text: item.text,
-              imageUrl: item.imageUrl,
-              audioUrl: item.audioUrl,
-              isMuted: true,
-              isSelected: false,
-              badge: rightBadge(question, answer, item.id),
-              onTap: () => onMatchTap(item.id),
-            ),
-          ),
-        )
-        .toList(growable: false),
-  );
+  Widget _rightItems(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: orderedRights(question, matchOrder)
+            .map(
+              (TestMatchItemModel item) => Padding(
+                padding: EdgeInsets.only(bottom: (10).h(context)),
+                child: TestPairTile(
+                  text: item.text,
+                  imageUrl: item.imageUrl,
+                  audioUrl: item.audioUrl,
+                  isMuted: true,
+                  isSelected: false,
+                  badge: rightBadge(question, answer, item.id),
+                  onTap: () => onMatchTap(item.id),
+                ),
+              ),
+            )
+            .toList(growable: false),
+      );
 }

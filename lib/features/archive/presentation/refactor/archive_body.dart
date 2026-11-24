@@ -1,13 +1,13 @@
-import '../../../../core/enums/archive_filter_enum.dart';
+﻿import '../../../../core/enums/archive_filter_enum.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/lesson_model.dart';
 import '../cubit/archive_cubit.dart';
 import '../widgets/archive_filter_bar.dart';
 import '../widgets/archive_content.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ArchiveBody extends StatelessWidget {
   const ArchiveBody({super.key, this.onLessonTap, this.onFilterSelected});
@@ -22,7 +22,7 @@ class ArchiveBody extends StatelessWidget {
         return Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
               child: ArchiveFilterBar(
                 selected: state.selectedFilter,
                 onSelected: (filter) {
@@ -32,7 +32,7 @@ class ArchiveBody extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             Expanded(
               child: ArchiveContent(state: state, onLessonTap: onLessonTap),

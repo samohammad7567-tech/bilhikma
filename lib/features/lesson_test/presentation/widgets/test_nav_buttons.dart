@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_outline_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestNavButtons extends StatelessWidget {
   const TestNavButtons({
@@ -26,7 +26,7 @@ class TestNavButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double height = 46.h;
+    final double height = 46;
 
     return Row(
       children: <Widget>[
@@ -38,16 +38,16 @@ class TestNavButtons extends StatelessWidget {
                 : LangKeys.nextQuestion.tr(),
             width: double.infinity,
             height: height,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            threeRadius: 8,
+            lastRadius: 8,
             isLoading: isSubmitting,
             backgroundColor: colors.secondary,
             textColor: colors.onSecondary,
-            elevation: 0,
+            elevation: (0).r(context),
           ),
         ),
 
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
 
         Expanded(
           child: Opacity(
@@ -57,8 +57,8 @@ class TestNavButtons extends StatelessWidget {
               text: LangKeys.previousQuestion.tr(),
               width: double.infinity,
               height: height,
-              threeRadius: 8.r,
-              lastRadius: 8.r,
+              threeRadius: 8,
+              lastRadius: 8,
               borderColor: colors.secondary,
               textColor: colors.secondary,
             ),

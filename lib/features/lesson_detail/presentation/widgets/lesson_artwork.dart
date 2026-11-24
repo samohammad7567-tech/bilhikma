@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_network_image.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonArtwork extends StatelessWidget {
   const LessonArtwork({
@@ -19,16 +19,16 @@ class LessonArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? imageUrl = this.imageUrl;
-    final double inset = framePadding ?? 8.w;
+    final double inset = framePadding ?? 8;
 
     return Container(
       padding: EdgeInsets.all(inset),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular((12).r(context)),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(6.r),
+        borderRadius: BorderRadius.circular((6).r(context)),
         child: AspectRatio(
           aspectRatio: aspectRatio,
           child: imageUrl == null || imageUrl.isEmpty

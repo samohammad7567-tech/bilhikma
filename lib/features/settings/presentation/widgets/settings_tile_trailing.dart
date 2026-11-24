@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SettingsTileTrailing extends StatelessWidget {
   const SettingsTileTrailing({required this.isBusy, super.key});
@@ -12,10 +12,10 @@ class SettingsTileTrailing extends StatelessWidget {
 
     if (isBusy) {
       return SizedBox(
-        width: 16.w,
-        height: 16.w,
+        width: (16).w(context),
+        height: (16).h(context),
         child: CircularProgressIndicator(
-          strokeWidth: 2.w,
+          strokeWidth: (2).r(context),
           color: colors.secondary,
         ),
       );
@@ -23,7 +23,7 @@ class SettingsTileTrailing extends StatelessWidget {
 
     return Icon(
       Icons.arrow_forward_ios,
-      size: 14.w,
+      size: (14).r(context),
       color: colors.onSurfaceVariant,
     );
   }

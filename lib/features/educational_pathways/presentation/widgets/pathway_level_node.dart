@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/pathway_level_model.dart';
 import 'pathway_node_row.dart';
@@ -25,7 +24,7 @@ class PathwayLevelNode extends StatelessWidget {
       children: <Widget>[
         PathwayNodeRow(
           label: level.name,
-          indent: 60.w,
+          indent: 60,
           isExpanded: isExpanded,
           onTap: () => onToggle(level.id),
         ),

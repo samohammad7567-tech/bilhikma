@@ -1,7 +1,6 @@
 import 'app_icon.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_assets.dart';
 
@@ -11,7 +10,7 @@ class BrandBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double diameter = size ?? 56.w;
+    final double diameter = size ?? 56;
 
     return Container(
       width: diameter,

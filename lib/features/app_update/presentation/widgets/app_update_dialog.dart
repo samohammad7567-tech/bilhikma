@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../data/models/app_version_model.dart';
 import 'app_update_dialog_actions.dart';
 import 'app_update_dialog_header.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppUpdateDialog extends StatelessWidget {
   const AppUpdateDialog({required this.version, super.key});
@@ -31,18 +31,18 @@ class AppUpdateDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: colors.surface,
-      elevation: 0,
-      insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      elevation: (0).r(context),
+      insetPadding: EdgeInsets.symmetric(horizontal: (28).w(context)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((20).r(context))),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: (18).w(context), vertical: (20).h(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const AppUpdateDialogHeader(),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             Text(
               version.hasMessage
@@ -51,11 +51,11 @@ class AppUpdateDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 5,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7),
+              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7.h(context)),
             ),
 
             if (version.latestVersion.isNotEmpty) ...<Widget>[
-              SizedBox(height: 10.h),
+              SizedBox(height: (10).h(context)),
               Text(
                 'app_update_latest_version'.tr(
                   namedArgs: <String, String>{'version': version.latestVersion},
@@ -67,7 +67,7 @@ class AppUpdateDialog extends StatelessWidget {
               ),
             ],
 
-            SizedBox(height: 22.h),
+            SizedBox(height: (22).h(context)),
 
             const AppUpdateDialogActions(),
           ],

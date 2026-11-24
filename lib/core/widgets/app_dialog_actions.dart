@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'custom_button.dart';
 import 'custom_outline_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppDialogActions extends StatelessWidget {
   const AppDialogActions({
@@ -34,25 +34,25 @@ class AppDialogActions extends StatelessWidget {
             onPressed: onConfirm,
             text: confirmKey.tr(),
             width: double.infinity,
-            height: 44.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            height: (44).h(context),
+            threeRadius: 8,
+            lastRadius: 8,
             backgroundColor: confirmColor ?? colors.error,
             textColor: colors.onError,
-            elevation: 0,
+            elevation: (0).r(context),
           ),
         ),
 
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
 
         Expanded(
           child: CustomOutlineButton(
             onPressed: onCancel,
             text: cancelKey.tr(),
             width: double.infinity,
-            height: 44.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            height: (44).h(context),
+            threeRadius: 8,
+            lastRadius: 8,
             borderColor: colors.secondary,
             textColor: colors.secondary,
           ),

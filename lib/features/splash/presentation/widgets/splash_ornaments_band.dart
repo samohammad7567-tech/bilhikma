@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
+import 'package:bilhikma/core/utils/my_screen_size.dart';
 import 'splash_logo_pop.dart';
 import 'splash_medallion_entry.dart';
 
@@ -17,7 +17,7 @@ class SplashOrnamentsBand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double medallionSize = 0.72.sw;
+    final double medallionSize = MyScreenSize.widthFraction(context, 0.72);
     final double overflow = medallionSize * 0.65;
 
     return SizedBox(

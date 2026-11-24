@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
@@ -11,6 +10,7 @@ import '../cubit/lessons_cubit.dart';
 import '../../../../core/widgets/lesson_card.dart';
 import 'lesson_media_tabs.dart';
 import '../../../../core/widgets/lesson_subject_header.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonsContent extends StatelessWidget {
   const LessonsContent({required this.state, this.onLessonTap, super.key});
@@ -38,28 +38,28 @@ class LessonsContent extends StatelessWidget {
       onRefresh: context.read<LessonsCubit>().refresh,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.only(bottom: 24.h),
+        padding: EdgeInsets.only(bottom: (24).h(context)),
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
             child: LessonSubjectHeader(subject: subject),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
             child: LessonMediaTabs(
               selected: state.selectedType,
               onSelected: context.read<LessonsCubit>().selectType,
             ),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           if (state.isLoading)
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 32.h),
+              padding: EdgeInsets.symmetric(vertical: (32).h(context)),
               child: const Center(child: CircularProgressIndicator()),
             )
           else if (lessons.isEmpty)
@@ -70,7 +70,7 @@ class LessonsContent extends StatelessWidget {
           else ...<Widget>[
             for (final LessonModel lesson in lessons)
               Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+                padding: EdgeInsets.fromLTRB((16).w(context), (0).h(context), (16).w(context), (12).h(context)),
                 child: LessonCard(
                   lesson: lesson,
                   onTap: onLessonTap == null
@@ -81,7 +81,7 @@ class LessonsContent extends StatelessWidget {
 
             if (state.hasMore)
               Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+                padding: EdgeInsets.fromLTRB((16).w(context), (0).h(context), (16).w(context), (12).h(context)),
                 child: Center(
                   child: state.isLoadingMore
                       ? const CircularProgressIndicator()

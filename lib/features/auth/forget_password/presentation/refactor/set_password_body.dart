@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/widgets/app_content_width.dart';
 import '../../../../../core/widgets/app_top_bar.dart';
 import '../widgets/reset_password_header.dart';
 import 'set_password_form.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SetPasswordBody extends StatelessWidget {
   const SetPasswordBody({super.key, this.onBack});
@@ -18,7 +18,7 @@ class SetPasswordBody extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
             child: AppTopBar(
               title: context.tr('set_password_title'),
               onBack: onBack ?? () => Navigator.of(context).pop(),
@@ -31,7 +31,7 @@ class SetPasswordBody extends StatelessWidget {
               child: SingleChildScrollView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.fromLTRB(40.w, 20.h, 40.w, 32.h),
+                padding: EdgeInsets.fromLTRB((40).w(context), (20).h(context), (40).w(context), (32).h(context)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -40,7 +40,7 @@ class SetPasswordBody extends StatelessWidget {
                       hintKey: 'set_password_hint',
                     ),
 
-                    SizedBox(height: 26.h),
+                    SizedBox(height: (26).h(context)),
 
                     const SetPasswordForm(),
                   ],

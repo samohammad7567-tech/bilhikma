@@ -2,10 +2,10 @@ import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/app_tab_enum.dart';
 import '../themes/app_theme.dart';
+import '../utils/my_screen_size.dart';
 import 'bottom_nav_tab_icon.dart';
 
 class AppBottomNavBar extends StatelessWidget {
@@ -21,9 +21,6 @@ class AppBottomNavBar extends StatelessWidget {
   static const double _minBarHeight = 64;
   static const double _maxBarHeight = 76;
   static const double _labelFontSize = 12;
-
-  static double get barHeight =>
-      (70.h).clamp(_minBarHeight, _maxBarHeight).toDouble();
 
   static const double _maxLabelTextScale = 1;
 
@@ -48,7 +45,10 @@ class AppBottomNavBar extends StatelessWidget {
           backgroundColor: Colors.transparent,
           buttonBackgroundColor: Colors.transparent,
           iconPadding: 0,
-          height: barHeight,
+          height: MyScreenSize.bottomChromeHeight(context).clamp(
+            _minBarHeight,
+            _maxBarHeight,
+          ),
           animationDuration: const Duration(milliseconds: 400),
           items: <CurvedNavigationBarItem>[
             for (final AppTab tab in AppTab.values)

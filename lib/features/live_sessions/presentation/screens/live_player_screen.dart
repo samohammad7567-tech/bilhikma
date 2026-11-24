@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/live_session_model.dart';
 import '../../../../core/widgets/app_error_view.dart';
@@ -11,6 +10,7 @@ import '../widgets/live_player_stage.dart';
 import '../widgets/live_player_summary_card.dart';
 import '../../../security/presentation/widgets/security_watch.dart';
 import '../../../../core/routing/app_routes.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LivePlayerScreen extends StatefulWidget {
   const LivePlayerScreen({required this.session, super.key});
@@ -72,14 +72,14 @@ class _LivePlayerScreenState extends State<LivePlayerScreen> {
 
                   return _Shell(
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 24.h),
+                      padding: EdgeInsets.only(bottom: (24).h(context)),
                       children: <Widget>[
                         stage,
 
-                        SizedBox(height: 16.h),
+                        SizedBox(height: (16).h(context)),
 
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
                           child: LivePlayerSummaryCard(session: widget.session),
                         ),
                       ],

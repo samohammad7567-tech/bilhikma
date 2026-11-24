@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonVideoRewindHint extends StatelessWidget {
   const LessonVideoRewindHint({
@@ -28,11 +28,11 @@ class LessonVideoRewindHint extends StatelessWidget {
                     ? Icons.fast_rewind_rounded
                     : Icons.fast_forward_rounded,
                 color: Colors.white,
-                size: 30.sp,
+                size: (30).r(context),
               ),
               Text(
                 '10s',
-                style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                style: TextStyle(color: Colors.white, fontSize: (12).sp(context)),
               ),
             ],
           ),

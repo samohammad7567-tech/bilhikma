@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../../../../core/enums/sleep_timer_option_enum.dart';
@@ -9,6 +8,7 @@ import '../cubit/settings_cubit.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 import '../../../../core/themes/app_theme.dart';
 import 'sleep_timer_option_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SleepTimerSheet extends StatelessWidget {
   const SleepTimerSheet({super.key});
@@ -32,13 +32,13 @@ class SleepTimerSheet extends StatelessWidget {
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (BuildContext context, SettingsState state) {
           return Padding(
-            padding: EdgeInsets.symmetric(vertical: 6.h),
+            padding: EdgeInsets.symmetric(vertical: (6).h(context)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SheetHandle(),
 
-                SizedBox(height: 20.h),
+                SizedBox(height: (20).h(context)),
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
@@ -52,7 +52,7 @@ class SleepTimerSheet extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 12.h),
+                SizedBox(height: (12).h(context)),
 
                 for (final SleepTimerOption option
                     in SleepTimerOption.selectable)

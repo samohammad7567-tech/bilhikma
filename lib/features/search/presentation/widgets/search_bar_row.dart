@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'search_query_field.dart';
 import 'search_submit_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SearchBarRow extends StatefulWidget {
   const SearchBarRow({
@@ -51,7 +51,7 @@ class _SearchBarRowState extends State<SearchBarRow> {
           ),
         ),
 
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
 
         SearchSubmitButton(onPressed: widget.onSubmitted),
       ],

@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
+﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../video_player_options.dart';
 import 'video_circle_icon_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoPlaybackError extends StatelessWidget {
   const VideoPlaybackError({
@@ -23,27 +24,27 @@ class VideoPlaybackError extends StatelessWidget {
     return ColoredBox(
       color: Colors.black.withValues(alpha: 0.72),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all((24).r(context)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(
               CupertinoIcons.exclamationmark_triangle,
               color: options.foregroundColor,
-              size: 32,
+              size: (32).r(context),
             ),
 
-            const SizedBox(height: 12),
+            SizedBox(height: (12).h(context)),
 
             Text(
               message,
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: options.foregroundColor, fontSize: 14),
+              style: TextStyle(color: options.foregroundColor, fontSize: (14).sp(context)),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: (16).h(context)),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +57,7 @@ class VideoPlaybackError extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(width: 8),
+                SizedBox(width: (8).w(context)),
 
                 VideoCircleIconButton(
                   icon: CupertinoIcons.xmark,

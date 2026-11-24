@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/lesson_model.dart';
 import '../cubit/search_cubit.dart';
 import '../widgets/search_bar_row.dart';
 import '../widgets/search_results.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SearchBody extends StatelessWidget {
   const SearchBody({super.key, this.onResultTap});
@@ -21,7 +21,7 @@ class SearchBody extends StatelessWidget {
         return Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
               child: SearchBarRow(
                 query: state.query,
                 onChanged: cubit.queryChanged,
@@ -29,7 +29,7 @@ class SearchBody extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             Expanded(
               child: SearchResults(state: state, onResultTap: onResultTap),

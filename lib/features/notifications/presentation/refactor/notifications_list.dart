@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/notification_model.dart';
 import '../widgets/notification_card.dart';
 import '../widgets/notification_day_header.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
 import 'notification_day_group.dart';
 import 'notification_seen_tracker.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class NotificationsList extends StatefulWidget {
   const NotificationsList({
@@ -68,10 +68,10 @@ class _NotificationsListState extends State<NotificationsList> {
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.fromLTRB(
-          16.w,
+          16,
           0,
-          16.w,
-          AppBottomNavBar.barHeight + 24.h,
+          16,
+          MyScreenSize.bottomChromeHeight(context) + 24,
         ),
         itemCount: rows.length,
         itemBuilder: (BuildContext context, int index) => rows[index],
@@ -88,7 +88,7 @@ class _NotificationsListState extends State<NotificationsList> {
       for (final NotificationModel item in group.items) {
         rows.add(
           Padding(
-            padding: EdgeInsets.only(bottom: 10.h),
+            padding: EdgeInsets.only(bottom: (10).h(context)),
             child: _card(item),
           ),
         );

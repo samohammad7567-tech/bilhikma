@@ -1,9 +1,8 @@
-import '../../../../../core/routing/app_routes.dart';
+﻿import '../../../../../core/routing/app_routes.dart';
 import '../../../../../core/widgets/app_icon.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/app_content_width.dart';
@@ -11,6 +10,7 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/status_header.dart';
 import '../widgets/info_card.dart';
 import '../widgets/info_item.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class RequestReviewBody extends StatelessWidget {
   const RequestReviewBody({
@@ -52,11 +52,11 @@ class RequestReviewBody extends StatelessWidget {
       child: AppContentWidth(
         maxWidth: 600,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50.w),
+          padding: EdgeInsets.symmetric(horizontal: (50).w(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
 
               StatusHeader(
                 title: context.tr('request_under_review'),
@@ -67,9 +67,9 @@ class RequestReviewBody extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    AppIcon(asset: AppAssets.assetsPending, size: 70.w),
+                    AppIcon(asset: AppAssets.assetsPending, size: (70).r(context)),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: (24).h(context)),
 
                     InfoCard(items: items),
                   ],
@@ -87,15 +87,15 @@ class RequestReviewBody extends StatelessWidget {
                     },
                 text: 'back_to_login'.tr(),
                 width: double.infinity,
-                height: 40,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (40).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: colors.secondary,
                 textColor: colors.onSecondary,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
             ],
           ),
         ),

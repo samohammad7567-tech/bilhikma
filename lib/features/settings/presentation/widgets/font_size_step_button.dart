@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class FontSizeStepButton extends StatelessWidget {
   const FontSizeStepButton({
@@ -18,16 +18,16 @@ class FontSizeStepButton extends StatelessWidget {
 
     return Material(
       color: colors.tertiary.withValues(alpha: isEnabled ? 0.8 : 0.32),
-      borderRadius: BorderRadius.circular(8.r),
+      borderRadius: BorderRadius.circular((8).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,
         child: SizedBox(
-          width: 44.w,
-          height: 40.h,
+          width: (44).w(context),
+          height: (40).h(context),
           child: Icon(
             icon,
-            size: 22.w,
+            size: (22).r(context),
             color: colors.secondaryContainer.withValues(
               alpha: isEnabled ? 1 : 0.4,
             ),

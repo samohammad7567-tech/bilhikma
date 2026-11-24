@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ResetPasswordHeader extends StatelessWidget {
   const ResetPasswordHeader({
@@ -23,11 +23,11 @@ class ResetPasswordHeader extends StatelessWidget {
       children: <Widget>[
         SvgPicture.asset(
           AppAssets.assetsLogoText,
-          height: 78.h,
+          height: (78).h(context),
           fit: BoxFit.contain,
         ),
 
-        SizedBox(height: 18.h),
+        SizedBox(height: (18).h(context)),
 
         Text(
           headingKey.tr(),
@@ -37,7 +37,7 @@ class ResetPasswordHeader extends StatelessWidget {
           style: AppTheme.styles(context).sectionTitle,
         ),
 
-        SizedBox(height: 8.h),
+        SizedBox(height: (8).h(context)),
 
         Text(
           hintKey.tr(),

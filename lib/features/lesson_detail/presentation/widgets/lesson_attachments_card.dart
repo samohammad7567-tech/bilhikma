@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/file_download_state.dart';
 import '../../../../core/widgets/ornamented_card.dart';
 import '../../data/models/lesson_attachment_model.dart';
 import '../../../../core/themes/app_theme.dart';
 import 'lesson_attachment_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAttachmentsCard extends StatelessWidget {
   const LessonAttachmentsCard({
@@ -39,8 +39,8 @@ class LessonAttachmentsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrnamentedCard(
-      radius: 12.r,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      radius: 12,
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (12).h(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -53,7 +53,7 @@ class LessonAttachmentsCard extends StatelessWidget {
             style: AppTheme.styles(context).rowTitle,
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: (10).h(context)),
 
           for (final LessonAttachmentModel file in attachments) ...<Widget>[
             LessonAttachmentRow(
@@ -68,7 +68,7 @@ class LessonAttachmentsCard extends StatelessWidget {
               isPreviewing: previewingId == file.id,
               isDownloaded: downloadedIds.contains(file.id),
             ),
-            if (file != attachments.last) SizedBox(height: 10.h),
+            if (file != attachments.last) SizedBox(height: (10).h(context)),
           ],
         ],
       ),

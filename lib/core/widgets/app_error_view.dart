@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'custom_button.dart';
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppErrorView extends StatelessWidget {
   const AppErrorView({
@@ -24,7 +24,7 @@ class AppErrorView extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32.w),
+        padding: EdgeInsets.all((32).r(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -36,17 +36,17 @@ class AppErrorView extends StatelessWidget {
               ).bodyLarge.copyWith(color: colors.secondary),
             ),
 
-            SizedBox(height: 20.h),
+            SizedBox(height: (20).h(context)),
 
             CustomButton(
               onPressed: onRetry,
               text: 'retry'.tr(),
               width: double.infinity,
-              height: 40.h,
-              threeRadius: 8.r,
-              lastRadius: 8.r,
+              height: (40).h(context),
+              threeRadius: 8,
+              lastRadius: 8,
               backgroundColor: colors.secondaryContainer,
-              elevation: 0,
+              elevation: (0).r(context),
             ),
           ],
         ),

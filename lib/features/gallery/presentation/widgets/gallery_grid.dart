@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../data/models/gallery_image_model.dart';
 import 'gallery_tile.dart';
@@ -23,31 +24,28 @@ class GalleryGrid extends StatelessWidget {
       );
     }
 
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final int crossAxisCount = constraints.maxWidth >= 900
-            ? 4
-            : constraints.maxWidth >= 600
-            ? 3
-            : 2;
+    final int crossAxisCount = MyScreenSize.galleryColumns(context);
 
-        return GridView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
-          itemCount: images.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            mainAxisSpacing: 12.h,
-            crossAxisSpacing: 12.w,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            final GalleryImageModel image = images[index];
+    return GridView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        (16).w(context),
+        (0).h(context),
+        (16).w(context),
+        (24).h(context),
+      ),
+      itemCount: images.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        final GalleryImageModel image = images[index];
 
-            return GalleryTile(
-              image: image,
-              onTap: onImageTap == null ? null : () => onImageTap!(index),
-            );
-          },
+        return GalleryTile(
+          image: image,
+          onTap: onImageTap == null ? null : () => onImageTap!(index),
         );
       },
     );

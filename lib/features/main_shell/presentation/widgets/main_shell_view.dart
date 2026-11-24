@@ -1,16 +1,17 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/app/cubit/app_preferences_cubit.dart';
+import '../../../../core/utils/my_screen_size.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/widgets/app_nav_rail.dart';
 import '../../../../core/drawer/presentation/refactor/app_drawer.dart';
 import '../refactor/main_shell_tabs.dart';
 
 class MainShellView extends StatelessWidget {
   const MainShellView({required this.onBack, super.key});
-
-  static const double _wideBreakpoint = 600;
-  static const double _contentMaxWidth = 720;
 
   final void Function(BuildContext context, ShellBackAction action) onBack;
 
@@ -28,37 +29,69 @@ class MainShellView extends StatelessWidget {
             if (didPop) return;
             onBack(context, cubit.handleBackPress());
           },
-          child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            extendBody: true,
-            drawer: const AppDrawer(),
-            body: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final Widget tabs = MainShellTabs(
-                  selectedTab: cubit.selectedTab,
-                  visitedTabs: cubit.visitedTabs,
-                  tabsEpoch: cubit.tabsEpoch,
-                );
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final Widget tabs = MainShellTabs(
+                selectedTab: cubit.selectedTab,
+                visitedTabs: cubit.visitedTabs,
+                tabsEpoch: cubit.tabsEpoch,
+              );
+              final bool isWide = MyScreenSize.isTablet(context);
 
-                if (constraints.maxWidth < _wideBreakpoint) return tabs;
-
-                return Align(
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: _contentMaxWidth,
-                    height: constraints.maxHeight,
-                    child: tabs,
-                  ),
-                );
-              },
-            ),
-            bottomNavigationBar: AppBottomNavBar(
-              selectedTab: cubit.selectedTab,
-              onTabSelected: cubit.selectTab,
-            ),
+              return Scaffold(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                extendBody: true,
+                drawer: const AppDrawer(),
+                body: isWide
+                    ? _wideBody(context, constraints, cubit, tabs)
+                    : tabs,
+                bottomNavigationBar: isWide
+                    ? null
+                    : AppBottomNavBar(
+                        selectedTab: cubit.selectedTab,
+                        onTabSelected: cubit.selectTab,
+                      ),
+              );
+            },
           ),
         );
       },
+    );
+  }
+
+  Widget _wideBody(
+    BuildContext context,
+    BoxConstraints constraints,
+    AppPreferencesCubit cubit,
+    Widget tabs,
+  ) {
+    final double availableWidth = math.max(
+      0,
+      constraints.maxWidth - MyScreenSize.navRailWidth(context),
+    );
+    final double contentWidth = math.min(
+      availableWidth,
+      MyScreenSize.contentMaxWidth(context),
+    );
+
+    return Row(
+      children: <Widget>[
+        AppNavRail(
+          selectedTab: cubit.selectedTab,
+          onTabSelected: cubit.selectTab,
+        ),
+        Expanded(
+          child: Center(
+            child: SizedBox(
+              width: contentWidth,
+              height: constraints.maxHeight.isFinite
+                  ? constraints.maxHeight
+                  : null,
+              child: tabs,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

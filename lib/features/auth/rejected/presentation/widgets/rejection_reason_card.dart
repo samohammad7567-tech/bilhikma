@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class RejectionReasonCard extends StatelessWidget {
   const RejectionReasonCard({required this.reason, super.key});
@@ -17,10 +17,10 @@ class RejectionReasonCard extends StatelessWidget {
       alignment: Alignment.center,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: (18).w(context), vertical: (16).h(context)),
         decoration: BoxDecoration(
           color: colors.onSurface.withValues(alpha: 0.09),
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular((8).r(context)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -32,7 +32,7 @@ class RejectionReasonCard extends StatelessWidget {
                 context,
               ).bodyStrong.copyWith(color: colors.secondary),
             ),
-            SizedBox(height: 6.h),
+            SizedBox(height: (6).h(context)),
             Text(
               reason,
               textAlign: TextAlign.center,

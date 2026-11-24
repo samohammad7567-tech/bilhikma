@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class OtpCodeField extends StatelessWidget {
   const OtpCodeField({
@@ -40,19 +40,19 @@ class OtpCodeField extends StatelessWidget {
       children: <Widget>[
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final double gap = _gap.w;
+            final double gap = _gap;
             final double boxWidth =
                 ((constraints.maxWidth - gap * (length - 1)) / length)
                     .floorToDouble();
 
             PinTheme boxTheme(Color border) => PinTheme(
               width: boxWidth,
-              height: 52.h,
+              height: (52).h(context),
               textStyle: digitStyle,
               decoration: BoxDecoration(
                 color: colors.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: border, width: 1.4),
+                borderRadius: BorderRadius.circular((10).r(context)),
+                border: Border.all(color: border, width: 1.4.w(context)),
               ),
             );
 
@@ -96,16 +96,16 @@ class OtpCodeField extends StatelessWidget {
         ),
 
         if (isVerifying) ...<Widget>[
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
           Center(
             child: SizedBox(
-              width: 16.w,
-              height: 16.w,
-              child: CircularProgressIndicator(strokeWidth: 2.w),
+              width: (16).w(context),
+              height: (16).h(context),
+              child: CircularProgressIndicator(strokeWidth: (2).r(context)),
             ),
           ),
         ] else if (errorKey != null) ...<Widget>[
-          SizedBox(height: 6.h),
+          SizedBox(height: (6).h(context)),
           Text(
             errorKey.tr(namedArgs: <String, String>{'count': '$length'}),
             textAlign: TextAlign.start,

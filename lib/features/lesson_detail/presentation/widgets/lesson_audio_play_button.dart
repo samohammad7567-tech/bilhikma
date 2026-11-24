@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAudioPlayButton extends StatelessWidget {
   const LessonAudioPlayButton({
@@ -22,19 +22,19 @@ class LessonAudioPlayButton extends StatelessWidget {
       child: InkWell(
         onTap: onToggle,
         child: SizedBox(
-          width: 48.w,
-          height: 48.w,
+          width: (48).w(context),
+          height: (48).h(context),
           child: isBuffering
               ? Padding(
-                  padding: EdgeInsets.all(14.w),
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
+                  padding: EdgeInsets.all((14).r(context)),
+                  child: CircularProgressIndicator(
+                    strokeWidth: (2).r(context),
                     color: Colors.white,
                   ),
                 )
               : Icon(
                   isPlaying ? Icons.pause : Icons.play_arrow,
-                  size: 26.w,
+                  size: (26).r(context),
                   color: Colors.white,
                 ),
         ),

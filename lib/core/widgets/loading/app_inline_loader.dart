@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppInlineLoader extends StatelessWidget {
   const AppInlineLoader({super.key, this.size, this.strokeWidth});
@@ -9,8 +8,8 @@ class AppInlineLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double loaderSize = size ?? 24.sp;
-    final double loaderStroke = strokeWidth ?? 2.sp;
+    final double loaderSize = size ?? 24;
+    final double loaderStroke = strokeWidth ?? 2;
 
     return SizedBox(
       width: loaderSize,

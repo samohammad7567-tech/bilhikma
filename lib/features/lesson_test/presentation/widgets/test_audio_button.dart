@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/services/audioplayerservice/audioplayerservice.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestAudioButton extends StatefulWidget {
   const TestAudioButton({required this.url, super.key, this.dense = false});
@@ -107,7 +108,7 @@ class _TestAudioButtonState extends State<TestAudioButton> {
       iconSize: widget.dense ? 18 : null,
       padding: widget.dense ? EdgeInsets.zero : null,
       constraints: widget.dense
-          ? BoxConstraints.tightFor(width: 34, height: 34)
+          ? BoxConstraints.tightFor(width: (34).w(context), height: (34).h(context))
           : null,
       visualDensity: widget.dense ? VisualDensity.compact : null,
     );

@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/widgets/custom_outline_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestResultActionBar extends StatelessWidget {
   const TestResultActionBar({required this.onBackToLesson, super.key});
@@ -16,19 +16,19 @@ class TestResultActionBar extends StatelessWidget {
 
     return Material(
       color: colors.surface,
-      elevation: 8,
+      elevation: (8).r(context),
       shadowColor: colors.shadow,
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+          padding: EdgeInsets.fromLTRB((16).w(context), (12).h(context), (16).w(context), (12).h(context)),
           child: CustomOutlineButton(
             onPressed: onBackToLesson,
             text: LangKeys.backToLesson.tr(),
             width: double.infinity,
-            height: 46.h,
-            threeRadius: 8.r,
-            lastRadius: 8.r,
+            height: (46).h(context),
+            threeRadius: 8,
+            lastRadius: 8,
             borderColor: colors.secondary,
             textColor: colors.secondary,
           ),

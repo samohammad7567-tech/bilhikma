@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PathwayIconTile extends StatelessWidget {
   const PathwayIconTile({required this.asset, super.key});
@@ -16,11 +16,11 @@ class PathwayIconTile extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: colors.secondaryContainer,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular((8).r(context)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: AppIcon(asset: asset, size: 24.w, color: colors.onPrimary),
+        padding: EdgeInsets.all(8.0.r(context)),
+        child: AppIcon(asset: asset, size: (24).r(context), color: colors.onPrimary),
       ),
     );
   }

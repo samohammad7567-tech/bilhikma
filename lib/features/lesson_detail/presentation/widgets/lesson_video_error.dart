@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonVideoError extends StatelessWidget {
   const LessonVideoError({required this.onRetry, super.key, this.details});
@@ -17,17 +17,17 @@ class LessonVideoError extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: (24).w(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
               Icons.videocam_off_rounded,
-              size: 36.w,
+              size: (36).r(context),
               color: Colors.white.withValues(alpha: 0.75),
             ),
 
-            SizedBox(height: 12.h),
+            SizedBox(height: (12).h(context)),
 
             Text(
               'video_playback_failed'.tr(),
@@ -38,7 +38,7 @@ class LessonVideoError extends StatelessWidget {
             ),
 
             if (details != null && kDebugMode) ...<Widget>[
-              SizedBox(height: 6.h),
+              SizedBox(height: (6).h(context)),
               Text(
                 details!,
                 textAlign: TextAlign.center,
@@ -50,11 +50,11 @@ class LessonVideoError extends StatelessWidget {
               ),
             ],
 
-            SizedBox(height: 14.h),
+            SizedBox(height: (14).h(context)),
 
             TextButton.icon(
               onPressed: onRetry,
-              icon: Icon(Icons.refresh_rounded, size: 18.w),
+              icon: Icon(Icons.refresh_rounded, size: (18).r(context)),
               label: Text('retry'.tr()),
               style: TextButton.styleFrom(foregroundColor: Colors.white),
             ),

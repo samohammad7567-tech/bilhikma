@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
@@ -31,7 +30,7 @@ class ResetPasswordField extends StatelessWidget {
       filled: true,
       fillColour: colors.tertiary.withValues(alpha: 0.4),
       borderColor: Colors.transparent,
-      borderRadius: 12.r,
+      borderRadius: 12,
       hintText: 'password'.tr(),
       textDirection: TextDirection.ltr,
       obscureText: obscure,

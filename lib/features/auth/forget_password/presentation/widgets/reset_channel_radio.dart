@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 class ResetChannelRadio extends StatelessWidget {
   const ResetChannelRadio({required this.isSelected, super.key});
@@ -11,8 +10,8 @@ class ResetChannelRadio extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      width: 20.w,
-      height: 20.w,
+      width: 20,
+      height: 20,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -20,8 +19,8 @@ class ResetChannelRadio extends StatelessWidget {
       ),
       child: isSelected
           ? Container(
-              width: 10.w,
-              height: 10.w,
+              width: 10,
+              height: 10,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: colors.tertiary,

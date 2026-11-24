@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/widgets/capped_seek_bar.dart';
 import '../../../../core/widgets/playback_speed_button.dart';
 import 'lesson_video_round_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonVideoBottomBar extends StatelessWidget {
   const LessonVideoBottomBar({
@@ -44,7 +44,7 @@ class LessonVideoBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 2.h, 4.w, 2.h),
+      padding: EdgeInsets.fromLTRB((12).w(context), (2).h(context), (4).w(context), (2).h(context)),
       color: Colors.black.withValues(alpha: 0.35),
       child: Row(
         children: <Widget>[
@@ -52,11 +52,11 @@ class LessonVideoBottomBar extends StatelessWidget {
             textDirection: TextDirection.ltr,
             child: Text(
               '${_clock(position)} / ${_clock(duration)}',
-              style: TextStyle(color: Colors.white, fontSize: 11.sp),
+              style: TextStyle(color: Colors.white, fontSize: (11).sp(context)),
             ),
           ),
 
-          SizedBox(width: 6.w),
+          SizedBox(width: (6).w(context)),
 
           Expanded(
             child: Directionality(
@@ -78,13 +78,13 @@ class LessonVideoBottomBar extends StatelessWidget {
             onOverlay: true,
           ),
 
-          SizedBox(width: 4.w),
+          SizedBox(width: (4).w(context)),
 
           LessonVideoRoundButton(
             icon: isFullscreen
                 ? Icons.fullscreen_exit_rounded
                 : Icons.fullscreen_rounded,
-            size: 20.sp,
+            size: (20).r(context),
             onTap: onFullscreen,
           ),
         ],

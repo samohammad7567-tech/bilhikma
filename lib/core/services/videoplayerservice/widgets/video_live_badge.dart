@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoLiveBadge extends StatelessWidget {
   const VideoLiveBadge({required this.label, super.key});
@@ -8,31 +9,31 @@ class VideoLiveBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: (10).w(context), vertical: (5).h(context)),
       decoration: BoxDecoration(
         color: Colors.red.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular((6).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            width: 7,
-            height: 7,
+            width: (7).w(context),
+            height: (7).h(context),
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
             ),
           ),
 
-          const SizedBox(width: 6),
+          SizedBox(width: (6).w(context)),
 
           Text(
             label,
             maxLines: 1,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: (12).sp(context),
               fontWeight: FontWeight.bold,
             ),
           ),

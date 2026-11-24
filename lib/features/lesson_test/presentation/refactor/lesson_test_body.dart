@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/quiz_attempt_model.dart';
 import '../cubit/lesson_test_cubit.dart';
 import '../widgets/assessment_unsupported_view.dart';
-import '../widgets/test_result_action_bar.dart';
+import '../widgets/lesson_test_result_view.dart';
 import '../widgets/test_time_up_view.dart';
 import 'lesson_test_intro_body.dart';
 import 'lesson_test_question_body.dart';
-import 'lesson_test_result_body.dart';
 
 class LessonTestBody extends StatelessWidget {
   const LessonTestBody({required this.onBackToLesson, super.key});
@@ -41,18 +40,14 @@ class LessonTestBody extends StatelessWidget {
         return Padding(
           padding: state.isResult
               ? EdgeInsets.zero
-              : EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
-          child: _body(context, cubit, viewState),
+              : EdgeInsets.fromLTRB((16).w(context), (4).h(context), (16).w(context), (16).h(context)),
+          child: _body(cubit, viewState),
         );
       },
     );
   }
 
-  Widget _body(
-    BuildContext context,
-    LessonTestCubit cubit,
-    LessonTestState state,
-  ) {
+  Widget _body(LessonTestCubit cubit, LessonTestState state) {
     switch (state.status) {
       case LessonTestStatus.initial:
       case LessonTestStatus.loading:
@@ -97,21 +92,11 @@ class LessonTestBody extends StatelessWidget {
         final QuizAttemptModel? result = state.result;
         if (result == null) return _empty;
 
-        return Column(
-          children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
-                child: LessonTestResultBody(
-                  result: result,
-                  showReview:
-                      (state.quiz?.showCorrectAnswers ?? false) ||
-                      result.hasSolutions,
-                ),
-              ),
-            ),
-            TestResultActionBar(onBackToLesson: onBackToLesson),
-          ],
+        return LessonTestResultView(
+          result: result,
+          showReview:
+              (state.quiz?.showCorrectAnswers ?? false) || result.hasSolutions,
+          onBackToLesson: onBackToLesson,
         );
     }
   }

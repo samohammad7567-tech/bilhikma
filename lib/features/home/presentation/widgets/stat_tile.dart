@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class StatTile extends StatelessWidget {
   const StatTile({required this.value, required this.label, super.key});
@@ -12,10 +12,10 @@ class StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (10).h(context)),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular((8).r(context)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -25,7 +25,7 @@ class StatTile extends StatelessWidget {
             child: Text(value, style: AppTheme.styles(context).statValue),
           ),
 
-          SizedBox(height: 2.h),
+          SizedBox(height: (2).h(context)),
 
           Text(
             label,

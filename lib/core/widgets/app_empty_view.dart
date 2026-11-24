@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
+import '../utils/my_screen_size.dart';
+import '../utils/screen_scale.dart';
 
 class AppEmptyView extends StatelessWidget {
   const AppEmptyView({
@@ -23,7 +24,7 @@ class AppEmptyView extends StatelessWidget {
       builder: (BuildContext context, BoxConstraints constraints) {
         final double minHeight = constraints.maxHeight.isFinite
             ? constraints.maxHeight
-            : MediaQuery.sizeOf(context).height * 0.5;
+            : MyScreenSize.heightFraction(context, 0.5);
 
         return ConstrainedBox(
           constraints: BoxConstraints(minHeight: minHeight),
@@ -36,13 +37,21 @@ class AppEmptyView extends StatelessWidget {
   Widget _content(BuildContext context) {
     return Padding(
       padding:
-          padding ?? EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
+          padding ??
+          EdgeInsets.symmetric(
+            horizontal: (24).w(context),
+            vertical: (48).h(context),
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 44.w, color: Theme.of(context).colorScheme.outline),
+          Icon(
+            icon,
+            size: (44).r(context),
+            color: Theme.of(context).colorScheme.outline,
+          ),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
 
           Text(
             messageKey.tr(),

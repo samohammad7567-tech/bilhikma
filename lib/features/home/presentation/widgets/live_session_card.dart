@@ -1,13 +1,13 @@
-import '../../../../core/widgets/app_icon.dart';
+﻿import '../../../../core/widgets/app_icon.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/models/live_session_model.dart';
 import '../refactor/home_formats.dart';
 import '../../../../core/themes/app_theme.dart';
 import 'live_session_card_status_badge.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LiveSessionCard extends StatelessWidget {
   const LiveSessionCard({required this.session, super.key, this.onTap});
@@ -24,29 +24,29 @@ class LiveSessionCard extends StatelessWidget {
 
     return Material(
       color: colors.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: BorderRadius.circular((12).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(10.w),
+          padding: EdgeInsets.all((10).r(context)),
           child: Row(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.all(11.w),
+                padding: EdgeInsets.all((11).r(context)),
                 decoration: BoxDecoration(
                   color: colors.primaryContainer,
-                  borderRadius: BorderRadius.circular(10.r),
+                  borderRadius: BorderRadius.circular((10).r(context)),
                 ),
                 child: AppIcon(
                   asset: AppAssets.assetsVideoIcon,
-                  width: 26.w,
-                  height: 26.w,
+                  width: (26).w(context),
+                  height: (26).h(context),
                   color: colors.onPrimaryContainer,
                 ),
               ),
 
-              SizedBox(width: 10.w),
+              SizedBox(width: (10).w(context)),
 
               Expanded(
                 child: Column(
@@ -60,7 +60,7 @@ class LiveSessionCard extends StatelessWidget {
                       style: AppTheme.styles(context).labelStrong,
                     ),
 
-                    SizedBox(height: 2.h),
+                    SizedBox(height: (2).h(context)),
 
                     Text(
                       HomeFormats.liveHeadline(session),
@@ -72,7 +72,7 @@ class LiveSessionCard extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 10.w),
+              SizedBox(width: (10).w(context)),
 
               LiveSessionCardStatusBadge(label: HomeFormats.liveBadge(session)),
             ],

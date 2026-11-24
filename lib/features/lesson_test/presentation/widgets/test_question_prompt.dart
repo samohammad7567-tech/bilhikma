@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -8,6 +7,7 @@ import '../../../../core/utils/lesson_detail_formats.dart';
 import 'test_question_media.dart';
 import 'test_rich_prompt.dart';
 import 'test_timer_chip.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestQuestionPrompt extends StatelessWidget {
   const TestQuestionPrompt({
@@ -51,7 +51,7 @@ class TestQuestionPrompt extends StatelessWidget {
         else if (timeLeft != null)
           _timerOnly(context, timeLeft),
         if (_hasMedia) ...<Widget>[
-          if (hasHeader) SizedBox(height: 14.h),
+          if (hasHeader) SizedBox(height: (14).h(context)),
           TestQuestionMedia(imageUrl: imageUrl, audioUrl: audioUrl),
         ],
       ],
@@ -72,10 +72,10 @@ class TestQuestionPrompt extends StatelessWidget {
       children: <Widget>[
         Expanded(child: text),
 
-        SizedBox(width: 10.w),
+        SizedBox(width: (10).w(context)),
 
         Padding(
-          padding: EdgeInsets.only(top: 2.h),
+          padding: EdgeInsets.only(top: (2).h(context)),
           child: _timer(context, timeLeft),
         ),
       ],

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppProgressBar extends StatelessWidget {
   const AppProgressBar({
@@ -20,7 +20,7 @@ class AppProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final double barHeight = height ?? 6.h;
+    final double barHeight = height ?? 6;
 
     final double? pending = pendingProgress;
     final bool hasPending = pending != null && pending > progress;
@@ -40,7 +40,7 @@ class AppProgressBar extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 4.h),
+          SizedBox(height: (4).h(context)),
         ],
 
         ClipRRect(

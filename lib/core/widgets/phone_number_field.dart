@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_countries.dart';
 import '../models/country_model.dart';
@@ -10,6 +9,7 @@ import '../utils/app_regex.dart';
 import '../utils/phone_number_input_formatter.dart';
 import 'country_picker_sheet.dart';
 import 'custom_text_field.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PhoneNumberField extends StatefulWidget {
   const PhoneNumberField({
@@ -132,7 +132,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           onTap: _pickCountry,
         ),
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         CustomTextField(
           controller: _national,
@@ -145,7 +145,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           keyboardType: TextInputType.phone,
           suffixIcon: widget.suffixIcon,
           prefixIcon: Padding(
-            padding: EdgeInsetsDirectional.only(start: 16.w, end: 8.w),
+            padding: EdgeInsetsDirectional.only(start: (16).w(context), end: (8).h(context)),
             child: Text(
               _country.displayDialCode,
               textDirection: TextDirection.ltr,
@@ -163,10 +163,10 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           validator: _validate,
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: (6).h(context)),
 
         Padding(
-          padding: EdgeInsetsDirectional.only(start: 4.w, end: 4.w),
+          padding: EdgeInsetsDirectional.only(start: (4).w(context), end: (4).h(context)),
           child: Text(
             'phone_hint_without_country_code'.tr(),
             textAlign: TextAlign.start,
@@ -198,7 +198,7 @@ class _CountrySelectorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final BorderRadius radius = BorderRadius.circular(borderRadius ?? 15.r);
+    final BorderRadius radius = BorderRadius.circular(borderRadius ?? 15);
 
     return Material(
       color: Colors.transparent,
@@ -206,7 +206,7 @@ class _CountrySelectorTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: radius,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (14).h(context)),
           decoration: BoxDecoration(
             color: fill,
             borderRadius: radius,
@@ -214,9 +214,9 @@ class _CountrySelectorTile extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
-              Text(country.flag, style: TextStyle(fontSize: 22.sp)),
+              Text(country.flag, style: TextStyle(fontSize: (22).sp(context))),
 
-              SizedBox(width: 10.w),
+              SizedBox(width: (10).w(context)),
 
               Expanded(
                 child: Text(
@@ -228,7 +228,7 @@ class _CountrySelectorTile extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 8.w),
+              SizedBox(width: (8).w(context)),
 
               Text(
                 country.displayDialCode,
@@ -241,7 +241,7 @@ class _CountrySelectorTile extends StatelessWidget {
 
               Icon(
                 Icons.keyboard_arrow_down_rounded,
-                size: 22.w,
+                size: (22).r(context),
                 color: colors.onSurfaceVariant,
               ),
             ],

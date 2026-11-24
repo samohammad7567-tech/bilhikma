@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppCircleAvatar extends StatelessWidget {
   const AppCircleAvatar({super.key, this.size});
@@ -7,7 +6,7 @@ class AppCircleAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double diameter = size ?? 50.w;
+    final double diameter = size ?? 50;
 
     final ColorScheme colors = Theme.of(context).colorScheme;
 

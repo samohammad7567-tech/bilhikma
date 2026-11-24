@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SearchSubmitButton extends StatelessWidget {
   const SearchSubmitButton({required this.onPressed, super.key});
@@ -17,9 +17,9 @@ class SearchSubmitButton extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         child: SizedBox(
-          width: 48.w,
-          height: 48.w,
-          child: Icon(Icons.search, size: 22.w, color: colors.secondary),
+          width: (48).w(context),
+          height: (48).h(context),
+          child: Icon(Icons.search, size: (22).r(context), color: colors.secondary),
         ),
       ),
     );

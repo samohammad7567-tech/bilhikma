@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../widgets/splash_brand_texts.dart';
 import '../widgets/splash_mosque_background.dart';
 import '../widgets/splash_ornaments_band.dart';
 import 'splash_timeline.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SplashBody extends StatefulWidget {
   const SplashBody({super.key});
@@ -52,7 +52,7 @@ class _SplashBodyState extends State<SplashBody>
                 logoSettle: _stages.logoSettle,
                 ornamentsEntry: _stages.ornamentsEntry,
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: (20).h(context)),
               SplashBrandTexts(
                 titleEntry: _stages.titleEntry,
                 taglineEntry: _stages.taglineEntry,

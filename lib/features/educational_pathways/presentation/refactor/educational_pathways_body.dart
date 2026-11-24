@@ -1,14 +1,14 @@
-import '../widgets/switch_pathway_sheet.dart';
+﻿import '../widgets/switch_pathway_sheet.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../cubit/educational_pathways_cubit.dart';
 import '../widgets/educational_pathways_content.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class EducationalPathwaysBody extends StatelessWidget {
   const EducationalPathwaysBody({super.key});
@@ -38,18 +38,18 @@ class EducationalPathwaysBody extends StatelessWidget {
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
               child: CustomButton(
                 onPressed: () => SwitchPathwaySheet.show(context, cubit),
                 text: 'switch_educational_path'.tr(),
                 width: double.infinity,
-                height: 48.h.clamp(44, 56).toDouble(),
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: 48.clamp(44, 56).toDouble(),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: Theme.of(
                   context,
                 ).colorScheme.secondaryContainer,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
             ),
           ],

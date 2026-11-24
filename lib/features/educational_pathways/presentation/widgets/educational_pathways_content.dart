@@ -1,13 +1,13 @@
-import 'section_title.dart';
+﻿import 'section_title.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../data/models/educational_pathway_model.dart';
 import '../cubit/educational_pathways_cubit.dart';
 import 'active_pathway_card.dart';
 import 'pathway_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class EducationalPathwaysContent extends StatelessWidget {
   const EducationalPathwaysContent({
@@ -24,21 +24,21 @@ class EducationalPathwaysContent extends StatelessWidget {
     final List<EducationalPathwayModel> pathways = state.visiblePathways;
 
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
       children: <Widget>[
         if (state.hasActivePathway) ...<Widget>[
           const SectionTitle(labelKey: 'app_pathway_content'),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
 
           ActivePathwayCard(active: state.active),
 
-          SizedBox(height: 24.h),
+          SizedBox(height: (24).h(context)),
         ],
 
         const SectionTitle(labelKey: 'my_learning_paths'),
 
-        SizedBox(height: 12.h),
+        SizedBox(height: (12).h(context)),
 
         if (pathways.isEmpty)
           const AppEmptyView(
@@ -53,7 +53,7 @@ class EducationalPathwaysContent extends StatelessWidget {
             onToggle: cubit.toggleNode,
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
         ],
       ],
     );

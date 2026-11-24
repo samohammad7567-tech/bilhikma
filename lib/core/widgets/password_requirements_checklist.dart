@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/password_requirement_enum.dart';
 import '../themes/app_theme.dart';
 import 'password_requirement_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PasswordRequirementsChecklist extends StatelessWidget {
   const PasswordRequirementsChecklist({required this.password, super.key});
@@ -16,10 +16,10 @@ class PasswordRequirementsChecklist extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (10).h(context)),
       decoration: BoxDecoration(
         color: colors.surfaceContainerLowest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +33,7 @@ class PasswordRequirementsChecklist extends StatelessWidget {
             style: AppTheme.styles(context).labelMedium,
           ),
 
-          SizedBox(height: 4.h),
+          SizedBox(height: (4).h(context)),
 
           for (final PasswordRequirement requirement
               in PasswordRequirement.values)

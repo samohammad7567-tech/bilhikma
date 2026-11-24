@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
@@ -66,7 +66,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color outline = borderColor ?? Theme.of(context).colorScheme.outline;
-    final BorderRadius radius = BorderRadius.circular(borderRadius ?? 15.r);
+    final BorderRadius radius = BorderRadius.circular(borderRadius ?? 15);
 
     final bool isLtr = textDirection == TextDirection.ltr;
 
@@ -107,7 +107,7 @@ class CustomTextField extends StatelessWidget {
         ),
         contentPadding:
             contentPadding ??
-            EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+            EdgeInsets.symmetric(horizontal: (20).w(context), vertical: (16).h(context)),
         counterText: '',
         filled: filled,
         fillColor: fillColour ?? Theme.of(context).colorScheme.tertiary,

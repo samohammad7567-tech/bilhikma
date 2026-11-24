@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../refactor/test_blank_segments.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -26,8 +25,8 @@ class TestBlankText extends StatelessWidget {
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 4.w,
-      runSpacing: 10.h,
+      spacing: 4,
+      runSpacing: 10,
       children: TestBlankSegments.asWords(segments)
           .map((TestBlankSegment segment) {
             final String? blankId = segment.blankId;

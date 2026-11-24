@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/notification_kind_enum.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
 import '../../../../core/widgets/app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationKindTile extends StatelessWidget {
   const NotificationKindTile({
@@ -21,27 +21,27 @@ class NotificationKindTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BorderRadius radius = BorderRadius.circular(10.r);
+    final BorderRadius radius = BorderRadius.circular((10).r(context));
     if (kind.hasOwnTile) {
       return ClipRRect(
         borderRadius: radius,
         child: AppIcon(
           asset: kind.imagePath,
-          size: size.w,
+          size: size,
           fit: BoxFit.contain,
         ),
       );
     }
 
     return Container(
-      width: size.w,
-      height: size.w,
+      width: size,
+      height: size,
       decoration: BoxDecoration(color: _tileColour, borderRadius: radius),
       child: Padding(
-        padding: EdgeInsets.all(9.w),
+        padding: EdgeInsets.all((9).r(context)),
         child: AppIcon(
           asset: kind.imagePath,
-          size: 22.w,
+          size: (22).r(context),
           fit: BoxFit.contain,
           color: tone.iconInk,
         ),

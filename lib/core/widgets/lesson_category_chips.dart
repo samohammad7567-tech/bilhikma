@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../enums/lesson_category_enum.dart';
 import 'lesson_category_chip.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonCategoryChips extends StatelessWidget {
   const LessonCategoryChips({
@@ -17,12 +17,12 @@ class LessonCategoryChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 44.h,
+      height: (44).h(context),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
         itemCount: LessonCategory.values.length,
-        separatorBuilder: (_, _) => SizedBox(width: 10.w),
+        separatorBuilder: (_, _) => SizedBox(width: (10).w(context)),
         itemBuilder: (BuildContext context, int index) {
           final LessonCategory category = LessonCategory.values[index];
 

@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/enums/password_strength_enum.dart';
 import 'password_strength_segment.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PasswordStrengthMeter extends StatelessWidget {
   const PasswordStrengthMeter({required this.strength, super.key});
@@ -17,10 +17,10 @@ class PasswordStrengthMeter extends StatelessWidget {
     final Color tone = _toneOf(colors);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (10).h(context)),
       decoration: BoxDecoration(
         color: colors.surfaceContainerLowest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,7 +32,7 @@ class PasswordStrengthMeter extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsetsDirectional.only(
-                      end: index == PasswordStrength.segments - 1 ? 0 : 4.w,
+                      end: index == PasswordStrength.segments - 1 ? 0 : 4,
                     ),
                     child: PasswordStrengthSegment(
                       isFilled: index < strength.filledSegments,
@@ -43,7 +43,7 @@ class PasswordStrengthMeter extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
 
           Text(
             'password_strength'.tr(

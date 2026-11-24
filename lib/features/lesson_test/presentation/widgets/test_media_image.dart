@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_network_image.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestMediaImage extends StatelessWidget {
   const TestMediaImage({
@@ -26,7 +26,7 @@ class TestMediaImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final BorderRadius borderRadius = BorderRadius.circular(radius.r);
+    final BorderRadius borderRadius = BorderRadius.circular(radius.r(context));
 
     return Container(
       width: width,
@@ -34,13 +34,13 @@ class TestMediaImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: borderRadius,
-        border: Border.all(color: colors.outlineVariant, width: 1),
+        border: Border.all(color: colors.outlineVariant, width: (1).w(context)),
         boxShadow: elevated
             ? <BoxShadow>[
                 BoxShadow(
                   color: colors.shadow.withValues(alpha: 0.10),
-                  blurRadius: 16.r,
-                  offset: Offset(0, 6.h),
+                  blurRadius: (16).r(context),
+                  offset: const Offset(0, 6),
                 ),
               ]
             : null,
@@ -55,7 +55,7 @@ class TestMediaImage extends StatelessWidget {
             errorWidget: Center(
               child: Icon(
                 Icons.broken_image_outlined,
-                size: 28.r,
+                size: (28).r(context),
                 color: colors.onSurfaceVariant,
               ),
             ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
 
@@ -41,7 +40,7 @@ class CustomOutlineButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color stroke = borderColor ?? Theme.of(context).colorScheme.secondary;
     final Color foreground = textColor ?? stroke;
-    final double radius = threeRadius ?? 20.r;
+    final double radius = threeRadius ?? 20;
 
     return SizedBox(
       height: height,
@@ -49,7 +48,7 @@ class CustomOutlineButton extends StatelessWidget {
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           backgroundColor: backgroundColor,
-          side: BorderSide(color: stroke, width: borderWidth ?? 1.w),
+          side: BorderSide(color: stroke, width: borderWidth ?? 1),
           disabledForegroundColor: foreground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -63,10 +62,10 @@ class CustomOutlineButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? SizedBox(
-                width: loadingWidth ?? 22.w,
-                height: loadingHeight ?? 22.w,
+                width: loadingWidth ?? 22,
+                height: loadingHeight ?? 22,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.w,
+                  strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(foreground),
                 ),
               )

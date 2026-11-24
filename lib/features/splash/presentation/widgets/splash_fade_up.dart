@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 class SplashFadeUp extends StatelessWidget {
   const SplashFadeUp({required this.entry, required this.child, super.key});
@@ -9,7 +8,7 @@ class SplashFadeUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double travel = 14.h;
+    final double travel = 14;
 
     return AnimatedBuilder(
       animation: entry,

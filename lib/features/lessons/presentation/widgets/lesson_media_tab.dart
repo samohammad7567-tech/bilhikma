@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/content_type_enum.dart';
 import '../../../../core/utils/lesson_view_data.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonMediaTab extends StatelessWidget {
   const LessonMediaTab({
@@ -27,18 +27,18 @@ class LessonMediaTab extends StatelessWidget {
 
     return Material(
       color: isSelected ? colors.secondary : Colors.transparent,
-      borderRadius: BorderRadius.circular(8.r),
+      borderRadius: BorderRadius.circular((8).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: (6).w(context), vertical: (10).h(context)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(mediaType.icon, size: 18.w, color: foreground),
+              Icon(mediaType.icon, size: (18).r(context), color: foreground),
 
-              SizedBox(width: 6.w),
+              SizedBox(width: (6).w(context)),
 
               Flexible(
                 child: Text(

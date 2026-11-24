@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bilhikma/core/enums/app_tab_enum.dart';
 import 'package:bilhikma/core/themes/app_theme.dart';
-import 'package:bilhikma/core/utils/app_screen_util.dart';
 import 'package:bilhikma/core/widgets/app_bottom_nav_bar.dart';
 import 'package:bilhikma/core/widgets/bottom_nav_tab_icon.dart';
 
@@ -26,19 +24,14 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: AppScreenUtil.designSize,
-          splitScreenMode: AppScreenUtil.splitScreenMode,
-          minTextAdapt: AppScreenUtil.minTextAdapt,
-          builder: (_, _) => MaterialApp(
-            theme: AppTheme.light(),
-            home: Scaffold(
-              extendBody: true,
-              body: const SizedBox.expand(),
-              bottomNavigationBar: AppBottomNavBar(
-                selectedTab: AppTab.home,
-                onTabSelected: (_) {},
-              ),
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            extendBody: true,
+            body: const SizedBox.expand(),
+            bottomNavigationBar: AppBottomNavBar(
+              selectedTab: AppTab.home,
+              onTabSelected: (_) {},
             ),
           ),
         ),

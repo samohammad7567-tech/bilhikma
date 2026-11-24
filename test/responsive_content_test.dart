@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bilhikma/core/themes/app_theme.dart';
-import 'package:bilhikma/core/utils/app_screen_util.dart';
+import 'package:bilhikma/core/utils/video_stage_sizing.dart';
 import 'package:bilhikma/core/widgets/app_section_scaffold.dart';
 import 'package:bilhikma/features/gallery/data/models/gallery_image_model.dart';
 import 'package:bilhikma/features/gallery/presentation/widgets/gallery_grid.dart';
@@ -19,14 +18,7 @@ void main() {
     tester.view.physicalSize = size;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      ScreenUtilInit(
-        designSize: AppScreenUtil.designSize,
-        splitScreenMode: AppScreenUtil.splitScreenMode,
-        minTextAdapt: AppScreenUtil.minTextAdapt,
-        builder: (_, _) => MaterialApp(theme: AppTheme.light(), home: child),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp(theme: AppTheme.light(), home: child));
     await tester.pumpAndSettle();
   }
 
@@ -89,7 +81,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(tester.getRect(find.byType(Column)).width, 900);
+    expect(tester.getRect(find.byType(Column)).width, 1040);
   });
 
   testWidgets('section screens keep full width on iPad portrait', (
@@ -127,5 +119,74 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(tester.getRect(find.byType(Column)).width, 1180);
+  });
+
+  Future<double> stageHeight(
+    WidgetTester tester,
+    Size size,
+    BoxConstraints constraints, {
+    bool isFullscreen = false,
+  }) async {
+    late double height;
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = size;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (BuildContext context) {
+            height = VideoStageSizing.height(
+              context: context,
+              constraints: constraints,
+              aspectRatio: 16 / 9,
+              isFullscreen: isFullscreen,
+            );
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    return height;
+  }
+
+  testWidgets('video stage is full bleed on a landscape phone', (
+    WidgetTester tester,
+  ) async {
+    final double height = await stageHeight(
+      tester,
+      const Size(844, 390),
+      BoxConstraints(maxWidth: 844, maxHeight: 390),
+    );
+
+    expect(height, closeTo(390, 0.001));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('video stage keeps the 55 percent cap on a tablet', (
+    WidgetTester tester,
+  ) async {
+    final double height = await stageHeight(
+      tester,
+      const Size(1180, 820),
+      BoxConstraints(maxWidth: 1040, maxHeight: 700),
+    );
+
+    expect(height, closeTo(820 * VideoStageSizing.maxHeightRatio, 0.001));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('fullscreen video fills the available height', (
+    WidgetTester tester,
+  ) async {
+    final double height = await stageHeight(
+      tester,
+      const Size(390, 844),
+      BoxConstraints(maxWidth: 390, maxHeight: 700),
+      isFullscreen: true,
+    );
+
+    expect(height, closeTo(700, 0.001));
+    expect(tester.takeException(), isNull);
   });
 }

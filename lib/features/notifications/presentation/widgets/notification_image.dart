@@ -1,9 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_image_viewer.dart';
 import '../../../../core/widgets/app_network_image.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/localization/lang_keys.dart';
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_skeleton_box.dart';
 
 /// Notification banner image: shown whole (never cropped) and tappable to open
@@ -25,19 +27,21 @@ class NotificationImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double maxHeight =
-        MediaQuery.sizeOf(context).height * _maxHeightFactor;
+    final double maxHeight = MyScreenSize.heightFraction(
+      context,
+      _maxHeightFactor,
+    );
 
     return Semantics(
       button: true,
-      label: 'view_image'.tr(),
+      label: LangKeys.viewImage.tr(),
       excludeSemantics: true,
       child: GestureDetector(
         onTap: () => AppImageViewer.open(context, url: url, heroTag: heroTag),
         // The hint is inside the clip, so it disappears with the image when the
         // url fails to load.
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(_radius.r),
+          borderRadius: BorderRadius.circular(_radius),
           child: Stack(
             children: <Widget>[
               Hero(
@@ -50,25 +54,25 @@ class NotificationImage extends StatelessWidget {
                     fit: BoxFit.contain,
                     errorWidget: const SizedBox.shrink(),
                     placeholder: AppSkeletonBox(
-                      height: 170.h,
-                      radius: _radius.r,
+                      height: (170).h(context),
+                      radius: _radius,
                     ),
                   ),
                 ),
               ),
 
               PositionedDirectional(
-                bottom: 8.h,
-                end: 8.w,
+                bottom: (8).h(context),
+                end: (8).h(context),
                 child: Container(
-                  padding: EdgeInsets.all(6.r),
+                  padding: EdgeInsets.all((6).r(context)),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.45),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.zoom_out_map,
-                    size: 16.r,
+                    size: (16).r(context),
                     color: Colors.white,
                   ),
                 ),

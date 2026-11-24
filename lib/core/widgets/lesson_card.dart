@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/lesson_model.dart';
 import 'app_toast.dart';
@@ -9,6 +8,7 @@ import 'lesson_media_tag.dart';
 import 'lesson_save_icon.dart';
 import 'lesson_thumbnail.dart';
 import 'ornamented_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonCard extends StatelessWidget {
   const LessonCard({required this.lesson, super.key, this.onTap});
@@ -22,7 +22,7 @@ class LessonCard extends StatelessWidget {
 
     return Material(
       color: Theme.of(context).colorScheme.tertiaryContainer,
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.circular((14).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: isLocked ? () => _reportLocked(context) : onTap,
@@ -31,7 +31,7 @@ class LessonCard extends StatelessWidget {
             const Positioned.fill(child: OrnamentBackdrop()),
 
             Padding(
-              padding: EdgeInsets.all(10.w),
+              padding: EdgeInsets.all((10).r(context)),
               child: IntrinsicHeight(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -42,7 +42,7 @@ class LessonCard extends StatelessWidget {
                       isLocked: isLocked,
                     ),
 
-                    SizedBox(width: 12.w),
+                    SizedBox(width: (12).w(context)),
 
                     Expanded(child: LessonCardDetails(lesson: lesson)),
                   ],
@@ -50,15 +50,15 @@ class LessonCard extends StatelessWidget {
               ),
             ),
             PositionedDirectional(
-              start: 0,
-              bottom: 0,
+              start: (0).w(context),
+              bottom: (0).h(context),
               child: LessonMediaTag(mediaType: lesson.type),
             ),
 
             if (!isLocked)
               PositionedDirectional(
-                start: 4.w,
-                top: 4.h,
+                start: (4).w(context),
+                top: (4).h(context),
                 child: LessonSaveIcon(
                   lessonId: lesson.id,
                   backgroundColor: Theme.of(

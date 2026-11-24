@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
+import '../../../../core/utils/screen_scale.dart';
 import '../cubit/book_preview_cubit.dart';
 import 'book_page_scrubber.dart';
 import 'book_reader_actions.dart';
@@ -41,7 +41,7 @@ class BookReaderBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 4.h),
+          padding: EdgeInsets.fromLTRB((12).w(context), (4).h(context), (12).w(context), (4).h(context)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

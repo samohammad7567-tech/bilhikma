@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../refactor/home_formats.dart';
 import 'progress_ring.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class HomeProgressTile extends StatelessWidget {
   const HomeProgressTile({required this.progress, super.key});
@@ -14,10 +14,10 @@ class HomeProgressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: (10).w(context), vertical: (8).h(context)),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Row(
         children: <Widget>[
@@ -34,7 +34,7 @@ class HomeProgressTile extends StatelessWidget {
                   style: AppTheme.styles(context).labelStrong,
                 ),
 
-                SizedBox(height: 2.h),
+                SizedBox(height: (2).h(context)),
 
                 Text(
                   'keep_going'.tr(),
@@ -46,7 +46,7 @@ class HomeProgressTile extends StatelessWidget {
             ),
           ),
 
-          SizedBox(width: 8.w),
+          SizedBox(width: (8).w(context)),
 
           ProgressRing(progress: progress),
         ],

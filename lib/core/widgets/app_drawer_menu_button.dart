@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_assets.dart';
 import 'app_icon.dart';
@@ -14,7 +13,7 @@ class AppDrawerMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomBarIcon(
       onTap: onTap,
-      padding: 13.w,
+      padding: 13,
       child: AppIcon(
         asset: AppAssets.assetsMenuIcon,
         color: Theme.of(context).colorScheme.tertiary,

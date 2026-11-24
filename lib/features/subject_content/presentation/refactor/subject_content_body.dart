@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/app_top_bar.dart';
 import '../../../../core/widgets/custom_bar_icon.dart';
@@ -47,7 +47,7 @@ class SubjectContentBody extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (12).h(context)),
             child: AppTopBar(
               title: context.tr('subject_content'),
               onBack: onBack,
@@ -55,7 +55,7 @@ class SubjectContentBody extends StatelessWidget {
                   ? null
                   : CustomBarIcon(
                       onTap: onMenuTap,
-                      padding: 13.w,
+                      padding: 13,
                       child: AppIcon(
                         asset: AppAssets.assetsMenuIcon,
                         color: Theme.of(context).colorScheme.tertiary,

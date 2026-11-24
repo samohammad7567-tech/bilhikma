@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
+﻿import 'package:flutter/cupertino.dart';
 
 import '../video_item.dart';
 import '../video_player_options.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoDetails extends StatelessWidget {
   const VideoDetails({required this.item, required this.options, super.key});
@@ -26,36 +27,36 @@ class VideoDetails extends StatelessWidget {
             title,
             style: TextStyle(
               color: fg,
-              fontSize: 26,
+              fontSize: (26).sp(context),
               fontWeight: FontWeight.bold,
             ),
           ),
 
         if (subtitle.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 6),
+          SizedBox(height: (6).h(context)),
           Text(
             subtitle,
-            style: TextStyle(color: fg.withValues(alpha: 0.7), fontSize: 16),
+            style: TextStyle(color: fg.withValues(alpha: 0.7), fontSize: (16).sp(context)),
           ),
         ],
 
         if (date.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 10),
+          SizedBox(height: (10).h(context)),
           Row(
             children: <Widget>[
               Icon(
                 CupertinoIcons.calendar,
-                size: 16,
+                size: (16).r(context),
                 color: fg.withValues(alpha: 0.5),
               ),
 
-              const SizedBox(width: 6),
+              SizedBox(width: (6).w(context)),
 
               Text(
                 date,
                 style: TextStyle(
                   color: fg.withValues(alpha: 0.5),
-                  fontSize: 14,
+                  fontSize: (14).sp(context),
                 ),
               ),
             ],
@@ -63,25 +64,25 @@ class VideoDetails extends StatelessWidget {
         ],
 
         if (description.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 20),
+          SizedBox(height: (20).h(context)),
 
           Text(
             options.descriptionLabel,
             style: TextStyle(
               color: fg,
-              fontSize: 16,
+              fontSize: (16).sp(context),
               fontWeight: FontWeight.w600,
             ),
           ),
 
-          const SizedBox(height: 8),
+          SizedBox(height: (8).h(context)),
 
           Text(
             description,
             style: TextStyle(
               color: fg.withValues(alpha: 0.8),
-              fontSize: 17,
-              height: 1.7,
+              fontSize: (17).sp(context),
+              height: 1.7.h(context),
             ),
           ),
         ],

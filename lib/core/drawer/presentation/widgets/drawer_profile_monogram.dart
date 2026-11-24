@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'drawer_profile_initials.dart';
 
@@ -10,7 +9,7 @@ class DrawerProfileMonogram extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double size = 52.w;
+    final double size = 52;
 
     return ClipOval(
       child: Container(

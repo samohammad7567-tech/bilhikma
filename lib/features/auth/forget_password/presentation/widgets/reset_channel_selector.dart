@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../../core/enums/reset_channel_enum.dart';
 import 'reset_channel_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ResetChannelSelector extends StatelessWidget {
   const ResetChannelSelector({
@@ -26,7 +26,7 @@ class ResetChannelSelector extends StatelessWidget {
           onTap: () => onChanged(ResetChannel.email),
         ),
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         ResetChannelTile(
           labelKey: 'via_sms',

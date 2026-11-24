@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonDetailInset extends StatelessWidget {
   const LessonDetailInset({required this.child, super.key});
@@ -8,7 +8,7 @@ class LessonDetailInset extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.w),
+    padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
     child: child,
   );
 }

@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../enums/password_requirement_enum.dart';
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PasswordRequirementRow extends StatelessWidget {
   const PasswordRequirementRow({
@@ -25,7 +25,7 @@ class PasswordRequirementRow extends StatelessWidget {
     return Semantics(
       checked: isSatisfied,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 3.h),
+        padding: EdgeInsets.symmetric(vertical: (3).h(context)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -36,12 +36,12 @@ class PasswordRequirementRow extends StatelessWidget {
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked,
                 key: ValueKey<bool>(isSatisfied),
-                size: 15.w,
+                size: (15).r(context),
                 color: tone,
               ),
             ),
 
-            SizedBox(width: 8.w),
+            SizedBox(width: (8).w(context)),
 
             Expanded(
               child: Text(

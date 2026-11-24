@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 class LiveSessionCardDot extends StatelessWidget {
   const LiveSessionCardDot({super.key});
@@ -7,8 +6,8 @@ class LiveSessionCardDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 8.w,
-      height: 8.w,
+      width: 8,
+      height: 8,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimaryContainer,
         shape: BoxShape.circle,

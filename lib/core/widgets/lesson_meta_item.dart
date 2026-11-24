@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonMetaItem extends StatelessWidget {
   const LessonMetaItem({
@@ -20,7 +20,7 @@ class LessonMetaItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget glyph = Icon(
       icon,
-      size: 15.w,
+      size: (15).r(context),
       color: Theme.of(context).colorScheme.outline,
     );
 
@@ -36,8 +36,8 @@ class LessonMetaItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (isIconTrailing) ...<Widget>[text, SizedBox(width: 6.w), glyph],
-        if (!isIconTrailing) ...<Widget>[glyph, SizedBox(width: 6.w), text],
+        if (isIconTrailing) ...<Widget>[text, SizedBox(width: (6).w(context)), glyph],
+        if (!isIconTrailing) ...<Widget>[glyph, SizedBox(width: (6).w(context)), text],
       ],
     );
   }

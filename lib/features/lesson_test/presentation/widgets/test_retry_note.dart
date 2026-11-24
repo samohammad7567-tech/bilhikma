@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestRetryNote extends StatelessWidget {
   const TestRetryNote({
@@ -22,16 +22,16 @@ class TestRetryNote extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (14).h(context)),
       decoration: BoxDecoration(
         color: colors.primaryContainer.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular((8).r(context)),
       ),
       child: Row(
         children: <Widget>[
-          Icon(Icons.info_outline, size: 18.w, color: colors.onSurfaceVariant),
+          Icon(Icons.info_outline, size: (18).r(context), color: colors.onSurfaceVariant),
 
-          SizedBox(width: 8.w),
+          SizedBox(width: (8).w(context)),
 
           Expanded(
             child: Text(

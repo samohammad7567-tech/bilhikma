@@ -1,12 +1,12 @@
-import '../../../../core/widgets/app_icon.dart';
+﻿import '../../../../core/widgets/app_icon.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_count_badge.dart';
 import '../../../../core/widgets/brand_badge.dart';
 import '../../../../core/widgets/custom_bar_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({
@@ -27,15 +27,15 @@ class HomeTopBar extends StatelessWidget {
       children: <Widget>[
         CustomBarIcon(
           onTap: onMenuTap,
-          padding: 13.w,
+          padding: 13,
           child: AppIcon(
             asset: AppAssets.assetsMenuIcon,
-            size: 20,
+            size: (20).r(context),
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),
 
-        BrandBadge(size: 68.w),
+        BrandBadge(size: (68).r(context)),
 
         AppCountBadge(
           count: unreadNotifications,

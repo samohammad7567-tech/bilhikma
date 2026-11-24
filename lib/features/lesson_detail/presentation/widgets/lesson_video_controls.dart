@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/utils/media_controls_visibility.dart';
@@ -9,6 +8,7 @@ import '../../../../core/widgets/app_toast.dart';
 import 'lesson_video_bottom_bar.dart';
 import 'lesson_video_round_button.dart';
 import 'lesson_video_tap_layer.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonVideoControls extends StatefulWidget {
   const LessonVideoControls({
@@ -160,15 +160,15 @@ class _LessonVideoControlsState extends State<LessonVideoControls> {
               icon: widget.isPlaying
                   ? Icons.pause_rounded
                   : Icons.play_arrow_rounded,
-              size: 34.sp,
+              size: (34).r(context),
               onTap: () => _run(widget.onToggle),
             ),
           ),
 
         Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
+          left: (0).w(context),
+          right: (0).w(context),
+          bottom: (0).h(context),
           child: LessonVideoBottomBar(
             isFullscreen: widget.isFullscreen,
             position: widget.position,

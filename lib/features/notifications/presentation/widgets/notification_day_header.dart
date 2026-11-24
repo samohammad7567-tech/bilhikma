@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationDayHeader extends StatelessWidget {
   const NotificationDayHeader({required this.label, super.key});
@@ -11,7 +11,7 @@ class NotificationDayHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 14.h, bottom: 8.h),
+      padding: EdgeInsets.only(top: (14).h(context), bottom: (8).h(context)),
       child: Align(
         alignment: AlignmentDirectional.centerStart,
         child: Text(

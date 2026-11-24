@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/coming_soon_sheet.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../data/models/lesson_detail_model.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonQuizActionBar extends StatelessWidget {
   const LessonQuizActionBar({
@@ -29,19 +29,19 @@ class LessonQuizActionBar extends StatelessWidget {
 
     return Material(
       color: colors.surface,
-      elevation: 8,
+      elevation: (8).r(context),
       shadowColor: colors.shadow,
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
+          padding: EdgeInsets.fromLTRB((16).w(context), (12).h(context), (16).w(context), (12).h(context)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (detail.hasPassedQuiz) ...<Widget>[
                 _PassedNote(color: colors.primary),
-                SizedBox(height: 10.h),
+                SizedBox(height: (10).h(context)),
               ],
               if (needsArticleRead) ...<Widget>[
                 Text(
@@ -50,7 +50,7 @@ class LessonQuizActionBar extends StatelessWidget {
                     context,
                   ).cardCaption.copyWith(color: colors.error),
                 ),
-                SizedBox(height: 10.h),
+                SizedBox(height: (10).h(context)),
               ],
               CustomButton(
                 onPressed: canStartQuiz
@@ -65,14 +65,14 @@ class LessonQuizActionBar extends StatelessWidget {
                     ? LangKeys.viewResultAndReview.tr()
                     : LangKeys.goToTest.tr(),
                 width: double.infinity,
-                height: 46,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (46).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: canStartQuiz
                     ? colors.secondary
                     : colors.surfaceContainerHighest,
                 textColor: canStartQuiz ? colors.onSecondary : colors.outline,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
             ],
           ),
@@ -91,8 +91,8 @@ class _PassedNote extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Icon(Icons.check_circle, size: 18.r, color: color),
-        SizedBox(width: 6.w),
+        Icon(Icons.check_circle, size: (18).r(context), color: color),
+        SizedBox(width: (6).w(context)),
         Expanded(
           child: Text(
             'test_passed_note'.tr(),

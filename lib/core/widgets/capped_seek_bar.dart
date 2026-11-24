@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CappedSeekBar extends StatefulWidget {
   const CappedSeekBar({
@@ -46,7 +45,7 @@ class _CappedSeekBarState extends State<CappedSeekBar> {
 
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
-        trackHeight: 4.h,
+        trackHeight: 4,
         activeTrackColor: colors.secondaryContainer,
         inactiveTrackColor: colors.surfaceContainerLowest,
         secondaryActiveTrackColor: colors.secondaryContainer.withValues(
@@ -54,7 +53,7 @@ class _CappedSeekBarState extends State<CappedSeekBar> {
         ),
         thumbColor: colors.secondaryContainer,
         overlayShape: SliderComponentShape.noOverlay,
-        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6.r),
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
       ),
       child: Slider(
         value: value,

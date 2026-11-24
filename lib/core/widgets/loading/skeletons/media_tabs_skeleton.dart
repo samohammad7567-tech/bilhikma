@@ -1,6 +1,6 @@
-import 'package:bilhikma/core/widgets/loading/skeleton_box.dart';
+﻿import 'package:bilhikma/core/widgets/loading/skeleton_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class MediaTabsSkeleton extends StatelessWidget {
   const MediaTabsSkeleton({super.key});
@@ -8,26 +8,26 @@ class MediaTabsSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
       child: Column(
         children: <Widget>[
           Row(
             children: <Widget>[
               Expanded(
-                child: SkeletonBox(height: 36.h, radius: 8.r),
+                child: SkeletonBox(height: (36).h(context), radius: 8),
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: (8).w(context)),
               Expanded(
-                child: SkeletonBox(height: 36.h, radius: 8.r),
+                child: SkeletonBox(height: (36).h(context), radius: 8),
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
           ...List<Widget>.generate(
             4,
             (int index) => Padding(
-              padding: EdgeInsets.only(bottom: 12.h),
-              child: SkeletonBox(height: 80.h, radius: 12.r),
+              padding: EdgeInsets.only(bottom: (12).h(context)),
+              child: SkeletonBox(height: (80).h(context), radius: 12),
             ),
           ),
         ],

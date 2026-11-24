@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+
+import 'my_screen_size.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class CustomBottomSheet {
   const CustomBottomSheet._();
@@ -15,10 +18,10 @@ class CustomBottomSheet {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * _maxHeightFactor,
+        maxHeight: MyScreenSize.heightFraction(context, _maxHeightFactor),
       ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular((25).r(context))),
       ),
       builder: (context) {
         final Color sheetColor =
@@ -27,20 +30,20 @@ class CustomBottomSheet {
         return SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+              bottom: MyScreenSize.keyboardHeight(context),
             ),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all((16).r(context)),
               decoration: BoxDecoration(
                 color: sheetColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(25),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular((25).r(context)),
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.20),
-                    blurRadius: 20,
-                    spreadRadius: 0,
+                    blurRadius: (20).r(context),
+                    spreadRadius: (0).r(context),
                     offset: const Offset(0, -5),
                   ),
                 ],

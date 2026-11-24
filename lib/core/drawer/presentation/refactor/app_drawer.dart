@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../di/service_locator.dart';
+import '../../../utils/my_screen_size.dart';
 import '../widgets/drawer_content.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -26,12 +27,10 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return BlocProvider<ProfileCubit>.value(
       value: _profile,
       child: Drawer(
-        width: screenWidth * 0.8 > 320 ? 320 : screenWidth * 0.8,
+        width: MyScreenSize.widthFraction(context, 0.8, max: 320),
         backgroundColor: Theme.of(context).colorScheme.surface,
         shape: const RoundedRectangleBorder(),
         child: const DrawerContent(),

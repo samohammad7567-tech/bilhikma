@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/notification_tone_palette.dart';
 import '../../data/models/notification_model.dart';
 import 'notification_kind_tile.dart';
 import 'notification_card_text.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationCard extends StatelessWidget {
   const NotificationCard({
@@ -35,7 +35,7 @@ class NotificationCard extends StatelessWidget {
 
     return Material(
       color: background,
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: BorderRadius.circular((12).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -44,7 +44,7 @@ class NotificationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Container(
-                width: _barWidth.w,
+                width: _barWidth,
                 color: isUnread
                     ? tone.accent
                     : tone.accent.withValues(alpha: 0.55),
@@ -52,13 +52,13 @@ class NotificationCard extends StatelessWidget {
 
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10.w, 10.h, 12.w, 10.h),
+                  padding: EdgeInsets.fromLTRB((10).w(context), (10).h(context), (12).w(context), (10).h(context)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      _leading(tone),
+                      _leading(context, tone),
 
-                      SizedBox(width: 10.w),
+                      SizedBox(width: (10).w(context)),
 
                       Expanded(
                         child: NotificationCardText(
@@ -77,18 +77,18 @@ class NotificationCard extends StatelessWidget {
     );
   }
 
-  Widget _leading(NotificationTonePalette tone) {
+  Widget _leading(BuildContext context, NotificationTonePalette tone) {
     if (!isOpening) {
       return NotificationKindTile(kind: notification.kind, tone: tone);
     }
 
     return SizedBox.square(
-      dimension: NotificationKindTile.size.w,
+      dimension: NotificationKindTile.size,
       child: Center(
         child: SizedBox.square(
-          dimension: 20.w,
+          dimension: 20,
           child: CircularProgressIndicator(
-            strokeWidth: 2.w,
+            strokeWidth: (2).r(context),
             valueColor: AlwaysStoppedAnimation<Color>(tone.accent),
           ),
         ),

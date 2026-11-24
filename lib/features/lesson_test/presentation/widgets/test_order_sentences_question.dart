@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_question_model.dart';
 import '../../data/models/test_sentence_model.dart';
 import 'test_question_prompt.dart';
 import 'test_sentence_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestOrderSentencesQuestion extends StatelessWidget {
   const TestOrderSentencesQuestion({
@@ -39,7 +39,7 @@ class TestOrderSentencesQuestion extends StatelessWidget {
           rich: question.isRichPrompt,
         ),
 
-        SizedBox(height: 18.h),
+        SizedBox(height: (18).h(context)),
 
         ReorderableListView.builder(
           shrinkWrap: true,
@@ -56,7 +56,7 @@ class TestOrderSentencesQuestion extends StatelessWidget {
 
             return Padding(
               key: ValueKey<String>(sentence.id),
-              padding: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.only(bottom: (10).h(context)),
               child: TestSentenceTile(
                 text: sentence.text,
                 index: index,

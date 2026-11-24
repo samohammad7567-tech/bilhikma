@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/subject_card.dart';
 import '../../../../core/models/subject_model.dart';
 import '../refactor/subjects_formats.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class SubjectsList extends StatelessWidget {
   const SubjectsList({required this.subjects, this.onSubjectTap, super.key});
@@ -30,14 +30,14 @@ class SubjectsList extends StatelessWidget {
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
-        16.w,
-        4.h,
-        16.w,
-        AppBottomNavBar.barHeight + 24.h,
+        16,
+        4,
+        16,
+        MyScreenSize.bottomChromeHeight(context) + 24,
       ),
       itemCount: subjects.length,
       separatorBuilder: (BuildContext context, int index) =>
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
       itemBuilder: (BuildContext context, int index) {
         final SubjectModel subject = subjects[index];
 

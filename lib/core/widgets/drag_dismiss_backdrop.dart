@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/my_screen_size.dart';
+
 /// Dark backdrop that follows a vertical drag and pops the route once the drag
 /// passes the dismiss threshold (or is flung). Reusable by any full screen
 /// media view; set [enabled] to false while the content is zoomed so the drag
@@ -55,7 +57,7 @@ class _DragDismissBackdropState extends State<DragDismissBackdrop> {
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.sizeOf(context).height;
+    final double height = MyScreenSize.height(context);
     final double backdrop = (1 - (_drag.abs() / _dragLimit)).clamp(
       _minBackdrop,
       1.0,

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import 'section_view_all_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
@@ -36,7 +36,7 @@ class SectionHeader extends StatelessWidget {
               ),
 
               if (subtitle != null && subtitle.isNotEmpty) ...<Widget>[
-                SizedBox(height: 2.h),
+                SizedBox(height: (2).h(context)),
                 Text(
                   subtitle,
                   maxLines: 1,
@@ -51,7 +51,7 @@ class SectionHeader extends StatelessWidget {
         ),
 
         if (onViewAll != null) ...<Widget>[
-          SizedBox(width: 12.w),
+          SizedBox(width: (12).w(context)),
           SectionViewAllButton(onPressed: onViewAll!),
         ],
       ],

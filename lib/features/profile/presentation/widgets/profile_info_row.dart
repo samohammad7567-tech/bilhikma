@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/educational_path_text.dart';
@@ -8,6 +7,7 @@ import '../../../../core/enums/profile_field_enum.dart';
 import '../../data/models/profile_field_value.dart';
 import '../../data/models/profile_model.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ProfileInfoRow extends StatelessWidget {
   const ProfileInfoRow({required this.field, required this.profile, super.key});
@@ -18,12 +18,12 @@ class ProfileInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (14).h(context)),
       child: Row(
         children: <Widget>[
-          AppIcon(asset: field.imagePath, size: 26.w, padding: EdgeInsets.zero),
+          AppIcon(asset: field.imagePath, size: (26).r(context), padding: EdgeInsets.zero),
 
-          SizedBox(width: 10.w),
+          SizedBox(width: (10).w(context)),
 
           Text(
             field.label.tr(),
@@ -32,7 +32,7 @@ class ProfileInfoRow extends StatelessWidget {
             style: AppTheme.styles(context).rowValue,
           ),
 
-          SizedBox(width: 12.w),
+          SizedBox(width: (12).w(context)),
           Expanded(
             child: _FieldValue(field: field, profile: profile),
           ),

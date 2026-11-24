@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'pathway_icon_tile.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PathwayInfoRow extends StatelessWidget {
   const PathwayInfoRow({
@@ -24,7 +24,7 @@ class PathwayInfoRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         PathwayIconTile(asset: asset),
-        SizedBox(width: 10.w),
+        SizedBox(width: (10).w(context)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +40,7 @@ class PathwayInfoRow extends StatelessWidget {
               ),
               for (final String value in values)
                 Padding(
-                  padding: EdgeInsets.only(top: 2.h),
+                  padding: EdgeInsets.only(top: (2).h(context)),
                   child: Text(
                     value,
                     maxLines: 1,

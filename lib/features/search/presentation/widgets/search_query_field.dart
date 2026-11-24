@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SearchQueryField extends StatelessWidget {
   const SearchQueryField({
@@ -19,7 +19,7 @@ class SearchQueryField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final BorderRadius radius = BorderRadius.circular(28.r);
+    final BorderRadius radius = BorderRadius.circular((28).r(context));
 
     return TextField(
       controller: controller,
@@ -32,7 +32,7 @@ class SearchQueryField extends StatelessWidget {
         fillColor: colors.surfaceContainerHighest,
         hintText: 'search_hint'.tr(),
         hintStyle: AppTheme.styles(context).searchHint,
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: (20).w(context), vertical: (14).h(context)),
         border: OutlineInputBorder(
           borderRadius: radius,
           borderSide: BorderSide.none,

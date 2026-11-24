@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
+﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../video_playback.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoPipControls extends StatelessWidget {
   const VideoPipControls({
@@ -32,7 +33,7 @@ class VideoPipControls extends StatelessWidget {
               child: AnimatedBuilder(
                 animation: playback,
                 builder: (BuildContext context, _) => Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all((10).r(context)),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
@@ -42,7 +43,7 @@ class VideoPipControls extends StatelessWidget {
                         ? CupertinoIcons.pause_fill
                         : CupertinoIcons.play_fill,
                     color: Colors.white,
-                    size: 22,
+                    size: (22).r(context),
                   ),
                 ),
               ),
@@ -50,8 +51,8 @@ class VideoPipControls extends StatelessWidget {
           ),
 
           Positioned(
-            top: 6,
-            right: 6,
+            top: (6).h(context),
+            right: (6).w(context),
             child: IgnorePointer(
               ignoring: !isVisible,
               child: AnimatedOpacity(
@@ -60,14 +61,14 @@ class VideoPipControls extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onClose,
                   child: Container(
-                    padding: const EdgeInsets.all(5),
+                    padding: EdgeInsets.all((5).r(context)),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.55),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       CupertinoIcons.xmark,
-                      size: 16,
+                      size: (16).r(context),
                       color: Colors.white,
                     ),
                   ),

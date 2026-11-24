@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/ornamented_card.dart';
 import '../../data/models/active_pathway_model.dart';
 import '../refactor/pathway_view_data.dart';
 import 'pathway_info_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ActivePathwayCard extends StatelessWidget {
   const ActivePathwayCard({required this.active, super.key});
@@ -16,8 +16,8 @@ class ActivePathwayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrnamentedCard(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
-      radius: 14.r,
+      padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (16).h(context)),
+      radius: 14,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -29,7 +29,7 @@ class ActivePathwayCard extends StatelessWidget {
             ]),
           ),
 
-          SizedBox(height: 14.h),
+          SizedBox(height: (14).h(context)),
 
           PathwayInfoRow(
             asset: AppAssets.assetsEducationalPath,

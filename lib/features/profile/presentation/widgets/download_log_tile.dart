@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/download_log_item.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class DownloadLogTile extends StatelessWidget {
   const DownloadLogTile({
@@ -29,14 +29,14 @@ class DownloadLogTile extends StatelessWidget {
       opacity: isDeleting ? 0.5 : 1,
       child: Material(
         color: colors.tertiaryContainer,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular((12).r(context)),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
           enabled: !isDeleting,
           leading: Icon(
             Icons.picture_as_pdf,
             color: colors.primary,
-            size: 26.w,
+            size: (26).r(context),
           ),
           title: Text(
             item.fileName,
@@ -75,9 +75,9 @@ class _DeleteAction extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isDeleting) {
       return SizedBox(
-        width: 22.w,
-        height: 22.w,
-        child: CircularProgressIndicator(strokeWidth: 2.w, color: color),
+        width: (22).w(context),
+        height: (22).h(context),
+        child: CircularProgressIndicator(strokeWidth: (2).r(context), color: color),
       );
     }
 
@@ -85,7 +85,7 @@ class _DeleteAction extends StatelessWidget {
       onPressed: onDelete,
       visualDensity: VisualDensity.compact,
       tooltip: 'delete_download'.tr(),
-      icon: Icon(Icons.delete_outline, size: 22.w, color: color),
+      icon: Icon(Icons.delete_outline, size: (22).r(context), color: color),
     );
   }
 }

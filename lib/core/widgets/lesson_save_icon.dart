@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../features/lessons/presentation/cubit/lesson_save_cubit.dart';
 import '../di/service_locator.dart';
@@ -54,10 +53,10 @@ class LessonSaveIcon extends StatelessWidget {
             child: InkWell(
               onTap: () => _toggle(context, cubit),
               child: Padding(
-                padding: EdgeInsets.all(padding ?? 8.w),
+                padding: EdgeInsets.all(padding ?? 8),
                 child: Icon(
                   isSaved ? Icons.bookmark : Icons.bookmark_border,
-                  size: iconSize ?? 20.w,
+                  size: iconSize ?? 20,
                   color: isSaved ? colors.secondary : colors.onSurfaceVariant,
                 ),
               ),

@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../refactor/pathway_option.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PathwayDropdownField extends StatelessWidget {
   const PathwayDropdownField({
@@ -39,33 +39,33 @@ class PathwayDropdownField extends StatelessWidget {
           style: AppTheme.styles(context).rowValue,
         ),
 
-        SizedBox(height: 8.h),
+        SizedBox(height: (8).h(context)),
 
         Container(
-          height: 48.h,
-          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          height: (48).h(context),
+          padding: EdgeInsets.symmetric(horizontal: (14).w(context)),
           decoration: BoxDecoration(
             color: colors.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular((10).r(context)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selected,
               isExpanded: true,
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular((10).r(context)),
               dropdownColor: colors.surfaceContainerLowest,
               icon: isLoading
                   ? SizedBox(
-                      width: 16.w,
-                      height: 16.w,
+                      width: (16).w(context),
+                      height: (16).h(context),
                       child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: (2).r(context),
                         color: colors.onSurfaceVariant,
                       ),
                     )
                   : Icon(
                       Icons.keyboard_arrow_down,
-                      size: 20.w,
+                      size: (20).r(context),
                       color: colors.onSurfaceVariant,
                     ),
               hint: Text(

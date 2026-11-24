@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class StatusHeader extends StatelessWidget {
   const StatusHeader({required this.title, required this.note, super.key});
@@ -20,7 +20,7 @@ class StatusHeader extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: AppTheme.styles(context).statusTitle,
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: (16).h(context)),
         Text(
           note,
           textAlign: TextAlign.center,

@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -9,6 +8,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../data/models/profile_model.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/edit_profile_label.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class EditProfileForm extends StatefulWidget {
   const EditProfileForm({required this.profile, super.key});
@@ -74,7 +74,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
     return Form(
       key: _formKey,
       child: ListView(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+        padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (24).h(context)),
         children: <Widget>[
           EditProfileLabel(text: 'full_name'.tr()),
           CustomTextField(
@@ -87,7 +87,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 : null,
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           EditProfileLabel(text: 'email'.tr()),
           CustomTextField(
@@ -100,7 +100,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             validator: _validateEmail,
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: (16).h(context)),
 
           EditProfileLabel(text: 'phone'.tr()),
           CustomTextField(
@@ -110,10 +110,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
             readOnly: true,
             overrideValidator: true,
             textDirection: TextDirection.ltr,
-            suffixIcon: Icon(Icons.lock_outline, size: 18.w),
+            suffixIcon: Icon(Icons.lock_outline, size: (18).r(context)),
           ),
 
-          SizedBox(height: 6.h),
+          SizedBox(height: (6).h(context)),
 
           Text(
             'phone_not_editable'.tr(),
@@ -122,7 +122,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
             ),
           ),
 
-          SizedBox(height: 28.h),
+          SizedBox(height: (28).h(context)),
 
           BlocBuilder<ProfileCubit, ProfileState>(
             buildWhen: (ProfileState previous, ProfileState current) =>
@@ -131,10 +131,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
               onPressed: _save,
               text: 'save_changes'.tr(),
               width: double.infinity,
-              height: 46.h,
+              height: (46).h(context),
               isLoading: state.isSaving,
-              threeRadius: 10.r,
-              lastRadius: 10.r,
+              threeRadius: 10,
+              lastRadius: 10,
             ),
           ),
         ],

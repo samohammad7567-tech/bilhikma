@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_error_view.dart';
 import '../cubit/profile_cubit.dart';
@@ -8,7 +7,8 @@ import '../widgets/profile_action_card.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_info_card.dart';
 import 'profile_action_handler.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({super.key});
@@ -32,19 +32,19 @@ class ProfileBody extends StatelessWidget {
 
         return ListView(
           padding: EdgeInsets.fromLTRB(
-            16.w,
-            8.h,
-            16.w,
-            AppBottomNavBar.barHeight + 24.h,
+            16,
+            8,
+            16,
+            MyScreenSize.bottomChromeHeight(context) + 24,
           ),
           children: <Widget>[
             ProfileHeader(name: state.profile.name),
 
-            SizedBox(height: 22.h),
+            SizedBox(height: (22).h(context)),
 
             ProfileInfoCard(profile: state.profile),
 
-            SizedBox(height: 14.h),
+            SizedBox(height: (14).h(context)),
 
             ProfileActionCard(
               onAction: (action) =>

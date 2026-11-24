@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SettingsSegmentTile extends StatelessWidget {
   const SettingsSegmentTile({
@@ -29,12 +29,12 @@ class SettingsSegmentTile extends StatelessWidget {
 
     return Material(
       color: isSelected ? colors.tertiaryContainer : Colors.transparent,
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular((10).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: isSelected ? null : onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (10).h(context)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -53,8 +53,8 @@ class SettingsSegmentTile extends StatelessWidget {
               ),
 
               if (icon != null) ...<Widget>[
-                SizedBox(width: 6.w),
-                Icon(icon, size: 16.w, color: foreground),
+                SizedBox(width: (6).w(context)),
+                Icon(icon, size: (16).r(context), color: foreground),
               ],
             ],
           ),

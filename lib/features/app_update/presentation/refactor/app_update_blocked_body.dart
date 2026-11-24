@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/services/app_info_service.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -9,6 +8,7 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/status_header.dart';
 import '../../data/models/app_version_model.dart';
 import '../widgets/app_update_message_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppUpdateBlockedBody extends StatelessWidget {
   const AppUpdateBlockedBody({
@@ -29,11 +29,11 @@ class AppUpdateBlockedBody extends StatelessWidget {
       child: AppContentWidth(
         maxWidth: 600,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.w),
+          padding: EdgeInsets.symmetric(horizontal: (32).w(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
 
               StatusHeader(
                 title: isMaintenance
@@ -49,27 +49,27 @@ class AppUpdateBlockedBody extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: 24.h),
+                      SizedBox(height: (24).h(context)),
 
                       Icon(
                         isMaintenance
                             ? Icons.build_circle_outlined
                             : Icons.system_update_alt_rounded,
-                        size: 70.w,
+                        size: (70).r(context),
                         color: colors.secondary,
                       ),
 
                       if (version.hasMessage) ...<Widget>[
-                        SizedBox(height: 24.h),
+                        SizedBox(height: (24).h(context)),
                         AppUpdateMessageCard(message: version.message!),
                       ],
 
                       if (!isMaintenance) ...<Widget>[
-                        SizedBox(height: 20.h),
+                        SizedBox(height: (20).h(context)),
                         _VersionLine(version: version),
                       ],
 
-                      SizedBox(height: 24.h),
+                      SizedBox(height: (24).h(context)),
                     ],
                   ),
                 ),
@@ -80,15 +80,15 @@ class AppUpdateBlockedBody extends StatelessWidget {
                   onPressed: onUpdate,
                   text: 'update_now'.tr(),
                   width: double.infinity,
-                  height: 44.h,
-                  threeRadius: 8.r,
-                  lastRadius: 8.r,
+                  height: (44).h(context),
+                  threeRadius: 8,
+                  lastRadius: 8,
                   backgroundColor: colors.secondary,
                   textColor: colors.onSecondary,
-                  elevation: 0,
+                  elevation: (0).r(context),
                 ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
             ],
           ),
         ),
@@ -117,7 +117,7 @@ class _VersionLine extends StatelessWidget {
         ),
 
         if (version.latestVersion.isNotEmpty) ...<Widget>[
-          SizedBox(height: 6.h),
+          SizedBox(height: (6).h(context)),
           Text(
             'app_update_latest_version'.tr(
               namedArgs: <String, String>{'version': version.latestVersion},

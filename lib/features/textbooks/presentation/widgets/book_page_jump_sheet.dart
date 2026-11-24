@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/sheet_handle.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class BookPageJumpSheet extends StatefulWidget {
   const BookPageJumpSheet({
@@ -57,7 +57,7 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
       children: <Widget>[
         const SheetHandle(),
 
-        SizedBox(height: 12.h),
+        SizedBox(height: (12).h(context)),
 
         Text(
           'reader_jump_to_page'.tr(),
@@ -66,7 +66,7 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
           style: AppTheme.styles(context).cardTitle,
         ),
 
-        SizedBox(height: 14.h),
+        SizedBox(height: (14).h(context)),
 
         CustomTextField(
           controller: _controller,
@@ -81,7 +81,7 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
         ),
 
         if (_errorKey != null) ...<Widget>[
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
 
           Text(
             _errorKey!.tr(
@@ -95,16 +95,16 @@ class _BookPageJumpSheetState extends State<BookPageJumpSheet> {
           ),
         ],
 
-        SizedBox(height: 16.h),
+        SizedBox(height: (16).h(context)),
 
         CustomButton(
           onPressed: _submit,
           text: 'reader_go'.tr(),
           width: double.infinity,
-          height: 46.h,
-          threeRadius: 8.r,
-          lastRadius: 8.r,
-          elevation: 0,
+          height: (46).h(context),
+          threeRadius: 8,
+          lastRadius: 8,
+          elevation: (0).r(context),
         ),
       ],
     );

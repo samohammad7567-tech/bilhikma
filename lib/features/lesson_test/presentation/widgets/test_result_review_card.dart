@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
@@ -12,6 +11,7 @@ import '../refactor/test_solution_answers.dart';
 import 'test_rich_prompt.dart';
 import 'test_review_answers.dart';
 import 'test_review_status.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestResultReviewCard extends StatelessWidget {
   const TestResultReviewCard({
@@ -40,11 +40,11 @@ class TestResultReviewCard extends StatelessWidget {
     final String? explanation = _explanation;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      margin: EdgeInsets.only(bottom: (12).h(context)),
+      padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (14).h(context)),
       decoration: BoxDecoration(
         color: colors.surfaceContainerHighest.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -56,12 +56,12 @@ class TestResultReviewCard extends StatelessWidget {
               style: AppTheme.styles(context).labelStrong,
             ),
 
-          if (prompt.trim().isNotEmpty) SizedBox(height: 8.h),
+          if (prompt.trim().isNotEmpty) SizedBox(height: (8).h(context)),
 
           Row(
             children: <Widget>[
-              Icon(status.icon, size: 18.w, color: status.color),
-              SizedBox(width: 6.w),
+              Icon(status.icon, size: (18).r(context), color: status.color),
+              SizedBox(width: (6).w(context)),
               Expanded(
                 child: Text(
                   status.label,
@@ -87,7 +87,7 @@ class TestResultReviewCard extends StatelessWidget {
           if (givenAnswers.isNotEmpty ||
               correctAnswers.isNotEmpty ||
               explanation != null) ...<Widget>[
-            SizedBox(height: 8.h),
+            SizedBox(height: (8).h(context)),
             TestReviewAnswers(
               givenAnswers: givenAnswers,
               correctAnswers: correctAnswers,

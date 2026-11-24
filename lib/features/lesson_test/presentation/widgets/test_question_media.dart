@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_image_viewer.dart';
 import 'test_audio_button.dart';
 import 'test_media_image.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestQuestionMedia extends StatelessWidget {
   const TestQuestionMedia({super.key, this.imageUrl, this.audioUrl});
@@ -23,7 +23,7 @@ class TestQuestionMedia extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (image != null) _image(context, image),
-        if (image != null && audio != null) SizedBox(height: 10.h),
+        if (image != null && audio != null) SizedBox(height: (10).h(context)),
         if (audio != null)
           Align(
             alignment: AlignmentDirectional.centerStart,
@@ -35,12 +35,12 @@ class TestQuestionMedia extends StatelessWidget {
 
   Widget _image(BuildContext context, String url) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
+      padding: EdgeInsets.symmetric(vertical: (12).h(context)),
       child: GestureDetector(
         onTap: () => AppImageViewer.open(context, url: url),
         child: AspectRatio(
           aspectRatio: 16 / 9,
-          child: TestMediaImage(url: url, padding: EdgeInsets.all(8.w)),
+          child: TestMediaImage(url: url, padding: EdgeInsets.all((8).r(context))),
         ),
       ),
     );

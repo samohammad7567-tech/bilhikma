@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../cubit/notifications_cubit.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationFilterTabs extends StatelessWidget {
   const NotificationFilterTabs({
@@ -32,7 +32,7 @@ class NotificationFilterTabs extends StatelessWidget {
           ),
         ),
 
-        SizedBox(width: 10.w),
+        SizedBox(width: (10).w(context)),
 
         Expanded(
           child: _tab(
@@ -70,7 +70,7 @@ class NotificationFilterTabs extends StatelessWidget {
       child: InkWell(
         onTap: () => onSelected(value),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 8.w),
+          padding: EdgeInsets.symmetric(vertical: (9).h(context), horizontal: (8).w(context)),
           child: Text(
             label,
             textAlign: TextAlign.center,

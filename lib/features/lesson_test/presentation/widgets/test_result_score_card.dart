@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/lesson_detail_formats.dart';
 import '../../data/models/quiz_attempt_model.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestResultScoreCard extends StatelessWidget {
   const TestResultScoreCard({required this.result, super.key});
@@ -18,12 +18,12 @@ class TestResultScoreCard extends StatelessWidget {
     final bool passed = result.isPassed == true;
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
+      padding: EdgeInsets.symmetric(vertical: (18).h(context), horizontal: (12).w(context)),
       decoration: BoxDecoration(
         color: passed
             ? colors.tertiaryContainer
             : colors.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Column(
         children: <Widget>[
@@ -45,7 +45,7 @@ class TestResultScoreCard extends StatelessWidget {
                 ),
 
                 VerticalDivider(
-                  width: 1.w,
+                  width: (1).w(context),
                   thickness: 1,
                   color: colors.onSurface.withValues(alpha: 0.2),
                 ),
@@ -67,7 +67,7 @@ class TestResultScoreCard extends StatelessWidget {
           ),
 
           if (result.duration != null) ...[
-            SizedBox(height: 10.h),
+            SizedBox(height: (10).h(context)),
             Text(
               '${LangKeys.quizTimeSpent.tr()}: '
               '${LessonDetailFormats.clock(result.duration!)}',

@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/localization/lang_keys.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../refactor/quiz_review_answer.dart';
 import 'test_html_text.dart';
 import 'test_review_answer_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestReviewAnswers extends StatelessWidget {
   const TestReviewAnswers({
@@ -37,7 +37,7 @@ class TestReviewAnswers extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         for (int index = 0; index < sections.length; index++) ...<Widget>[
-          if (index > 0) SizedBox(height: 8.h),
+          if (index > 0) SizedBox(height: (8).h(context)),
           sections[index],
         ],
       ],
@@ -55,7 +55,7 @@ class TestReviewAnswers extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text('${labelKey.tr()}:', style: styles.labelStrong),
-        SizedBox(height: 3.h),
+        SizedBox(height: (3).h(context)),
         for (final QuizReviewAnswer answer in answers)
           TestReviewAnswerTile(answer: answer),
       ],
@@ -69,7 +69,7 @@ class TestReviewAnswers extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text('${LangKeys.quizExplanation.tr()}:', style: styles.labelStrong),
-        SizedBox(height: 3.h),
+        SizedBox(height: (3).h(context)),
         TestHtmlText(text, style: styles.labelSmall),
       ],
     );

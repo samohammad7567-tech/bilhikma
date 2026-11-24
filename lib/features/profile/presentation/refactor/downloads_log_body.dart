@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_error_view.dart';
@@ -9,6 +8,7 @@ import '../cubit/downloads_log_cubit.dart';
 import '../widgets/download_log_tile.dart';
 import '../widgets/downloads_log_skeleton.dart';
 import 'downloads_log_actions.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class DownloadsLogBody extends StatelessWidget {
   const DownloadsLogBody({super.key});
@@ -51,10 +51,10 @@ class _DownloadsList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       child: ListView.separated(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+        padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (24).h(context)),
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: state.items.length,
-        separatorBuilder: (_, _) => SizedBox(height: 10.h),
+        separatorBuilder: (_, _) => SizedBox(height: (10).h(context)),
         itemBuilder: (BuildContext context, int index) {
           final DownloadLogItem item = state.items[index];
 

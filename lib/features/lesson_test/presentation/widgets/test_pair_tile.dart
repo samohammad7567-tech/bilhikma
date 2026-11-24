@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import 'test_audio_button.dart';
 import 'test_html_text.dart';
 import 'test_media_image.dart';
 import 'test_pair_badge.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestPairTile extends StatelessWidget {
   const TestPairTile({
@@ -20,15 +20,10 @@ class TestPairTile extends StatelessWidget {
   });
 
   final String text;
-
   final bool isSelected;
-
   final bool isMuted;
-
   final int? badge;
-
   final VoidCallback onTap;
-
   final String? imageUrl;
   final String? audioUrl;
 
@@ -44,45 +39,45 @@ class TestPairTile extends StatelessWidget {
       color: isMuted
           ? colors.surfaceContainerHighest
           : colors.tertiaryContainer,
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular((10).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: (12).w(context),
+            vertical: (12).h(context),
+          ),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular((10).r(context)),
             border: Border.all(
               color: isSelected ? colors.secondary : Colors.transparent,
-              width: 1.6.w,
+              width: 1.6.w(context),
             ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (image != null) ...<Widget>[
-                _image(image),
-                SizedBox(width: 8.w),
+                _image(context, image),
+                SizedBox(width: (8).w(context)),
               ],
-
               Expanded(
                 child: hasText
                     ? TestHtmlText(
                         text,
-                        style: AppTheme.styles(
-                          context,
-                        ).cardBlurb.copyWith(color: colors.onSurface),
+                        style: AppTheme.styles(context)
+                            .cardBlurb
+                            .copyWith(color: colors.onSurface),
                       )
                     : const SizedBox.shrink(),
               ),
-
               if (audio != null) ...<Widget>[
-                SizedBox(width: 4.w),
+                SizedBox(width: (4).w(context)),
                 TestAudioButton(url: audio, dense: true),
               ],
-
               if (badge != null) ...<Widget>[
-                SizedBox(width: 8.w),
+                SizedBox(width: (8).w(context)),
                 TestPairBadge(value: badge),
               ],
             ],
@@ -92,19 +87,19 @@ class TestPairTile extends StatelessWidget {
     );
   }
 
-  Widget _image(String url) => Padding(
-    padding: EdgeInsets.symmetric(vertical: 2.h),
-    child: SizedBox(
-      width: 48.w,
-      height: 48.w,
-      child: TestMediaImage(
-        url: url,
-        radius: 10,
-        padding: EdgeInsets.all(3.w),
-        elevated: false,
-      ),
-    ),
-  );
+  Widget _image(BuildContext context, String url) => Padding(
+        padding: EdgeInsets.symmetric(vertical: (2).h(context)),
+        child: SizedBox(
+          width: (48).w(context),
+          height: (48).h(context),
+          child: TestMediaImage(
+            url: url,
+            radius: 10,
+            padding: EdgeInsets.all((3).r(context)),
+            elevated: false,
+          ),
+        ),
+      );
 
   String? _present(String? value) {
     final String text = value?.trim() ?? '';

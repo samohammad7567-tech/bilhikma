@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../utils/lesson_view_data.dart';
 import '../enums/lesson_category_enum.dart';
 import '../themes/app_theme.dart';
 import 'app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonCategoryChip extends StatelessWidget {
   const LessonCategoryChip({
@@ -29,19 +29,19 @@ class LessonCategoryChip extends StatelessWidget {
       shape: StadiumBorder(
         side: isSelected
             ? BorderSide.none
-            : BorderSide(color: colors.outline, width: 1.2.w),
+            : BorderSide(color: colors.outline, width: 1.2.w(context)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: (16).w(context)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              AppIcon(asset: category.icon, size: 18.w, color: foreground),
+              AppIcon(asset: category.icon, size: (18).r(context), color: foreground),
 
-              SizedBox(width: 8.w),
+              SizedBox(width: (8).w(context)),
 
               Text(
                 category.label.tr(),

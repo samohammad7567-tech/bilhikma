@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../enums/content_type_enum.dart';
 import '../models/live_session_model.dart';
 import 'lesson_thumbnail.dart';
 import 'ornamented_card.dart';
 import 'live_session_details.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LiveSessionTile extends StatelessWidget {
   const LiveSessionTile({
@@ -22,8 +22,8 @@ class LiveSessionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrnamentedCard(
-      radius: 14.r,
-      padding: EdgeInsets.all(10.w),
+      radius: 14,
+      padding: EdgeInsets.all((10).r(context)),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +33,7 @@ class LiveSessionTile extends StatelessWidget {
               imageUrl: session.coverUrl,
             ),
 
-            SizedBox(width: 12.w),
+            SizedBox(width: (12).w(context)),
 
             Expanded(
               child: LiveSessionDetails(

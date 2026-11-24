@@ -1,8 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SettingsChoiceCard extends StatelessWidget {
   const SettingsChoiceCard({
@@ -24,10 +24,10 @@ class SettingsChoiceCard extends StatelessWidget {
     final AppTextStyles styles = AppTheme.styles(context);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (12).h(context)),
       decoration: BoxDecoration(
         color: colors.tertiaryContainer.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular((14).r(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,7 +35,7 @@ class SettingsChoiceCard extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              SizedBox(width: 12.w),
+              SizedBox(width: (12).w(context)),
 
               Expanded(
                 child: Column(
@@ -50,7 +50,7 @@ class SettingsChoiceCard extends StatelessWidget {
                       style: styles.rowTitle,
                     ),
 
-                    SizedBox(height: 2.h),
+                    SizedBox(height: (2).h(context)),
 
                     Text(
                       hint.tr(),
@@ -65,7 +65,7 @@ class SettingsChoiceCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
 
           control,
         ],

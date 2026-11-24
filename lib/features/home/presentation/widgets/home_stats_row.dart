@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'stat_tile.dart';
 import 'home_progress_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class HomeStatsRow extends StatelessWidget {
   const HomeStatsRow({
@@ -20,10 +20,10 @@ class HomeStatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.w),
+      padding: EdgeInsets.all((8).r(context)),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular((12).r(context)),
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -36,13 +36,13 @@ class HomeStatsRow extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: 8.w),
+            SizedBox(width: (8).w(context)),
 
             Expanded(
               child: StatTile(value: '$lessonsCount', label: 'lessons'.tr()),
             ),
 
-            SizedBox(width: 8.w),
+            SizedBox(width: (8).w(context)),
 
             Expanded(
               flex: 3,

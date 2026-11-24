@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_option_model.dart';
 import 'test_word_chip.dart';
@@ -22,8 +21,8 @@ class TestWordBank extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 10.w,
-      runSpacing: 10.h,
+      spacing: 10,
+      runSpacing: 10,
       children: options
           .map(
             (TestOptionModel option) => TestWordChip(

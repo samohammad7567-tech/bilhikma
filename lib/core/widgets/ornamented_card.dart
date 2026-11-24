@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../constants/app_assets.dart';
 import 'card_ornament.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class OrnamentedCard extends StatelessWidget {
   const OrnamentedCard({
@@ -27,7 +27,7 @@ class OrnamentedCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: color ?? Theme.of(context).colorScheme.tertiaryContainer,
-        borderRadius: BorderRadius.circular(radius ?? 12.r),
+        borderRadius: BorderRadius.circular(radius ?? 12),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -38,7 +38,7 @@ class OrnamentedCard extends StatelessWidget {
           Padding(
             padding:
                 padding ??
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
             child: child,
           ),
         ],

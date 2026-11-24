@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../themes/app_theme.dart';
+import '../utils/my_screen_size.dart';
 import 'app_top_bar_back_button.dart';
+import '../utils/screen_scale.dart';
 
 class AppTopBar extends StatelessWidget {
   const AppTopBar({
@@ -27,12 +28,20 @@ class AppTopBar extends StatelessWidget {
         (onBack == null ? null : AppTopBarBackButton(onPressed: onBack));
 
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 48.h),
+      constraints: BoxConstraints(minHeight: 48),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 56.w, vertical: 4.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: MyScreenSize.value(
+                context,
+                compact: 16,
+                medium: 24,
+                expanded: 32,
+              ),
+              vertical: (4).h(context),
+            ),
             child: Text(
               title,
               textAlign: TextAlign.center,

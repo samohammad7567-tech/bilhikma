@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../enums/drawer_destination_enum.dart';
 import 'drawer_menu_item.dart';
@@ -21,10 +20,10 @@ class DrawerMenuList extends StatelessWidget {
             in DrawerDestination.values) ...<Widget>[
           if (_startsNewGroup(destination))
             Divider(
-              height: 24.h,
-              thickness: 1.h,
-              indent: 12.w,
-              endIndent: 12.w,
+              height: 24,
+              thickness: 1,
+              indent: 12,
+              endIndent: 12,
               color: colors.outline.withValues(alpha: 0.25),
             ),
 

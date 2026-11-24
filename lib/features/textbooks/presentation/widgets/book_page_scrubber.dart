@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../cubit/book_preview_cubit.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class BookPageScrubber extends StatelessWidget {
   const BookPageScrubber({
@@ -30,12 +30,13 @@ class BookPageScrubber extends StatelessWidget {
           icon: Icons.chevron_left,
           onPressed: state.canGoBack ? onPrevious : null,
           colors: colors,
+          context: context,
         ),
 
         Expanded(
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              trackHeight: 3.h,
+              trackHeight: 3,
               activeTrackColor: colors.secondary,
               inactiveTrackColor: colors.surfaceContainerLowest,
               thumbColor: colors.secondary,
@@ -55,6 +56,7 @@ class BookPageScrubber extends StatelessWidget {
           icon: Icons.chevron_right,
           onPressed: state.canGoForward ? onNext : null,
           colors: colors,
+          context: context,
         ),
       ],
     );
@@ -64,10 +66,11 @@ class BookPageScrubber extends StatelessWidget {
     required IconData icon,
     required VoidCallback? onPressed,
     required ColorScheme colors,
+    required BuildContext context,
   }) => IconButton(
     onPressed: onPressed,
     visualDensity: VisualDensity.compact,
-    icon: Icon(icon, size: 26.w),
+    icon: Icon(icon, size: (26).r(context)),
     color: colors.onSurface,
     disabledColor: colors.outlineVariant,
   );

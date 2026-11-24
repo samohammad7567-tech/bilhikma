@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'count_badge_bubble.dart';
 
@@ -28,8 +27,8 @@ class AppCountBadge extends StatelessWidget {
         child,
 
         PositionedDirectional(
-          top: -2.h,
-          end: -2.w,
+          top: -2,
+          end: -2,
           child: CountBadgeBubble(label: label),
         ),
       ],

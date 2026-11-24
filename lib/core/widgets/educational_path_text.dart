@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
 
@@ -35,8 +34,8 @@ class EducationalPathText extends StatelessWidget {
     return Wrap(
       alignment: alignment,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 6.w,
-      runSpacing: 2.h,
+      spacing: 6,
+      runSpacing: 2,
       children: <Widget>[
         for (int i = 0; i < displaySegments.length; i++) ...<Widget>[
           if (i > 0) Text(!isRtl ? '‹' : '›', style: ancestor),

@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/download_progress.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_outline_button.dart';
 import 'book_download_progress.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SubjectBookActions extends StatelessWidget {
   const SubjectBookActions({
@@ -62,16 +62,16 @@ class SubjectBookActions extends StatelessWidget {
           onPressed: onDownload,
           text: 'download_book'.tr(),
           width: double.infinity,
-          height: 46.h,
-          threeRadius: 8.r,
-          lastRadius: 8.r,
-          elevation: 0,
+          height: (46).h(context),
+          threeRadius: 8,
+          lastRadius: 8,
+          elevation: (0).r(context),
           isLoading: isDownloading,
-          loadingWidth: 22.w,
-          loadingHeight: 22.w,
+          loadingWidth: 22,
+          loadingHeight: 22,
         ),
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         Text(
           'book_watermark_note'.tr(),
@@ -81,7 +81,7 @@ class SubjectBookActions extends StatelessWidget {
           style: AppTheme.styles(context).cardCaption,
         ),
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         _previewButton(context),
       ],
@@ -92,13 +92,13 @@ class SubjectBookActions extends StatelessWidget {
     onPressed: onOpen,
     text: 'open_book'.tr(),
     width: double.infinity,
-    height: 46.h,
-    threeRadius: 8.r,
-    lastRadius: 8.r,
-    elevation: 0,
+    height: (46).h(context),
+    threeRadius: 8,
+    lastRadius: 8,
+    elevation: (0).r(context),
     isLoading: isPreviewing,
-    loadingWidth: 22.w,
-    loadingHeight: 22.w,
+    loadingWidth: 22,
+    loadingHeight: 22,
   );
 
   Widget _previewButton(BuildContext context) {
@@ -108,9 +108,9 @@ class SubjectBookActions extends StatelessWidget {
       onPressed: onPreview,
       text: 'preview_book'.tr(),
       width: double.infinity,
-      height: 46.h,
-      threeRadius: 8.r,
-      lastRadius: 8.r,
+      height: (46).h(context),
+      threeRadius: 8,
+      lastRadius: 8,
       borderColor: colors.outlineVariant,
       backgroundColor: colors.surfaceContainerLowest,
       textColor: colors.onSurface,

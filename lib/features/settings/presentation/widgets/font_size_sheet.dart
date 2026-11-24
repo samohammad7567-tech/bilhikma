@@ -1,13 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/custom_bottom_sheet.dart';
 import '../cubit/settings_cubit.dart';
 import 'font_size_stepper.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class FontSizeSheet extends StatelessWidget {
   const FontSizeSheet({super.key});
@@ -32,13 +32,13 @@ class FontSizeSheet extends StatelessWidget {
           final SettingsCubit cubit = context.read<SettingsCubit>();
 
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+            padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (6).h(context)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SheetHandle(),
 
-                SizedBox(height: 20.h),
+                SizedBox(height: (20).h(context)),
 
                 Text(
                   'font_size'.tr(),
@@ -50,7 +50,7 @@ class FontSizeSheet extends StatelessWidget {
                   ).sectionTitle.copyWith(color: colors.secondaryContainer),
                 ),
 
-                SizedBox(height: 14.h),
+                SizedBox(height: (14).h(context)),
 
                 Text(
                   'font_size_sample'.tr(),
@@ -60,7 +60,7 @@ class FontSizeSheet extends StatelessWidget {
                   style: AppTheme.styles(context).bodyStrong,
                 ),
 
-                SizedBox(height: 24.h),
+                SizedBox(height: (24).h(context)),
 
                 FontSizeStepper(
                   percent: state.fontScalePercent,

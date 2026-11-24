@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../data/models/test_answer_model.dart';
 import '../../data/models/test_blank_model.dart';
@@ -8,6 +7,7 @@ import '../../data/models/test_question_model.dart';
 import 'test_blank_body_text.dart';
 import 'test_option_tile.dart';
 import 'test_question_prompt.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestDropdownBlanksQuestion extends StatelessWidget {
   const TestDropdownBlanksQuestion({
@@ -45,7 +45,7 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
           rich: question.isRichPrompt,
         ),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: (20).h(context)),
 
         TestBlankBodyText(
           body: question.body,
@@ -55,11 +55,11 @@ class TestDropdownBlanksQuestion extends StatelessWidget {
         ),
 
         if (activeBlank != null && activeBlank.choices.isNotEmpty) ...<Widget>[
-          SizedBox(height: 24.h),
+          SizedBox(height: (24).h(context)),
 
           for (final TestOptionModel choice in activeBlank.choices)
             Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
+              padding: EdgeInsets.only(bottom: (10).h(context)),
               child: TestOptionTile(
                 label: choice.label,
                 imageUrl: choice.imageUrl,

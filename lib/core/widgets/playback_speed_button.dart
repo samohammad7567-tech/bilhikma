@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../enums/playback_speed_enum.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PlaybackSpeedButton extends StatelessWidget {
   const PlaybackSpeedButton({
@@ -31,18 +31,18 @@ class PlaybackSpeedButton extends StatelessWidget {
 
     return Material(
       color: background,
-      borderRadius: BorderRadius.circular(20.r),
+      borderRadius: BorderRadius.circular((20).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+          padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (4).h(context)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Icon(Icons.speed_rounded, size: 14.sp, color: foreground),
+              Icon(Icons.speed_rounded, size: (14).r(context), color: foreground),
 
-              SizedBox(width: 3.w),
+              SizedBox(width: (3).w(context)),
 
               Text(
                 speed.label,
@@ -50,7 +50,7 @@ class PlaybackSpeedButton extends StatelessWidget {
                 maxLines: 1,
                 style: TextStyle(
                   color: foreground,
-                  fontSize: 11.sp,
+                  fontSize: (11).sp(context),
                   fontWeight: FontWeight.w700,
                 ),
               ),

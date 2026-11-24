@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_top_bar.dart';
 import '../../../../core/models/lesson_model.dart';
 import '../cubit/lessons_cubit.dart';
@@ -22,7 +22,7 @@ class LessonsViewAllBody extends StatelessWidget {
           return Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+                padding: EdgeInsets.fromLTRB((16).w(context), (8).h(context), (16).w(context), (12).h(context)),
                 child: AppTopBar(title: state.title, onBack: onBack),
               ),
 

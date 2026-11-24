@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../themes/app_theme.dart';
 
@@ -36,7 +35,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double radius = threeRadius ?? 20.r;
+    final double radius = threeRadius ?? 20;
 
     return SizedBox(
       height: height,
@@ -59,10 +58,10 @@ class CustomButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? SizedBox(
-                width: loadingWidth ?? 30.w,
-                height: loadingHeight ?? 30.w,
+                width: loadingWidth ?? 30,
+                height: loadingHeight ?? 30,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.w,
+                  strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     textColor ?? Theme.of(context).colorScheme.onPrimary,
                   ),

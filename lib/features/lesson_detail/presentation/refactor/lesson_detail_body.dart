@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/enums/lesson_status_enum.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -23,6 +22,7 @@ import '../widgets/article_read_button.dart';
 import '../widgets/lesson_detail_inset.dart';
 import '../widgets/lesson_locked_view.dart';
 import '../widgets/lesson_quiz_action_bar.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonDetailBody extends StatelessWidget {
   const LessonDetailBody({super.key, this.onGoToTest, this.videoStageKey});
@@ -70,11 +70,11 @@ class LessonDetailBody extends StatelessWidget {
         final bool canStartQuiz = state.canStartQuiz;
 
         final Widget content = ListView(
-          padding: EdgeInsets.only(bottom: 24.h),
+          padding: EdgeInsets.only(bottom: (24).h(context)),
           children: <Widget>[
             ..._stage(context, cubit, state, detail),
 
-            SizedBox(height: 14.h),
+            SizedBox(height: (14).h(context)),
 
             LessonDetailInset(
               child: LessonSummaryCard(
@@ -86,7 +86,7 @@ class LessonDetailBody extends StatelessWidget {
             ),
 
             if (detail.isVideo && !state.progress.isCompleted) ...<Widget>[
-              SizedBox(height: 10.h),
+              SizedBox(height: (10).h(context)),
               LessonDetailInset(
                 child: Text(
                   'video_no_skip_note'.tr(),
@@ -96,7 +96,7 @@ class LessonDetailBody extends StatelessWidget {
               ),
             ],
             if (description != null) ...<Widget>[
-              SizedBox(height: 18.h),
+              SizedBox(height: (18).h(context)),
               LessonDetailInset(
                 child: LessonTextSection(
                   headingKey: 'description_heading',
@@ -106,7 +106,7 @@ class LessonDetailBody extends StatelessWidget {
             ],
 
             if (detail.articleBody != null) ...<Widget>[
-              SizedBox(height: 18.h),
+              SizedBox(height: (18).h(context)),
               LessonDetailInset(
                 child: LessonTextSection(
                   headingKey: 'article_body_heading',
@@ -116,7 +116,7 @@ class LessonDetailBody extends StatelessWidget {
             ],
 
             if (detail.hasAttachments) ...<Widget>[
-              SizedBox(height: 18.h),
+              SizedBox(height: (18).h(context)),
               LessonDetailInset(
                 child: LessonAttachmentsCard(
                   attachments: detail.attachments,
@@ -137,7 +137,7 @@ class LessonDetailBody extends StatelessWidget {
             ],
 
             if (detail.isArticle) ...<Widget>[
-              SizedBox(height: 20.h),
+              SizedBox(height: (20).h(context)),
               LessonDetailInset(
                 child: ArticleReadButton(
                   isRead: state.isArticleRead,
@@ -243,9 +243,9 @@ class LessonDetailBody extends StatelessWidget {
 
     if (detail.isAudio) {
       return <Widget>[
-        SizedBox(height: 8.h),
+        SizedBox(height: (8).h(context)),
         const LessonDetailInset(child: LessonArtwork(aspectRatio: 1)),
-        SizedBox(height: 14.h),
+        SizedBox(height: (14).h(context)),
         LessonDetailInset(
           child: LessonAudioStage(
             url: state.playbackUrl,
@@ -269,7 +269,7 @@ class LessonDetailBody extends StatelessWidget {
     }
 
     return <Widget>[
-      SizedBox(height: 8.h),
+      SizedBox(height: (8).h(context)),
       const LessonDetailInset(child: LessonArtwork(aspectRatio: 16 / 9)),
     ];
   }

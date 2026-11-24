@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../constants/app_assets.dart';
 import '../enums/content_type_enum.dart';
 import 'app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonLockScrim extends StatelessWidget {
   const LessonLockScrim({required this.mediaType, super.key});
@@ -21,7 +21,7 @@ class LessonLockScrim extends StatelessWidget {
       child: Center(
         child: AppIcon(
           asset: AppAssets.assetsLockIcon,
-          size: 40.w,
+          size: (40).r(context),
           color: mediaType == ContentType.video
               ? colors.onPrimary
               : colors.onSecondary,

@@ -1,11 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_assets.dart';
 import '../themes/app_theme.dart';
 import 'app_dialog_actions.dart';
 import 'app_dialog_glyph.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppConfirmDialog extends StatelessWidget {
   const AppConfirmDialog({
@@ -56,11 +56,11 @@ class AppConfirmDialog extends StatelessWidget {
 
     return Dialog(
       backgroundColor: colors.surface,
-      elevation: 0,
-      insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      elevation: (0).r(context),
+      insetPadding: EdgeInsets.symmetric(horizontal: (28).w(context)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((20).r(context))),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: (18).w(context), vertical: (20).h(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,7 +69,7 @@ class AppConfirmDialog extends StatelessWidget {
               children: <Widget>[
                 AppDialogGlyph(imagePath: iconPath),
 
-                SizedBox(width: 12.w),
+                SizedBox(width: (12).w(context)),
 
                 Expanded(
                   child: Text(
@@ -83,17 +83,17 @@ class AppConfirmDialog extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: (16).h(context)),
 
             Text(
               messageKey.tr(namedArgs: messageArgs),
               textAlign: TextAlign.center,
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7),
+              style: AppTheme.styles(context).bodySmall.copyWith(height: 1.7.h(context)),
             ),
 
-            SizedBox(height: 22.h),
+            SizedBox(height: (22).h(context)),
 
             AppDialogActions(
               confirmKey: confirmKey,

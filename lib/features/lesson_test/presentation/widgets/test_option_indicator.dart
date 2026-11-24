@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestOptionIndicator extends StatelessWidget {
   const TestOptionIndicator({
@@ -15,16 +15,16 @@ class TestOptionIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double side = 20.w;
+    final double side = 20;
 
     return Container(
       width: side,
       height: side,
       decoration: BoxDecoration(
         color: isSelected && isMultiSelect ? color : Colors.transparent,
-        border: Border.all(color: color, width: 1.6.w),
+        border: Border.all(color: color, width: 1.6.w(context)),
         borderRadius: isMultiSelect
-            ? BorderRadius.circular(4.r)
+            ? BorderRadius.circular((4).r(context))
             : BorderRadius.circular(side),
       ),
       child: _mark(context, side),

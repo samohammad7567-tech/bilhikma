@@ -1,12 +1,13 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_countries.dart';
 import '../models/country_model.dart';
 import '../themes/app_theme.dart';
+import '../utils/my_screen_size.dart';
 import 'custom_text_field.dart';
 import 'sheet_handle.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class CountryPickerSheet extends StatefulWidget {
   const CountryPickerSheet({required this.selected, super.key});
@@ -52,24 +53,24 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MyScreenSize.keyboardHeight(context),
       ),
       child: Container(
-        height: 0.78.sh,
+        height: MyScreenSize.heightFraction(context, 0.78),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular((24).r(context))),
         ),
         child: SafeArea(
           top: false,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 12.h),
+              SizedBox(height: (12).h(context)),
 
               const SheetHandle(),
 
               Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+                padding: EdgeInsets.fromLTRB((20).w(context), (16).h(context), (20).w(context), (12).h(context)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
@@ -82,16 +83,16 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
                       style: AppTheme.styles(context).labelStrong,
                     ),
 
-                    SizedBox(height: 12.h),
+                    SizedBox(height: (12).h(context)),
 
                     CustomTextField(
                       controller: _search,
                       filled: true,
                       fillColour: colors.tertiary.withValues(alpha: 0.4),
                       borderColor: Colors.transparent,
-                      borderRadius: 12.r,
+                      borderRadius: 12,
                       hintText: 'search_country'.tr(),
-                      prefixIcon: Icon(Icons.search, size: 20.w),
+                      prefixIcon: Icon(Icons.search, size: (20).r(context)),
                       onChanged: (String? value) {
                         _filter(value ?? '');
                         return null;
@@ -111,7 +112,7 @@ class _CountryPickerSheetState extends State<CountryPickerSheet> {
                         ),
                       )
                     : ListView.builder(
-                        padding: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.only(bottom: (12).h(context)),
                         itemCount: _results.length,
                         itemBuilder: (BuildContext context, int index) {
                           final Country country = _results[index];
@@ -156,7 +157,7 @@ class _CountryTile extends StatelessWidget {
       onTap: onTap,
       selected: isSelected,
       selectedTileColor: colors.tertiary.withValues(alpha: 0.3),
-      leading: Text(country.flag, style: TextStyle(fontSize: 24.sp)),
+      leading: Text(country.flag, style: TextStyle(fontSize: (24).sp(context))),
       title: Text(
         country.localizedName(language),
         maxLines: 1,

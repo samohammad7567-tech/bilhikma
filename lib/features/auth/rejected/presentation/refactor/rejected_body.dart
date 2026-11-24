@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/routing/app_routes.dart';
@@ -9,6 +8,7 @@ import '../../../../../core/widgets/app_icon.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/status_header.dart';
 import '../widgets/rejection_reason_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class RejectedBody extends StatelessWidget {
   const RejectedBody({this.reason, this.onBackToLogin, super.key});
@@ -25,11 +25,11 @@ class RejectedBody extends StatelessWidget {
       child: AppContentWidth(
         maxWidth: 600,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50.w),
+          padding: EdgeInsets.symmetric(horizontal: (50).w(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
 
               StatusHeader(
                 title: context.tr('request_rejected'),
@@ -40,11 +40,11 @@ class RejectedBody extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    AppIcon(asset: AppAssets.assetsAccountRejected, size: 70.w),
+                    AppIcon(asset: AppAssets.assetsAccountRejected, size: (70).r(context)),
 
                     if (reasonText != null &&
                         reasonText.isNotEmpty) ...<Widget>[
-                      SizedBox(height: 24.h),
+                      SizedBox(height: (24).h(context)),
                       RejectionReasonCard(reason: reasonText),
                     ],
                   ],
@@ -60,15 +60,15 @@ class RejectedBody extends StatelessWidget {
                     ),
                 text: 'ok'.tr(),
                 width: double.infinity,
-                height: 40,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (40).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 backgroundColor: colors.secondary,
                 textColor: colors.onSecondary,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: (24).h(context)),
             ],
           ),
         ),

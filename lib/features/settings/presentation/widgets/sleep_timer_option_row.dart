@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/sleep_timer_option_enum.dart';
 import '../refactor/settings_formats.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SleepTimerOptionRow extends StatelessWidget {
   const SleepTimerOptionRow({
@@ -24,7 +24,7 @@ class SleepTimerOptionRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: (8).w(context), vertical: (14).h(context)),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -40,7 +40,7 @@ class SleepTimerOptionRow extends StatelessWidget {
             ),
 
             if (isSelected)
-              Icon(Icons.check, size: 18.w, color: colors.secondaryContainer),
+              Icon(Icons.check, size: (18).r(context), color: colors.secondaryContainer),
           ],
         ),
       ),

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/widgets/educational_path_text.dart';
 import '../../../../core/widgets/ornamented_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class InstitutionCard extends StatelessWidget {
   const InstitutionCard({
@@ -18,7 +18,7 @@ class InstitutionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrnamentedCard(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (14).h(context)),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -32,7 +32,7 @@ class InstitutionCard extends StatelessWidget {
             ),
 
             if (path.isNotEmpty) ...<Widget>[
-              SizedBox(height: 4.h),
+              SizedBox(height: (4).h(context)),
               EducationalPathText(segments: path),
             ],
           ],

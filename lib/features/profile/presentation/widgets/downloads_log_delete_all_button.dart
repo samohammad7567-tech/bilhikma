@@ -1,6 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class DownloadsLogDeleteAllButton extends StatelessWidget {
   const DownloadsLogDeleteAllButton({
@@ -22,12 +22,12 @@ class DownloadsLogDeleteAllButton extends StatelessWidget {
 
     if (isDeletingAll) {
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        padding: EdgeInsets.symmetric(horizontal: (12).w(context)),
         child: SizedBox(
-          width: 20.w,
-          height: 20.w,
+          width: (20).w(context),
+          height: (20).h(context),
           child: CircularProgressIndicator(
-            strokeWidth: 2.w,
+            strokeWidth: (2).r(context),
             color: colors.error,
           ),
         ),
@@ -39,7 +39,7 @@ class DownloadsLogDeleteAllButton extends StatelessWidget {
       tooltip: 'clear_all_downloads'.tr(),
       icon: Icon(
         Icons.delete_sweep_outlined,
-        size: 24.w,
+        size: (24).r(context),
         color: isEnabled
             ? colors.error
             : colors.onSurfaceVariant.withValues(alpha: 0.4),

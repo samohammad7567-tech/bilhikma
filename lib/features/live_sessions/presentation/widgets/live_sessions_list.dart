@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/models/live_session_model.dart';
 import '../../../../core/widgets/live_session_tile.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/utils/my_screen_size.dart';
+import '../../../../core/utils/screen_scale.dart';
 
 class LiveSessionsList extends StatelessWidget {
   const LiveSessionsList({
@@ -22,14 +22,14 @@ class LiveSessionsList extends StatelessWidget {
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
-        16.w,
-        4.h,
-        16.w,
-        AppBottomNavBar.barHeight + 24.h,
+        16,
+        4,
+        16,
+        MyScreenSize.bottomChromeHeight(context) + 24,
       ),
       itemCount: sessions.length,
       separatorBuilder: (BuildContext context, int index) =>
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
       itemBuilder: (BuildContext context, int index) {
         final LiveSessionModel session = sessions[index];
 

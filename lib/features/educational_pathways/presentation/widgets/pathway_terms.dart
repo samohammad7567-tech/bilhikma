@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_colors.dart';
 import '../../data/models/pathway_term_model.dart';
@@ -13,7 +12,7 @@ class PathwayTerms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.only(start: 68.w),
+      padding: EdgeInsetsDirectional.only(start: 68),
       child: Container(
         decoration: const BoxDecoration(
           border: BorderDirectional(start: BorderSide(color: AppColors.sand)),
@@ -23,7 +22,7 @@ class PathwayTerms extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             for (final PathwayTermModel term in terms)
-              PathwayNodeRow(label: term.name, indent: 12.w),
+              PathwayNodeRow(label: term.name, indent: 12),
           ],
         ),
       ),

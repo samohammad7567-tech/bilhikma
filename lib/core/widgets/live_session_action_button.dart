@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../localization/lang_keys.dart';
+import '../utils/my_screen_size.dart';
 import 'custom_button.dart';
 import 'custom_outline_button.dart';
 
@@ -21,27 +22,32 @@ class LiveSessionActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    final double width = 132.w * MediaQuery.textScalerOf(context).scale(1);
+    final double width = MyScreenSize.value<double>(
+      context,
+      compact: 132,
+      medium: 144,
+      expanded: 156,
+    );
 
     if (isLive) {
       return CustomButton(
         onPressed: onWatch,
-        text: 'watch_now'.tr(),
+        text: LangKeys.watchNow.tr(),
         width: width,
-        height: 40.h,
-        threeRadius: 8.r,
-        lastRadius: 8.r,
+        height: 40,
+        threeRadius: 8,
+        lastRadius: 8,
         elevation: 0,
       );
     }
 
     return CustomOutlineButton(
       onPressed: onRemind,
-      text: 'remind_me_later'.tr(),
+      text: LangKeys.remindMeLater.tr(),
       width: width,
-      height: 40.h,
-      threeRadius: 8.r,
-      lastRadius: 8.r,
+      height: 40,
+      threeRadius: 8,
+      lastRadius: 8,
       borderColor: colors.outlineVariant,
       backgroundColor: colors.surfaceContainerLowest,
       textColor: colors.onSurface,

@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/models/live_session_model.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/live_formats.dart';
 import '../../../../core/widgets/lesson_meta_item.dart';
 import '../../../../core/widgets/ornamented_card.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LivePlayerSummaryCard extends StatelessWidget {
   const LivePlayerSummaryCard({required this.session, super.key});
@@ -17,8 +17,8 @@ class LivePlayerSummaryCard extends StatelessWidget {
     final String description = session.description ?? '';
 
     return OrnamentedCard(
-      radius: 14.r,
-      padding: EdgeInsets.all(14.w),
+      radius: 14,
+      padding: EdgeInsets.all((14).r(context)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -30,7 +30,7 @@ class LivePlayerSummaryCard extends StatelessWidget {
           ),
 
           if (description.isNotEmpty) ...<Widget>[
-            SizedBox(height: 6.h),
+            SizedBox(height: (6).h(context)),
             Text(
               description,
               textAlign: TextAlign.start,
@@ -41,7 +41,7 @@ class LivePlayerSummaryCard extends StatelessWidget {
           ],
 
           if (session.scheduledAt != null) ...<Widget>[
-            SizedBox(height: 12.h),
+            SizedBox(height: (12).h(context)),
             Row(
               children: <Widget>[
                 Flexible(
@@ -51,7 +51,7 @@ class LivePlayerSummaryCard extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(width: 14.w),
+                SizedBox(width: (14).w(context)),
 
                 Flexible(
                   child: LessonMetaItem(

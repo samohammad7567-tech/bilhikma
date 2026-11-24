@@ -1,12 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../data/models/educational_pathway_model.dart';
 import '../refactor/pathway_view_data.dart';
 import 'pathway_info_row.dart';
 import 'pathway_tree.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PathwayCard extends StatelessWidget {
   const PathwayCard({
@@ -25,10 +25,10 @@ class PathwayCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular((14).r(context)),
       ),
       clipBehavior: Clip.antiAlias,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (16).h(context)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,14 +41,14 @@ class PathwayCard extends StatelessWidget {
             ]),
           ),
 
-          SizedBox(height: 14.h),
+          SizedBox(height: (14).h(context)),
 
           PathwayInfoRow(
             asset: AppAssets.assetsEducationalPath,
             label: 'academic_path'.tr(),
           ),
 
-          SizedBox(height: 8.h),
+          SizedBox(height: (8).h(context)),
 
           PathwayTree(
             pathway: pathway,

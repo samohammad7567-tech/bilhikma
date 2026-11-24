@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+﻿import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/app_regex.dart';
@@ -23,7 +22,7 @@ class ResetIdentityField extends StatelessWidget {
       filled: true,
       fillColour: colors.tertiary.withValues(alpha: 0.4),
       borderColor: Colors.transparent,
-      borderRadius: 12.r,
+      borderRadius: 12,
       hintText: 'email'.tr(),
       textDirection: TextDirection.ltr,
       suffixIcon: const FieldIconBox(asset: AppAssets.assetsEmailIcon),

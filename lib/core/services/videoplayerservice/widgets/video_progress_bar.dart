@@ -1,8 +1,9 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 import '../video_playback.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoProgressBar extends StatefulWidget {
   const VideoProgressBar({
@@ -65,26 +66,26 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
                 onHorizontalDragEnd: (_) =>
                     setState(() => _dragFraction = null),
                 child: SizedBox(
-                  height: 24,
+                  height: (24).h(context),
                   width: width,
                   child: Stack(
                     alignment: AlignmentDirectional.centerStart,
                     children: <Widget>[
                       Container(
                         width: width,
-                        height: 3,
+                        height: (3).h(context),
                         decoration: BoxDecoration(
                           color: Colors.white24,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular((2).r(context)),
                         ),
                       ),
 
                       Container(
                         width: width * fraction,
-                        height: 3,
+                        height: (3).h(context),
                         decoration: BoxDecoration(
                           color: widget.accentColor,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular((2).r(context)),
                         ),
                       ),
 
@@ -93,8 +94,8 @@ class _VideoProgressBarState extends State<VideoProgressBar> {
                             .clamp(0.0, width - 14)
                             .toDouble(),
                         child: Container(
-                          width: 14,
-                          height: 14,
+                          width: (14).w(context),
+                          height: (14).h(context),
                           decoration: BoxDecoration(
                             color: widget.accentColor,
                             shape: BoxShape.circle,

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class IndexStrip extends StatelessWidget {
   const IndexStrip({required this.order, super.key});
@@ -11,10 +11,10 @@ class IndexStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(minWidth: 26.w),
+      constraints: BoxConstraints(minWidth: 26),
       color: Theme.of(context).colorScheme.tertiary,
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top: 10.h, left: 4.w, right: 4.w),
+      padding: EdgeInsets.only(top: (10).h(context), left: (4).w(context), right: (4).w(context)),
       child: Text(
         '$order',
         maxLines: 1,

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/ornamented_card.dart';
 import 'test_intro_card_row.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class TestIntroCard extends StatelessWidget {
   const TestIntroCard({required this.rows, super.key});
@@ -14,14 +14,14 @@ class TestIntroCard extends StatelessWidget {
     return OrnamentedCard(
       leading: null,
       trailing: null,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (4).h(context)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           for (int index = 0; index < rows.length; index++) ...<Widget>[
             if (index > 0)
               Divider(
-                height: 1.h,
+                height: (1).h(context),
                 thickness: 1,
                 color: Theme.of(
                   context,

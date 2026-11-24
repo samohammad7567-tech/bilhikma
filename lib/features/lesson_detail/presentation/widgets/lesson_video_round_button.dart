@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonVideoRoundButton extends StatelessWidget {
   const LessonVideoRoundButton({
@@ -22,7 +22,7 @@ class LessonVideoRoundButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(8.w),
+          padding: EdgeInsets.all((8).r(context)),
           child: Icon(icon, color: Colors.white, size: size),
         ),
       ),

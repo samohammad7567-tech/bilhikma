@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/themes/notification_tone_palette.dart';
@@ -9,6 +8,7 @@ import '../refactor/notification_formats.dart';
 import 'notification_image.dart';
 import 'notification_kind_chip.dart';
 import 'notification_kind_tile.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class NotificationDetailsSheet extends StatelessWidget {
   const NotificationDetailsSheet({required this.notification, super.key});
@@ -30,14 +30,14 @@ class NotificationDetailsSheet extends StatelessWidget {
       children: <Widget>[
         const SheetHandle(),
 
-        SizedBox(height: 14.h),
+        SizedBox(height: (14).h(context)),
 
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             NotificationKindTile(kind: notification.kind, tone: tone),
 
-            SizedBox(width: 10.w),
+            SizedBox(width: (10).w(context)),
 
             Expanded(
               child: Column(
@@ -46,7 +46,7 @@ class NotificationDetailsSheet extends StatelessWidget {
                 children: <Widget>[
                   NotificationKindChip(kind: notification.kind),
 
-                  SizedBox(height: 6.h),
+                  SizedBox(height: (6).h(context)),
 
                   Text(
                     notification.title,
@@ -61,11 +61,11 @@ class NotificationDetailsSheet extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 12.h),
+        SizedBox(height: (12).h(context)),
 
         if (notification.hasImage) ...<Widget>[
           _image(),
-          SizedBox(height: 12.h),
+          SizedBox(height: (12).h(context)),
         ],
         Text(
           notification.message,
@@ -73,7 +73,7 @@ class NotificationDetailsSheet extends StatelessWidget {
           style: styles.cardSubtitle,
         ),
 
-        SizedBox(height: 14.h),
+        SizedBox(height: (14).h(context)),
 
         Text(
           NotificationFormats.stamp(notification.sentAt),
@@ -82,7 +82,7 @@ class NotificationDetailsSheet extends StatelessWidget {
           style: styles.cardCaption,
         ),
 
-        SizedBox(height: 8.h),
+        SizedBox(height: (8).h(context)),
       ],
     );
   }

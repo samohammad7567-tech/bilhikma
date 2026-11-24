@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class CustomBarIcon extends StatelessWidget {
   const CustomBarIcon({
@@ -17,12 +17,12 @@ class CustomBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double diameter = size ?? 44.w;
+    final double diameter = size ?? 44;
 
     return Material(
       color: Theme.of(context).colorScheme.surfaceContainerLowest,
       shape: const CircleBorder(),
-      elevation: 2,
+      elevation: (2).r(context),
       shadowColor: Colors.black.withValues(alpha: 0.15),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -31,7 +31,7 @@ class CustomBarIcon extends StatelessWidget {
           width: diameter,
           height: diameter,
           child: Padding(
-            padding: EdgeInsets.all(padding ?? 12.w),
+            padding: EdgeInsets.all(padding ?? 12),
             child: child,
           ),
         ),

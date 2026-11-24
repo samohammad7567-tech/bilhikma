@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/enums/playback_speed_enum.dart';
 import '../../../../core/widgets/playback_speed_button.dart';
 import '../../../../core/widgets/playback_speed_sheet.dart';
 import 'lesson_audio_play_button.dart';
 import 'lesson_audio_skip_button.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAudioControlsRow extends StatelessWidget {
   const LessonAudioControlsRow({
@@ -48,7 +48,7 @@ class LessonAudioControlsRow extends StatelessWidget {
 
         LessonAudioSkipButton(icon: Icons.skip_next, onTap: onRewind),
 
-        SizedBox(width: 22.w),
+        SizedBox(width: (22).w(context)),
 
         LessonAudioPlayButton(
           isPlaying: isPlaying,
@@ -56,7 +56,7 @@ class LessonAudioControlsRow extends StatelessWidget {
           onToggle: onToggle,
         ),
 
-        SizedBox(width: 22.w),
+        SizedBox(width: (22).w(context)),
 
         LessonAudioSkipButton(icon: Icons.skip_previous, onTap: onForward),
 

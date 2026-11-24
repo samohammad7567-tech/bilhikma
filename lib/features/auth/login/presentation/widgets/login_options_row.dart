@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/themes/app_theme.dart';
 import 'login_remember_me.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LoginOptionsRow extends StatelessWidget {
   const LoginOptionsRow({
@@ -33,7 +33,7 @@ class LoginOptionsRow extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 12.w),
+        SizedBox(width: (12).w(context)),
         Flexible(
           child: LoginRememberMe(
             value: rememberMe,

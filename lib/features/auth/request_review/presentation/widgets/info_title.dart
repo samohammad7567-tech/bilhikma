@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'info_item.dart';
 import '../../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class InfoTile extends StatelessWidget {
   const InfoTile({required this.item, super.key});
@@ -11,10 +11,10 @@ class InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double iconSize = 34.w;
+    final double iconSize = 34;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+      padding: EdgeInsets.symmetric(horizontal: (18).w(context), vertical: (20).h(context)),
       child: Row(
         children: <Widget>[
           Image.asset(
@@ -23,7 +23,7 @@ class InfoTile extends StatelessWidget {
             height: iconSize,
             fit: BoxFit.contain,
           ),
-          SizedBox(width: 27.w),
+          SizedBox(width: (27).w(context)),
           Expanded(
             child: Text.rich(
               TextSpan(

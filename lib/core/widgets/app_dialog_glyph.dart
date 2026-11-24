@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'app_icon.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppDialogGlyph extends StatelessWidget {
   const AppDialogGlyph({
@@ -22,17 +22,17 @@ class AppDialogGlyph extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      width: 38.w,
-      height: 38.w,
+      width: (38).w(context),
+      height: (38).h(context),
       decoration: BoxDecoration(
         color: backgroundColor ?? colors.error.withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular((10).r(context)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.all((8).r(context)),
         child: AppIcon(
           asset: imagePath,
-          size: 20.w,
+          size: (20).r(context),
           color: iconColor ?? colors.onError,
         ),
       ),

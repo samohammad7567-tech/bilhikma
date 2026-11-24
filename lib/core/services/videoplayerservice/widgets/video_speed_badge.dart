@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+﻿import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoSpeedBadge extends StatelessWidget {
   const VideoSpeedBadge({required this.color, super.key});
@@ -9,24 +10,24 @@ class VideoSpeedBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (8).h(context)),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular((20).r(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(CupertinoIcons.forward_fill, color: color, size: 18),
+          Icon(CupertinoIcons.forward_fill, color: color, size: (18).r(context)),
 
-          const SizedBox(width: 4),
+          SizedBox(width: (4).w(context)),
 
-          const Text(
+          Text(
             '2x',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 15,
+              fontSize: (15).sp(context),
             ),
           ),
         ],

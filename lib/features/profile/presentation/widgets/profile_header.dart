@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_circle_avatar.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({required this.name, super.key});
@@ -14,9 +14,9 @@ class ProfileHeader extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        AppCircleAvatar(size: 96.w),
+        AppCircleAvatar(size: (96).r(context)),
 
-        SizedBox(height: 14.h),
+        SizedBox(height: (14).h(context)),
 
         Text(
           name,

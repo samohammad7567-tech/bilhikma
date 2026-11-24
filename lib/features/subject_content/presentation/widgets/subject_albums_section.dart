@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../gallery/data/models/media_album_model.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SubjectAlbumsSection extends StatelessWidget {
   const SubjectAlbumsSection({
@@ -27,7 +27,7 @@ class SubjectAlbumsSection extends StatelessWidget {
       children: <Widget>[
         for (final MediaAlbumModel album in albums)
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB((16).w(context), (0).h(context), (16).w(context), (12).h(context)),
             child: _AlbumRow(album: album, onTap: () => onAlbumTap(album)),
           ),
       ],
@@ -47,29 +47,29 @@ class _AlbumRow extends StatelessWidget {
 
     return Material(
       color: colors.tertiaryContainer,
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.circular((14).r(context)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(12.w),
+          padding: EdgeInsets.all((12).r(context)),
           child: Row(
             children: <Widget>[
               Container(
-                width: 46.w,
-                height: 46.w,
+                width: (46).w(context),
+                height: (46).h(context),
                 decoration: BoxDecoration(
                   color: colors.primaryContainer,
-                  borderRadius: BorderRadius.circular(10.r),
+                  borderRadius: BorderRadius.circular((10).r(context)),
                 ),
                 child: Icon(
                   Icons.photo_library_outlined,
-                  size: 22.w,
+                  size: (22).r(context),
                   color: colors.onPrimaryContainer,
                 ),
               ),
 
-              SizedBox(width: 12.w),
+              SizedBox(width: (12).w(context)),
 
               Expanded(
                 child: Column(
@@ -86,7 +86,7 @@ class _AlbumRow extends StatelessWidget {
                     ),
 
                     if ((album.description ?? '').isNotEmpty) ...<Widget>[
-                      SizedBox(height: 2.h),
+                      SizedBox(height: (2).h(context)),
                       Text(
                         album.description!,
                         maxLines: 1,
@@ -100,7 +100,7 @@ class _AlbumRow extends StatelessWidget {
 
               Icon(
                 Icons.arrow_forward_ios,
-                size: 14.w,
+                size: (14).r(context),
                 color: colors.onSurfaceVariant,
               ),
             ],

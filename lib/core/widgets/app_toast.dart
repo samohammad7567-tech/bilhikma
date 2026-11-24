@@ -1,11 +1,11 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../di/service_locator.dart';
 import '../themes/app_theme.dart';
-import 'app_bottom_nav_bar.dart';
+import '../utils/my_screen_size.dart';
+import '../utils/screen_scale.dart';
 
 enum AppToastKind { info, success, error }
 
@@ -130,10 +130,10 @@ class _ToastViewState extends State<_ToastView>
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Positioned(
-      left: 16.w,
-      right: 16.w,
+      left: (16).w(context),
+      right: (16).w(context),
 
-      bottom: AppBottomNavBar.barHeight + 12.h,
+      bottom: MyScreenSize.bottomChromeHeight(context) + 12,
       child: FadeTransition(
         opacity: _fade,
         child: SlideTransition(
@@ -143,14 +143,14 @@ class _ToastViewState extends State<_ToastView>
             child: GestureDetector(
               onTap: _dismiss,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: (14).w(context), vertical: (12).h(context)),
                 decoration: BoxDecoration(
                   color: colors.secondary,
-                  borderRadius: BorderRadius.circular(14.r),
+                  borderRadius: BorderRadius.circular((14).r(context)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.25),
-                      blurRadius: 14,
+                      blurRadius: (14).r(context),
                       offset: const Offset(0, 4),
                     ),
                   ],
@@ -159,8 +159,8 @@ class _ToastViewState extends State<_ToastView>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Icon(_icon, size: 20.w, color: _accent(colors)),
-                    SizedBox(width: 10.w),
+                    Icon(_icon, size: (20).r(context), color: _accent(colors)),
+                    SizedBox(width: (10).w(context)),
                     Expanded(
                       child: Text(
                         widget.message,

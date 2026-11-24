@@ -69,11 +69,10 @@ class AppBlocObserver extends BlocObserver {
   void onDone(
     Bloc<dynamic, dynamic> bloc,
     Object? event, [
-    Object? result,
     Object? error,
     StackTrace? stackTrace,
   ]) {
-    super.onDone(bloc, event, result, stackTrace);
+    super.onDone(bloc, event, error, stackTrace);
 
     if (error != null) {
       _log(

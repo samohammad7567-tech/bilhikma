@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class AppTopBarBackButton extends StatelessWidget {
   const AppTopBarBackButton({required this.onPressed, super.key});
@@ -17,11 +17,11 @@ class AppTopBarBackButton extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         child: SizedBox(
-          width: 44.w,
-          height: 44.w,
+          width: (44).w(context),
+          height: (44).h(context),
           child: Icon(
             Icons.arrow_back_ios_new,
-            size: 18.w,
+            size: (18).r(context),
             color: colors.onSurface,
           ),
         ),

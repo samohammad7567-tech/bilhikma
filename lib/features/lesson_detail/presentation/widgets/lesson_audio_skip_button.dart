@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class LessonAudioSkipButton extends StatelessWidget {
   const LessonAudioSkipButton({required this.icon, super.key, this.onTap});
@@ -14,10 +14,10 @@ class LessonAudioSkipButton extends StatelessWidget {
 
     return InkResponse(
       onTap: onTap,
-      radius: 24.w,
+      radius: 24,
       child: Icon(
         icon,
-        size: 28.w,
+        size: (28).r(context),
         color: onTap == null ? colour.withValues(alpha: 0.4) : colour,
       ),
     );

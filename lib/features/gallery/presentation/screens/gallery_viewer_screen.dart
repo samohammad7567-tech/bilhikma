@@ -1,13 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../../../../core/routing/app_routes.dart';
 import '../../../security/presentation/widgets/security_watch.dart';
 import '../../data/models/gallery_image_model.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class GalleryViewerScreen extends StatefulWidget {
   const GalleryViewerScreen({
@@ -48,9 +48,9 @@ class _GalleryViewerScreenState extends State<GalleryViewerScreen>
   static const double _dismissThreshold = 130;
   static const double _dragLimit = 400;
 
-  double get _thumbSize => 56.w;
-  double get _thumbGap => 8.w;
-  double get _thumbPadding => 16.w;
+  double get _thumbSize => 56;
+  double get _thumbGap => 8;
+  double get _thumbPadding => 16;
 
   @override
   void initState() {
@@ -229,31 +229,31 @@ class _GalleryViewerScreenState extends State<GalleryViewerScreen>
               ),
 
               PositionedDirectional(
-                top: 8.h,
-                start: 8.w,
+                top: (8).h(context),
+                start: (8).w(context),
                 child: IconButton(
                   onPressed: () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.close, color: Colors.white),
+                  icon: Icon(Icons.close, color: Colors.white),
                 ),
               ),
 
               if (caption != null && caption.isNotEmpty)
                 Positioned(
-                  bottom: hasFilmstrip ? 92.h : 16.h,
-                  left: 16.w,
-                  right: 16.w,
+                  bottom: hasFilmstrip ? 92 : 16,
+                  left: (16).w(context),
+                  right: (16).w(context),
                   child: Text(
                     caption,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                    style: TextStyle(color: Colors.white70, fontSize: (14).sp(context)),
                   ),
                 ),
 
               if (hasFilmstrip)
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 12.h,
+                  left: (0).w(context),
+                  right: (0).w(context),
+                  bottom: (12).h(context),
                   child: SizedBox(
                     height: _thumbSize,
                     child: GestureDetector(
@@ -327,7 +327,7 @@ class _ThumbTile extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular((8).r(context)),
           border: Border.all(
             color: selected
                 ? colors.tertiary
@@ -336,7 +336,7 @@ class _ThumbTile extends StatelessWidget {
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular((6).r(context)),
           child: Opacity(
             opacity: selected ? 1 : 0.55,
             child: CachedNetworkImage(

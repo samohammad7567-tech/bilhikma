@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../enums/drawer_destination_enum.dart';
 import '../../../themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class DrawerMenuItem extends StatelessWidget {
   const DrawerMenuItem({
@@ -22,12 +22,12 @@ class DrawerMenuItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (14).h(context)),
         child: Row(
           children: <Widget>[
-            Icon(destination.icon, size: 22.w, color: colors.secondary),
+            Icon(destination.icon, size: (22).r(context), color: colors.secondary),
 
-            SizedBox(width: 16.w),
+            SizedBox(width: (16).w(context)),
 
             Expanded(
               child: Text(

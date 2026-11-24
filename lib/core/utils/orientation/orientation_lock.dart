@@ -1,6 +1,7 @@
-import 'orientation_util.dart';
-
 import 'package:flutter/material.dart';
+
+import '../my_screen_size.dart';
+import 'orientation_util.dart';
 
 class OrientationLock extends StatefulWidget {
   const OrientationLock({super.key, required this.child});
@@ -12,13 +13,14 @@ class OrientationLock extends StatefulWidget {
 }
 
 class _OrientationLockState extends State<OrientationLock> {
-  bool _done = false;
+  bool? _lastMobile;
 
   @override
   Widget build(BuildContext context) {
-    if (!_done) {
-      _done = true;
-      setPreferredOrientationByDevice(context);
+    final bool isMobile = MyScreenSize.isMobile(context);
+    if (_lastMobile != isMobile) {
+      _lastMobile = isMobile;
+      setPreferredOrientationByDeviceType(isMobile: isMobile);
     }
     return widget.child;
   }

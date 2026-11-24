@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
 
 import 'drag_dismiss_backdrop.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 /// Reusable full screen viewer for a single network image: pinch and double tap
 /// to zoom, drag to dismiss, nothing cropped.
@@ -105,26 +105,26 @@ class _AppImageViewerState extends State<AppImageViewer> {
             child: Stack(
               children: <Widget>[
                 PositionedDirectional(
-                  top: 8.h,
-                  start: 8.w,
+                  top: (8).h(context),
+                  start: (8).w(context),
                   child: IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
                     tooltip: 'close'.tr(),
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close, color: Colors.white),
                   ),
                 ),
 
                 if (caption != null && caption.isNotEmpty)
                   PositionedDirectional(
-                    bottom: 16.h,
-                    start: 16.w,
-                    end: 16.w,
+                    bottom: (16).h(context),
+                    start: (16).w(context),
+                    end: (16).h(context),
                     child: Text(
                       caption,
                       textAlign: TextAlign.center,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                      style: TextStyle(color: Colors.white70, fontSize: (14).sp(context)),
                     ),
                   ),
               ],
@@ -139,14 +139,14 @@ class _AppImageViewerState extends State<AppImageViewer> {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Icon(Icons.broken_image_outlined, color: Colors.white54, size: 44.r),
+        Icon(Icons.broken_image_outlined, color: Colors.white54, size: (44).r(context)),
 
-        SizedBox(height: 10.h),
+        SizedBox(height: (10).h(context)),
 
         Text(
           'something_went_wrong'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+          style: TextStyle(color: Colors.white70, fontSize: (14).sp(context)),
         ),
       ],
     ),

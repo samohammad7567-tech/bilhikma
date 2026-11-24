@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/routing/notification_destination.dart';
 import '../../../../core/utils/custom_bottom_sheet.dart';
+import '../../../../core/utils/screen_scale.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../data/models/notification_model.dart';
 import '../cubit/notifications_cubit.dart';
@@ -35,7 +35,7 @@ class NotificationsBody extends StatelessWidget {
         return Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 4.h),
+              padding: EdgeInsets.fromLTRB((16).w(context), 0.0.h(context), (16).w(context), (4).h(context)),
               child: NotificationFilterTabs(
                 filter: state.filter,
                 totalCount: state.notifications.length,

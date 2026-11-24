@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../video_player_options.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class VideoSpeedSheet extends StatelessWidget {
   const VideoSpeedSheet({
@@ -23,8 +24,8 @@ class VideoSpeedSheet extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: options.backgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular((20).r(context))),
       ),
       builder: (BuildContext sheetContext) => VideoSpeedSheet(
         options: options,
@@ -44,19 +45,19 @@ class VideoSpeedSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: EdgeInsets.fromLTRB((16).w(context), (12).h(context), (16).w(context), (8).h(context)),
             child: Text(
               options.speedSheetTitle,
               style: TextStyle(
                 color: options.foregroundColor,
-                fontSize: 16,
+                fontSize: (16).sp(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           Flexible(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: EdgeInsets.only(bottom: (8).h(context)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

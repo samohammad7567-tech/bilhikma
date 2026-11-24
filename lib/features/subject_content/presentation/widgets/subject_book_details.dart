@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/lesson_meta_item.dart';
 import '../../../../core/models/textbook_model.dart';
 import '../refactor/subject_content_formats.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SubjectBookDetails extends StatelessWidget {
   const SubjectBookDetails({required this.book, super.key});
@@ -27,7 +27,7 @@ class SubjectBookDetails extends StatelessWidget {
           style: AppTheme.styles(context).cardTitle,
         ),
 
-        SizedBox(height: 4.h),
+        SizedBox(height: (4).h(context)),
 
         if (version != null) ...<Widget>[
           Text(
@@ -40,7 +40,7 @@ class SubjectBookDetails extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: (10).h(context)),
         ],
 
         if (book.pageCount > 0) ...<Widget>[
@@ -50,7 +50,7 @@ class SubjectBookDetails extends StatelessWidget {
             isIconTrailing: true,
           ),
 
-          SizedBox(height: 6.h),
+          SizedBox(height: (6).h(context)),
         ],
 
         LessonMetaItem(

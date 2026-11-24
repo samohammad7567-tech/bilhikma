@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class PathwayNodeRow extends StatelessWidget {
   const PathwayNodeRow({
@@ -24,7 +24,7 @@ class PathwayNodeRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(indent, 8.h, 12.w, 8.h),
+        padding: EdgeInsetsDirectional.fromSTEB(indent, 8, 12, 8),
         child: Align(
           alignment: AlignmentDirectional.centerStart,
           child: Row(
@@ -43,14 +43,14 @@ class PathwayNodeRow extends StatelessWidget {
               ),
 
               if (onTap != null) ...<Widget>[
-                SizedBox(width: 6.w),
+                SizedBox(width: (6).w(context)),
 
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    size: 20.w,
+                    size: (20).r(context),
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),

@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/models/live_session_model.dart';
 import '../../data/models/resume_lesson_model.dart';
@@ -9,6 +8,7 @@ import '../cubit/home_cubit.dart';
 import '../widgets/home_top_bar.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../widgets/home_sections.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class HomeScreenBody extends StatelessWidget {
   const HomeScreenBody({
@@ -41,7 +41,7 @@ class HomeScreenBody extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: (16).w(context), vertical: (12).h(context)),
             child: HomeTopBar(
               onMenuTap: onMenuTap,
               onNotificationsTap: onNotificationsTap,

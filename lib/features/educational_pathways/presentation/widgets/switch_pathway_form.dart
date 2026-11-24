@@ -1,13 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/sheet_handle.dart';
 import '../cubit/educational_pathways_cubit.dart';
 import 'pathway_dropdown_field.dart';
 import '../../../../core/themes/app_theme.dart';
+import 'package:bilhikma/core/utils/screen_scale.dart';
 
 class SwitchPathwayForm extends StatelessWidget {
   const SwitchPathwayForm({super.key});
@@ -20,14 +20,14 @@ class SwitchPathwayForm extends StatelessWidget {
             .read<EducationalPathwaysCubit>();
 
         return Padding(
-          padding: EdgeInsets.symmetric(vertical: 6.h),
+          padding: EdgeInsets.symmetric(vertical: (6).h(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               const Align(child: SheetHandle()),
 
-              SizedBox(height: 22.h),
+              SizedBox(height: (22).h(context)),
 
               Text(
                 'switch_educational_path'.tr(),
@@ -39,7 +39,7 @@ class SwitchPathwayForm extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: (20).h(context)),
 
               PathwayDropdownField(
                 label: 'institution'.tr(),
@@ -49,7 +49,7 @@ class SwitchPathwayForm extends StatelessWidget {
                 isLoading: state.isLoadingInstitutes,
               ),
 
-              SizedBox(height: 16.h),
+              SizedBox(height: (16).h(context)),
 
               PathwayDropdownField(
                 label: 'level'.tr(),
@@ -59,7 +59,7 @@ class SwitchPathwayForm extends StatelessWidget {
                 isLoading: state.isLoadingClasses,
               ),
 
-              SizedBox(height: 16.h),
+              SizedBox(height: (16).h(context)),
 
               PathwayDropdownField(
                 label: 'term'.tr(),
@@ -69,20 +69,20 @@ class SwitchPathwayForm extends StatelessWidget {
                 isLoading: state.isLoadingClasses,
               ),
 
-              SizedBox(height: 26.h),
+              SizedBox(height: (26).h(context)),
 
               CustomButton(
                 onPressed: state.canSubmitSwitch ? cubit.switchPathway : () {},
                 text: 'switch_educational_path'.tr(),
                 width: double.infinity,
-                height: 48.h,
-                threeRadius: 8.r,
-                lastRadius: 8.r,
+                height: (48).h(context),
+                threeRadius: 8,
+                lastRadius: 8,
                 isLoading: state.isSwitching,
                 backgroundColor: state.canSubmitSwitch
                     ? Theme.of(context).colorScheme.secondaryContainer
                     : Theme.of(context).colorScheme.surfaceContainerHigh,
-                elevation: 0,
+                elevation: (0).r(context),
               ),
             ],
           ),
