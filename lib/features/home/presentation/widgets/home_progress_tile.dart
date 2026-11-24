@@ -14,7 +14,10 @@ class HomeProgressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: (10).w(context), vertical: (8).h(context)),
+      padding: EdgeInsets.symmetric(
+        horizontal: (10).w(context),
+        vertical: (8).h(context),
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular((10).r(context)),

@@ -115,7 +115,7 @@ class AppTextStyles {
   /// Context path — used in widget build methods via AppTheme.styles(context).
   /// Font sizes are scaled against the 412-wide design baseline.
   const AppTextStyles.withContext(BuildContext context, this.colors)
-      : _context = context;
+    : _context = context;
 
   final ColorScheme colors;
   final BuildContext? _context;
@@ -131,13 +131,12 @@ class AppTextStyles {
     required FontWeight weight,
     required Color color,
     double? height,
-  }) =>
-      GoogleFonts.cairo(
-        fontSize: _sp(size),
-        fontWeight: weight,
-        color: color,
-        height: height,
-      );
+  }) => GoogleFonts.cairo(
+    fontSize: _sp(size),
+    fontWeight: weight,
+    color: color,
+    height: height,
+  );
 
   TextStyle get statusTitle =>
       _style(size: 26, weight: FontWeight.w700, color: colors.onSurface);
@@ -154,35 +153,26 @@ class AppTextStyles {
   TextStyle get groupTitle =>
       _style(size: 15, weight: FontWeight.w800, color: colors.onSurface);
   TextStyle get splashTitle => GoogleFonts.arefRuqaa(
-        fontSize: _sp(18),
-        fontWeight: FontWeight.w700,
-        color: colors.onSurface,
-      );
+    fontSize: _sp(18),
+    fontWeight: FontWeight.w700,
+    color: colors.onSurface,
+  );
   TextStyle get cardTitle =>
       _style(size: 15, weight: FontWeight.w700, color: colors.onSurface);
-  TextStyle get cardSubtitle => _style(
-        size: 12,
-        weight: FontWeight.w400,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get cardSubtitle =>
+      _style(size: 12, weight: FontWeight.w400, color: colors.onSurfaceVariant);
   TextStyle get cardBlurb => _style(
-        size: 11,
-        weight: FontWeight.w400,
-        color: colors.onSurfaceVariant,
-        height: 1.6,
-      );
-  TextStyle get cardCaption => _style(
-        size: 11,
-        weight: FontWeight.w400,
-        color: colors.onSurfaceVariant,
-      );
+    size: 11,
+    weight: FontWeight.w400,
+    color: colors.onSurfaceVariant,
+    height: 1.6,
+  );
+  TextStyle get cardCaption =>
+      _style(size: 11, weight: FontWeight.w400, color: colors.onSurfaceVariant);
   TextStyle get rowTitle =>
       _style(size: 14, weight: FontWeight.w700, color: colors.onSurface);
-  TextStyle get rowValue => _style(
-        size: 12,
-        weight: FontWeight.w600,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get rowValue =>
+      _style(size: 12, weight: FontWeight.w600, color: colors.onSurfaceVariant);
   TextStyle get optionLabel =>
       _style(size: 14, weight: FontWeight.w500, color: colors.onSurface);
   TextStyle get optionLabelSelected =>
@@ -191,11 +181,8 @@ class AppTextStyles {
       _style(size: 13, weight: FontWeight.w700, color: colors.onSurface);
   TextStyle get labelMedium =>
       _style(size: 13, weight: FontWeight.w600, color: colors.onSurface);
-  TextStyle get labelSmall => _style(
-        size: 12,
-        weight: FontWeight.w600,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get labelSmall =>
+      _style(size: 12, weight: FontWeight.w600, color: colors.onSurfaceVariant);
   TextStyle get pillLabel =>
       _style(size: 14, weight: FontWeight.w600, color: colors.onPrimary);
   TextStyle get badgeLabel =>
@@ -205,18 +192,15 @@ class AppTextStyles {
   TextStyle get caption =>
       _style(size: 11, weight: FontWeight.w400, color: colors.onSurface);
   TextStyle get brandTagline => _style(
-        size: 11,
-        weight: FontWeight.w400,
-        color: colors.onSecondary,
-        height: 1.7,
-      );
+    size: 11,
+    weight: FontWeight.w400,
+    color: colors.onSecondary,
+    height: 1.7,
+  );
   TextStyle get statValue =>
       _style(size: 16, weight: FontWeight.w700, color: colors.onSurface);
-  TextStyle get statLabel => _style(
-        size: 10,
-        weight: FontWeight.w700,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get statLabel =>
+      _style(size: 10, weight: FontWeight.w700, color: colors.onSurfaceVariant);
   TextStyle get buttonLabel =>
       _style(size: 16, weight: FontWeight.w400, color: colors.onPrimary);
   TextStyle get navLabel =>
@@ -227,11 +211,8 @@ class AppTextStyles {
       _style(size: 14, weight: FontWeight.w400, color: colors.onSurface);
   TextStyle get fieldHint =>
       _style(size: 14, weight: FontWeight.w400, color: colors.onSurface);
-  TextStyle get searchHint => _style(
-        size: 13,
-        weight: FontWeight.w400,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get searchHint =>
+      _style(size: 13, weight: FontWeight.w400, color: colors.onSurfaceVariant);
   TextStyle get fieldError =>
       _style(size: 12, weight: FontWeight.w400, color: colors.error);
   TextStyle get bodyLarge =>
@@ -240,30 +221,27 @@ class AppTextStyles {
       _style(size: 16, weight: FontWeight.w700, color: colors.onSurface);
   TextStyle get bodyMedium =>
       _style(size: 14, weight: FontWeight.w400, color: colors.onSurface);
-  TextStyle get bodySmall => _style(
-        size: 12,
-        weight: FontWeight.w400,
-        color: colors.onSurfaceVariant,
-      );
+  TextStyle get bodySmall =>
+      _style(size: 12, weight: FontWeight.w400, color: colors.onSurfaceVariant);
   TextStyle get note => _style(
-        size: 16,
-        weight: FontWeight.w400,
-        color: colors.secondary,
-        height: 1.5,
-      );
+    size: 16,
+    weight: FontWeight.w400,
+    color: colors.secondary,
+    height: 1.5,
+  );
 
   TextTheme get textTheme => TextTheme(
-        headlineLarge: authTitle,
-        headlineMedium: screenTitle,
-        headlineSmall: sectionTitle,
-        titleLarge: panelTitle,
-        titleMedium: cardTitle,
-        titleSmall: rowTitle,
-        bodyLarge: bodyLarge,
-        bodyMedium: bodyMedium,
-        bodySmall: bodySmall,
-        labelLarge: buttonLabel,
-        labelMedium: labelMedium,
-        labelSmall: badgeLabel,
-      );
+    headlineLarge: authTitle,
+    headlineMedium: screenTitle,
+    headlineSmall: sectionTitle,
+    titleLarge: panelTitle,
+    titleMedium: cardTitle,
+    titleSmall: rowTitle,
+    bodyLarge: bodyLarge,
+    bodyMedium: bodyMedium,
+    bodySmall: bodySmall,
+    labelLarge: buttonLabel,
+    labelMedium: labelMedium,
+    labelSmall: badgeLabel,
+  );
 }

@@ -18,7 +18,9 @@ class DrawerBrandHeader extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: colors.secondary,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular((30).r(context))),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular((30).r(context)),
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -31,7 +33,7 @@ class DrawerBrandHeader extends StatelessWidget {
           ),
 
           Padding(
-            padding: EdgeInsets.all((80).r(context)),
+            padding: EdgeInsets.all((60).r(context)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

@@ -18,52 +18,62 @@ class AppBottomNavBar extends StatelessWidget {
   final AppTab selectedTab;
   final ValueChanged<AppTab> onTabSelected;
 
-  static const double _minBarHeight = 64;
-  static const double _maxBarHeight = 76;
-  static const double _labelFontSize = 12;
+  static const double _minBarHeight = 60;
+  static const double _maxBarHeight = 80;
 
-  static const double _maxLabelTextScale = 1;
+  static const double _labelFontSize = 12;
+  static const double _extraHeightPerScale = 20;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+
+    // System accessibility text scaling.
+    final TextScaler textScaler = MediaQuery.textScalerOf(context);
+
+    // Actual scaled label font size.
+    final double scaledLabelSize = textScaler.scale(_labelFontSize);
+
+    // Calculate additional height according to text scaling.
+    final double additionalHeight =
+        (scaledLabelSize - _labelFontSize) *
+        (_extraHeightPerScale / _labelFontSize);
+
+    final double barHeight =
+        (MyScreenSize.bottomChromeHeight(context) + additionalHeight).clamp(
+          _minBarHeight,
+          _maxBarHeight,
+        );
+
     final TextStyle labelStyle = AppTheme.styles(
       context,
     ).navLabel.copyWith(fontSize: _labelFontSize);
 
-    return MediaQuery.withClampedTextScaling(
-      maxScaleFactor: _maxLabelTextScale,
-
-      child: DefaultTextStyle.merge(
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.center,
-        child: CurvedNavigationBar(
-          index: selectedTab.index,
-          onTap: (int index) => onTabSelected(AppTab.values[index]),
-          color: colors.secondary,
-          backgroundColor: Colors.transparent,
-          buttonBackgroundColor: Colors.transparent,
-          iconPadding: 0,
-          height: MyScreenSize.bottomChromeHeight(context).clamp(
-            _minBarHeight,
-            _maxBarHeight,
-          ),
-          animationDuration: const Duration(milliseconds: 400),
-          items: <CurvedNavigationBarItem>[
-            for (final AppTab tab in AppTab.values)
-              CurvedNavigationBarItem(
-                child: BottomNavTabIcon(
-                  tab: tab,
-                  isSelected: tab == selectedTab,
-                ),
-                label: tab.label.tr(),
-                labelStyle: tab == selectedTab
-                    ? labelStyle.copyWith(color: colors.tertiaryContainer)
-                    : labelStyle,
-              ),
-          ],
-        ),
+    return DefaultTextStyle.merge(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+      child: CurvedNavigationBar(
+        index: selectedTab.index,
+        onTap: (int index) {
+          onTabSelected(AppTab.values[index]);
+        },
+        color: colors.secondary,
+        backgroundColor: Colors.transparent,
+        buttonBackgroundColor: Colors.transparent,
+        iconPadding: 0,
+        height: barHeight,
+        animationDuration: const Duration(milliseconds: 400),
+        items: <CurvedNavigationBarItem>[
+          for (final AppTab tab in AppTab.values)
+            CurvedNavigationBarItem(
+              child: BottomNavTabIcon(tab: tab, isSelected: tab == selectedTab),
+              label: tab.label.tr(),
+              labelStyle: tab == selectedTab
+                  ? labelStyle.copyWith(color: colors.tertiaryContainer)
+                  : labelStyle,
+            ),
+        ],
       ),
     );
   }

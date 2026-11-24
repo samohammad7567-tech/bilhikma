@@ -60,12 +60,11 @@ class MyScreenSize {
     required T compact,
     T? medium,
     T? expanded,
-  }) =>
-      switch (windowSize(context)) {
-        WindowSize.compact => compact,
-        WindowSize.medium => medium ?? compact,
-        WindowSize.expanded => expanded ?? medium ?? compact,
-      };
+  }) => switch (windowSize(context)) {
+    WindowSize.compact => compact,
+    WindowSize.medium => medium ?? compact,
+    WindowSize.expanded => expanded ?? medium ?? compact,
+  };
 
   // ── Design-relative scaling ───────────────────────────────────────────────────
   // These replicate what flutter_screenutil's .w / .h / .r / .sp did when the
@@ -78,12 +77,12 @@ class MyScreenSize {
   //   h()   – vertical lengths, vertical padding
   //   r()   – border radii (uses width ratio so circles stay circular)
 
-  static const double _minScale = 0.85;
-  static const double _maxWidthScale = 1.35;
-  static const double _maxHeightScale = 1.25;
-  static const double _minTextScale = 0.9;
-  static const double _maxTextScale = 1.3;
+  static const double _minScale = 0.75;
+  static const double _maxWidthScale = 1.1;
+  static const double _maxHeightScale = 1.0;
 
+  static const double _minTextScale = 0.9;
+  static const double _maxTextScale = 1.0;
   static double widthScale(BuildContext context) =>
       (width(context) / _designWidth).clamp(_minScale, _maxWidthScale);
 
@@ -121,30 +120,24 @@ class MyScreenSize {
     double fraction, {
     double min = 0,
     double max = double.infinity,
-  }) =>
-      (width(context) * fraction).clamp(min, max).toDouble();
+  }) => (width(context) * fraction).clamp(min, max).toDouble();
 
   static double heightFraction(
     BuildContext context,
     double fraction, {
     double min = 0,
     double max = double.infinity,
-  }) =>
-      (height(context) * fraction).clamp(min, max).toDouble();
+  }) => (height(context) * fraction).clamp(min, max).toDouble();
 
   static double contentMaxWidth(BuildContext context) => value<double>(
-        context,
-        compact: double.infinity,
-        medium: 900,
-        expanded: 1040,
-      );
+    context,
+    compact: double.infinity,
+    medium: 900,
+    expanded: 1040,
+  );
 
-  static int galleryColumns(BuildContext context) => value<int>(
-        context,
-        compact: 2,
-        medium: 3,
-        expanded: 4,
-      );
+  static int galleryColumns(BuildContext context) =>
+      value<int>(context, compact: 2, medium: 3, expanded: 4);
 
   static double bottomChromeHeight(BuildContext context) =>
       isTablet(context) ? 0 : 70;

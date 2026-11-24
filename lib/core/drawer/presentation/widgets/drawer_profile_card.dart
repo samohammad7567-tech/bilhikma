@@ -24,7 +24,10 @@ class DrawerProfileCard extends StatelessWidget {
         onTap: onTap,
         child: OrnamentedCard(
           radius: 14,
-          padding: EdgeInsets.symmetric(horizontal: (12).w(context), vertical: (12).h(context)),
+          padding: EdgeInsets.symmetric(
+            horizontal: (6).w(context),
+            vertical: (6).h(context),
+          ),
           child: Row(
             children: <Widget>[
               const DrawerProfileMonogram(avatarUrl: ''),
