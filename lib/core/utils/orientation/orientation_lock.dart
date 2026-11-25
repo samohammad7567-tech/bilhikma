@@ -14,14 +14,32 @@ class OrientationLock extends StatefulWidget {
 
 class _OrientationLockState extends State<OrientationLock> {
   bool? _lastMobile;
+  bool? _pendingMobile;
+  int _generation = 0;
 
   @override
-  Widget build(BuildContext context) {
-    final bool isMobile = MyScreenSize.isMobile(context);
-    if (_lastMobile != isMobile) {
-      _lastMobile = isMobile;
-      setPreferredOrientationByDeviceType(isMobile: isMobile);
-    }
-    return widget.child;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _pendingMobile = MyScreenSize.isMobile(context);
+    _scheduleApply();
   }
+
+  void _scheduleApply() {
+    final int generation = ++_generation;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || generation != _generation) return;
+      _applyOrientation();
+    });
+  }
+
+  void _applyOrientation() {
+    final bool? isMobile = _pendingMobile;
+    if (isMobile == null || _lastMobile == isMobile) return;
+
+    _lastMobile = isMobile;
+    setPreferredOrientationByDeviceType(isMobile: isMobile);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

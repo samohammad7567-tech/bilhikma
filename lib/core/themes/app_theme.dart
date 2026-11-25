@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/my_screen_size.dart';
 import 'app_colors.dart';
@@ -64,6 +63,7 @@ class AppTheme {
   static ThemeData light() {
     return ThemeData(
       useMaterial3: false,
+      fontFamily: AppTextStyles.cairoFamily,
       primaryColorLight: lightColorScheme.surface,
       primaryColorDark: lightColorScheme.secondary,
       iconTheme: IconThemeData(color: lightColorScheme.primary),
@@ -82,6 +82,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: false,
       brightness: Brightness.dark,
+      fontFamily: AppTextStyles.cairoFamily,
       primaryColor: darkColorScheme.primary,
       primaryColorLight: const Color(0xff1E1E1E),
       primaryColorDark: Colors.white,
@@ -108,6 +109,9 @@ class AppTheme {
 
 @immutable
 class AppTextStyles {
+  static const String cairoFamily = 'Cairo';
+  static const String arefRuqaaFamily = 'Aref Ruqaa';
+
   /// Const path — used only for ThemeData.textTheme (no context available).
   /// Font sizes are plain dp; Flutter's TextScaler handles accessibility scaling.
   const AppTextStyles(this.colors) : _context = null;
@@ -131,7 +135,8 @@ class AppTextStyles {
     required FontWeight weight,
     required Color color,
     double? height,
-  }) => GoogleFonts.cairo(
+  }) => TextStyle(
+    fontFamily: cairoFamily,
     fontSize: _sp(size),
     fontWeight: weight,
     color: color,
@@ -152,7 +157,8 @@ class AppTextStyles {
       _style(size: 17, weight: FontWeight.w700, color: colors.onSurface);
   TextStyle get groupTitle =>
       _style(size: 15, weight: FontWeight.w800, color: colors.onSurface);
-  TextStyle get splashTitle => GoogleFonts.arefRuqaa(
+  TextStyle get splashTitle => TextStyle(
+    fontFamily: arefRuqaaFamily,
     fontSize: _sp(18),
     fontWeight: FontWeight.w700,
     color: colors.onSurface,

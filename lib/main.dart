@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -17,12 +16,10 @@ import 'core/services/push_notification_service.dart';
 import 'core/services/screen_capture_policy.dart';
 import 'core/services/screen_capture_service.dart';
 import 'core/utils/cache_util.dart';
+import 'core/widgets/device_preview_scope.dart';
 
 void main() {
-  runZonedGuarded(
-    _startApp,
-    AppBootstrap.reportFatal,
-  );
+  runZonedGuarded(_startApp, AppBootstrap.reportFatal);
 }
 
 Future<void> _startApp() async {
@@ -34,10 +31,7 @@ Future<void> _startApp() async {
 
   // Phase 1: Core initialization.
 
-  await AppBootstrap.runStep(
-    'preferences',
-    CacheUtil.init,
-  );
+  await AppBootstrap.runStep('preferences', CacheUtil.init);
 
   await AppBootstrap.runStep(
     'localization',
@@ -50,10 +44,7 @@ Future<void> _startApp() async {
     timeout: const Duration(seconds: 25),
   );
 
-  await AppBootstrap.runStep(
-    'service_locator',
-    setupServiceLocator,
-  );
+  await AppBootstrap.runStep('service_locator', setupServiceLocator);
 
   // Phase 2: Local configuration.
 
@@ -79,23 +70,19 @@ Future<void> _startApp() async {
     () => ScreenCaptureService.instance.attach(getIt()),
   );
 
-  await AppBootstrap.runStep(
-    'capture_policy',
-    ScreenCapturePolicy.restore,
-  );
+  await AppBootstrap.runStep('capture_policy', ScreenCapturePolicy.restore);
 
   // Phase 3: Start UI.
 
   runApp(
-    EasyLocalization(
-      supportedLocales: const <Locale>[
-        Locale('ar'),
-        Locale('en'),
-      ],
-      path: 'assets/translations',
-      startLocale: const Locale('ar'),
-      fallbackLocale: const Locale('ar'),
-      child: const BilhikmaApp(),
+    wrapWithDevicePreview(
+      child: EasyLocalization(
+        supportedLocales: const <Locale>[Locale('ar'), Locale('en')],
+        path: 'assets/translations',
+        startLocale: const Locale('ar'),
+        fallbackLocale: const Locale('ar'),
+        child: const BilhikmaApp(),
+      ),
     ),
   );
 

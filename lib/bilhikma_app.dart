@@ -10,6 +10,7 @@ import 'core/routing/keyboard_dismiss_observer.dart';
 import 'core/themes/app_theme.dart';
 import 'core/utils/app_language.dart';
 import 'core/widgets/app_chrome.dart';
+import 'core/widgets/device_preview_scope.dart';
 
 class BilhikmaApp extends StatelessWidget {
   const BilhikmaApp({super.key});
@@ -39,11 +40,12 @@ class BilhikmaApp extends StatelessWidget {
             themeMode: preferences.isDark ? ThemeMode.dark : ThemeMode.light,
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            builder: (BuildContext context, Widget? child) => AppChrome(
-              fontScale: preferences.fontScale,
-              child: child,
-            ),
+            locale: devicePreviewLocale(context, context.locale),
+            builder: (BuildContext context, Widget? child) =>
+                applyDevicePreviewBuilder(
+                  context,
+                  AppChrome(fontScale: preferences.fontScale, child: child),
+                ),
           );
         },
       ),
